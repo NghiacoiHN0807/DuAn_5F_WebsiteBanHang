@@ -18,3 +18,25 @@ code {
     justify-content: space-between;
   }
 }
+//Header
+.gray-background {
+  background-color: rgb(237, 237, 237);
+  .nav-links {
+    font-size: small;
+    color: black;
+  }
+  .nav-separator {
+    margin: 0 5px; /* Điều chỉnh khoảng cách giữa dấu "|" và các NavLink */
+    color: black; /* Màu sắc của dấu "|" */
+  }
+}
+//Home
+.gray-background-home {
+  background-color: rgb(237, 237, 237);
+  text-align: center;
+  font-size: small;
+  .hello {
+    color: rgb(0, 0, 0);
+    font-size: small;
+  }
+}
