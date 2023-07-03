@@ -22,7 +22,7 @@ const ModelAddNew = (props) => {
     } else {
       let res = await postAddXuatXu(setMa, setTenNuoc, setTrangThai);
       console.log("Check res: ", res);
-      if (res && res.idxx) {
+      if (res && res.idXx) {
         handleClose();
         getMa("");
         getTenNuoc("");
