@@ -8,7 +8,7 @@ const ModelConfirm = (props) => {
   const { show, handleClose, isDataXuatXu, getXanXuat } = props;
 
   const confirmDelte = async () => {
-    let res = await deleteXuatXu(isDataXuatXu.idxx);
+    let res = await deleteXuatXu(isDataXuatXu.idXx);
     console.log("Check res deleteXuatXu: " + res);
     if (res && res.statusCode === 200) {
       toast.success("This data has been deleted");

@@ -1,10 +1,12 @@
-import "./App.scss";
-import Header from "./components/Header";
+import "./css/App.scss";
+import "./css/Home.scss";
+import Header from "./layout/Header";
 import TableXuatXu from "./components/TableXuatXu";
 import Container from "react-bootstrap/Container";
 import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import { ToastContainer } from "react-toastify";
+import Footer from "./layout/Footer";
 
 function App() {
   return (
@@ -19,6 +21,7 @@ function App() {
             </Routes>
           </div>
         </Container>
+        <Footer />
       </div>
       <ToastContainer
         position="top-right"

@@ -1,8 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `assigment_java5` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `assigment_java5`;
+CREATE DATABASE  IF NOT EXISTS `duan_5f` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `duan_5f`;
 -- MySQL dump 10.13  Distrib 8.0.32, for Win64 (x86_64)
 --
--- Host: localhost    Database: assigment_java5
+-- Host: localhost    Database: duan_5f
 -- ------------------------------------------------------
 -- Server version	8.0.32
 
@@ -26,8 +26,8 @@ DROP TABLE IF EXISTS `chat_lieu`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `chat_lieu` (
   `id_cl` int NOT NULL AUTO_INCREMENT,
-  `ma_cl` varchar(20) DEFAULT NULL,
-  `ten_cl` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `ma_cl` varchar(255) DEFAULT NULL,
+  `ten_cl` varchar(255) DEFAULT NULL,
   `tinh_trang` int DEFAULT '0',
   PRIMARY KEY (`id_cl`),
   UNIQUE KEY `MaCL` (`ma_cl`)
@@ -52,7 +52,7 @@ DROP TABLE IF EXISTS `chi_tiet_san_pham`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `chi_tiet_san_pham` (
   `id_ctsp` int NOT NULL AUTO_INCREMENT,
-  `ma_ctsp` varchar(20) DEFAULT NULL,
+  `ma_ctsp` varchar(255) DEFAULT NULL,
   `id_cl` int DEFAULT NULL,
   `id_ms` int DEFAULT NULL,
   `id_size` int DEFAULT NULL,
@@ -60,10 +60,11 @@ CREATE TABLE `chi_tiet_san_pham` (
   `is_lsp` int DEFAULT NULL,
   `id_xx` int DEFAULT NULL,
   `id_tay_ao` int DEFAULT NULL,
-  `mo_ta` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `id_co_ao` int DEFAULT NULL,
+  `mo_ta` varchar(255) DEFAULT NULL,
   `so_luong_ton` int DEFAULT NULL,
-  `gia_nhap` decimal(20,0) DEFAULT NULL,
-  `gia_ban` decimal(20,0) DEFAULT NULL,
+  `gia_nhap` decimal(38,2) DEFAULT NULL,
+  `gia_ban` decimal(38,2) DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
   PRIMARY KEY (`id_ctsp`),
   KEY `id_cl` (`id_cl`),
@@ -73,12 +74,14 @@ CREATE TABLE `chi_tiet_san_pham` (
   KEY `id_ms_idx` (`id_ms`),
   KEY `id_sp_idx` (`id_sp`),
   KEY `id_tay_ao_idx` (`id_tay_ao`),
+  KEY `id_co_ao_idx` (`id_co_ao`),
   CONSTRAINT `id_cl` FOREIGN KEY (`id_cl`) REFERENCES `chat_lieu` (`id_cl`),
+  CONSTRAINT `id_co_ao` FOREIGN KEY (`id_co_ao`) REFERENCES `loai_co_ao` (`id_co_ao`),
   CONSTRAINT `id_lsp` FOREIGN KEY (`is_lsp`) REFERENCES `loai_sp` (`id_loaisp`),
   CONSTRAINT `id_ms` FOREIGN KEY (`id_ms`) REFERENCES `mau_sac` (`id_ms`),
   CONSTRAINT `id_size` FOREIGN KEY (`id_size`) REFERENCES `size` (`id_size`),
   CONSTRAINT `id_sp` FOREIGN KEY (`id_sp`) REFERENCES `san_pham` (`id_sp`),
-  CONSTRAINT `id_tay_ao` FOREIGN KEY (`id_tay_ao`) REFERENCES `ong_tay_ao` (`id_ong_tay`),
+  CONSTRAINT `id_tay_ao` FOREIGN KEY (`id_tay_ao`) REFERENCES `ong_tay_ao` (`id_tay_ao`),
   CONSTRAINT `id_xx` FOREIGN KEY (`id_xx`) REFERENCES `xuat_xu` (`id_xx`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -101,15 +104,18 @@ DROP TABLE IF EXISTS `dia_chi`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dia_chi` (
   `id_dia_chi` int NOT NULL AUTO_INCREMENT,
-  `dia_chi_cu_the` varchar(250) NOT NULL,
-  `phuong_xa` varchar(100) NOT NULL,
-  `quan_huyen` varchar(100) NOT NULL,
-  `tinh_thanh` varchar(100) NOT NULL,
+  `id_tk` int DEFAULT NULL,
+  `dia_chi_cu_the` varchar(255) DEFAULT NULL,
+  `phuong_xa` varchar(255) DEFAULT NULL,
+  `quan_huyen` varchar(255) DEFAULT NULL,
+  `tinh_thanh` varchar(255) DEFAULT NULL,
   `loai_dia_chi` int DEFAULT NULL,
-  `sdt` varchar(15) DEFAULT '0',
-  `ten_nguoi_nhan` varchar(200) DEFAULT NULL,
+  `sdt` varchar(255) DEFAULT NULL,
+  `ten_nguoi_nhan` varchar(255) DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
-  PRIMARY KEY (`id_dia_chi`)
+  PRIMARY KEY (`id_dia_chi`),
+  KEY `id_tai_khoan_idx` (`id_tk`),
+  CONSTRAINT `id_tk` FOREIGN KEY (`id_tk`) REFERENCES `tai_khoan` (`id_tai_khoan`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -131,12 +137,12 @@ DROP TABLE IF EXISTS `giam_gia`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `giam_gia` (
   `id_giam_gia` int NOT NULL AUTO_INCREMENT,
-  `ma_giam_gia` varchar(45) NOT NULL,
-  `ten_chuong_trinh` varchar(200) NOT NULL,
+  `ma_giam_gia` varchar(255) DEFAULT NULL,
+  `ten_chuong_trinh` varchar(255) DEFAULT NULL,
   `ngay_bat_dau` date NOT NULL,
   `ngay_ket_thuc` date NOT NULL,
-  `muc_giam_phan_tram` decimal(20,0) DEFAULT NULL,
-  `muc_giam_tien_mat` decimal(20,0) DEFAULT NULL,
+  `muc_giam_phan_tram` decimal(38,2) DEFAULT NULL,
+  `muc_giam_tien_mat` decimal(38,2) DEFAULT NULL,
   `trang_thai` int DEFAULT '0',
   PRIMARY KEY (`id_giam_gia`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -162,12 +168,13 @@ CREATE TABLE `giam_gia_chi_tiet` (
   `id_ggct` int NOT NULL AUTO_INCREMENT,
   `id_ctsp` int DEFAULT NULL,
   `id_giam_gia` int DEFAULT NULL,
-  `don_gia` decimal(20,0) NOT NULL,
-  `so_tien_con_lai` decimal(20,0) NOT NULL,
+  `don_gia` decimal(38,2) DEFAULT NULL,
+  `so_tien_con_lai` decimal(38,2) DEFAULT NULL,
   `trang_thai` int NOT NULL,
   PRIMARY KEY (`id_ggct`),
   KEY `id_ctsp_idx` (`id_ctsp`),
   KEY `id_giam_gia_idx` (`id_giam_gia`),
+  CONSTRAINT `id_ctsp2` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`),
   CONSTRAINT `id_giam_gia` FOREIGN KEY (`id_giam_gia`) REFERENCES `giam_gia` (`id_giam_gia`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -190,8 +197,8 @@ DROP TABLE IF EXISTS `hinh_thuc_thanh_toan`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `hinh_thuc_thanh_toan` (
   `id_httt` int NOT NULL AUTO_INCREMENT,
-  `hinh_thuc` varchar(45) DEFAULT NULL,
-  `mo_ta` varchar(45) DEFAULT NULL,
+  `hinh_thuc` varchar(255) DEFAULT NULL,
+  `mo_ta` varchar(255) DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
   PRIMARY KEY (`id_httt`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -217,20 +224,20 @@ CREATE TABLE `hoa_don` (
   `id_hd` int NOT NULL AUTO_INCREMENT,
   `id_tai_khoan` int DEFAULT NULL,
   `id_httt` int DEFAULT NULL,
-  `ma_hd` varchar(20) DEFAULT NULL,
+  `ma_hd` varchar(255) DEFAULT NULL,
   `ngay_tao` date DEFAULT NULL,
   `ngay_thanh_toan` date DEFAULT NULL,
-  `so_tien_giam_gia` decimal(20,0) DEFAULT '0',
-  `thanh_tien` decimal(20,0) DEFAULT '0',
-  `tien_dua` decimal(20,0) DEFAULT '0',
-  `tien_thua` decimal(20,0) DEFAULT '0',
-  `tien_ship` decimal(20,0) DEFAULT '0',
-  `tong_tien` decimal(20,0) DEFAULT '0',
-  `ten_kh` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `sdt_kh` varchar(30) DEFAULT NULL,
-  `ten_ship` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `sdt_ship` varchar(30) DEFAULT NULL,
-  `dia_chi` varchar(150) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `so_tien_giam_gia` decimal(38,2) DEFAULT NULL,
+  `thanh_tien` decimal(38,2) DEFAULT NULL,
+  `tien_dua` decimal(38,2) DEFAULT NULL,
+  `tien_thua` decimal(38,2) DEFAULT NULL,
+  `tien_ship` decimal(38,2) DEFAULT NULL,
+  `tong_tien` decimal(38,2) DEFAULT NULL,
+  `ten_kh` varchar(255) DEFAULT NULL,
+  `sdt_kh` varchar(255) DEFAULT NULL,
+  `ten_ship` varchar(255) DEFAULT NULL,
+  `sdt_ship` varchar(255) DEFAULT NULL,
+  `dia_chi` varchar(255) DEFAULT NULL,
   `ngay_du_tinh_nhan` date DEFAULT NULL,
   `nga_bat_dau_giao` date DEFAULT NULL,
   `ngay_giao_thanh_cong` date DEFAULT NULL,
@@ -264,12 +271,14 @@ CREATE TABLE `hoa_don_chi_tiet` (
   `id_hd` int DEFAULT NULL,
   `id_ctsp` int DEFAULT NULL,
   `so_luong` int DEFAULT NULL,
-  `don_gia` decimal(20,0) DEFAULT '0',
-  `ly_do_huy` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `don_gia` decimal(38,2) DEFAULT NULL,
+  `ly_do_huy` varchar(255) DEFAULT NULL,
   `trang_thai` int DEFAULT '0',
+  `idHdct` int NOT NULL,
   PRIMARY KEY (`id_hdct`),
-  KEY `IDCTSP_idx` (`id_ctsp`),
-  KEY `id_hd_idx` (`id_hd`),
+  KEY `id_hd_idx` (`id_hd`) /*!80000 INVISIBLE */,
+  KEY `id_ctsp_idx` (`id_ctsp`),
+  CONSTRAINT `id_ctsp1` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`),
   CONSTRAINT `id_hd` FOREIGN KEY (`id_hd`) REFERENCES `hoa_don` (`id_hd`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -293,8 +302,9 @@ DROP TABLE IF EXISTS `images`;
 CREATE TABLE `images` (
   `id_images` int NOT NULL AUTO_INCREMENT,
   `id_ctsp` int DEFAULT NULL,
-  `images` text,
+  `images` varchar(255) DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
+  `idImages` int NOT NULL,
   PRIMARY KEY (`id_images`),
   KEY `id_ctsp_idx` (`id_ctsp`),
   CONSTRAINT `id_ctsp` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`)
@@ -321,9 +331,10 @@ CREATE TABLE `lich_su_giam_gia` (
   `id_lsgg` int NOT NULL AUTO_INCREMENT,
   `id_hd` int DEFAULT NULL,
   `id_ggct` int DEFAULT NULL,
-  `gia_ban_dau` varchar(45) DEFAULT NULL,
-  `gia_da_giam` varchar(45) DEFAULT NULL,
-  `ngay_mua` varchar(45) DEFAULT NULL,
+  `gia_ban_dau` varchar(255) DEFAULT NULL,
+  `gia_da_giam` varchar(255) DEFAULT NULL,
+  `ngay_mua` varchar(255) DEFAULT NULL,
+  `idLsgg` int NOT NULL,
   PRIMARY KEY (`id_lsgg`),
   KEY `id_ggct_idx` (`id_ggct`),
   KEY `id_hd_idx` (`id_hd`),
@@ -342,6 +353,30 @@ LOCK TABLES `lich_su_giam_gia` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `loai_co_ao`
+--
+
+DROP TABLE IF EXISTS `loai_co_ao`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `loai_co_ao` (
+  `id_co_ao` int NOT NULL AUTO_INCREMENT,
+  `loai_co_ao` varchar(45) DEFAULT NULL,
+  `trang_thai` int DEFAULT NULL,
+  PRIMARY KEY (`id_co_ao`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `loai_co_ao`
+--
+
+LOCK TABLES `loai_co_ao` WRITE;
+/*!40000 ALTER TABLE `loai_co_ao` DISABLE KEYS */;
+/*!40000 ALTER TABLE `loai_co_ao` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `loai_sp`
 --
 
@@ -350,9 +385,10 @@ DROP TABLE IF EXISTS `loai_sp`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `loai_sp` (
   `id_loaisp` int NOT NULL AUTO_INCREMENT,
-  `ma_lsp` varchar(20) NOT NULL,
-  `ten_lsp` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `ma_lsp` varchar(255) DEFAULT NULL,
+  `ten_lsp` varchar(255) DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
+  `id_lsp` int NOT NULL,
   PRIMARY KEY (`id_loaisp`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -375,8 +411,8 @@ DROP TABLE IF EXISTS `mau_sac`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `mau_sac` (
   `id_ms` int NOT NULL AUTO_INCREMENT,
-  `ma_ms` varchar(20) NOT NULL,
-  `ten_ms` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `ma_ms` varchar(255) DEFAULT NULL,
+  `ten_ms` varchar(255) DEFAULT NULL,
   `trang_thai` int DEFAULT '0',
   PRIMARY KEY (`id_ms`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -399,11 +435,11 @@ DROP TABLE IF EXISTS `ong_tay_ao`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `ong_tay_ao` (
-  `id_ong_tay` int NOT NULL AUTO_INCREMENT,
-  `ma_ong_tay` varchar(45) DEFAULT NULL,
-  `loai_ong_tay` varchar(45) DEFAULT NULL,
+  `id_tay_ao` int NOT NULL AUTO_INCREMENT,
+  `ma_tay_ao` varchar(255) DEFAULT NULL,
+  `loai_tay_ao` varchar(255) DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
-  PRIMARY KEY (`id_ong_tay`)
+  PRIMARY KEY (`id_tay_ao`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -425,8 +461,8 @@ DROP TABLE IF EXISTS `san_pham`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `san_pham` (
   `id_sp` int NOT NULL AUTO_INCREMENT,
-  `ma_sp` varchar(20) NOT NULL,
-  `ten_sp` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
+  `ma_sp` varchar(255) DEFAULT NULL,
+  `ten_sp` varchar(255) DEFAULT NULL,
   `tinh_trang` int NOT NULL,
   PRIMARY KEY (`id_sp`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -450,8 +486,8 @@ DROP TABLE IF EXISTS `size`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `size` (
   `id_size` int NOT NULL AUTO_INCREMENT,
-  `ma_size` varchar(20) NOT NULL,
-  `ten_size` varchar(10) NOT NULL,
+  `ma_size` varchar(255) DEFAULT NULL,
+  `ten_size` varchar(255) DEFAULT NULL,
   `tinh_trang` int DEFAULT '0',
   PRIMARY KEY (`id_size`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -475,19 +511,16 @@ DROP TABLE IF EXISTS `tai_khoan`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tai_khoan` (
   `id_tai_khoan` int NOT NULL AUTO_INCREMENT,
-  `id_dia_chi` int DEFAULT NULL,
-  `ma_tai_khoan` varchar(20) DEFAULT NULL,
-  `ho` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `ten` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
-  `sdt` varchar(30) DEFAULT NULL,
-  `email` varchar(30) DEFAULT NULL,
-  `mat_khau` varchar(100) DEFAULT NULL,
+  `ma_tai_khoan` varchar(255) DEFAULT NULL,
+  `ho` varchar(255) DEFAULT NULL,
+  `ten` varchar(255) DEFAULT NULL,
+  `sdt` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `mat_khau` varchar(255) DEFAULT NULL,
   `chuc_vu` int DEFAULT '0',
   `quyen_vu` int DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
-  PRIMARY KEY (`id_tai_khoan`),
-  KEY `id_dia_chi_idx` (`id_dia_chi`),
-  CONSTRAINT `id_dia_chi` FOREIGN KEY (`id_dia_chi`) REFERENCES `dia_chi` (`id_dia_chi`)
+  PRIMARY KEY (`id_tai_khoan`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -509,11 +542,11 @@ DROP TABLE IF EXISTS `xuat_xu`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `xuat_xu` (
   `id_xx` int NOT NULL AUTO_INCREMENT,
-  `ma_xx` varchar(20) NOT NULL,
-  `ten_nuoc` varchar(30) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `ma_xx` varchar(255) DEFAULT NULL,
+  `ten_nuoc` varchar(255) DEFAULT NULL,
   `tinh_trang` int DEFAULT NULL,
   PRIMARY KEY (`id_xx`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -522,6 +555,7 @@ CREATE TABLE `xuat_xu` (
 
 LOCK TABLES `xuat_xu` WRITE;
 /*!40000 ALTER TABLE `xuat_xu` DISABLE KEYS */;
+INSERT INTO `xuat_xu` VALUES (17,'XX01','Y',0),(102,'XX02','Huhu',0),(104,'XX03 ','Huhu',0),(105,'XX04','Haa',0),(108,'ewq','ewq',0);
 /*!40000 ALTER TABLE `xuat_xu` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -534,4 +568,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-06-21  9:45:11
+-- Dump completed on 2023-07-03 11:30:44
