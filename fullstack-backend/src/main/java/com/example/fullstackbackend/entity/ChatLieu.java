@@ -32,7 +32,4 @@ public class ChatLieu {
     @Column(name = "tinh_trang")
     private Integer tinhTrang;
 
-//    Long da den day
-//    Hi
-
 }
