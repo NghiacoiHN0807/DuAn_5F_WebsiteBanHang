@@ -20,7 +20,7 @@ import lombok.Setter;
 @Table(name = "size")
 public class Size {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_size")
     private Integer idSize;
 

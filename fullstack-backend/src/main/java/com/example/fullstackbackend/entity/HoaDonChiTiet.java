@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 @Table(name = "hoa_don_chi_tiet")
 public class HoaDonChiTiet {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idHdct;
 
     @ManyToOne(fetch = FetchType.LAZY)

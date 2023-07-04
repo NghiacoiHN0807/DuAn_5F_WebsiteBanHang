@@ -23,7 +23,7 @@ import lombok.Setter;
 @Table(name = "images")
 public class Images {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idImages;
 
     @ManyToOne(fetch = FetchType.LAZY)

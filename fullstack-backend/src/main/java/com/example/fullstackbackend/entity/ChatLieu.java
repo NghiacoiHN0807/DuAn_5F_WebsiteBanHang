@@ -19,7 +19,7 @@ import lombok.Setter;
 @Table(name = "chat_lieu")
 public class ChatLieu {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_cl")
     private Integer idCl;
 

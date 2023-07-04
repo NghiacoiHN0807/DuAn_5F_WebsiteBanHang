@@ -20,7 +20,7 @@ function AppADM() {
               <HeaderADM />
               <div className="my-3">
                 <Routes>
-                  <Route path="/" element={<QLSP />} />
+                  <Route path="/home" element={<QLSP />} />
                   <Route path="/table-xuatXu" element={<TableXuatXu />} />
                 </Routes>
               </div>

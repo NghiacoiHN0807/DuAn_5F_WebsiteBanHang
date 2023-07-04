@@ -15,33 +15,33 @@ const Footer = (props) => {
           </div>
           <NavDropdown
             color="black"
-            title="Dropdown"
+            title="Product Management"
             id="basic-nav-dropdown"
             className="link-footer"
           >
-            <NavDropdown.Item href="#action/3.1">
-              <NavLink to="/table-xuatXu" className={"nav-link"}>
-                Table Xuat Xu
-              </NavLink>
-            </NavDropdown.Item>
-            <NavDropdown.Item href="#action/3.2">
-              Another action
-            </NavDropdown.Item>
-            <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+            <NavLink to="/table-xuatXu" className={"nav-link"}>
+              Table Xuat Xu
+            </NavLink>
+            <NavLink to="/home" className={"nav-link"}>
+              Product details
+            </NavLink>
+            <NavLink to="/home" className={"nav-link"}>
+              Product details
+            </NavLink>
             <NavDropdown.Divider />
-            <NavDropdown.Item href="#action/3.4">
-              Separated link
-            </NavDropdown.Item>
+            <NavLink to="/home" className={"nav-link"}>
+              Product details
+            </NavLink>
           </NavDropdown>
-          <Nav.Link href="/home" className="link-footer">
-            Active
-          </Nav.Link>
-          <Nav.Link eventKey="link-1" className="link-footer">
-            Link
-          </Nav.Link>
-          <Nav.Link eventKey="link-2" className="link-footer">
-            Link
-          </Nav.Link>
+          <NavLink to="/home" className={"nav-link"}>
+            Employee manager
+          </NavLink>
+          <NavLink to="/home" className={"nav-link"}>
+            Customer management
+          </NavLink>
+          <NavLink to="/home" className={"nav-link"}>
+            Sales statistics
+          </NavLink>
         </Nav>
       </footer>
     </>
