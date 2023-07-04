@@ -33,4 +33,6 @@ public class SanPham {
     @Column(name = "tinh_trang")
     private Integer tinhTrang;
 
+//    long van da den
+
 }
