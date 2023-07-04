@@ -23,7 +23,7 @@ import lombok.Setter;
 @Table(name = "tai_khoan")
 public class TaiKhoan {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tai_khoan")
     private Integer idTaiKhoan;
 

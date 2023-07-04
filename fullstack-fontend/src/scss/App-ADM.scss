@@ -57,6 +57,7 @@ code {
 //Footer
 footer {
   background-color: rgb(201, 199, 199);
+  height: 703px;
   .nav-container-footer {
     .col-2 {
       .nav-link {
@@ -65,7 +66,7 @@ footer {
       }
     }
   }
-  .link-footer {
+  .nav-link {
     color: black;
   }
 }

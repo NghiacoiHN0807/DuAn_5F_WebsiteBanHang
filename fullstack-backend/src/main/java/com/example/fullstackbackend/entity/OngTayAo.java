@@ -20,7 +20,7 @@ import lombok.Setter;
 @Table(name = "ong_tay_ao")
 public class OngTayAo {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tay_ao")
     private Integer idTayAo;
 
