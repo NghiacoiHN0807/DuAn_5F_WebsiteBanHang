@@ -1,5 +1,5 @@
-import "./css/App.scss";
-import "./css/Home.scss";
+import "./scss/App.scss";
+import "./scss/Home.scss";
 import Header from "./layout/Header";
 import TableXuatXu from "./components/TableXuatXu";
 import Container from "react-bootstrap/Container";
