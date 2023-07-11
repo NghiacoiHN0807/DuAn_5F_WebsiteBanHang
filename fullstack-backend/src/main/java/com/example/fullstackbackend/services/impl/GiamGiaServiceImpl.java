@@ -19,9 +19,9 @@ public class GiamGiaServiceImpl implements GiamGiaService {
     private GiamGiaRepository giamGiaRepository;
 
     @Override
-    public Page<GiamGia> getAll(Integer pageNo, Integer size) {
+    public Page<GiamGia> getAll(Integer pageNo, Integer size, Integer trangThai) {
         Pageable pageable = PageRequest.of(pageNo, size);
-        return giamGiaRepository.findAll(pageable);
+        return giamGiaRepository.findAllByTrangThai(trangThai, pageable);
     }
 
     @Override
@@ -51,6 +51,8 @@ public class GiamGiaServiceImpl implements GiamGiaService {
 
     @Override
     public void remove(Integer id) {
-        giamGiaRepository.deleteById(id);
+        GiamGia giamGia = getOne(id).orElseThrow();
+        giamGia.setTrangThai(0);
+        giamGiaRepository.save(giamGia);
     }
 }
