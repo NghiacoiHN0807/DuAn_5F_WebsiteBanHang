@@ -28,7 +28,7 @@ public class GiamGiaChiTietController {
     private GiamGiaChiTietService giamGiaChiTietService;
 
     @GetMapping("views")
-    Page<GiamGiaChiTiet> getAll(@RequestParam(value = "page", defaultValue = "0") Integer pageNo, @RequestParam(value = "size", defaultValue = "5") Integer size, @RequestParam(value = "trangThai", defaultValue = "1") Integer trangThai) {
+    Page<GiamGiaChiTiet> getAll(@RequestParam(value = "page", defaultValue = "0") Integer pageNo, @RequestParam(value = "size", defaultValue = "5") Integer size, @RequestParam(value = "trangThai", defaultValue = "0") Integer trangThai) {
         return giamGiaChiTietService.getAll(pageNo, size, trangThai);
     }
 

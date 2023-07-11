@@ -46,6 +46,6 @@ public class GiamGia {
     private BigDecimal mucGiamTienMat;
 
     @Column(name = "trang_thai")
-    private Integer trangThai = 1;
+    private Integer trangThai = 0;
 
 }
