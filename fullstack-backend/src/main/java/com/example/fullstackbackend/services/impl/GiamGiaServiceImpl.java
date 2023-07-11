@@ -52,7 +52,7 @@ public class GiamGiaServiceImpl implements GiamGiaService {
     @Override
     public void remove(Integer id) {
         GiamGia giamGia = getOne(id).orElseThrow();
-        giamGia.setTrangThai(0);
+        giamGia.setTrangThai(10);
         giamGiaRepository.save(giamGia);
     }
 }

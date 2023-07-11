@@ -46,7 +46,7 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     @Override
     public void remove(Integer id) {
         GiamGiaChiTiet giamGiaChiTiet = getOne(id).orElseThrow();
-        giamGiaChiTiet.setTrangThai(0);
+        giamGiaChiTiet.setTrangThai(10);
         giamGiaChiTietRepository.save(giamGiaChiTiet);
     }
 }
