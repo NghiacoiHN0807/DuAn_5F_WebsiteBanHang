@@ -74,7 +74,7 @@ const Header = (props) => {
               <NavLink to="/table-xuatXu" className={"nav-link"}>
                 <FontAwesomeIcon icon={faHeart} size="lg" />
               </NavLink>
-              <NavLink to="/table-xuatXu" className={"nav-link"}>
+              <NavLink to="/cart" className={"nav-link"}>
                 <FontAwesomeIcon icon={faCartShopping} size="lg" />{" "}
               </NavLink>
             </Nav>

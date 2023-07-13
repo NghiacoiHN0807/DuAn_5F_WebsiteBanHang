@@ -7,6 +7,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import { ToastContainer } from "react-toastify";
 import Footer from "./layout/Footer";
+import Cart from "./components/Cart";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/table-xuatXu" element={<TableXuatXu />} />
+              <Route path="/cart" element={<Cart />} />
             </Routes>
           </div>
         </Container>
