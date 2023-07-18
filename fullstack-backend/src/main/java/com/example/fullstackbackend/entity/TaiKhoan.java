@@ -27,9 +27,12 @@ public class TaiKhoan {
     @Column(name = "id_tai_khoan")
     private Integer idTaiKhoan;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_dia_chi", referencedColumnName = "id_dia_chi")
     private DiaChi idDiaChi;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_chuc_vu", referencedColumnName = "id_cv")
+    private ChucVu idChucVu;
 
     @Column(name = "ma_tai_khoan")
     private String maTaiKhoan;
@@ -48,12 +51,6 @@ public class TaiKhoan {
 
     @Column(name = "mat_khau")
     private String matKhau;
-
-    @Column(name = "chuc_vu")
-    private Integer chucVu;
-
-    @Column(name = "quyen_vu")
-    private Integer quyenVu;
 
     @Column(name = "trang_thai")
     private Integer trangThai;

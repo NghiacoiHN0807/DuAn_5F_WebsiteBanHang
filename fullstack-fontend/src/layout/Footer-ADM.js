@@ -34,6 +34,15 @@ const Footer = (props) => {
             </NavLink>
           </NavDropdown>
           <NavLink to="/home" className={"nav-link"}>
+            Online sales
+          </NavLink>
+          <NavLink to="/direct-sale" className={"nav-link"}>
+            Direct sales
+          </NavLink>
+          <NavLink to="/home" className={"nav-link"}>
+            Employee manager
+          </NavLink>
+          <NavLink to="/home" className={"nav-link"}>
             Employee manager
           </NavLink>
           <NavLink to="/home" className={"nav-link"}>

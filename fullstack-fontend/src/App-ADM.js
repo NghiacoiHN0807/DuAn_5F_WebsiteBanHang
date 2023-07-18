@@ -1,11 +1,13 @@
 import TableXuatXu from "./components/TableXuatXu";
 import Container from "react-bootstrap/Container";
-import { Routes, Route } from "react-router-dom";
 import QLSP from "./components/QuanLySanPham";
+import DireactSale from "./components/DirectSale-ADM";
+import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import HeaderADM from "./layout/Header-ADM";
 import FooterADM from "./layout/Footer-ADM";
 import "./scss/App-ADM.scss";
+import CartBillADM from "./components/Cart-Bill-ADM";
 
 function AppADM() {
   return (
@@ -22,6 +24,8 @@ function AppADM() {
                 <Routes>
                   <Route path="/home" element={<QLSP />} />
                   <Route path="/table-xuatXu" element={<TableXuatXu />} />
+                  <Route path="/direct-sale" element={<DireactSale />} />
+                  <Route path="/create-bill/:id" element={<CartBillADM />} />
                 </Routes>
               </div>
             </Container>
