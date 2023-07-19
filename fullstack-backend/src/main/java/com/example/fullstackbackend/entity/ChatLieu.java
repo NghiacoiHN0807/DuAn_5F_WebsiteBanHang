@@ -32,4 +32,11 @@ public class ChatLieu {
     @Column(name = "tinh_trang")
     private Integer tinhTrang;
 
+    public Integer getIdCl() {
+        return idCl;
+    }
+
+    public void setIdCl(Integer idCl) {
+        this.idCl = idCl;
+    }
 }

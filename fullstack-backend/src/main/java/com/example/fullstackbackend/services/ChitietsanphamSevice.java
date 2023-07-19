@@ -6,9 +6,9 @@ import org.springframework.data.domain.Page;
 import java.util.Optional;
 
 public interface ChitietsanphamSevice {
-    Page<ChiTietSanPham> chatlieuPage(Integer pageNo, Integer size);
+    Page<ChiTietSanPham> chiTietSP(Integer pageNo, Integer size);
 
-    void add(ChiTietSanPham add);
+    ChiTietSanPham add(ChiTietSanPham add);
 
     void delete(Integer id);
 

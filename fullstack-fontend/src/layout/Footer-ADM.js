@@ -22,8 +22,8 @@ const Footer = (props) => {
             <NavLink to="/table-xuatXu" className={"nav-link"}>
               Table Xuat Xu
             </NavLink>
-            <NavLink to="/home" className={"nav-link"}>
-              Product details
+            <NavLink to="/table-ctsp" className={"nav-link"}>
+              Table CTSP
             </NavLink>
             <NavLink to="/home" className={"nav-link"}>
               Product details

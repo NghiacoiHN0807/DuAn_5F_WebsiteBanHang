@@ -1,7 +1,8 @@
 import TableXuatXu from "./components/TableXuatXu";
+import QuanLySanPham from "./components/ChiTietSP/QuanLySanPham";
 import Container from "react-bootstrap/Container";
 import { Routes, Route } from "react-router-dom";
-import QLSP from "./components/QuanLySanPham";
+import Home from "./components/Home";
 import { ToastContainer } from "react-toastify";
 import HeaderADM from "./layout/Header-ADM";
 import FooterADM from "./layout/Footer-ADM";
@@ -20,8 +21,9 @@ function AppADM() {
               <HeaderADM />
               <div className="my-3">
                 <Routes>
-                  <Route path="/home" element={<QLSP />} />
+                  <Route path="/home" element={<Home />} />
                   <Route path="/table-xuatXu" element={<TableXuatXu />} />
+                  <Route path="/table-ctsp" element={<QuanLySanPham />} />
                 </Routes>
               </div>
             </Container>

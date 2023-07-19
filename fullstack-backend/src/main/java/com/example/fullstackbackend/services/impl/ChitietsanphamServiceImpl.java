@@ -17,14 +17,14 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamSevice {
     @Autowired
     private ChitietsanphamRepository chitietsanphamRepository;
     @Override
-    public Page<ChiTietSanPham> chatlieuPage(Integer pageNo, Integer size) {
+    public Page<ChiTietSanPham> chiTietSP(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return chitietsanphamRepository.findAll(pageable);
     }
 
     @Override
-    public void add(ChiTietSanPham add) {
-        chitietsanphamRepository.save(add);
+    public ChiTietSanPham add(ChiTietSanPham add) {
+        return chitietsanphamRepository.save(add);
     }
 
     @Override

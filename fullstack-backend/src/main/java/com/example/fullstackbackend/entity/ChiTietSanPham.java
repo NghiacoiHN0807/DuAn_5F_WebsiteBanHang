@@ -32,33 +32,37 @@ public class ChiTietSanPham {
     @Column(name = "ma_ctsp")
     private String maCtsp;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_cl", referencedColumnName = "id_cl")
     private ChatLieu idCl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_ms", referencedColumnName = "id_ms")
     private MauSac idMs;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_size", referencedColumnName = "id_size")
     private Size idSize;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_sp", referencedColumnName = "id_sp")
     private SanPham idSp;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_lsp", referencedColumnName = "id_lsp")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_lsp", referencedColumnName = "id_loaisp")
     private LoaiSp isLsp;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_xx", referencedColumnName = "id_xx")
     private XuatXu idXx;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_tay_ao", referencedColumnName = "id_tay_ao")
     private OngTayAo idTayAo;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_co_ao", referencedColumnName = "id_co_ao")
+    private LoaiCoAo idLoaiCoAo;
 
     @Column(name = "mo_ta")
     private String moTa;
