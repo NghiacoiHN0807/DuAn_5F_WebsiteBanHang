@@ -1,9 +1,8 @@
-// import { toast } from "react-toastify";
-import { useState } from "react";
+import {toast} from "react-toastify";
+import {useState} from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { postAddXuatXu } from "../services/xuatXuSevice";
-import { toast } from "react-toastify";
+import {postAddXuatXu} from "../services/xuatXuSevice";
 
 const ModelAddNew = (props) => {
   const { show, handleClose } = props;
