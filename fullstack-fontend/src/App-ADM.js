@@ -6,6 +6,7 @@ import { ToastContainer } from "react-toastify";
 import HeaderADM from "./layout/Header-ADM";
 import FooterADM from "./layout/Footer-ADM";
 import "./scss/App-ADM.scss";
+import TableTaiKhoanKH from "./components/TaiKhoanKhachHang/TableTKKhachHang";
 
 function AppADM() {
   return (
@@ -22,6 +23,7 @@ function AppADM() {
                 <Routes>
                   <Route path="/home" element={<QLSP />} />
                   <Route path="/table-xuatXu" element={<TableXuatXu />} />
+                  <Route path="/table-taiKhoanKH" element={<TableTaiKhoanKH />} />
                 </Routes>
               </div>
             </Container>

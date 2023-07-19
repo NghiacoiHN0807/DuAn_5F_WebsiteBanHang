@@ -6,6 +6,7 @@ import ModalsAddNewTKKH from "./ModalsAddNewTKKH";
 import ModelConfirmTKKH from "./ModelConfirmTKKH";
 
 const TableTaiKhoanKH = (props) => {
+
     //Set value for table
     const [listTaiKhoanKH, setlistTaiKhoanKH] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
@@ -87,11 +88,14 @@ const TableTaiKhoanKH = (props) => {
                                             className="btn btn-outline-danger">
                                         Delete
                                     </button>
-                                    {" "}
-                                    <button type="button"
-                                            className="btn btn-outline-warning">
+                                    <button
+                                            type="button"
+                                            className="btn btn-outline-danger">
                                         Update
                                     </button>
+
+
+
                                 </td>
                             </tr>
                         );
@@ -125,6 +129,7 @@ const TableTaiKhoanKH = (props) => {
                               isDataTaiKhoanKH={isDataTaiKhoanKH}
                               getTaiKhoanKH={getTaiKhoanKH}
             />
+
         </>
     );
 };

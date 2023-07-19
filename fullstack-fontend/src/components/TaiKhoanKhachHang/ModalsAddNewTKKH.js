@@ -1,8 +1,8 @@
-import {toast} from "react-toastify";
 import {useState} from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import {postAddTaiKhoanKhachHang} from "../../services/taiKhoanKhachHangSevice";
+import {toast} from "react-toastify";
 
 const ModelAddNewTKKH = (props) => {
     const {show, handleClose} = props;

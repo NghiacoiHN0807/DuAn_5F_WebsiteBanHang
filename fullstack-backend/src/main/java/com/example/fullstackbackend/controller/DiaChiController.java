@@ -1,47 +1,39 @@
 package com.example.fullstackbackend.controller;
 
-import com.example.fullstackbackend.entity.XuatXu;
-import com.example.fullstackbackend.exception.xuatXuNotFoundException;
-import com.example.fullstackbackend.services.XuatxuSevice;
+import com.example.fullstackbackend.entity.DiaChi;
+import com.example.fullstackbackend.exception.DiaChiNotFoundException;
+import com.example.fullstackbackend.services.DiaChiSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/xuat-xu/")
+@RequestMapping("/dia-chi/")
 @CrossOrigin("http://localhost:3000/")
-public class XuatxuController {
+public class DiaChiController {
     @Autowired
-    private XuatxuSevice xuatxuSevice;
+    private DiaChiSevice DiaChiSevice;
 
     @GetMapping("view-all")
-    public Page<XuatXu> viewAll(@RequestParam(defaultValue = "0") Integer page,
+    public Page<DiaChi> viewAll(@RequestParam(defaultValue = "0") Integer page,
                                 @RequestParam(defaultValue = "5") Integer size,
                                 @RequestParam("p") Optional<Integer> p) {
-        Page<XuatXu> xuatxus = xuatxuSevice.chatlieuPage(p.orElse(page), size);
-        return xuatxus;
+        Page<DiaChi> DiaChis = DiaChiSevice.Page(p.orElse(page), size);
+        return DiaChis;
     }
 
     @PostMapping("add")
-    public XuatXu add(@Valid @RequestBody XuatXu xuatxu,
+    public DiaChi add(@Valid @RequestBody DiaChi DiaChi,
                       BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
-            return xuatxuSevice.add(xuatxu);
+            return DiaChiSevice.add(DiaChi);
         }
     }
 
@@ -51,24 +43,24 @@ public class XuatxuController {
                          @RequestParam(defaultValue = "5") Integer size, @RequestParam("p")
                              Optional<Integer> p, Model model) {
 
-        XuatXu xuatxu = new XuatXu();
-        model.addAttribute("add", xuatxu);
+        DiaChi DiaChi = new DiaChi();
+        model.addAttribute("add", DiaChi);
 
-        Optional<XuatXu> xuatxu1 = xuatxuSevice.detail(id);
-        model.addAttribute("getOne", xuatxu1.get());
+        Optional<DiaChi> DiaChi1 = DiaChiSevice.detail(id);
+        model.addAttribute("getOne", DiaChi1.get());
 
-        Page<XuatXu> chatlieus = xuatxuSevice.chatlieuPage(p.orElse(page), size);
-        model.addAttribute("xuatxus", chatlieus);
+        Page<DiaChi> diaChis = DiaChiSevice.Page(p.orElse(page), size);
+        model.addAttribute("DiaChis", diaChis);
 
-        return "XuatXu";
+        return "DiaChi";
     }
 
     @DeleteMapping("delete/{id}")
     public String delete(@PathVariable("id") Integer id) {
-        if (!xuatxuSevice.checkExists(id)) {
-            throw new xuatXuNotFoundException(id);
+        if (!DiaChiSevice.checkExists(id)) {
+            throw new DiaChiNotFoundException(id);
         } else {
-            xuatxuSevice.delete(id);
+            DiaChiSevice.delete(id);
             return "";
         }
     }
@@ -76,17 +68,17 @@ public class XuatxuController {
     @GetMapping("view-update/{id}")
     public String viewUpdate(@PathVariable("id") Integer id, Model model) {
 
-        XuatXu xuatxu = new XuatXu();
-        model.addAttribute("update", xuatxu);
+        DiaChi DiaChi = new DiaChi();
+        model.addAttribute("update", DiaChi);
 
-        Optional<XuatXu> chatlieu = xuatxuSevice.detail(id);
-        model.addAttribute("getOne", chatlieu.get());
+        Optional<DiaChi> diaChi = DiaChiSevice.detail(id);
+        model.addAttribute("getOne", diaChi.get());
 
-        return "Update-XuatXu";
+        return "Update-DiaChi";
     }
 
     @PostMapping("update")
-    public XuatXu update(@RequestBody XuatXu xuatxu) {
-        return xuatxuSevice.update(xuatxu);
+    public DiaChi update(@RequestBody DiaChi DiaChi) {
+        return DiaChiSevice.update(DiaChi);
     }
 }

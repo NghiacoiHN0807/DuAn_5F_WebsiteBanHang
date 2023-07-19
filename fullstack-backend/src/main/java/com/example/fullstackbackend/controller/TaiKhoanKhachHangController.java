@@ -17,68 +17,72 @@ import java.util.Optional;
 @CrossOrigin("http://localhost:3000/")
 public class TaiKhoanKhachHangController {
     @Autowired
-    private TaiKhoanKhachHangSevice TaiKhoanKHSevice;
+    private TaiKhoanKhachHangSevice TaiKhoanKhachHangKHSevice;
 
     @GetMapping("view-all")
     public Page<TaiKhoan> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                @RequestParam(defaultValue = "5") Integer size,
-                                @RequestParam("p") Optional<Integer> p) {
-        Page<TaiKhoan> TaiKhoans = TaiKhoanKHSevice.Page(p.orElse(page), size);
-        return TaiKhoans;
+                                  @RequestParam(defaultValue = "5") Integer size,
+                                  @RequestParam("p") Optional<Integer> p) {
+        Page<TaiKhoan> TaiKhoanKhachHangs = TaiKhoanKhachHangKHSevice.Page(p.orElse(page), size);
+        return TaiKhoanKhachHangs;
     }
 
     @PostMapping("add")
     public TaiKhoan add(@Valid @RequestBody TaiKhoan TaiKhoan,
-                      BindingResult bindingResult) {
+                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
-            return TaiKhoanKHSevice.add(TaiKhoan);
+            return TaiKhoanKhachHangKHSevice.add(TaiKhoan);
         }
     }
 
     @GetMapping("detail/{id}")
-    public String detail(@PathVariable("id") Integer id,
-                         @RequestParam(defaultValue = "0") Integer page,
-                         @RequestParam(defaultValue = "5") Integer size, @RequestParam("p")
-                             Optional<Integer> p, Model model) {
+    public Optional<TaiKhoan> detail(@PathVariable("id") Integer id,
+                                     @RequestParam(defaultValue = "0") Integer page,
+                                     @RequestParam(defaultValue = "5") Integer size, @RequestParam("p")
+                         Optional<Integer> p, Model model) {
 
         TaiKhoan TaiKhoan = new TaiKhoan();
         model.addAttribute("add", TaiKhoan);
 
-        Optional<TaiKhoan> TaiKhoan1 = TaiKhoanKHSevice.detail(id);
-        model.addAttribute("getOne", TaiKhoan1.get());
+        Optional<TaiKhoan> TaiKhoanKhachHang1 = TaiKhoanKhachHangKHSevice.detail(id);
+        model.addAttribute("getOne", TaiKhoanKhachHang1.get());
 
-        Page<TaiKhoan> taiKhoans = TaiKhoanKHSevice.Page(p.orElse(page), size);
-        model.addAttribute("TaiKhoans", taiKhoans);
+        Page<TaiKhoan> TaiKhoanKhachHangs = TaiKhoanKhachHangKHSevice.Page(p.orElse(page), size);
+        model.addAttribute("TaiKhoanKhachHangs", TaiKhoanKhachHangs);
 
-        return "TaiKhoan";
+        return TaiKhoanKhachHang1;
     }
 
     @DeleteMapping("delete/{id}")
     public String delete(@PathVariable("id") Integer id) {
-        if (!TaiKhoanKHSevice.checkExists(id)) {
+        if (!TaiKhoanKhachHangKHSevice.checkExists(id)) {
             throw new TaiKhoanKHNotFoundException(id);
         } else {
-            TaiKhoanKHSevice.delete(id);
+            TaiKhoanKhachHangKHSevice.delete(id);
             return "";
         }
     }
 
     @GetMapping("view-update/{id}")
-    public String viewUpdate(@PathVariable("id") Integer id, Model model) {
+    public Optional<TaiKhoan> viewUpdate(@PathVariable("id") Integer id, Model model) {
 
         TaiKhoan TaiKhoan = new TaiKhoan();
         model.addAttribute("update", TaiKhoan);
 
-        Optional<TaiKhoan> taiKhoan = TaiKhoanKHSevice.detail(id);
-        model.addAttribute("getOne", taiKhoan.get());
+        Optional<TaiKhoan> taiKhoanKhachHang = TaiKhoanKhachHangKHSevice.detail(id);
+        model.addAttribute("getOne", taiKhoanKhachHang.get());
 
-        return "Update-TaiKhoan";
+        return taiKhoanKhachHang;
     }
 
     @PostMapping("update")
-    public TaiKhoan update(@RequestBody TaiKhoan TaiKhoan) {
-        return TaiKhoanKHSevice.update(TaiKhoan);
+    public TaiKhoan update(@RequestBody TaiKhoan TaiKhoan,BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return null;
+        } else {
+        return TaiKhoanKhachHangKHSevice.update(TaiKhoan);
+    }
     }
 }

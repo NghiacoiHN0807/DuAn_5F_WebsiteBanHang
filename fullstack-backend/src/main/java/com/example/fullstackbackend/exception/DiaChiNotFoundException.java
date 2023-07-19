@@ -1,7 +1,7 @@
 package com.example.fullstackbackend.exception;
 
-public class xuatXuNotFoundException extends RuntimeException{
-    public xuatXuNotFoundException(Integer id){
-        super("Could not found the xuatXu with id: "+id);
+public class DiaChiNotFoundException extends RuntimeException{
+    public DiaChiNotFoundException(Integer id){
+        super("Could not found the Dia Chi with id: "+id);
     }
 }
