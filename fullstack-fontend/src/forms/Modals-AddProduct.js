@@ -9,9 +9,12 @@ import { useEffect } from "react";
 import { postAddDirect } from "../services/DirectSaleSevice";
 import Col from "react-bootstrap/Col";
 import Image from "react-bootstrap/Image";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
+import ReactPaginate from "react-paginate";
 
 const ModalAddProduct = (props) => {
-  const { show, handleClose } = props;
+  const { show, handleClose, selectDataCart } = props;
   //Show Data on Table
   const [listData, setListData] = useState([]);
   const [numberPages, setNumberPages] = useState([]);
@@ -27,15 +30,16 @@ const ModalAddProduct = (props) => {
       setNumberPages(getData.totalPages);
     }
   };
+  //Next Page
+  const handlePageClick = (event) => {
+    getAllDataImages(+event.selected);
+  };
   //Insert product
   const param = useParams();
   const idHdParam = param.id;
   const handleChoose = async (idCtsp) => {
-    console.log("Enter Data", idCtsp);
-    console.log("Enter product", idCtsp.idCtsp);
-    console.log("Enter giaBan", idCtsp.giaBan);
-    console.log("Enter IdHD", idHdParam);
     await postAddDirect(idCtsp, 1, idCtsp.giaBan, idHdParam, 0);
+    selectDataCart();
   };
 
   return (
@@ -74,15 +78,15 @@ const ModalAddProduct = (props) => {
                           <Image src={`../assets/${item.images}`} rounded />
                         </Col>
                       </td>
-                      <td>{item.idCtsp.idSp.tenSp}</td>
                       <td>{item.idCtsp.maCtsp}</td>
+                      <td>{item.idCtsp.idSp.tenSp}</td>
                       <td>{item.idCtsp.giaBan}</td>
                       <td>
                         <Button
                           onClick={() => handleChoose(item.idCtsp)}
                           variant="success"
                         >
-                          Choose
+                          <FontAwesomeIcon icon={faCartPlus} size="lg" />
                         </Button>
                       </td>
                     </tr>
@@ -90,6 +94,26 @@ const ModalAddProduct = (props) => {
                 })}
             </tbody>
           </Table>
+          <ReactPaginate
+            breakLabel="..."
+            nextLabel="next >"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={5}
+            pageCount={numberPages}
+            previousLabel="< previous"
+            renderOnZeroPageCount={null}
+            //Class form
+            pageClassName="page-item"
+            pageLinkClassName="page-link"
+            previousClassName="page-item"
+            previousLinkClassName="page-link"
+            nextClassName="page-item"
+            nextLinkClassName="page-link"
+            breakClassName="page-item"
+            breakLinkClassName="page-link"
+            containerClassName="pagination"
+            activeClassName="active"
+          />
         </Modal.Body>
         <Button variant="secondary" onClick={handleClose}>
           Close

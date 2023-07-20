@@ -1,28 +1,35 @@
 import Table from "react-bootstrap/Table";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { postAddBill, selectAllBill } from "../services/BillSevice";
+import { deleteHD, postAddBill, selectAllBill } from "../services/BillSevice";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import { postAddDirect } from "../services/DirectSaleSevice";
 import ReactPaginate from "react-paginate";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDeleteLeft, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 const DireactSale = (props) => {
   const [listBill, setListBill] = useState([]);
   // Show Data On Tables
   const [numberPages, setNumberPages] = useState([]);
   const getListData = async (page) => {
-    let res = await selectAllBill(page);
-    console.log("Check res: ", res.content);
-    setListBill(res.content);
-    setNumberPages(res.totalPages);
+    try {
+      let res = await selectAllBill(page);
+      console.log("Check res: ", res.content);
+      setListBill(res.content);
+      setNumberPages(res.totalPages);
+    } catch (error) {
+      console.error("Error in list bill: ", error);
+    }
   };
+  const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
-    getListData(0);
-  }, []);
+    getListData(currentPage);
+  }, [currentPage]);
   //Next Page
   const handlePageClick = (event) => {
     getListData(+event.selected);
+    setCurrentPage(+event.selected);
   };
 
   //Create a new Detail Direct
@@ -43,16 +50,26 @@ const DireactSale = (props) => {
   const handleAdd = async () => {
     const newValue = code + 1;
     setCode(newValue);
-    let res = await postAddBill(code, formattedDate, 0);
+    let res = await postAddBill(code, formattedDate, 8);
     toast.success("A shopping cart is created successfully");
     getIdHttp = res.idHd;
-    await postAddDirect(parseInt(getIdHttp));
-    console.log("Check setId : ", getIdHttp);
+    // await getDataCart(getIdHttp);
     navigate(`/create-bill/${getIdHttp}`);
   };
 
   //Delete
-  const handleDelete = (maXx) => {};
+  const handleDelete = async (item) => {
+    console.log(item);
+    if (item.trangThai === 8) {
+      await deleteHD(item.idHd);
+      toast.success("Successfully deleted this bill ");
+      getListData(currentPage);
+    } else if (item.trangThai === 9) {
+      toast.warn("This bill has been pain ");
+    } else {
+      toast.error("This bill was not deleted successfully ");
+    }
+  };
 
   return (
     <>
@@ -81,17 +98,17 @@ const DireactSale = (props) => {
                   <td>{item.maHd}</td>
                   <td>{item.tongTien}</td>
                   <td>{item.ngayTao}</td>
-                  <td>{item.tinhTrang === 0 ? "Paind" : "Unpaid"}</td>
+                  <td>{item.trangThai === 9 ? "Paid" : "Unpaid"}</td>
                   <td>
                     <button
                       onClick={() => handleDelete(item)}
                       type="button"
                       className="btn btn-outline-danger"
                     >
-                      Delete
+                      <FontAwesomeIcon icon={faDeleteLeft} size="lg" />
                     </button>{" "}
                     <button type="button" className="btn btn-outline-warning">
-                      Update
+                      <FontAwesomeIcon icon={faPenToSquare} size="lg" />
                     </button>
                   </td>
                 </tr>

@@ -1,12 +1,18 @@
 import "../scss/Car-Bill-ADM.scss";
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { detailBill } from "../services/BillSevice";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
 import ModalAddProduct from "../forms/Modals-AddProduct";
-import { getDetailOne } from "../services/DirectSaleSevice";
+import {
+  deleteProductOnCart,
+  getDetailOne,
+} from "../services/DirectSaleSevice";
+import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDeleteLeft } from "@fortawesome/free-solid-svg-icons";
 
 const CartBillADM = (props) => {
   //Get IdHd on http
@@ -17,26 +23,34 @@ const CartBillADM = (props) => {
   const [listHD, setlistHD] = useState([]);
   // const [listHD, setlistHD] = useState([]);
 
+  const getDetailHD = useCallback(async () => {
+    try {
+      let getData = await detailBill(idHdParam);
+      console.log("checkDaTa: ", getData);
+      setlistHD(getData);
+    } catch (error) {
+      console.error("Error: ", error);
+    }
+  }, [idHdParam]);
   useEffect(() => {
     getDetailHD();
-  }, []);
-
-  const getDetailHD = async () => {
-    let getData = await detailBill(idHdParam);
-    console.log("checkDaTa: ", getData);
-    setlistHD(getData);
-  };
+  }, [getDetailHD]);
   //Select Product On Cart
   const [DataCart, setDataCart] = useState([]);
-  const selectDataCart = async () => {
-    console.log("Check Data Cart: ", idHdParam);
-    let res = await getDetailOne(idHdParam);
-    console.log("Check Data Cart: ", res);
-    setDataCart(res);
-  };
+
+  const selectDataCart = useCallback(async () => {
+    try {
+      console.log("Check Data Cart: ", idHdParam);
+      let res = await getDetailOne(idHdParam);
+      console.log("Check Data Cart: ", res);
+      setDataCart(res);
+    } catch (error) {
+      console.error("Error: ", error);
+    }
+  }, [idHdParam]);
   useEffect(() => {
     selectDataCart();
-  }, []);
+  }, [selectDataCart]);
   //Add Product
   const [showModalsAdd, setShowModalAdd] = useState(false);
   const handleAddProduct = () => {
@@ -45,7 +59,12 @@ const CartBillADM = (props) => {
   const handleClose = () => {
     setShowModalAdd(false);
   };
-
+  //Delete product on cart
+  const handleDelete = async (item) => {
+    await deleteProductOnCart(item.idHdct);
+    selectDataCart();
+    toast.success("Delete the product is successfully");
+  };
   return (
     <>
       <p>Bill Code: {listHD.maHd}</p>
@@ -84,6 +103,15 @@ const CartBillADM = (props) => {
                     <td>{item.idCtsp.idSp.tenSp}</td>
                     <td>{item.soLuong}</td>
                     <td>{item.donGia}</td>
+                    <td>
+                      <button
+                        onClick={() => handleDelete(item)}
+                        type="button"
+                        className="btn btn-outline-danger"
+                      >
+                        <FontAwesomeIcon icon={faDeleteLeft} size="lg" />
+                      </button>
+                    </td>
                   </tr>
                 );
               })}
@@ -114,7 +142,11 @@ const CartBillADM = (props) => {
         </Button>{" "}
       </div>
       {/* Add Modals */}
-      <ModalAddProduct show={showModalsAdd} handleClose={handleClose} />
+      <ModalAddProduct
+        show={showModalsAdd}
+        selectDataCart={selectDataCart}
+        handleClose={handleClose}
+      />
     </>
   );
 };

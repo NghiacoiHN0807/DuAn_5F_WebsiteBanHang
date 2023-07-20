@@ -1,6 +1,6 @@
 import custom from "./custom-axios";
 const selectAllBill = (page) => {
-  return custom.get(`/hoa-don/view-all?p=${page}`);
+  return custom.get(`/hoa-don/view-all-offline-invoice?p=${page}`);
 };
 const selectAllImgProduct = (page) => {
   return custom.get(`/images/view-all?p=${page}`);
@@ -14,10 +14,14 @@ const detailBill = (id_hd) => {
 const findByMaHD = (ma_hd) => {
   return custom.get(`/hoa-don/findByMaHD/${ma_hd}`);
 };
+const deleteHD = (id_hd) => {
+  return custom.put(`/hoa-don/delete/${id_hd}`);
+};
 export {
   selectAllBill,
   postAddBill,
   detailBill,
   findByMaHD,
   selectAllImgProduct,
+  deleteHD,
 };

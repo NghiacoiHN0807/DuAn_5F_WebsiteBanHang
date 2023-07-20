@@ -20,4 +20,13 @@ const addProduct = (idCtsp, soLuong, donGia, idHd) => {
     donGia,
   });
 };
-export { addProduct, getDataCart, postAddDirect, getDetailOne };
+const deleteProductOnCart = (idHdct) => {
+  return custom.delete(`/hoa-don-chi-tiet/delete/${idHdct}`);
+};
+export {
+  addProduct,
+  getDataCart,
+  postAddDirect,
+  getDetailOne,
+  deleteProductOnCart,
+};

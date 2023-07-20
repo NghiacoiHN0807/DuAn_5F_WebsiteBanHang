@@ -31,13 +31,19 @@ public class HoadonServiceImpl implements HoadonSevice {
     }
 
     @Override
+    public Page<HoaDon> hoaDonOffline(Integer pageNo, Integer size) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        return hoadonRepository.pageOfflineInvoice(pageable);
+    }
+
+    @Override
     public HoaDon add(HoaDon add) {
         return hoadonRepository.save(add);
     }
 
     @Override
     public void delete(Integer id) {
-        hoadonRepository.deleteById(id);
+        hoadonRepository.delete(id);
     }
 
     @Override
