@@ -1,4 +1,6 @@
 import TableXuatXu from "./components/TableXuatXu";
+import ViewChucVu from "./components/ViewChucVu";
+import ViewTaiKhoan from "./components/ViewTaiKhoan";
 import Container from "react-bootstrap/Container";
 import { Routes, Route } from "react-router-dom";
 import QLSP from "./components/QuanLySanPham";
@@ -22,6 +24,9 @@ function AppADM() {
                 <Routes>
                   <Route path="/home" element={<QLSP />} />
                   <Route path="/table-xuatXu" element={<TableXuatXu />} />
+                  <Route path="/table-chucVu" element={<ViewChucVu />} />
+                  <Route path="/table-taiKhoan" element={<ViewTaiKhoan />} />
+
                 </Routes>
               </div>
             </Container>
