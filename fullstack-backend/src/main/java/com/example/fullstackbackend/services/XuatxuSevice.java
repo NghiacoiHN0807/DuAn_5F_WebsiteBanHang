@@ -10,7 +10,7 @@ public interface XuatxuSevice {
 
     List<XuatXu> getAll();
 
-    Page<XuatXu> chatlieuPage(Integer pageNo, Integer size);
+    Page<XuatXu> xuatXuPage(Integer pageNo, Integer size);
 
     XuatXu add(XuatXu add);
 

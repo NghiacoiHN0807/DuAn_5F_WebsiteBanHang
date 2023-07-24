@@ -39,8 +39,12 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamSevice {
 
     @Override
     public Optional<ChiTietSanPham> detail(Integer id) {
-        Optional<ChiTietSanPham> xuatxu = chitietsanphamRepository.findById(id);
-        return xuatxu;
+        return chitietsanphamRepository.findById(id);
+    }
+
+    @Override
+    public Boolean checkExists(Integer id) {
+        return chitietsanphamRepository.existsById(id);
     }
 
 }

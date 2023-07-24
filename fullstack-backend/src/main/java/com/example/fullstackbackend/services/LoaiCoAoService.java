@@ -11,13 +11,15 @@ public interface LoaiCoAoService {
 
     List<LoaiCoAo> getAll();
 
-    Page<LoaiCoAo> LoaiCoAoPage(Integer pageNo, Integer size);
+    Page<LoaiCoAo> loaiCoAoPage(Integer pageNo, Integer size);
 
-    void add(LoaiCoAo add);
+    LoaiCoAo add(LoaiCoAo add);
 
     void delete(Integer id);
 
-    void update(LoaiCoAo update);
+    LoaiCoAo update(LoaiCoAo update);
 
     Optional<LoaiCoAo> detail(Integer id);
+
+    Boolean checkExists(Integer id);
 }

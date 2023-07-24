@@ -1,5 +1,6 @@
-import TableXuatXu from "./components/TableXuatXu";
-import QuanLySanPham from "./components/ChiTietSP/QuanLySanPham";
+import XuatXuMain from "./components/XuatXu/XuatXuMain";
+import CTSPMain from "./components/ChiTietSP/CTSPMain";
+import ChatLieuMain from "./components/ChatLieu/ChatLieuMain";
 import Container from "react-bootstrap/Container";
 import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
@@ -22,8 +23,18 @@ function AppADM() {
               <div className="my-3">
                 <Routes>
                   <Route path="/home" element={<Home />} />
-                  <Route path="/table-xuatXu" element={<TableXuatXu />} />
-                  <Route path="/table-ctsp" element={<QuanLySanPham />} />
+                  <Route
+                    path="/quan-ly-san-pham/xuat-xu"
+                    element={<XuatXuMain />}
+                  />
+                  <Route
+                    path="/quan-ly-san-pham/chi-tiet-san-pham"
+                    element={<CTSPMain />}
+                  />
+                  <Route
+                    path="/quan-ly-san-pham/chat-lieu"
+                    element={<ChatLieuMain />}
+                  />
                 </Routes>
               </div>
             </Container>

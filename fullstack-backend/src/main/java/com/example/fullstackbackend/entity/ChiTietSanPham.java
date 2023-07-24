@@ -1,6 +1,7 @@
 package com.example.fullstackbackend.entity;
 
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -50,7 +51,7 @@ public class ChiTietSanPham {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_lsp", referencedColumnName = "id_loaisp")
-    private LoaiSp isLsp;
+    private LoaiSp idLsp;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_xx", referencedColumnName = "id_xx")

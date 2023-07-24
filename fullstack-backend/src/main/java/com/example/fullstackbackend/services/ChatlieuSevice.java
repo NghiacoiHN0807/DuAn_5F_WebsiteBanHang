@@ -11,12 +11,14 @@ public interface ChatlieuSevice {
 
     Page<ChatLieu> chatlieuPage(Integer pageNo, Integer size);
 
-    void add(ChatLieu add);
+    ChatLieu add(ChatLieu add);
 
     void delete(Integer id);
 
-    void update(ChatLieu update);
+    ChatLieu update(ChatLieu update);
 
     Optional<ChatLieu> detail(Integer id);
+
+    Boolean checkExists(Integer id);
 
 }

@@ -6,16 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-@Controller
+@RestController
+@CrossOrigin("http://localhost:3000/")
 @RequestMapping("/loai-sp/")
 public class LoaiSpController {
     @Autowired
@@ -38,18 +41,8 @@ public class LoaiSpController {
     }
 
     @GetMapping("detail/{id}")
-    public String detail(@PathVariable("id") Integer id, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer size, @RequestParam("p") Optional<Integer> p, Model model) {
-
-        LoaiSp chatlieu1 = new LoaiSp();
-        model.addAttribute("add", chatlieu1);
-
-        Optional<LoaiSp> chatlieu = loaispSevice.detail(id);
-        model.addAttribute("getOne", chatlieu.get());
-
-        Page<LoaiSp> chatlieus = loaispSevice.chatlieuPage(p.orElse(page), size);
-        model.addAttribute("LoaiSP", chatlieus);
-
-        return "LoaiSP";
+    public Optional<LoaiSp> detail(@PathVariable("id") Integer id) {
+        return loaispSevice.detail(id);
     }
 
     @GetMapping("delete/{id}")

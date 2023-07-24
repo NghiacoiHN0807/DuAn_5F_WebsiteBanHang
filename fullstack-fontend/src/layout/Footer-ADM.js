@@ -15,18 +15,21 @@ const Footer = (props) => {
           </div>
           <NavDropdown
             color="black"
-            title="Product Management"
+            title="Quản lý sản phẩm"
             id="basic-nav-dropdown"
             className="link-footer"
           >
-            <NavLink to="/table-xuatXu" className={"nav-link"}>
-              Table Xuat Xu
+            <NavLink
+              to="/quan-ly-san-pham/chi-tiet-san-pham"
+              className={"nav-link"}
+            >
+              Chi tiết sản phẩm
             </NavLink>
-            <NavLink to="/table-ctsp" className={"nav-link"}>
-              Table CTSP
+            <NavLink to="/quan-ly-san-pham/xuat-xu" className={"nav-link"}>
+              Xuất xứ
             </NavLink>
-            <NavLink to="/home" className={"nav-link"}>
-              Product details
+            <NavLink to="/quan-ly-san-pham/chat-lieu" className={"nav-link"}>
+              Chất liệu
             </NavLink>
             <NavDropdown.Divider />
             <NavLink to="/home" className={"nav-link"}>

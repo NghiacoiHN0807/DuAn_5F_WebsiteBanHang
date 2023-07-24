@@ -9,6 +9,7 @@ import com.example.fullstackbackend.entity.OngTayAo;
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.entity.Size;
 import com.example.fullstackbackend.entity.XuatXu;
+import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.ChatlieuSevice;
 import com.example.fullstackbackend.services.ChitietsanphamSevice;
 import com.example.fullstackbackend.services.LoaiCoAoService;
@@ -21,10 +22,10 @@ import com.example.fullstackbackend.services.XuatxuSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +33,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -78,11 +78,7 @@ public class ChitietsanphamController {
         return chiTietSP;
     }
 
-    @GetMapping("view-all/listCL")
-    public List<ChatLieu> listCL() {
-        List<ChatLieu> listCL = chatlieuSevice.getAll();
-        return listCL;
-    }
+
 
     @GetMapping("view-all/listMS")
     public List<MauSac> listMS() {
@@ -112,12 +108,7 @@ public class ChitietsanphamController {
         return listLSP;
     }
 
-    @GetMapping("view-all/listXX")
-    public List<XuatXu> listXX() {
 
-        List<XuatXu> listXX = xuatxuSevice.getAll();
-        return listXX;
-    }
 
     @GetMapping("view-all/listTayAo")
     public List<OngTayAo> listTayAo() {
@@ -144,43 +135,19 @@ public class ChitietsanphamController {
 
     }
 
-    @GetMapping("detail/{id}")
-    public String detail(@PathVariable("id") Integer id, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer size, @RequestParam("p") Optional<Integer> p, Model model) {
+//    @GetMapping("detail/{id}")
+//    public ChiTietSanPham detail(@PathVariable("id") Integer id) {
+//        return null;
+//    }
 
-        ChiTietSanPham xuatxu = new ChiTietSanPham();
-        model.addAttribute("add", xuatxu);
-
-        List<ChatLieu> chatlieus = chatlieuSevice.getAll();
-        model.addAttribute("chatlieus", chatlieus);
-
-        List<LoaiSp> loaisps = loaispSevice.getAll();
-        model.addAttribute("loaisps", loaisps);
-
-        List<SanPham> sanphams = sanPhamSevice.getAll();
-        model.addAttribute("sanphams", sanphams);
-
-        List<Size> sizes = sizeSevice.getAll();
-        model.addAttribute("sizes", sizes);
-
-        List<XuatXu> xuatxus1 = xuatxuSevice.getAll();
-        model.addAttribute("xuatxus1", xuatxus1);
-
-        List<MauSac> mausacs = mausacSevice.getAll();
-        model.addAttribute("mausacs", mausacs);
-
-        Optional<ChiTietSanPham> xuatxu1 = chitietsanphamSevice.detail(id);
-        model.addAttribute("getOne", xuatxu1.get());
-
-        Page<ChiTietSanPham> chatlieus1 = chitietsanphamSevice.chiTietSP(p.orElse(page), size);
-        model.addAttribute("xuatxus", chatlieus1);
-
-        return "ChiTietSanPham";
-    }
-
-    @GetMapping("delete/{id}")
-    public String delete(@PathVariable("id") Integer id, Model model) {
-        chitietsanphamSevice.delete(id);
-        return "redirect:/chi-tiet-san-pham/view-all";
+    @DeleteMapping("delete/{id}")
+    public String delete(@PathVariable("id") Integer id) {
+        if (!chitietsanphamSevice.checkExists(id)) {
+            throw new xuatXuNotFoundException(id);
+        } else {
+            chitietsanphamSevice.delete(id);
+            return "";
+        }
     }
 
     @GetMapping("view-update/{id}")

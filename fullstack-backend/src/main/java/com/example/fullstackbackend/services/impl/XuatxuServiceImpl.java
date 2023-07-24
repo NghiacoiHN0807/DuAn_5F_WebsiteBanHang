@@ -25,7 +25,7 @@ public class XuatxuServiceImpl implements XuatxuSevice {
     }
 
     @Override
-    public Page<XuatXu> chatlieuPage(Integer pageNo, Integer size) {
+    public Page<XuatXu> xuatXuPage(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return xuatxuRepository.findAll(pageable);
     }

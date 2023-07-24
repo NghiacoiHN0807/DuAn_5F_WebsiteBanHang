@@ -30,8 +30,8 @@ public class ChatlieuServiceImpl implements ChatlieuSevice {
     }
 
     @Override
-    public void add(ChatLieu chatlieu) {
-        chatlieuRepository.save(chatlieu);
+    public ChatLieu add(ChatLieu chatlieu) {
+        return chatlieuRepository.save(chatlieu);
     }
 
     @Override
@@ -40,8 +40,8 @@ public class ChatlieuServiceImpl implements ChatlieuSevice {
     }
 
     @Override
-    public void update(ChatLieu update) {
-        chatlieuRepository.save(update);
+    public ChatLieu update(ChatLieu update) {
+        return chatlieuRepository.save(update);
     }
 
     @Override
@@ -49,4 +49,10 @@ public class ChatlieuServiceImpl implements ChatlieuSevice {
         Optional<ChatLieu> chatlieu = chatlieuRepository.findById(id);
         return chatlieu;
     }
+
+    @Override
+    public Boolean checkExists(Integer id) {
+        return chatlieuRepository.existsById(id);
+    }
+
 }

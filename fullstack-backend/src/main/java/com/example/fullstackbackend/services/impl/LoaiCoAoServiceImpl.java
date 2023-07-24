@@ -24,14 +24,14 @@ public class LoaiCoAoServiceImpl implements LoaiCoAoService {
     }
 
     @Override
-    public Page<LoaiCoAo> LoaiCoAoPage(Integer pageNo, Integer size) {
+    public Page<LoaiCoAo> loaiCoAoPage(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return loaiCoAoRepository.findAll(pageable);
     }
 
     @Override
-    public void add(LoaiCoAo add) {
-        loaiCoAoRepository.save(add);
+    public LoaiCoAo add(LoaiCoAo add) {
+        return loaiCoAoRepository.save(add);
     }
 
     @Override
@@ -40,12 +40,17 @@ public class LoaiCoAoServiceImpl implements LoaiCoAoService {
     }
 
     @Override
-    public void update(LoaiCoAo update) {
-        loaiCoAoRepository.save(update);
+    public LoaiCoAo update(LoaiCoAo update) {
+        return loaiCoAoRepository.save(update);
     }
 
     @Override
     public Optional<LoaiCoAo> detail(Integer id) {
         return loaiCoAoRepository.findById(id);
+    }
+
+    @Override
+    public Boolean checkExists(Integer id) {
+        return loaiCoAoRepository.existsById(id);
     }
 }

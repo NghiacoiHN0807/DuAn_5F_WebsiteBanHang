@@ -6,16 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
-@Controller
+@RestController
+@CrossOrigin("http://localhost:3000/")
 @RequestMapping("/mau-sac/")
 public class MausacController {
     @Autowired
@@ -38,18 +41,8 @@ public class MausacController {
     }
 
     @GetMapping("detail/{id}")
-    public String detail(@PathVariable("id") Integer id, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer size, @RequestParam("p") Optional<Integer> p, Model model) {
-
-        MauSac xuatxu = new MauSac();
-        model.addAttribute("add", xuatxu);
-
-        Optional<MauSac> xuatxu1 = mausacSevice.detail(id);
-        model.addAttribute("getOne", xuatxu1.get());
-
-        Page<MauSac> chatlieus = mausacSevice.chatlieuPage(p.orElse(page), size);
-        model.addAttribute("xuatxus", chatlieus);
-
-        return "MauSac";
+    public Optional<MauSac> detail(@PathVariable("id") Integer id) {
+        return mausacSevice.detail(id);
     }
 
     @GetMapping("delete/{id}")
