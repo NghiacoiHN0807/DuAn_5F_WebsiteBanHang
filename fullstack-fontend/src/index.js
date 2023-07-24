@@ -10,7 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      {/* <App /> */}
+       {/*<App />*/}
       <AppADM />
     </BrowserRouter>
   </React.StrictMode>,

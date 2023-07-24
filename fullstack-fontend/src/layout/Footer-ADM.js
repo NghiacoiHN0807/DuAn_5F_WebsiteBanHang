@@ -1,7 +1,7 @@
 import Nav from "react-bootstrap/Nav";
 import logo5F from "../assets/logo_5F.png";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { NavLink } from "react-router-dom";
+import {NavLink} from "react-router-dom";
 
 const Footer = (props) => {
   return (
@@ -21,6 +21,9 @@ const Footer = (props) => {
           >
             <NavLink to="/table-xuatXu" className={"nav-link"}>
               Table Xuat Xu
+            </NavLink>
+            <NavLink to="/table-taiKhoanKH" className={"nav-link"}>
+              Table Tai Khoan KH
             </NavLink>
             <NavLink to="/home" className={"nav-link"}>
               Product details

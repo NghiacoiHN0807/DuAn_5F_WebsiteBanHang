@@ -64,7 +64,7 @@ const TableTaiKhoanKH = (props) => {
                     <th>Ten</th>
                     <th>SDT</th>
                     <th>Email</th>
-                    <th>Mat Khau</th>
+                    {/*<th>Mat Khau</th>*/}
                     <th>Trang Thai</th>
                     <th>Function</th>
                 </tr>
@@ -80,7 +80,7 @@ const TableTaiKhoanKH = (props) => {
                                 <td>{item.ten}</td>
                                 <td>{item.sdt}</td>
                                 <td>{item.email}</td>
-                                <td>{item.matKhau}</td>
+                                {/*<td>{item.matKhau}</td>*/}
                                 <td>{item.trangThai === 1 ? 'Hoat Dong' : 'Ngung Hoat Dong'}</td>
                                 <td>
                                     <button onClick={() => handleDelete(item)}
