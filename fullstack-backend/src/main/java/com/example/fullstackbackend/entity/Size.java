@@ -31,6 +31,6 @@ public class Size {
     private String tenSize;
 
     @Column(name = "tinh_trang")
-    private Integer tinhTrang;
+    private Integer trangThai;
 
 }

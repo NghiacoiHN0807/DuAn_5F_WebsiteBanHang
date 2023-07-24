@@ -1,7 +1,7 @@
 // import { toast } from "react-toastify";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { deleteXuatXu } from "../../services/xuatXuSevice";
+import { deleteXuatXu } from "../../services/XuatXuService";
 import { toast } from "react-toastify";
 
 const ModalConfirm = (props) => {

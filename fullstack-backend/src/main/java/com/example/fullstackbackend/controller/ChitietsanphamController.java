@@ -10,15 +10,15 @@ import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.entity.Size;
 import com.example.fullstackbackend.entity.XuatXu;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
-import com.example.fullstackbackend.services.ChatlieuSevice;
-import com.example.fullstackbackend.services.ChitietsanphamSevice;
+import com.example.fullstackbackend.services.ChatlieuService;
+import com.example.fullstackbackend.services.ChitietsanphamService;
 import com.example.fullstackbackend.services.LoaiCoAoService;
-import com.example.fullstackbackend.services.LoaispSevice;
-import com.example.fullstackbackend.services.MausacSevice;
+import com.example.fullstackbackend.services.LoaispService;
+import com.example.fullstackbackend.services.MausacService;
 import com.example.fullstackbackend.services.OngTayAoService;
-import com.example.fullstackbackend.services.SanPhamSevice;
-import com.example.fullstackbackend.services.SizeSevice;
-import com.example.fullstackbackend.services.XuatxuSevice;
+import com.example.fullstackbackend.services.SanPhamService;
+import com.example.fullstackbackend.services.SizeService;
+import com.example.fullstackbackend.services.XuatxuService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -44,25 +44,25 @@ import java.util.Optional;
 
 public class ChitietsanphamController {
     @Autowired
-    private ChitietsanphamSevice chitietsanphamSevice;
+    private ChitietsanphamService chitietsanphamSevice;
 
     @Autowired
-    private ChatlieuSevice chatlieuSevice;
+    private ChatlieuService chatlieuService;
 
     @Autowired
-    private LoaispSevice loaispSevice;
+    private LoaispService loaispSevice;
 
     @Autowired
-    private SanPhamSevice sanPhamSevice;
+    private SanPhamService sanPhamSevice;
 
     @Autowired
-    private SizeSevice sizeSevice;
+    private SizeService sizeSevice;
 
     @Autowired
-    private XuatxuSevice xuatxuSevice;
+    private XuatxuService xuatxuSevice;
 
     @Autowired
-    private MausacSevice mausacSevice;
+    private MausacService mausacSevice;
 
     @Autowired
     private OngTayAoService ongTayAoService;
@@ -155,7 +155,7 @@ public class ChitietsanphamController {
 
         ChiTietSanPham xuatxu = new ChiTietSanPham();
         model.addAttribute("update", xuatxu);
-        List<ChatLieu> chatlieus = chatlieuSevice.getAll();
+        List<ChatLieu> chatlieus = chatlieuService.getAll();
         model.addAttribute("chatlieus", chatlieus);
 
         List<LoaiSp> loaisps = loaispSevice.getAll();

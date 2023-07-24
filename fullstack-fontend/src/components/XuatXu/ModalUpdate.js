@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { putUpdateXuatXu } from "../../services/xuatXuSevice";
+import { putUpdateXuatXu } from "../../services/XuatXuService";
 import { toast } from "react-toastify";
 
 const ModalUpdate = (props) => {

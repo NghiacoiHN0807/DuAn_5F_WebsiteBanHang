@@ -11,15 +11,15 @@ const detailCL = (idCl) => {
   return custom.get(`/chat-lieu/detail/${idCl}`); // Call API
 };
 
-const postAddChatLieu = (maCl, tenNuoc, trangThai) => {
-  return custom.post("/chat-lieu/add", { maCl, tenNuoc, trangThai });
+const postAddChatLieu = (maCl, tenCl, trangThai) => {
+  return custom.post("/chat-lieu/add", { maCl, tenCl, trangThai });
 };
 const deleteChatLieu = (id) => {
   return custom.delete(`/chat-lieu/delete/${id}`);
 };
 
-const putUpdateChatLieu = (idCl, maCl, tenNuoc, trangThai) => {
-  return custom.put(`/chat-lieu/update`, { idCl, maCl, tenNuoc, trangThai });
+const putUpdateChatLieu = (idCl, maCl, tenCl, trangThai) => {
+  return custom.put(`/chat-lieu/update`, { idCl, maCl, tenCl, trangThai });
 };
 
 export {

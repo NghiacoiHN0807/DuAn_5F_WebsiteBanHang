@@ -24,14 +24,14 @@ public class OngTayAoImpl implements OngTayAoService {
     }
 
     @Override
-    public Page<OngTayAo> OngTayAoPage(Integer pageNo, Integer size) {
+    public Page<OngTayAo> ongTayAoPage(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return ongTayAoRepository.findAll(pageable);
     }
 
     @Override
-    public void add(OngTayAo add) {
-        ongTayAoRepository.save(add);
+    public OngTayAo add(OngTayAo add) {
+        return ongTayAoRepository.save(add);
     }
 
     @Override
@@ -40,12 +40,17 @@ public class OngTayAoImpl implements OngTayAoService {
     }
 
     @Override
-    public void update(OngTayAo update) {
-        ongTayAoRepository.save(update);
+    public OngTayAo update(OngTayAo update) {
+        return ongTayAoRepository.save(update);
     }
 
     @Override
     public Optional<OngTayAo> detail(Integer id) {
         return ongTayAoRepository.findById(id);
+    }
+
+    @Override
+    public Boolean checkExists(Integer id) {
+        return ongTayAoRepository.existsById(id);
     }
 }

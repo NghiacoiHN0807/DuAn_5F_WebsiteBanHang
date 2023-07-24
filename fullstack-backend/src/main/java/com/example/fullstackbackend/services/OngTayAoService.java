@@ -10,13 +10,15 @@ public interface OngTayAoService {
 
     List<OngTayAo> getAll();
 
-    Page<OngTayAo> OngTayAoPage(Integer pageNo, Integer size);
+    Page<OngTayAo> ongTayAoPage(Integer pageNo, Integer size);
 
-    void add(OngTayAo add);
+    OngTayAo add(OngTayAo add);
 
     void delete(Integer id);
 
-    void update(OngTayAo update);
+    OngTayAo update(OngTayAo update);
 
     Optional<OngTayAo> detail(Integer id);
+
+    Boolean checkExists(Integer id);
 }

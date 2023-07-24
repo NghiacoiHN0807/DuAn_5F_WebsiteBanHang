@@ -30,13 +30,6 @@ public class ChatLieu {
     private String tenCl;
 
     @Column(name = "tinh_trang")
-    private Integer tinhTrang;
+    private Integer trangThai;
 
-    public Integer getIdCl() {
-        return idCl;
-    }
-
-    public void setIdCl(Integer idCl) {
-        this.idCl = idCl;
-    }
 }

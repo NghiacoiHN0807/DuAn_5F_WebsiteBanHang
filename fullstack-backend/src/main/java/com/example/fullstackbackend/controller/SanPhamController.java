@@ -1,22 +1,24 @@
 package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.SanPham;
-import com.example.fullstackbackend.services.SanPhamSevice;
+import com.example.fullstackbackend.exception.xuatXuNotFoundException;
+import com.example.fullstackbackend.services.SanPhamService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -24,59 +26,47 @@ import java.util.Optional;
 @RequestMapping("/san-pham/")
 public class SanPhamController {
     @Autowired
-    private SanPhamSevice sanPhamSevice;
+    private SanPhamService sanPhamService;
 
     @GetMapping("view-all")
-    public String viewAll(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer size,
-                          @RequestParam("p") Optional<Integer> p, Model model) {
-        SanPham chatlieu = new SanPham();
-        model.addAttribute("add", chatlieu);
+    public Page<SanPham> viewAll(@RequestParam(defaultValue = "0") Integer page,
+                                  @RequestParam(defaultValue = "5") Integer size,
+                                  @RequestParam("p") Optional<Integer> p) {
+        return sanPhamService.sanPhamPage(p.orElse(page), size);
+    }
 
-        Page<SanPham> xuatxus = sanPhamSevice.chatlieuPage(p.orElse(page), size);
-        model.addAttribute("xuatxus", xuatxus);
-        return "SanPham";
+    @GetMapping("listSP")
+    public List<SanPham> listSP() {
+        return sanPhamService.getAll();
     }
 
     @PostMapping("add")
-    public String add(@Valid @ModelAttribute("add") SanPham xuatxu,
-                      BindingResult bindingResult, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer size,
-                      @RequestParam("p") Optional<Integer> p, Model model) {
+    public SanPham add(@Valid @RequestBody SanPham sanPham,
+                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            Page<SanPham> xuatxus = sanPhamSevice.chatlieuPage(p.orElse(page), size);
-            model.addAttribute("xuatxus", xuatxus);
-            return "SanPham";
+            return null;
         } else {
-            sanPhamSevice.add(xuatxu);
-            return "redirect:/san-pham/view-all";
+            return sanPhamService.add(sanPham);
         }
     }
 
     @GetMapping("detail/{id}")
     public Optional<SanPham> detail(@PathVariable("id") Integer id) {
-        return sanPhamSevice.detail(id);
+        return sanPhamService.detail(id);
     }
 
-    @GetMapping("delete/{id}")
-    public String delete(@PathVariable("id") Integer id, Model model) {
-        sanPhamSevice.delete(id);
-        return "redirect:/san-pham/view-all";
+    @DeleteMapping("delete/{id}")
+    public String delete(@PathVariable("id") Integer id) {
+        if (!sanPhamService.checkExists(id)) {
+            throw new xuatXuNotFoundException(id);
+        } else {
+            sanPhamService.delete(id);
+            return "";
+        }
     }
 
-    @GetMapping("view-update/{id}")
-    public String viewUpdate(@PathVariable("id") Integer id, Model model) {
-
-        SanPham xuatxu = new SanPham();
-        model.addAttribute("update", xuatxu);
-
-        Optional<SanPham> chatlieu = sanPhamSevice.detail(id);
-        model.addAttribute("getOne", chatlieu.get());
-
-        return "Update-SanPham";
-    }
-
-    @PostMapping("update")
-    public String update(@ModelAttribute("update") SanPham xuatxu) {
-        sanPhamSevice.update(xuatxu);
-        return "redirect:/san-pham/view-all";
+    @PutMapping("update")
+    public SanPham update(@RequestBody SanPham sanPham) {
+        return sanPhamService.update(sanPham);
     }
 }

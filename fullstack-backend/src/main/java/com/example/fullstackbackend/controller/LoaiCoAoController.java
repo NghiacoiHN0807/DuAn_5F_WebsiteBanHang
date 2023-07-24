@@ -1,16 +1,18 @@
 package com.example.fullstackbackend.controller;
 
-import com.example.fullstackbackend.entity.ChatLieu;
 import com.example.fullstackbackend.entity.LoaiCoAo;
+import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.LoaiCoAoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,8 +36,8 @@ public class LoaiCoAoController {
         return loaiCoAoService.loaiCoAoPage(p.orElse(page), size);
     }
 
-    @GetMapping("listCL")
-    public List<LoaiCoAo> listCL() {
+    @GetMapping("listCoAo")
+    public List<LoaiCoAo> listCoAo() {
         return loaiCoAoService.getAll();
     }
 
@@ -52,5 +54,20 @@ public class LoaiCoAoController {
     @GetMapping("detail/{id}")
     public Optional<LoaiCoAo> detail(@PathVariable("id") Integer id) {
         return loaiCoAoService.detail(id);
+    }
+
+    @DeleteMapping("delete/{id}")
+    public String delete(@PathVariable("id") Integer id) {
+        if (!loaiCoAoService.checkExists(id)) {
+            throw new xuatXuNotFoundException(id);
+        } else {
+            loaiCoAoService.delete(id);
+            return "";
+        }
+    }
+
+    @PutMapping("update")
+    public LoaiCoAo update(@RequestBody LoaiCoAo loaiCoAo) {
+        return loaiCoAoService.update(loaiCoAo);
     }
 }

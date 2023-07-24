@@ -32,8 +32,26 @@ const Footer = (props) => {
               Chất liệu
             </NavLink>
             <NavDropdown.Divider />
-            <NavLink to="/home" className={"nav-link"}>
-              Product details
+            <NavLink to="/quan-ly-san-pham/loai-co-ao" className={"nav-link"}>
+              Loại cổ áo
+            </NavLink>
+            <NavLink
+              to="/quan-ly-san-pham/loai-san-pham"
+              className={"nav-link"}
+            >
+              Loại sản phẩm
+            </NavLink>
+            <NavLink to="/quan-ly-san-pham/mau-sac" className={"nav-link"}>
+              Màu sắc
+            </NavLink>
+            <NavLink to="/quan-ly-san-pham/ong-tay-ao" className={"nav-link"}>
+              Ống tay áo
+            </NavLink>
+            <NavLink to="/quan-ly-san-pham/san-pham" className={"nav-link"}>
+              Sản phẩm
+            </NavLink>
+            <NavLink to="/quan-ly-san-pham/size" className={"nav-link"}>
+              Size
             </NavLink>
           </NavDropdown>
           <NavLink to="/home" className={"nav-link"}>

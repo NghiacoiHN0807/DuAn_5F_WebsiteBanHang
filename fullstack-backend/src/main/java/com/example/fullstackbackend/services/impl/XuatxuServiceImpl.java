@@ -2,7 +2,7 @@ package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.entity.XuatXu;
 import com.example.fullstackbackend.repository.XuatxuRepository;
-import com.example.fullstackbackend.services.XuatxuSevice;
+import com.example.fullstackbackend.services.XuatxuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class XuatxuServiceImpl implements XuatxuSevice {
+public class XuatxuServiceImpl implements XuatxuService {
 
     @Autowired
     private XuatxuRepository xuatxuRepository;

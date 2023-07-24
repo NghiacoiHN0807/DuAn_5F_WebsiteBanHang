@@ -2,7 +2,7 @@ package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.repository.ChitietsanphamRepository;
-import com.example.fullstackbackend.services.ChitietsanphamSevice;
+import com.example.fullstackbackend.services.ChitietsanphamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class ChitietsanphamServiceImpl implements ChitietsanphamSevice {
+public class ChitietsanphamServiceImpl implements ChitietsanphamService {
 
     @Autowired
     private ChitietsanphamRepository chitietsanphamRepository;

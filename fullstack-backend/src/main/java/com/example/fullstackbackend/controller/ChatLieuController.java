@@ -1,18 +1,15 @@
 package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.ChatLieu;
-import com.example.fullstackbackend.entity.XuatXu;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
-import com.example.fullstackbackend.services.ChatlieuSevice;
+import com.example.fullstackbackend.services.ChatlieuService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,18 +27,18 @@ import java.util.Optional;
 
 public class ChatLieuController {
     @Autowired
-    private ChatlieuSevice chatlieuSevice;
+    private ChatlieuService chatlieuService;
 
     @GetMapping("view-all")
     public Page<ChatLieu> viewAll(@RequestParam(defaultValue = "0") Integer page,
                                 @RequestParam(defaultValue = "5") Integer size,
                                 @RequestParam("p") Optional<Integer> p) {
-        return chatlieuSevice.chatlieuPage(p.orElse(page), size);
+        return chatlieuService.chatlieuPage(p.orElse(page), size);
     }
 
     @GetMapping("listCL")
     public List<ChatLieu> listCL() {
-        return chatlieuSevice.getAll();
+        return chatlieuService.getAll();
     }
 
     @PostMapping("add")
@@ -50,27 +47,27 @@ public class ChatLieuController {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
-            return chatlieuSevice.add(chatLieu);
+            return chatlieuService.add(chatLieu);
         }
     }
 
     @GetMapping("detail/{id}")
     public Optional<ChatLieu> detail(@PathVariable("id") Integer id) {
-        return chatlieuSevice.detail(id);
+        return chatlieuService.detail(id);
     }
 
     @DeleteMapping("delete/{id}")
-    public String delete(@PathVariable("id") Integer id, Model model) {
-        if (!chatlieuSevice.checkExists(id)) {
+    public String delete(@PathVariable("id") Integer id) {
+        if (!chatlieuService.checkExists(id)) {
             throw new xuatXuNotFoundException(id);
         } else {
-            chatlieuSevice.delete(id);
+            chatlieuService.delete(id);
             return "";
         }
     }
 
     @PutMapping("update")
     public ChatLieu update(@RequestBody ChatLieu chatLieu) {
-        return chatlieuSevice.update(chatLieu);
+        return chatlieuService.update(chatLieu);
     }
 }

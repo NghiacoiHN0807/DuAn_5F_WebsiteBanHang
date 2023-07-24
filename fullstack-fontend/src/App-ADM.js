@@ -1,6 +1,12 @@
 import XuatXuMain from "./components/XuatXu/XuatXuMain";
 import CTSPMain from "./components/ChiTietSP/CTSPMain";
 import ChatLieuMain from "./components/ChatLieu/ChatLieuMain";
+import LoaiCoAoMain from "./components/LoaiCoAo/LoaiCoAoMain";
+import LoaiSPMain from "./components/LoaiSP/LoaiSPMain";
+import MauSacMain from "./components/MauSac/MauSacMain";
+import OngTayAoMain from "./components/OngTayAo/OngTayAoMain";
+import SanPhamMain from "./components/SanPham/SanPhamMain";
+import SizeMain from "./components/Size/SizeMain";
 import Container from "react-bootstrap/Container";
 import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
@@ -24,16 +30,37 @@ function AppADM() {
                 <Routes>
                   <Route path="/home" element={<Home />} />
                   <Route
-                    path="/quan-ly-san-pham/xuat-xu"
-                    element={<XuatXuMain />}
+                    path="/quan-ly-san-pham/chat-lieu"
+                    element={<ChatLieuMain />}
                   />
                   <Route
                     path="/quan-ly-san-pham/chi-tiet-san-pham"
                     element={<CTSPMain />}
                   />
                   <Route
-                    path="/quan-ly-san-pham/chat-lieu"
-                    element={<ChatLieuMain />}
+                    path="/quan-ly-san-pham/loai-co-ao"
+                    element={<LoaiCoAoMain />}
+                  />
+                  <Route
+                    path="/quan-ly-san-pham/loai-san-pham"
+                    element={<LoaiSPMain />}
+                  />
+                  <Route
+                    path="/quan-ly-san-pham/mau-sac"
+                    element={<MauSacMain />}
+                  />
+                  <Route
+                    path="/quan-ly-san-pham/ong-tay-ao"
+                    element={<OngTayAoMain />}
+                  />
+                  <Route
+                    path="/quan-ly-san-pham/san-pham"
+                    element={<SanPhamMain />}
+                  />
+                  <Route path="/quan-ly-san-pham/size" element={<SizeMain />} />
+                  <Route
+                    path="/quan-ly-san-pham/xuat-xu"
+                    element={<XuatXuMain />}
                   />
                 </Routes>
               </div>

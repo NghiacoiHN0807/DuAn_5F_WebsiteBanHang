@@ -2,12 +2,10 @@ package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.XuatXu;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
-import com.example.fullstackbackend.services.XuatxuSevice;
+import com.example.fullstackbackend.services.XuatxuService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,7 +26,7 @@ import java.util.Optional;
 @CrossOrigin("http://localhost:3000/")
 public class XuatxuController {
     @Autowired
-    private XuatxuSevice xuatxuSevice;
+    private XuatxuService xuatxuSevice;
 
     @GetMapping("view-all")
     public Page<XuatXu> viewAll(@RequestParam(defaultValue = "0") Integer page,
