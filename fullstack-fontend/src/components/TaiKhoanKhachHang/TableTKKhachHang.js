@@ -2,8 +2,9 @@ import {useEffect, useState} from "react";
 import Table from "react-bootstrap/Table";
 import ReactPaginate from "react-paginate";
 import {fetchAllTKKH} from "../../services/taiKhoanKhachHangSevice";
-import ModalsAddNewTKKH from "./ModalsAddNewTKKH";
+import ModelAddNewTKKH from "./ModelAddNewTKKH";
 import ModelConfirmTKKH from "./ModelConfirmTKKH";
+import ModalUpdate from "./ModelUpdateTKKH";
 
 const TableTaiKhoanKH = (props) => {
 
@@ -16,6 +17,7 @@ const TableTaiKhoanKH = (props) => {
     const handleClose = () => {
         setIsShowModalAddNew(false);
         setIsShowModalDelete(false);
+        setIsShowModalUpdate(false);
     };
     // Show Data On Tables
     useEffect(() => {
@@ -24,10 +26,10 @@ const TableTaiKhoanKH = (props) => {
 
     const getTaiKhoanKH = async (page) => {
         let res = await fetchAllTKKH(page);
-        console.log("Data", res);
+        // console.log("Data", res);
         if (res && res.content) {
             setlistTaiKhoanKH(res.content);
-            console.log("Data", res);
+            // console.log("Data", res);
             setTotalPages(res.totalPages);
         }
     };
@@ -39,12 +41,27 @@ const TableTaiKhoanKH = (props) => {
     const [isShowModalDelete, setIsShowModalDelete] = useState(false);
     const [isDataTaiKhoanKH, setDataTaiKhoanKH] = useState({});
     const handleDelete = (maTKKH) => {
-        console.log("Check delete: ", maTKKH);
+        // console.log("Check delete: ", maTKKH);
         setIsShowModalDelete(true);
         setDataTaiKhoanKH(maTKKH);
     };
 
-    console.log(listTaiKhoanKH);
+    const [isShowModalUpdate, setIsShowModalUpdate] = useState(false);
+
+
+    const handleUpdateTable = (taiKhoanKH) => {
+        setlistTaiKhoanKH([taiKhoanKH, ...listTaiKhoanKH]);
+        getTaiKhoanKH(0);
+    };
+
+
+    const handleUpdate = (taiKhoanKH) => {
+        setDataTaiKhoanKH(taiKhoanKH);
+        setIsShowModalUpdate(true);
+    };
+
+
+    // console.log(listTaiKhoanKH);
     return (
         <>
             <div className="my-3 add-new">
@@ -89,11 +106,12 @@ const TableTaiKhoanKH = (props) => {
                                         Delete
                                     </button>
                                     <button
-                                            type="button"
-                                            className="btn btn-outline-danger">
+                                        type="button"
+                                        className="btn btn-outline-warning"
+                                        onClick={() => handleUpdate(item)}
+                                    >
                                         Update
                                     </button>
-
 
 
                                 </td>
@@ -123,11 +141,20 @@ const TableTaiKhoanKH = (props) => {
                 activeClassName="active"
             />
             {/* Add Model */}
-            <ModalsAddNewTKKH show={isShowModalAddNew} handleClose={handleClose}/>
-            <ModelConfirmTKKH show={isShowModalDelete}
-                              handleClose={handleClose}
-                              isDataTaiKhoanKH={isDataTaiKhoanKH}
-                              getTaiKhoanKH={getTaiKhoanKH}
+            <ModelAddNewTKKH
+                show={isShowModalAddNew}
+                handleClose={handleClose}/>
+            <ModelConfirmTKKH
+                show={isShowModalDelete}
+                handleClose={handleClose}
+                isDataTaiKhoanKH={isDataTaiKhoanKH}
+                getTaiKhoanKH={getTaiKhoanKH}
+            />
+            <ModalUpdate
+                show={isShowModalUpdate}
+                handleClose={handleClose}
+                isDataTaiKhoanKH={isDataTaiKhoanKH}
+                handleUpdateTable={handleUpdateTable}
             />
 
         </>

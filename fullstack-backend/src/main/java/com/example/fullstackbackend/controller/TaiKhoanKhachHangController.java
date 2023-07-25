@@ -6,7 +6,6 @@ import com.example.fullstackbackend.services.TaiKhoanKhachHangSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +22,8 @@ public class TaiKhoanKhachHangController {
     public Page<TaiKhoan> viewAll(@RequestParam(defaultValue = "0") Integer page,
                                   @RequestParam(defaultValue = "5") Integer size,
                                   @RequestParam("p") Optional<Integer> p) {
-        Page<TaiKhoan> TaiKhoanKhachHangs = TaiKhoanKhachHangKHSevice.Page(p.orElse(page), size);
-        return TaiKhoanKhachHangs;
+
+        return TaiKhoanKhachHangKHSevice.Page(p.orElse(page), size);
     }
 
     @PostMapping("add")
@@ -38,21 +37,10 @@ public class TaiKhoanKhachHangController {
     }
 
     @GetMapping("detail/{id}")
-    public Optional<TaiKhoan> detail(@PathVariable("id") Integer id,
-                                     @RequestParam(defaultValue = "0") Integer page,
-                                     @RequestParam(defaultValue = "5") Integer size, @RequestParam("p")
-                         Optional<Integer> p, Model model) {
+    public Optional<TaiKhoan> detail(@PathVariable("id") Integer id
+    ) {
 
-        TaiKhoan TaiKhoan = new TaiKhoan();
-        model.addAttribute("add", TaiKhoan);
-
-        Optional<TaiKhoan> TaiKhoanKhachHang1 = TaiKhoanKhachHangKHSevice.detail(id);
-        model.addAttribute("getOne", TaiKhoanKhachHang1.get());
-
-        Page<TaiKhoan> TaiKhoanKhachHangs = TaiKhoanKhachHangKHSevice.Page(p.orElse(page), size);
-        model.addAttribute("TaiKhoanKhachHangs", TaiKhoanKhachHangs);
-
-        return TaiKhoanKhachHang1;
+        return TaiKhoanKhachHangKHSevice.detail(id);
     }
 
     @DeleteMapping("delete/{id}")
@@ -65,24 +53,13 @@ public class TaiKhoanKhachHangController {
         }
     }
 
-    @GetMapping("view-update/{id}")
-    public Optional<TaiKhoan> viewUpdate(@PathVariable("id") Integer id, Model model) {
-
-        TaiKhoan TaiKhoan = new TaiKhoan();
-        model.addAttribute("update", TaiKhoan);
-
-        Optional<TaiKhoan> taiKhoanKhachHang = TaiKhoanKhachHangKHSevice.detail(id);
-        model.addAttribute("getOne", taiKhoanKhachHang.get());
-
-        return taiKhoanKhachHang;
-    }
 
     @PostMapping("update")
-    public TaiKhoan update(@RequestBody TaiKhoan TaiKhoan,BindingResult bindingResult) {
+    public TaiKhoan update(@RequestBody TaiKhoan TaiKhoan, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
-        return TaiKhoanKhachHangKHSevice.update(TaiKhoan);
-    }
+            return TaiKhoanKhachHangKHSevice.update(TaiKhoan);
+        }
     }
 }
