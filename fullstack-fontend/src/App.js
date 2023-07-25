@@ -7,6 +7,8 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import { ToastContainer } from "react-toastify";
 import Footer from "./layout/Footer";
+// import View from "./components/View";
+// import ViewClient from "./components/ViewClient";
 
 function App() {
   return (
@@ -16,7 +18,7 @@ function App() {
         <Container>
           <div className="my-3">
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/home" element={<Home />} />
               <Route path="/table-xuatXu" element={<TableXuatXu />} />
             </Routes>
           </div>

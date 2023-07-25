@@ -19,34 +19,8 @@ public class LoaispServiceImpl implements LoaispSevice {
     private LoaispRepository loaispRepository;
 
     @Override
-    public List<LoaiSp> getAll() {
-        return loaispRepository.findAll();
-    }
-
-    @Override
-    public Page<LoaiSp> chatlieuPage(Integer pageNo, Integer size) {
+    public Page<LoaiSp> chatlieuPage(Integer pageNo, Integer size, Integer trangThai) {
         Pageable pageable = PageRequest.of(pageNo, size);
-        return loaispRepository.findAll(pageable);
-    }
-
-    @Override
-    public void add(LoaiSp add) {
-        loaispRepository.save(add);
-    }
-
-    @Override
-    public void delete(Integer id) {
-        loaispRepository.deleteById(id);
-    }
-
-    @Override
-    public void update(LoaiSp update) {
-        loaispRepository.save(update);
-    }
-
-    @Override
-    public Optional<LoaiSp> detail(Integer id) {
-        Optional<LoaiSp> Loaisp = loaispRepository.findById(id);
-        return Loaisp;
+        return loaispRepository.findAllByTrangThai(trangThai, pageable);
     }
 }

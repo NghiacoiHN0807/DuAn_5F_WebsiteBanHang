@@ -1,7 +1,7 @@
 package com.example.fullstackbackend.controller;
 
-import com.example.fullstackbackend.entity.LoaiSp;
-import com.example.fullstackbackend.services.LoaispSevice;
+import com.example.fullstackbackend.entity.Images;
+import com.example.fullstackbackend.services.ImagesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,14 +11,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/loai-sp/api/")
+@RequestMapping("/images/api/")
 @CrossOrigin("http://localhost:3000/")
-public class LoaiSpController {
+public class ImagesController {
+
     @Autowired
-    private LoaispSevice loaispSevice;
+    private ImagesService imagesService;
 
     @GetMapping("views")
-    Page<LoaiSp> getAll(@RequestParam(value = "page", defaultValue = "0") Integer pageNo, @RequestParam(value = "size", defaultValue = "5") Integer size, @RequestParam(value = "trangThai", defaultValue = "0") Integer trangThai) {
-        return loaispSevice.chatlieuPage(pageNo, size, trangThai);
+    Page<Images> getAll(@RequestParam(value = "page", defaultValue = "0") Integer pageNo, @RequestParam(value = "size", defaultValue = "5") Integer size) {
+        return imagesService.getAll(pageNo, size);
     }
+
 }

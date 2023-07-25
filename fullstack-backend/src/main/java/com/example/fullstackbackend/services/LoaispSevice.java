@@ -7,16 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LoaispSevice {
-
-    List<LoaiSp> getAll();
-
-    Page<LoaiSp> chatlieuPage(Integer pageNo, Integer size);
-
-    void add(LoaiSp add);
-
-    void delete(Integer id);
-
-    void update(LoaiSp update);
-
-    Optional<LoaiSp> detail(Integer id);
+    Page<LoaiSp> chatlieuPage(Integer pageNo, Integer size, Integer trangThai);
 }

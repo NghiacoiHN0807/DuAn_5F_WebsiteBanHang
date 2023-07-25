@@ -29,11 +29,11 @@ public class GiamGiaChiTiet {
     @Column(name = "id_ggct")
     private Integer idGgct;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_ctsp", referencedColumnName = "id_ctsp")
     private ChiTietSanPham idCtsp;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_giam_gia", referencedColumnName = "id_giam_gia")
     private GiamGia idGiamGia;
 

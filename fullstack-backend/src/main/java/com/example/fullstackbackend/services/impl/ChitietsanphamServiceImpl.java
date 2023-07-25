@@ -16,31 +16,10 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamSevice {
 
     @Autowired
     private ChitietsanphamRepository chitietsanphamRepository;
+
     @Override
-    public Page<ChiTietSanPham> chatlieuPage(Integer pageNo, Integer size) {
+    public Page<ChiTietSanPham> chatlieuPage(Integer pageNo, Integer size, Integer trangThai) {
         Pageable pageable = PageRequest.of(pageNo, size);
-        return chitietsanphamRepository.findAll(pageable);
+        return chitietsanphamRepository.findAllByTrangThai(trangThai, pageable);
     }
-
-    @Override
-    public void add(ChiTietSanPham add) {
-        chitietsanphamRepository.save(add);
-    }
-
-    @Override
-    public void delete(Integer id) {
-        chitietsanphamRepository.deleteById(id);
-    }
-
-    @Override
-    public void update(ChiTietSanPham update) {
-        chitietsanphamRepository.save(update);
-    }
-
-    @Override
-    public Optional<ChiTietSanPham> detail(Integer id) {
-        Optional<ChiTietSanPham> xuatxu = chitietsanphamRepository.findById(id);
-        return xuatxu;
-    }
-
 }
