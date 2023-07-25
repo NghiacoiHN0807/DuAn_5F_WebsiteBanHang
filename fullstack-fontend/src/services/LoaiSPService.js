@@ -18,8 +18,8 @@ const deleteLoaiSP = (id) => {
   return custom.delete(`/loai-sp/delete/${id}`);
 };
 
-const putUpdateLoaiSP = (idLsp, maLsp, tenLsp, trangThai) => {
-  return custom.put(`/loai-sp/update`, { idLsp, maLsp, tenLsp, trangThai });
+const putUpdateLoaiSP = (idLoaisp, maLsp, tenLsp, trangThai) => {
+  return custom.put(`/loai-sp/update`, { idLoaisp, maLsp, tenLsp, trangThai });
 };
 
 export {

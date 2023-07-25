@@ -5,18 +5,18 @@ import { deleteXuatXu } from "../../services/XuatXuService";
 import { toast } from "react-toastify";
 
 const ModalConfirm = (props) => {
-  const { show, handleClose, isDataXuatXu, getXanXuat } = props;
+  const { show, handleClose, isDataXuatXu, getXuatXu } = props;
 
   const confirmDelte = async () => {
     let res = await deleteXuatXu(isDataXuatXu.idXx);
-    console.log("Check res deleteXuatXu: " + res);
+    console.log("Check res delete: " + res);
     if (res && res.statusCode === 200) {
-      toast.success("This data has been deleted");
+      toast.success("Xóa thành công!");
       handleClose();
-      getXanXuat(0);
+      getXuatXu(0);
     } else {
       handleClose();
-      toast.error("This data hasn't been deleted");
+      toast.error("Xóa thất bại!");
     }
   };
   return (
@@ -31,9 +31,9 @@ const ModalConfirm = (props) => {
           <Modal.Title>DELETE</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div>Are you sure want delete this data?</div>
+          <div>Bạn có chắc muốn xóa không?</div>
           <br />
-          <b>Ma: {isDataXuatXu.maXx}</b>
+          <b>Mã: {isDataXuatXu.maXx}</b>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

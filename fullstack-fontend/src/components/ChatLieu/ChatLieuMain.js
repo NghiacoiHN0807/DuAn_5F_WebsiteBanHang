@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import ReactPaginate from "react-paginate";
-import { fetchAllXX } from "../../services/xuatXuSevice";
+import { fetchAllCL } from "../../services/ChatLieuService";
 import ModalAddNew from "./ModalAddNew";
 import ModalConfirm from "./ModalConfirm";
 import ModalUpdate from "./ModalUpdate";
 
-const TableXuatXu = (props) => {
+const TableChatLieu = (props) => {
   //Set value for table
-  const [listXuatXu, setListXuatXu] = useState([]);
+  const [listChatLieu, setListChatLieu] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
-  const [isDataXuatXu, setDataXuatXu] = useState({});
+  const [isDataChatLieu, setDataChatLieu] = useState({});
 
   //Set value for Model Add New is defalut
   const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
@@ -21,47 +21,48 @@ const TableXuatXu = (props) => {
   };
   // Show Data On Tables
   useEffect(() => {
-    getXanXuat(0);
+    getChatLieu(0);
   }, []);
 
-  const getXanXuat = async (page) => {
-    let res = await fetchAllXX(page);
+  const getChatLieu = async (page) => {
+    let res = await fetchAllCL(page);
     console.log("Data", res);
     if (res && res.content) {
-      setListXuatXu(res.content);
+      setListChatLieu(res.content);
       setTotalPages(res.totalPages);
     }
   };
 
-  const handleUpdateTable = (xuatXu) => {
-    setListXuatXu([xuatXu, ...listXuatXu]);
+  const handleUpdateTable = (chatLieu) => {
+    setListChatLieu([chatLieu, ...listChatLieu]);
+    getChatLieu(0);
   };
 
   //Next Page
   const handlePageClick = (event) => {
-    getXanXuat(+event.selected);
+    getChatLieu(+event.selected);
   };
   //Delete
   const [isShowModalDelete, setIsShowModalDelete] = useState(false);
 
-  const handleDelete = (maXx) => {
-    console.log("Check delete: ", maXx);
+  const handleDelete = (maCl) => {
+    console.log("Check delete: ", maCl);
     setIsShowModalDelete(true);
-    setDataXuatXu(maXx);
+    setDataChatLieu(maCl);
   };
 
   //Update
   const [isShowModalUpdate, setIsShowModalUpdate] = useState(false);
-  const handleUpdate = (xuatXu) => {
-    setDataXuatXu(xuatXu);
+  const handleUpdate = (chatLieu) => {
+    setDataChatLieu(chatLieu);
     setIsShowModalUpdate(true);
   };
 
-  console.log(listXuatXu);
+  console.log(listChatLieu);
   return (
     <>
       <div className="my-3 add-new">
-        <samp>List Xuat Xu</samp>
+        <samp>Chất liệu</samp>
         <button
           className="btn btn-success"
           onClick={() => setIsShowModalAddNew(true)}
@@ -72,29 +73,22 @@ const TableXuatXu = (props) => {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>Ma Xuat Xu</th>
-            <th>Ten Nuoc</th>
-            <th>Tinh Trang</th>
+            <th>Mã chất liệu</th>
+            <th>Tên chất liệu</th>
+            <th>Trạng thái</th>
             <th>Function</th>
           </tr>
         </thead>
         <tbody>
-          {listXuatXu &&
-            listXuatXu.length > 0 &&
-            listXuatXu.map((item, index) => {
+          {listChatLieu &&
+            listChatLieu.length > 0 &&
+            listChatLieu.map((item, index) => {
               return (
-                <tr key={`xuatXu-${index}`}>
-                  <td>{item.maXx}</td>
-                  <td>{item.tenNuoc}</td>
-                  <td>{item.trangThai === 1 ? "Con" : "Het"}</td>
+                <tr key={`chatLieu-${index}`}>
+                  <td>{item.maCl}</td>
+                  <td>{item.tenCl}</td>
+                  <td>{item.trangThai === 1 ? "Còn" : "Hết"}</td>
                   <td>
-                    <button
-                      onClick={() => handleDelete(item)}
-                      type="button"
-                      className="btn btn-outline-danger mx-3"
-                    >
-                      Delete
-                    </button>{" "}
                     <button
                       type="button"
                       className="btn btn-outline-warning"
@@ -102,6 +96,13 @@ const TableXuatXu = (props) => {
                     >
                       Update
                     </button>
+                    <button
+                      onClick={() => handleDelete(item)}
+                      type="button"
+                      className="btn btn-outline-danger mx-3"
+                    >
+                      Delete
+                    </button>{" "}
                   </td>
                 </tr>
               );
@@ -137,17 +138,17 @@ const TableXuatXu = (props) => {
       <ModalConfirm
         show={isShowModalDelete}
         handleClose={handleClose}
-        isDataXuatXu={isDataXuatXu}
-        getXanXuat={getXanXuat}
+        isDataChatLieu={isDataChatLieu}
+        getChatLieu={getChatLieu}
       />
 
       <ModalUpdate
         show={isShowModalUpdate}
         handleClose={handleClose}
-        isDataXuatXu={isDataXuatXu}
+        isDataChatLieu={isDataChatLieu}
         handleUpdateTable={handleUpdateTable}
       />
     </>
   );
 };
-export default TableXuatXu;
+export default TableChatLieu;

@@ -21,10 +21,10 @@ const TableXuatXu = (props) => {
   };
   // Show Data On Tables
   useEffect(() => {
-    getXanXuat(0);
+    getXuatXu(0);
   }, []);
 
-  const getXanXuat = async (page) => {
+  const getXuatXu = async (page) => {
     let res = await fetchAllXX(page);
     console.log("Data", res);
     if (res && res.content) {
@@ -35,11 +35,12 @@ const TableXuatXu = (props) => {
 
   const handleUpdateTable = (xuatXu) => {
     setListXuatXu([xuatXu, ...listXuatXu]);
+    getXuatXu(0);
   };
 
   //Next Page
   const handlePageClick = (event) => {
-    getXanXuat(+event.selected);
+    getXuatXu(+event.selected);
   };
   //Delete
   const [isShowModalDelete, setIsShowModalDelete] = useState(false);
@@ -61,7 +62,7 @@ const TableXuatXu = (props) => {
   return (
     <>
       <div className="my-3 add-new">
-        <samp>List Xuat Xu</samp>
+        <samp>List Xuất xứ</samp>
         <button
           className="btn btn-success"
           onClick={() => setIsShowModalAddNew(true)}
@@ -72,9 +73,9 @@ const TableXuatXu = (props) => {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>Ma Xuat Xu</th>
-            <th>Ten Nuoc</th>
-            <th>Tinh Trang</th>
+            <th>Mã xuất xứ</th>
+            <th>Tên nước</th>
+            <th>Trạng thái</th>
             <th>Function</th>
           </tr>
         </thead>
@@ -138,7 +139,7 @@ const TableXuatXu = (props) => {
         show={isShowModalDelete}
         handleClose={handleClose}
         isDataXuatXu={isDataXuatXu}
-        getXanXuat={getXanXuat}
+        getXuatXu={getXuatXu}
       />
 
       <ModalUpdate

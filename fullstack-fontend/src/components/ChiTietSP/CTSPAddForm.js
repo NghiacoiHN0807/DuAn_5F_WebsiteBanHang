@@ -1,23 +1,15 @@
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import {
-  postAddCTSP,
-  fetchMS,
-  fetchSize,
-  fetchSP,
-  fetchLSP,
-  fetchTayAo,
-  fetchCoAo,
-  detailMS,
-  detailSize,
-  detailSP,
-  detailLoaiSP,
-  detailOngTayAo,
-  detailLoaiCoAo,
-} from "../../services/ChiTietSPService";
-import { fetchXX, detailXX } from "../../services/xuatXuSevice";
+import { postAddCTSP } from "../../services/ChiTietSPService";
+import { fetchXX, detailXX } from "../../services/XuatXuService";
 import { fetchCL, detailCL } from "../../services/ChatLieuService";
+import { fetchCoAo, detailCoAo } from "../../services/LoaiCoAoService";
+import { fetchLSP, detailLSP } from "../../services/LoaiSPService";
+import { fetchMS, detailMS } from "../../services/MauSacService";
+import { fetchTayAo, detailTayAo } from "../../services/OngTayAoService";
+import { fetchSP, detailSP } from "../../services/SanPhamService";
+import { fetchSize, detailSize } from "../../services/SizeService";
 import { toast } from "react-toastify";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
@@ -144,10 +136,10 @@ const ModelAddNew = (props) => {
     const getObjMauSac = await detailMS(mauSac);
     const getObjSize = await detailSize(size);
     const getObjSanPham = await detailSP(sanPham);
-    const getObjLoaiSP = await detailLoaiSP(loaiSP);
+    const getObjLoaiSP = await detailLSP(loaiSP);
     const getObjXuatXu = await detailXX(xuatXu);
-    const getObjTayAo = await detailOngTayAo(tayAo);
-    const getObjCoAo = await detailLoaiCoAo(coAo);
+    const getObjTayAo = await detailTayAo(tayAo);
+    const getObjCoAo = await detailCoAo(coAo);
 
     console.log("loaiSP", getObjLoaiSP);
     console.log("tayAo", getObjTayAo);

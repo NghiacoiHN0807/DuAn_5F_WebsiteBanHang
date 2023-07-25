@@ -9,7 +9,7 @@ const ModalAddNew = (props) => {
   const { show, handleClose, handleUpdateTable } = props;
   const [maXx, setMaXx] = useState("");
   const [tenNuoc, setTenNuoc] = useState("");
-  const [trangThai, setTrangThai] = useState("");
+  const [trangThai, setTrangThai] = useState("1");
 
   const handleSave = async () => {
     //I want check console.log get ma and tenNuoc
@@ -48,13 +48,13 @@ const ModalAddNew = (props) => {
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>ADD NEW XUAT XU</Modal.Title>
+          <Modal.Title>Thêm mới xuất xứ</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="body-add-new">
             <form>
               <div className="mb-3">
-                <label className="form-label">Ma</label>
+                <label className="form-label">Mã</label>
                 <input
                   value={maXx}
                   onChange={(event) => setMaXx(event.target.value)}
@@ -63,7 +63,7 @@ const ModalAddNew = (props) => {
                 />
               </div>
               <div className="mb-3">
-                <label className="form-label">Ten Nuoc</label>
+                <label className="form-label">Tên nước</label>
                 <input
                   value={tenNuoc}
                   onChange={(event) => setTenNuoc(event.target.value)}
@@ -72,7 +72,7 @@ const ModalAddNew = (props) => {
                 />
               </div>
               <div className="mb-3">
-                <label className="form-label">Trang Thai</label>
+                <label className="form-label">Trạng thái</label>
                 <div className="form-check">
                   <input
                     className="form-check-input"
@@ -86,7 +86,7 @@ const ModalAddNew = (props) => {
                     className="form-check-label"
                     htmlFor="flexRadioDefault1"
                   >
-                    Con
+                    Còn
                   </label>
                 </div>
                 <div className="form-check">
@@ -101,7 +101,7 @@ const ModalAddNew = (props) => {
                     className="form-check-label"
                     htmlFor="flexRadioDefault2"
                   >
-                    Het
+                    Hết
                   </label>
                 </div>
               </div>
