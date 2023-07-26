@@ -16,7 +16,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 const ModelAddNew = (props) => {
-  const { show, handleClose } = props;
+  const { show, handleClose, handleUpdateTable } = props;
   const [maCTSP, setMaCTSP] = useState("");
   const [chatLieu, setChatLieu] = useState("");
   const [mauSac, setMauSac] = useState("");
@@ -26,11 +26,11 @@ const ModelAddNew = (props) => {
   const [xuatXu, setXuatXu] = useState("");
   const [tayAo, setTayAo] = useState("");
   const [coAo, setCoAo] = useState("");
-  const [mota, setMota] = useState("");
+  const [moTa, setMoTa] = useState("");
   const [soLuongTon, setSoLuongTon] = useState("");
   const [giaNhap, setGiaNhap] = useState("");
   const [giaBan, setGiaBan] = useState("");
-  const [trangThai, setTrangThai] = useState("");
+  const [trangThai, setTrangThai] = useState("1");
 
   const [listCL, setListCL] = useState([]);
   const [listMS, setListMS] = useState([]);
@@ -50,36 +50,37 @@ const ModelAddNew = (props) => {
 
   const getAllList = async () => {
     let resCL = await fetchCL();
-    console.log("Data", resCL);
     setListCL(resCL);
 
     let resMS = await fetchMS();
-    console.log("Data", resMS);
     setListMS(resMS);
 
     let resSize = await fetchSize();
-    console.log("Data", resSize);
     setListSize(resSize);
 
     let resSP = await fetchSP();
-    console.log("Data", resSP);
     setListSP(resSP);
 
     let resLSP = await fetchLSP();
-    console.log("Data", resLSP);
     setListLSP(resLSP);
 
     let resXX = await fetchXX();
-    console.log("Data", resXX);
     setListXX(resXX);
 
     let resTayAo = await fetchTayAo();
-    console.log("Data", resTayAo);
     setListTayAo(resTayAo);
 
     let resCoAo = await fetchCoAo();
-    console.log("Data", resCoAo);
     setListCoAo(resCoAo);
+
+    setChatLieu(resCL[0].idCl);
+    setMauSac(resMS[0].idMs);
+    setSize(resSize[0].idSize);
+    setSanPham(resSP[0].idSp);
+    setLoaiSP(resLSP[0].idLoaisp);
+    setXuatXu(resXX[0].idXx);
+    setTayAo(resTayAo[0].idTayAo);
+    setCoAo(resCoAo[0].idCoAo);
   };
 
   const selectCL = (event) => {
@@ -131,7 +132,7 @@ const ModelAddNew = (props) => {
   };
 
   const handleSave = async () => {
-    // get object chatlieu\
+    // get object all\
     const getObjChatLieu = await detailCL(chatLieu);
     const getObjMauSac = await detailMS(mauSac);
     const getObjSize = await detailSize(size);
@@ -140,30 +141,6 @@ const ModelAddNew = (props) => {
     const getObjXuatXu = await detailXX(xuatXu);
     const getObjTayAo = await detailTayAo(tayAo);
     const getObjCoAo = await detailCoAo(coAo);
-
-    console.log("loaiSP", getObjLoaiSP);
-    console.log("tayAo", getObjTayAo);
-
-    // I want check console.log get all attributes
-    console.log(
-      "Check state: ",
-      maCTSP,
-      getObjChatLieu,
-      getObjMauSac,
-      getObjSize,
-      getObjSanPham,
-      getObjLoaiSP,
-      getObjXuatXu,
-      getObjTayAo,
-      getObjCoAo,
-      mota,
-      soLuongTon,
-      giaNhap,
-      giaBan,
-      trangThai
-    );
-    //And now add to DB
-    //Check null
 
     if (
       setMaCTSP("") &&
@@ -175,7 +152,7 @@ const ModelAddNew = (props) => {
       setXuatXu("") &&
       setTayAo("") &&
       setCoAo("") &&
-      setMota("") &&
+      setMoTa("") &&
       setSoLuongTon("") &&
       setGiaNhap("") &&
       setGiaBan("") &&
@@ -194,7 +171,7 @@ const ModelAddNew = (props) => {
         getObjXuatXu,
         getObjCoAo,
         getObjTayAo,
-        mota,
+        moTa,
         soLuongTon,
         giaNhap,
         giaBan,
@@ -213,12 +190,28 @@ const ModelAddNew = (props) => {
         setXuatXu("");
         setTayAo("");
         setCoAo("");
-        setMota("");
+        setMoTa("");
         setSoLuongTon("");
         setGiaNhap("");
         setGiaBan("");
         setTrangThai("");
         toast.success("Add ctsp successfully!");
+        handleUpdateTable({
+          idCtsp: res.idCtsp,
+          idCl: res.idCl,
+          idMs: res.idMs,
+          idSize: res.idSize,
+          idSp: res.idSp,
+          idLoaisp: res.idLoaisp,
+          idXx: res.idXx,
+          idTayAo: res.idTayAo,
+          idCoAo: res.idCoAo,
+          moTa: res.moTa,
+          soLuongTon: res.soLuongTon,
+          giaNhap: res.giaNhap,
+          giaBan: res.giaBan,
+          trangThai: res.trangThai,
+        });
       } else {
         toast.error("Add ctsp failed!");
       }
@@ -259,7 +252,6 @@ const ModelAddNew = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectCL}
-                      defaultValue={listCL.length > 0 ? listCL[0].idCl : null}
                     >
                       {listCL.map((option, index) => (
                         <option key={index} value={option.idCl}>
@@ -278,7 +270,6 @@ const ModelAddNew = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectMS}
-                      defaultValue={listMS.length > 0 ? listMS[0].idMs : null}
                     >
                       {listMS.map((option) => (
                         <option value={option.idMs}>{option.tenMs}</option>
@@ -292,9 +283,6 @@ const ModelAddNew = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectSize}
-                      defaultValue={
-                        listSize.length > 0 ? listSize[0].idSize : null
-                      }
                     >
                       {listSize.map((option) => (
                         <option value={option.idSize}>{option.tenSize}</option>
@@ -311,7 +299,6 @@ const ModelAddNew = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectSP}
-                      defaultValue={listSP.length > 0 ? listSP[0].idSp : null}
                     >
                       {listSP.map((option) => (
                         <option value={option.idSp}>{option.tenSp}</option>
@@ -325,9 +312,6 @@ const ModelAddNew = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectLoaiSP}
-                      defaultValue={
-                        listLSP.length > 0 ? listLSP[0].idLoaisp : null
-                      }
                     >
                       {listLSP.map((option) => (
                         <option value={option.idLoaisp}>{option.tenLsp}</option>
@@ -344,7 +328,6 @@ const ModelAddNew = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectXX}
-                      defaultValue={listXX.length > 0 ? listXX[0].idXx : null}
                     >
                       {listXX.map((option) => (
                         <option value={option.idXx}>{option.tenNuoc}</option>
@@ -358,9 +341,6 @@ const ModelAddNew = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectTayAo}
-                      defaultValue={
-                        listTayAo.length > 0 ? listTayAo[0].idTayAo : null
-                      }
                     >
                       {listTayAo.map((option) => (
                         <option value={option.idTayAo}>
@@ -379,9 +359,6 @@ const ModelAddNew = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectCoAo}
-                      defaultValue={
-                        listCoAo.length > 0 ? listCoAo[0].idCoAo : null
-                      }
                     >
                       {listCoAo.map((option) => (
                         <option value={option.idCoAo}>{option.loaiCoAo}</option>
@@ -436,7 +413,7 @@ const ModelAddNew = (props) => {
                         className="form-check-input"
                         type="radio"
                         name="flexRadioDefault"
-                        defaultChecked={trangThai}
+                        checked={true}
                         value={"1"}
                         onChange={(event) => setTrangThai(event.target.value)}
                       />
@@ -452,7 +429,6 @@ const ModelAddNew = (props) => {
                         className="form-check-input"
                         type="radio"
                         name="flexRadioDefault"
-                        defaultChecked={trangThai}
                         value={"0"}
                         onChange={(event) => setTrangThai(event.target.value)}
                       />
@@ -472,8 +448,8 @@ const ModelAddNew = (props) => {
                       <Form.Control
                         as="textarea"
                         rows={3}
-                        value={mota}
-                        onChange={(event) => setMota(event.target.value)}
+                        value={moTa}
+                        onChange={(event) => setMoTa(event.target.value)}
                       />
                     </div>
                   </Form.Group>

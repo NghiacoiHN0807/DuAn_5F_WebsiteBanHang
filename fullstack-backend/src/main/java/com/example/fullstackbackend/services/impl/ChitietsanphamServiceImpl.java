@@ -33,8 +33,8 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
     }
 
     @Override
-    public void update(ChiTietSanPham update) {
-        chitietsanphamRepository.save(update);
+    public ChiTietSanPham update(ChiTietSanPham update) {
+        return chitietsanphamRepository.save(update);
     }
 
     @Override

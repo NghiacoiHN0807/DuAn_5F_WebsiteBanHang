@@ -13,7 +13,7 @@ public interface ChitietsanphamService {
 
     void delete(Integer id);
 
-    void update(ChiTietSanPham update);
+    ChiTietSanPham update(ChiTietSanPham update);
 
     Optional<ChiTietSanPham> detail(Integer id);
     Boolean checkExists(Integer id);

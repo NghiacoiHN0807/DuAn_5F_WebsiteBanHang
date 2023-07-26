@@ -63,7 +63,7 @@ public class ChiTietSanPham {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_co_ao", referencedColumnName = "id_co_ao")
-    private LoaiCoAo idLoaiCoAo;
+    private LoaiCoAo idCoAo;
 
     @Column(name = "mo_ta")
     private String moTa;
@@ -71,8 +71,8 @@ public class ChiTietSanPham {
     @Column(name = "so_luong_ton")
     private Integer soLuongTon;
 
-    @Column(name = "gia_nhap")
-    private BigDecimal giaNhap;
+//    @Column(name = "gia_nhap")
+//    private BigDecimal giaNhap;
 
     @Column(name = "gia_ban")
     private BigDecimal giaBan;

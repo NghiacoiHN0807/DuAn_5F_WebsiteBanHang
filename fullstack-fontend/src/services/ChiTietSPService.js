@@ -11,11 +11,10 @@ const postAddCTSP = (
   idSp,
   idLsp,
   idXx,
-  idLoaiCoAo,
+  idCoAo,
   idTayAo,
   moTa,
   soLuongTon,
-  giaNhap,
   giaBan,
   trangThai
 ) => {
@@ -27,11 +26,10 @@ const postAddCTSP = (
     idSp,
     idLsp,
     idXx,
-    idLoaiCoAo,
+    idCoAo,
     idTayAo,
     moTa,
     soLuongTon,
-    giaNhap,
     giaBan,
     trangThai,
   });
@@ -50,15 +48,14 @@ const putUpdateCTSP = (
   idSp,
   idLsp,
   idXx,
-  idLoaiCoAo,
+  idCoAo,
   idTayAo,
   moTa,
   soLuongTon,
-  giaNhap,
   giaBan,
   trangThai
 ) => {
-  return custom.put(`/chi-tiet-san-pham/update/${idCtsp}`, {
+  return custom.put(`/chi-tiet-san-pham/update`, {
     idCtsp,
     maCtsp,
     idCl,
@@ -67,11 +64,10 @@ const putUpdateCTSP = (
     idSp,
     idLsp,
     idXx,
-    idLoaiCoAo,
+    idCoAo,
     idTayAo,
     moTa,
     soLuongTon,
-    giaNhap,
     giaBan,
     trangThai,
   });

@@ -1,32 +1,23 @@
 import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import {
-  postAddCTSP,
-  fetchCL,
-  fetchMS,
-  fetchSize,
-  fetchSP,
-  fetchLSP,
-  fetchXX,
-  fetchTayAo,
-  fetchCoAo,
-  detailCL,
-  detailMS,
-  detailSize,
-  detailSP,
-  detailLoaiSP,
-  detailXX,
-  detailOngTayAo,
-  detailLoaiCoAo,
-} from "../../services/ChiTietSPService";
+import { putUpdateCTSP } from "../../services/ChiTietSPService";
+import { fetchXX, detailXX } from "../../services/XuatXuService";
+import { fetchCL, detailCL } from "../../services/ChatLieuService";
+import { fetchCoAo, detailCoAo } from "../../services/LoaiCoAoService";
+import { fetchLSP, detailLSP } from "../../services/LoaiSPService";
+import { fetchMS, detailMS } from "../../services/MauSacService";
+import { fetchTayAo, detailTayAo } from "../../services/OngTayAoService";
+import { fetchSP, detailSP } from "../../services/SanPhamService";
+import { fetchSize, detailSize } from "../../services/SizeService";
 import { toast } from "react-toastify";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 
 const ModelUpdate = (props) => {
-  const { show, handleClose } = props;
+  const { show, handleClose, handleUpdateTable, isDataCTSP } = props;
+  const [idCtsp, setIdCtsp] = useState("");
   const [maCTSP, setMaCTSP] = useState("");
   const [chatLieu, setChatLieu] = useState("");
   const [mauSac, setMauSac] = useState("");
@@ -36,7 +27,7 @@ const ModelUpdate = (props) => {
   const [xuatXu, setXuatXu] = useState("");
   const [tayAo, setTayAo] = useState("");
   const [coAo, setCoAo] = useState("");
-  const [mota, setMota] = useState("");
+  const [moTa, setMoTa] = useState("");
   const [soLuongTon, setSoLuongTon] = useState("");
   const [giaNhap, setGiaNhap] = useState("");
   const [giaBan, setGiaBan] = useState("");
@@ -57,6 +48,26 @@ const ModelUpdate = (props) => {
       // Cleanup
     };
   }, []);
+
+  useEffect(() => {
+    if (show) {
+      setIdCtsp(Number(isDataCTSP.idCtsp));
+      setMaCTSP(isDataCTSP.maCtsp);
+      setChatLieu(isDataCTSP.idCl.idCl);
+      setMauSac(isDataCTSP.idMs.idMs);
+      setSize(isDataCTSP.idSize.idSize);
+      setSanPham(isDataCTSP.idSp.idSp);
+      setLoaiSP(isDataCTSP.idLsp.idLoaisp);
+      setXuatXu(isDataCTSP.idXx.idXx);
+      setTayAo(isDataCTSP.idTayAo.idTayAo);
+      setCoAo(isDataCTSP.idCoAo.idCoAo);
+      setMoTa(isDataCTSP.moTa);
+      setSoLuongTon(isDataCTSP.soLuongTon);
+      setGiaNhap(isDataCTSP.giaNhap);
+      setGiaBan(isDataCTSP.giaBan);
+      setTrangThai(Number(isDataCTSP.trangThai));
+    }
+  }, [isDataCTSP, show]);
 
   const getAllList = async () => {
     let resCL = await fetchCL();
@@ -140,19 +151,16 @@ const ModelUpdate = (props) => {
     setCoAo(selectedValue);
   };
 
-  const handleSave = async () => {
+  const handleUpdate = async () => {
     // get object chatlieu\
     const getObjChatLieu = await detailCL(chatLieu);
     const getObjMauSac = await detailMS(mauSac);
     const getObjSize = await detailSize(size);
     const getObjSanPham = await detailSP(sanPham);
-    const getObjLoaiSP = await detailLoaiSP(loaiSP);
+    const getObjLoaiSP = await detailLSP(loaiSP);
     const getObjXuatXu = await detailXX(xuatXu);
-    const getObjTayAo = await detailOngTayAo(tayAo);
-    const getObjCoAo = await detailLoaiCoAo(coAo);
-
-    console.log("loaiSP", getObjLoaiSP);
-    console.log("tayAo", getObjTayAo);
+    const getObjTayAo = await detailTayAo(tayAo);
+    const getObjCoAo = await detailCoAo(coAo);
 
     // I want check console.log get all attributes
     console.log(
@@ -166,7 +174,7 @@ const ModelUpdate = (props) => {
       getObjXuatXu,
       getObjTayAo,
       getObjCoAo,
-      mota,
+      moTa,
       soLuongTon,
       giaNhap,
       giaBan,
@@ -185,7 +193,7 @@ const ModelUpdate = (props) => {
       setXuatXu("") &&
       setTayAo("") &&
       setCoAo("") &&
-      setMota("") &&
+      setMoTa("") &&
       setSoLuongTon("") &&
       setGiaNhap("") &&
       setGiaBan("") &&
@@ -194,7 +202,8 @@ const ModelUpdate = (props) => {
       handleClose();
       toast.warning("Some field is empty!");
     } else {
-      let res = await postAddCTSP(
+      let res = await putUpdateCTSP(
+        idCtsp,
         maCTSP,
         getObjChatLieu,
         getObjMauSac,
@@ -204,7 +213,7 @@ const ModelUpdate = (props) => {
         getObjXuatXu,
         getObjCoAo,
         getObjTayAo,
-        mota,
+        moTa,
         soLuongTon,
         giaNhap,
         giaBan,
@@ -214,23 +223,25 @@ const ModelUpdate = (props) => {
       console.log("Check res: ", res);
       if (res && res.idCtsp) {
         handleClose();
-        setMaCTSP("");
-        setChatLieu("");
-        setMauSac("");
-        setSize("");
-        setSanPham("");
-        setLoaiSP("");
-        setXuatXu("");
-        setTayAo("");
-        setCoAo("");
-        setMota("");
-        setSoLuongTon("");
-        setGiaNhap("");
-        setGiaBan("");
-        setTrangThai("");
-        toast.success("Add ctsp successfully!");
+        toast.success("Sửa thành công!");
+        handleUpdateTable({
+          idCtsp: res.idCtsp,
+          idCl: res.idCl,
+          idMs: res.idMs,
+          idSize: res.idSize,
+          idSp: res.idSp,
+          idLoaisp: res.idLoaisp,
+          idXx: res.idXx,
+          idTayAo: res.idTayAo,
+          idCoAo: res.idCoAo,
+          moTa: res.moTa,
+          soLuongTon: res.soLuongTon,
+          giaNhap: res.giaNhap,
+          giaBan: res.giaBan,
+          trangThai: res.trangThai,
+        });
       } else {
-        toast.error("Add ctsp failed!");
+        toast.error("Sửa thất bại!");
       }
     }
   };
@@ -245,7 +256,7 @@ const ModelUpdate = (props) => {
       >
         <Modal.Header closeButton>
           <Modal.Title id="example-custom-modal-styling-title">
-            ADD NEW
+            Update
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -269,10 +280,13 @@ const ModelUpdate = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectCL}
-                      defaultValue={listCL.length > 0 ? listCL[0].idCl : null}
                     >
                       {listCL.map((option, index) => (
-                        <option key={index} value={option.idCl}>
+                        <option
+                          key={index}
+                          value={option.idCl}
+                          selected={chatLieu === option.idCl}
+                        >
                           {option.tenCl}
                         </option>
                       ))}
@@ -288,10 +302,14 @@ const ModelUpdate = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectMS}
-                      defaultValue={listMS.length > 0 ? listMS[0].idMs : null}
                     >
                       {listMS.map((option) => (
-                        <option value={option.idMs}>{option.tenMs}</option>
+                        <option
+                          value={option.idMs}
+                          selected={mauSac === option.idMs}
+                        >
+                          {option.tenMs}
+                        </option>
                       ))}
                     </Form.Select>
                   </Form.Group>
@@ -302,12 +320,14 @@ const ModelUpdate = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectSize}
-                      defaultValue={
-                        listSize.length > 0 ? listSize[0].idSize : null
-                      }
                     >
                       {listSize.map((option) => (
-                        <option value={option.idSize}>{option.tenSize}</option>
+                        <option
+                          value={option.idSize}
+                          selected={size === option.idSize}
+                        >
+                          {option.tenSize}
+                        </option>
                       ))}
                     </Form.Select>
                   </Form.Group>
@@ -321,10 +341,14 @@ const ModelUpdate = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectSP}
-                      defaultValue={listSP.length > 0 ? listSP[0].idSp : null}
                     >
                       {listSP.map((option) => (
-                        <option value={option.idSp}>{option.tenSp}</option>
+                        <option
+                          value={option.idSp}
+                          selected={sanPham === option.idSp}
+                        >
+                          {option.tenSp}
+                        </option>
                       ))}
                     </Form.Select>
                   </Form.Group>
@@ -335,12 +359,14 @@ const ModelUpdate = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectLoaiSP}
-                      defaultValue={
-                        listLSP.length > 0 ? listLSP[0].idLoaisp : null
-                      }
                     >
                       {listLSP.map((option) => (
-                        <option value={option.idLoaisp}>{option.tenLsp}</option>
+                        <option
+                          value={option.idLoaisp}
+                          selected={loaiSP === option.idLoaisp}
+                        >
+                          {option.tenLsp}
+                        </option>
                       ))}
                     </Form.Select>
                   </Form.Group>
@@ -354,10 +380,14 @@ const ModelUpdate = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectXX}
-                      defaultValue={listXX.length > 0 ? listXX[0].idXx : null}
                     >
                       {listXX.map((option) => (
-                        <option value={option.idXx}>{option.tenNuoc}</option>
+                        <option
+                          value={option.idXx}
+                          selected={xuatXu === option.idXx}
+                        >
+                          {option.tenNuoc}
+                        </option>
                       ))}
                     </Form.Select>
                   </Form.Group>
@@ -368,12 +398,12 @@ const ModelUpdate = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectTayAo}
-                      defaultValue={
-                        listTayAo.length > 0 ? listTayAo[0].idTayAo : null
-                      }
                     >
                       {listTayAo.map((option) => (
-                        <option value={option.idTayAo}>
+                        <option
+                          value={option.idTayAo}
+                          selected={tayAo === option.idTayAo}
+                        >
                           {option.loaiTayAo}
                         </option>
                       ))}
@@ -389,12 +419,14 @@ const ModelUpdate = (props) => {
                     <Form.Select
                       aria-label="Default select example"
                       onChange={selectCoAo}
-                      defaultValue={
-                        listCoAo.length > 0 ? listCoAo[0].idCoAo : null
-                      }
                     >
                       {listCoAo.map((option) => (
-                        <option value={option.idCoAo}>{option.loaiCoAo}</option>
+                        <option
+                          value={option.idCoAo}
+                          selected={coAo === option.idCoAo}
+                        >
+                          {option.loaiCoAo}
+                        </option>
                       ))}
                     </Form.Select>
                   </Form.Group>
@@ -446,7 +478,7 @@ const ModelUpdate = (props) => {
                         className="form-check-input"
                         type="radio"
                         name="flexRadioDefault"
-                        defaultChecked={trangThai}
+                        checked={Number(trangThai) === 1}
                         value={"1"}
                         onChange={(event) => setTrangThai(event.target.value)}
                       />
@@ -462,7 +494,7 @@ const ModelUpdate = (props) => {
                         className="form-check-input"
                         type="radio"
                         name="flexRadioDefault"
-                        defaultChecked={trangThai}
+                        checked={Number(trangThai) === 0}
                         value={"0"}
                         onChange={(event) => setTrangThai(event.target.value)}
                       />
@@ -482,8 +514,8 @@ const ModelUpdate = (props) => {
                       <Form.Control
                         as="textarea"
                         rows={3}
-                        value={mota}
-                        onChange={(event) => setMota(event.target.value)}
+                        value={moTa}
+                        onChange={(event) => setMoTa(event.target.value)}
                       />
                     </div>
                   </Form.Group>
@@ -496,7 +528,7 @@ const ModelUpdate = (props) => {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={() => handleSave()}>
+          <Button variant="primary" onClick={() => handleUpdate()}>
             Save Changes
           </Button>
         </Modal.Footer>
