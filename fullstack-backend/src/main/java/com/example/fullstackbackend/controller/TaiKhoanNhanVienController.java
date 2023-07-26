@@ -73,7 +73,7 @@ public class TaiKhoanNhanVienController {
 
     @PutMapping("update/{id}")
     public TaiKhoanNhanVien update(@PathVariable("id") Integer id,@RequestBody TaiKhoanNhanVien taiKhoanNhanVien, BindingResult bindingResult) {
-        taiKhoanNhanVien.setIdTaiKhoan(id);
+//        taiKhoanNhanVien.setIdTaiKhoan(id);
         if (bindingResult.hasErrors()) {
             return null;
         } else {

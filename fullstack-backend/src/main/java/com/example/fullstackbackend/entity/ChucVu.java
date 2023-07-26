@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 
 @Entity
 @AllArgsConstructor
@@ -32,10 +31,9 @@ public class ChucVu {
     private String tenCv;
 
     @Column(name = "ngay_tao")
-    private LocalDate ngayTao;
+    private java.sql.Date ngayTao;
 
     @Column(name = "trang_thai")
     private Integer trangThai;
-
 
 }

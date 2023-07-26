@@ -36,6 +36,6 @@ public class XuatXu {
 
     @NotNull(message = "Not Blank")
     @Column(name = "tinh_trang")
-    private Integer trangThai;
+    private Integer tinhTrang;
 
 }

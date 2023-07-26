@@ -24,9 +24,10 @@ import lombok.Setter;
 public class Images {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_images")
     private Integer idImages;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_ctsp", referencedColumnName = "id_ctsp")
     private ChiTietSanPham idCtsp;
 

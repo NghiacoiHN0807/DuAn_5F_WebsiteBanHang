@@ -1,2 +1,4 @@
-package com.example.fullstackbackend.entity;public class TaiKhoanKhachHang {
+package com.example.fullstackbackend.entity;
+
+public class TaiKhoanKhachHang {
 }

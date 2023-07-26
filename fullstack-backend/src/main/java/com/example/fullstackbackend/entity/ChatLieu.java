@@ -30,6 +30,6 @@ public class ChatLieu {
     private String tenCl;
 
     @Column(name = "tinh_trang")
-    private Integer trangThai;
+    private Integer tinhTrang;
 
 }

@@ -31,6 +31,6 @@ public class SanPham {
     private String tenSp;
 
     @Column(name = "tinh_trang")
-    private Integer trangThai;
+    private Integer tinhTrang;
 
 }
