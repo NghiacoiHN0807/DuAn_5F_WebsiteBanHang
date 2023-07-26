@@ -13,26 +13,17 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "tai_khoan")
-<<<<<<<< HEAD:fullstack-backend/src/main/java/com/example/fullstackbackend/entity/TaiKhoanNhanVien.java
 public class TaiKhoanNhanVien {
-========
-
-public class TaiKhoanKhachHang {
->>>>>>>> origin/nhanh_khach_hang_By_Phuc:fullstack-backend/src/main/java/com/example/fullstackbackend/entity/TaiKhoanKhachHang.java
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tai_khoan")
     private Integer idTaiKhoan;
 
-<<<<<<<< HEAD:fullstack-backend/src/main/java/com/example/fullstackbackend/entity/TaiKhoanNhanVien.java
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_chuc_vu", referencedColumnName = "id_cv")
     private ChucVu idChucVu;
 
     @Column(name = "ma_tai_khoan")
-========
-    @Column(name = "ma_tai_khoan", unique = true)
->>>>>>>> origin/nhanh_khach_hang_By_Phuc:fullstack-backend/src/main/java/com/example/fullstackbackend/entity/TaiKhoanKhachHang.java
     private String maTaiKhoan;
 
     @Column(name = "ho")
