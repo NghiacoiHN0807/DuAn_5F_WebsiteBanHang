@@ -17,6 +17,7 @@ import { ToastContainer } from "react-toastify";
 import HeaderADM from "./layout/Header-ADM";
 import FooterADM from "./layout/Footer-ADM";
 import "./scss/App-ADM.scss";
+import TableTaiKhoanKH from "./components/TaiKhoanKhachHang/TableTKKhachHang";
 
 function AppADM() {
   return (
@@ -31,6 +32,7 @@ function AppADM() {
               <HeaderADM />
               <div className="my-3">
                 <Routes>
+<<<<<<< HEAD
                   <Route path="/home" element={<Home />} />
                   <Route
                     path="/quan-ly-san-pham/chat-lieu"
@@ -67,6 +69,11 @@ function AppADM() {
                   />
                   <Route path="/table-chucVu" element={<ViewChucVu />} />
                   <Route path="/table-taiKhoan" element={<TableTKNhanVien />} />
+=======
+                  <Route path="/home" element={<QLSP />} />
+                  <Route path="/table-xuatXu" element={<TableXuatXu />} />
+                  <Route path="/table-taiKhoanKH" element={<TableTaiKhoanKH />} />
+>>>>>>> origin/nhanh_khach_hang_By_Phuc
                 </Routes>
               </div>
             </Container>

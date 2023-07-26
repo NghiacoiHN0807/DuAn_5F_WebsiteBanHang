@@ -1,7 +1,7 @@
 import Nav from "react-bootstrap/Nav";
 import logo5F from "../assets/logo_5F.png";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { NavLink } from "react-router-dom";
+import {NavLink} from "react-router-dom";
 
 const Footer = (props) => {
   return (
@@ -25,8 +25,16 @@ const Footer = (props) => {
             >
               Chi tiết sản phẩm
             </NavLink>
+<<<<<<< HEAD
             <NavLink to="/quan-ly-san-pham/xuat-xu" className={"nav-link"}>
               Xuất xứ
+=======
+            <NavLink to="/table-taiKhoanKH" className={"nav-link"}>
+              Table Tai Khoan KH
+            </NavLink>
+            <NavLink to="/home" className={"nav-link"}>
+              Product details
+>>>>>>> origin/nhanh_khach_hang_By_Phuc
             </NavLink>
             <NavLink to="/quan-ly-san-pham/chat-lieu" className={"nav-link"}>
               Chất liệu
