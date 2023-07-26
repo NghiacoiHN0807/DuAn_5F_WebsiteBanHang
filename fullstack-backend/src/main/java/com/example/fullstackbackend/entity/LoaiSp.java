@@ -21,7 +21,7 @@ import lombok.Setter;
 public class LoaiSp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_lsp")
+    @Column(name = "id_loaisp")
     private Integer idLoaisp;
 
     @Column(name = "ma_lsp")
