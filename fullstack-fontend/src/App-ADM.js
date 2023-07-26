@@ -1,8 +1,6 @@
-<<<<<<< HEAD
 import TableXuatXu from "./components/TableXuatXu";
 import ViewChucVu from "./components/ViewChucVu";
 import TableTKNhanVien from "./components/TableTKNhanVien";
-=======
 import XuatXuMain from "./components/XuatXu/XuatXuMain";
 import CTSPMain from "./components/ChiTietSP/CTSPMain";
 import ChatLieuMain from "./components/ChatLieu/ChatLieuMain";
@@ -12,7 +10,6 @@ import MauSacMain from "./components/MauSac/MauSacMain";
 import OngTayAoMain from "./components/OngTayAo/OngTayAoMain";
 import SanPhamMain from "./components/SanPham/SanPhamMain";
 import SizeMain from "./components/Size/SizeMain";
->>>>>>> origin/vinhlt
 import Container from "react-bootstrap/Container";
 import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
@@ -34,13 +31,6 @@ function AppADM() {
               <HeaderADM />
               <div className="my-3">
                 <Routes>
-<<<<<<< HEAD
-                  <Route path="/home" element={<QLSP />} />
-                  <Route path="/table-xuatXu" element={<TableXuatXu />} />
-                  <Route path="/table-chucVu" element={<ViewChucVu />} />
-                  <Route path="/table-taiKhoan" element={<TableTKNhanVien />} />
-
-=======
                   <Route path="/home" element={<Home />} />
                   <Route
                     path="/quan-ly-san-pham/chat-lieu"
@@ -75,7 +65,8 @@ function AppADM() {
                     path="/quan-ly-san-pham/xuat-xu"
                     element={<XuatXuMain />}
                   />
->>>>>>> origin/vinhlt
+                  <Route path="/table-chucVu" element={<ViewChucVu />} />
+                  <Route path="/table-taiKhoan" element={<TableTKNhanVien />} />
                 </Routes>
               </div>
             </Container>
