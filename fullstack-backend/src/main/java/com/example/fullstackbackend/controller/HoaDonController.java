@@ -28,8 +28,18 @@ public class HoaDonController {
     private HoadonSevice hoadonSevice;
 
     @GetMapping("view-all-offline-invoice")
-    public Page<HoaDon> viewAll(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer size, @RequestParam("p") Optional<Integer> p) {
+    public Page<HoaDon> viewAll(@RequestParam(defaultValue = "0") Integer page,
+                                @RequestParam(defaultValue = "5") Integer size,
+                                @RequestParam("p") Optional<Integer> p) {
         Page<HoaDon> hoaDons = hoadonSevice.hoaDonOffline(p.orElse(page), size);
+        return hoaDons;
+    }
+
+    @GetMapping("view-all-online-invoice")
+    public Page<HoaDon> viewAllOnlineInvoice(@RequestParam(defaultValue = "0") Integer page,
+                                             @RequestParam(defaultValue = "5") Integer size,
+                                             @RequestParam("p") Optional<Integer> p) {
+        Page<HoaDon> hoaDons = hoadonSevice.hoaDonOnline(p.orElse(page), size);
         return hoaDons;
     }
 
@@ -44,7 +54,8 @@ public class HoaDonController {
 
     @GetMapping("detail/{id}")
     public HoaDon detail(@PathVariable("id") Integer id) {
-        HoaDon findHDCT = hoadonSevice.detail(id).orElseThrow(() -> new HoaDonChiTietNotFoundException(id));
+        HoaDon findHDCT = hoadonSevice.detail(id).
+                orElseThrow(() -> new HoaDonChiTietNotFoundException(id));
         return findHDCT;
     }
 
@@ -55,7 +66,7 @@ public class HoaDonController {
     }
 
     @PutMapping("update/{id}")
-    public HoaDon update(@RequestParam HoaDon newHD, @PathVariable("id") Integer id) {
+    public HoaDon update(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setIdTK(newHD.getIdTK());
             hoaDon.setMaHd(newHD.getMaHd());
@@ -80,7 +91,35 @@ public class HoaDonController {
         }).orElseThrow(() -> new HoaDonChiTietNotFoundException(id));
         return newHD1;
     }
+    @PutMapping("update-status/{id}")
+    public HoaDon updateStatus(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+            hoaDon.setTrangThai(newHD.getTrangThai());
+            return hoadonSevice.add(hoaDon);
+        }).orElseThrow(() -> new HoaDonChiTietNotFoundException(id));
+        return newHD1;
+    }
 
+    @PutMapping("update-payment/{id}")
+    public HoaDon updateThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+            hoaDon.setNgayThanhToan(newHD.getNgayThanhToan());
+            hoaDon.setTienDua(newHD.getTienDua());
+            hoaDon.setTrangThai(newHD.getTrangThai());
+            return hoadonSevice.add(hoaDon);
+        }).orElseThrow(() -> new HoaDonChiTietNotFoundException(id));
+        return newHD1;
+    }
+//    @PutMapping("update/{id}")
+//    public HoaDon update(@Valid @RequestBody HoaDon updateHD,
+//                         BindingResult bindingResult,
+//                         @PathVariable("id") Integer id) {
+//        if (bindingResult.hasErrors()) {
+//            return null;
+//        } else {
+//            return hoadonSevice.add(updateHD);
+//        }
+//    }
     @PutMapping("delete/{id}")
     public void delete(@PathVariable("id") Integer id) {
         if (!hoadonSevice.checkExists(id)) {

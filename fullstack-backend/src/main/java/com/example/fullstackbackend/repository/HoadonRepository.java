@@ -19,6 +19,9 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
     @Query(value = "SELECT x from HoaDon x where x.trangThai = 8 or x.trangThai = 9")
     Page<HoaDon> pageOfflineInvoice(Pageable pageable);
 
+    @Query(value = "SELECT x from HoaDon x where x.trangThai = 1 or x.trangThai = 2 or x.trangThai = 3 or x.trangThai = 4 or x.trangThai = 5")
+    Page<HoaDon> pageOnlineInvoice(Pageable pageable);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE HoaDon hd SET hd.trangThai= 10 WHERE hd.idHd=?1")

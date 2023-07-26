@@ -27,7 +27,7 @@ public class HinhThucThanhToan {
     @Column(name = "id_httt")
     private Integer idHttt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_hd", referencedColumnName = "id_hd")
     private HoaDon idHd;
 

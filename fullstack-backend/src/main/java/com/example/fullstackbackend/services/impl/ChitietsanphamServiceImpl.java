@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,10 +17,16 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamSevice {
 
     @Autowired
     private ChitietsanphamRepository chitietsanphamRepository;
+
     @Override
     public Page<ChiTietSanPham> chiTietSanPhamPage(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return chitietsanphamRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<ChiTietSanPham> findByProductName(String name) {
+        return chitietsanphamRepository.findByProductName(name);
     }
 
     @Override

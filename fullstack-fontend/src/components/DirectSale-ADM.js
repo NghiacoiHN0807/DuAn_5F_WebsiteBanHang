@@ -11,13 +11,14 @@ import { faDeleteLeft, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 const DireactSale = (props) => {
   const [listBill, setListBill] = useState([]);
   // Show Data On Tables
-  const [numberPages, setNumberPages] = useState([]);
+  const [numberPages, setNumberPages] = useState(0);
   const getListData = async (page) => {
     try {
       let res = await selectAllBill(page);
       console.log("Check res: ", res.content);
       setListBill(res.content);
-      setNumberPages(res.totalPages);
+
+      setNumberPages(Math.ceil(res.totalPages));
     } catch (error) {
       console.error("Error in list bill: ", error);
     }

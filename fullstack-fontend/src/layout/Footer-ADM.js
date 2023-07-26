@@ -33,7 +33,7 @@ const Footer = (props) => {
               Product details
             </NavLink>
           </NavDropdown>
-          <NavLink to="/home" className={"nav-link"}>
+          <NavLink to="/order-management" className={"nav-link"}>
             Online sales
           </NavLink>
           <NavLink to="/direct-sale" className={"nav-link"}>

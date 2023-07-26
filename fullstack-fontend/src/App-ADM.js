@@ -8,6 +8,9 @@ import HeaderADM from "./layout/Header-ADM";
 import FooterADM from "./layout/Footer-ADM";
 import "./scss/App-ADM.scss";
 import CartBillADM from "./components/Cart-Bill-ADM";
+import OrderManagement from "./components/OrderManagement";
+import OrderManagementTimeline from "./components/OrderManagement-Timeline";
+import TimeLine2 from "./components/TimeLine2";
 
 function AppADM() {
   return (
@@ -26,6 +29,15 @@ function AppADM() {
                   <Route path="/table-xuatXu" element={<TableXuatXu />} />
                   <Route path="/direct-sale" element={<DireactSale />} />
                   <Route path="/create-bill/:id" element={<CartBillADM />} />
+                  <Route
+                    path="/order-management"
+                    element={<OrderManagement />}
+                  />
+                  <Route
+                    path="/order-management-timeline/:id"
+                    element={<OrderManagementTimeline />}
+                  />
+                  <Route path="/timeline" element={<TimeLine2 />} />
                 </Routes>
               </div>
             </Container>

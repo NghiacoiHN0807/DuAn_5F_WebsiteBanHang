@@ -12,7 +12,14 @@ import {
 } from "../services/DirectSaleSevice";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDeleteLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faDeleteLeft,
+  faClipboardList,
+  faCartPlus,
+  faTrashCan,
+} from "@fortawesome/free-solid-svg-icons";
+import Null from "../forms/Null";
+import ModalUpdateProductOnCart from "../forms/Modals-Update-Product-Cart";
 
 const CartBillADM = (props) => {
   //Get IdHd on http
@@ -65,6 +72,21 @@ const CartBillADM = (props) => {
     selectDataCart();
     toast.success("Delete the product is successfully");
   };
+  //Update classify on the cart
+  const [showModalsUpdate, setShowModalsUpdate] = useState(false);
+  const [itemUpdateClassify, setItemUpdateClassify] = useState({});
+  const handleUpdateClassify = (item) => {
+    setShowModalsUpdate(true);
+    console.log("Check item: ", item);
+    if (item.length < 0) {
+      return null;
+    } else {
+      setItemUpdateClassify(item);
+    }
+  };
+  const handleCloseUpdateClassify = () => {
+    setShowModalsUpdate(false);
+  };
   return (
     <>
       <p>Bill Code: {listHD.maHd}</p>
@@ -72,9 +94,10 @@ const CartBillADM = (props) => {
         <Button
           onClick={() => handleAddProduct()}
           className="button-checkout"
-          variant="success"
+          variant="outline-success"
         >
-          + Add new product
+          <FontAwesomeIcon icon={faCartPlus} size="lg" />
+          Add Product
         </Button>{" "}
       </div>
       <div className="row customer-information">
@@ -86,14 +109,15 @@ const CartBillADM = (props) => {
                 <Form.Check aria-label="option 1" />
               </th>
               <th>Product</th>
-              <th>Quantity</th>
+              <th>Classify</th>
               <th>Price</th>
+              <th>Quantity</th>
+              <th>Total</th>
               <th>Function</th>
             </tr>
           </thead>
           <tbody>
-            {DataCart &&
-              DataCart.length > 0 &&
+            {DataCart && DataCart.length > 0 ? (
               DataCart.map((item, index) => {
                 return (
                   <tr key={`hoaDonChiTiet-${index}`}>
@@ -101,6 +125,18 @@ const CartBillADM = (props) => {
                       <Form.Check aria-label="option 1" />
                     </td>
                     <td>{item.idCtsp.idSp.tenSp}</td>
+                    <td>
+                      <Button
+                        onClick={() => handleUpdateClassify(item)}
+                        size="sm"
+                        variant="outline-dark"
+                      >
+                        Size: {item.idCtsp.idSize.tenSize} \ Color:{" "}
+                        {item.idCtsp.idMs.tenMs}
+                      </Button>
+                    </td>
+
+                    <td>{item.idCtsp.giaBan}</td>
                     <td>{item.soLuong}</td>
                     <td>{item.donGia}</td>
                     <td>
@@ -114,12 +150,34 @@ const CartBillADM = (props) => {
                     </td>
                   </tr>
                 );
-              })}
+              })
+            ) : (
+              <tr>
+                <Null />
+              </tr>
+            )}
           </tbody>
         </Table>
+        <div className="col-2">
+          <Button variant="outline-danger">
+            <FontAwesomeIcon icon={faTrashCan} size="sm" />
+          </Button>
+        </div>
+        <h6 className="col-2">Subtotal = {listHD.thanhTien}</h6>
       </div>
       <div className="row customer-information">
-        <h5>Customer Information</h5>
+        <div className="row">
+          <div className="col-5">
+            <h5>Customer Information</h5>
+          </div>
+          <div className="col-7 button-list-personal">
+            <Button size="sm" variant="outline-info">
+              <FontAwesomeIcon icon={faClipboardList} size="lg" />
+              List Persional
+            </Button>
+          </div>
+        </div>
+
         <Form>
           <Form.Label>Name</Form.Label>
           <Form.Control type="text" placeholder="Normal text" />
@@ -146,6 +204,11 @@ const CartBillADM = (props) => {
         show={showModalsAdd}
         selectDataCart={selectDataCart}
         handleClose={handleClose}
+      />
+      <ModalUpdateProductOnCart
+        show={showModalsUpdate}
+        handleClose={handleCloseUpdateClassify}
+        itemUpdateClassify={itemUpdateClassify}
       />
     </>
   );

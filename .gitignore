@@ -1,12 +1,11 @@
 # dependencies
-/node_modules
+fullstack-fontend/node_modules
 /.pnp
 .pnp.js
 *.pack
 .cache
-/node_modules/.cache/default-development/
-/node_modules/.cache/default-development/*.pack
-
+fullstack-fontend/node_modules/.cache/default-development/
+/fullstack-fontend/node_modules/.cache/default-development/*.pack
 # testing
 /coverage
 

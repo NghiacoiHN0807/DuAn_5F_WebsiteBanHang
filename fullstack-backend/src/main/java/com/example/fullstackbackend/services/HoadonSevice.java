@@ -13,6 +13,7 @@ public interface HoadonSevice {
     Page<HoaDon> hoaDonPage(Integer pageNo, Integer size);
 
     Page<HoaDon> hoaDonOffline(Integer pageNo, Integer size);
+    Page<HoaDon> hoaDonOnline(Integer pageNo, Integer size);
 
     HoaDon add(HoaDon add);
 
