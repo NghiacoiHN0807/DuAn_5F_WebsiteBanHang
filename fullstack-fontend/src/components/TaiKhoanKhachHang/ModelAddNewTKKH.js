@@ -8,7 +8,7 @@ import Form from "react-bootstrap/Form";
 
 const ModelAddNewTKKH = (props) => {
     const {show, handleClose} = props;
-    // const [setMaTaiKhoan, getMaTaiKhoan] = useState("");
+    const [setMaTaiKhoan, getMaTaiKhoan] = useState("");
     const [setHo, getHo] = useState("");
     const [setTen, getTen] = useState("");
     const [setSdt, getSdt] = useState("");
@@ -22,7 +22,7 @@ const ModelAddNewTKKH = (props) => {
         //And now add to DB
         //Check null
         if (
-            // getMaTaiKhoan("") &&
+            getMaTaiKhoan("") &&
             getHo("") && getTen("") && getSdt("") && getEmail("") && getMatKhau("") && getTrangThai("")) {
             handleClose();
             toast.warning("Ma, Ten Or Trang Thai is null");
@@ -33,7 +33,7 @@ const ModelAddNewTKKH = (props) => {
             // console.log("Check res: ", res);
             if (res && res.idTaiKhoan) {
                 handleClose();
-                // getMaTaiKhoan("");
+                getMaTaiKhoan("");
                 getHo("");
                 getTen("");
                 getSdt("");
@@ -63,16 +63,16 @@ const ModelAddNewTKKH = (props) => {
                     <Form>
                         <Row>
                             <Col>
-                                {/*<div className="mb-3">*/}
-                                {/*    <label className="form-label">Mã Tài Khoản</label>*/}
-                                {/*    <Form.Control*/}
-                                {/*        className="mb-3"*/}
-                                {/*        value={setMaTaiKhoan}*/}
-                                {/*        onChange={(event) => getMaTaiKhoan(event.target.value)}*/}
-                                {/*        type="text"*/}
+                                <div className="mb-3">
+                                    <label className="form-label">Mã Tài Khoản</label>
+                                    <Form.Control
+                                        className="mb-3"
+                                        value={setMaTaiKhoan}
+                                        onChange={(event) => getMaTaiKhoan(event.target.value)}
+                                        type="text"
 
-                                {/*    />*/}
-                                {/*</div>*/}
+                                    />
+                                </div>
                                 <div className="mb-3">
                                     <label className="form-label">Họ</label>
                                     <Form.Control

@@ -8,9 +8,7 @@ import java.util.Optional;
 
 public interface DiaChiSevice {
 
-    List<DiaChi> getAll();
-
-    Page<DiaChi> Page(Integer pageNo, Integer size);
+    Page<DiaChi> getAll(String maTaiKhoan,Integer pageNo, Integer size);
 
     DiaChi add(DiaChi add);
 

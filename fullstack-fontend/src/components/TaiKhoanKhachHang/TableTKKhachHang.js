@@ -6,7 +6,9 @@ import ModelAddNewTKKH from "./ModelAddNewTKKH";
 import ModelConfirmTKKH from "./ModelConfirmTKKH";
 import ModalUpdate from "./ModelUpdateTKKH";
 
+
 const TableTaiKhoanKH = (props) => {
+
 
     //Set value for table
     const [listTaiKhoanKH, setlistTaiKhoanKH] = useState([]);
@@ -29,7 +31,7 @@ const TableTaiKhoanKH = (props) => {
         // console.log("Data", res);
         if (res && res.content) {
             setlistTaiKhoanKH(res.content);
-            // console.log("Data", res);
+            console.log(res);
             setTotalPages(res.totalPages);
         }
     };
@@ -60,8 +62,13 @@ const TableTaiKhoanKH = (props) => {
         setIsShowModalUpdate(true);
     };
 
+    const handleDiaChi = (TK) => {
+        setDataTaiKhoanKH(TK);
+        localStorage.setItem('TK',JSON.stringify(TK));
+        window.location.href = '/table-diaChi';
+    };
 
-    // console.log(listTaiKhoanKH);
+
     return (
         <>
             <div className="my-3 add-new">
@@ -83,6 +90,7 @@ const TableTaiKhoanKH = (props) => {
                     <th>Email</th>
                     {/*<th>Mat Khau</th>*/}
                     <th>Trang Thai</th>
+                    <th>Dia Chi</th>
                     <th>Function</th>
                 </tr>
                 </thead>
@@ -99,6 +107,14 @@ const TableTaiKhoanKH = (props) => {
                                 <td>{item.email}</td>
                                 {/*<td>{item.matKhau}</td>*/}
                                 <td>{item.trangThai === 1 ? 'Hoat Dong' : 'Ngung Hoat Dong'}</td>
+                                <td>
+                                    <button onClick={() => handleDiaChi(item)}
+                                            type="button"
+                                            className="btn btn-outline-danger">
+                                        Dia Chi
+                                    </button>
+
+                                </td>
                                 <td>
                                     <button onClick={() => handleDelete(item)}
                                             type="button"
@@ -156,6 +172,7 @@ const TableTaiKhoanKH = (props) => {
                 isDataTaiKhoanKH={isDataTaiKhoanKH}
                 handleUpdateTable={handleUpdateTable}
             />
+
 
         </>
     );

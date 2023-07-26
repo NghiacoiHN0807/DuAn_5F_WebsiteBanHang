@@ -23,7 +23,7 @@ const ModalUpdate = (props) => {
             toast.warning("Mã hoặc tên không được để trống!");
         } else {
             let res = await postUpdateTaiKhoanKhachHang(idTaiKhoan,maTaiKhoan,ho, ten, sdt, email,matKhau,trangThai);
-            console.log("check", res);
+            // console.log("check", res);
             if (res) {
                 handleClose();
                 toast.success("Sửa thành công!");

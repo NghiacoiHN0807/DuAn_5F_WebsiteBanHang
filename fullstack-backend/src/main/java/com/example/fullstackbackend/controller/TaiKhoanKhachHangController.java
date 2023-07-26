@@ -1,6 +1,6 @@
 package com.example.fullstackbackend.controller;
 
-import com.example.fullstackbackend.entity.TaiKhoan;
+import com.example.fullstackbackend.entity.TaiKhoanKhachHang;
 import com.example.fullstackbackend.exception.TaiKhoanKHNotFoundException;
 import com.example.fullstackbackend.services.TaiKhoanKhachHangSevice;
 import jakarta.validation.Valid;
@@ -19,25 +19,25 @@ public class TaiKhoanKhachHangController {
     private TaiKhoanKhachHangSevice TaiKhoanKhachHangKHSevice;
 
     @GetMapping("view-all")
-    public Page<TaiKhoan> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                  @RequestParam(defaultValue = "5") Integer size,
-                                  @RequestParam("p") Optional<Integer> p) {
+    public Page<TaiKhoanKhachHang> viewAll(@RequestParam(defaultValue = "0") Integer page,
+                                           @RequestParam(defaultValue = "5") Integer size,
+                                           @RequestParam("p") Optional<Integer> p) {
 
         return TaiKhoanKhachHangKHSevice.Page(p.orElse(page), size);
     }
 
     @PostMapping("add")
-    public TaiKhoan add(@Valid @RequestBody TaiKhoan TaiKhoan,
-                        BindingResult bindingResult) {
+    public TaiKhoanKhachHang add(@Valid @RequestBody TaiKhoanKhachHang TaiKhoanKhachHang,
+                                 BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
-            return TaiKhoanKhachHangKHSevice.add(TaiKhoan);
+            return TaiKhoanKhachHangKHSevice.add(TaiKhoanKhachHang);
         }
     }
 
     @GetMapping("detail/{id}")
-    public Optional<TaiKhoan> detail(@PathVariable("id") Integer id
+    public Optional<TaiKhoanKhachHang> detail(@PathVariable("id") Integer id
     ) {
 
         return TaiKhoanKhachHangKHSevice.detail(id);
@@ -55,11 +55,11 @@ public class TaiKhoanKhachHangController {
 
 
     @PostMapping("update")
-    public TaiKhoan update(@RequestBody TaiKhoan TaiKhoan, BindingResult bindingResult) {
+    public TaiKhoanKhachHang update(@RequestBody TaiKhoanKhachHang TaiKhoanKhachHang, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
-            return TaiKhoanKhachHangKHSevice.update(TaiKhoan);
+            return TaiKhoanKhachHangKHSevice.update(TaiKhoanKhachHang);
         }
     }
 }

@@ -14,14 +14,13 @@ import lombok.Setter;
 @Setter
 @Table(name = "tai_khoan")
 
-public class TaiKhoan {
+public class TaiKhoanKhachHang {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tai_khoan")
     private Integer idTaiKhoan;
 
     @Column(name = "ma_tai_khoan", unique = true)
-
     private String maTaiKhoan;
 
     @Column(name = "ho")

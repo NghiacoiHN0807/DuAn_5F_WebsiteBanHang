@@ -2,12 +2,14 @@ package com.example.fullstackbackend.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 @Table(name = "dia_chi")
 public class DiaChi {
     @Id
@@ -17,7 +19,7 @@ public class DiaChi {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ma_tai_khoan", referencedColumnName = "ma_tai_khoan")
-    private TaiKhoan maTaiKhoan;
+    private TaiKhoanKhachHang maTaiKhoanKhachHang;
 
     @Size(max = 255)
     @Column(name = "dia_chi_cu_the")
