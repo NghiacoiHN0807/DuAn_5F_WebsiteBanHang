@@ -20,6 +20,9 @@ const addPayment = (idHd, hinhThuc, moTa, trangThai) => {
     trangThai,
   });
 };
+const getListHTTT = (idHd) => {
+  return custom.get(`/hinh-thuc-thanh-toan/view-all-list/${idHd}`);
+};
 const listHTTTByID = (idHd) => {
   return custom.get(`/hoa-don-chi-tiet/detail-get-one/${idHd}`);
 };
@@ -29,4 +32,5 @@ export {
   getDetailHDCT,
   addPayment,
   updatePayment,
+  getListHTTT,
 };

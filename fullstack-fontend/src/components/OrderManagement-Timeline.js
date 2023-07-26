@@ -6,6 +6,7 @@ import { Button } from "@mui/material";
 import { Badge } from "react-bootstrap";
 import {
   getDetailHDCT,
+  getListHTTT,
   updateStatusBill,
 } from "../services/OrderManagementTimeLine";
 import { toast } from "react-toastify";
@@ -30,6 +31,7 @@ import Grid from "@material-ui/core/Grid";
 import Timeline from "../MappingTimeLine/Timeline";
 import TimelineEvent from "../MappingTimeLine/TimelineEvent";
 import withStyles from "@material-ui/core/styles/withStyles";
+import Null from "../forms/Null";
 
 const styles = {
   container: {
@@ -76,7 +78,16 @@ const OrderManagementTimeline = ({ classes }) => {
   const handleNextClick = () => {
     setActiveIndex((prevIndex) => Math.min(prevIndex + 1, 5));
   };
-
+  //Select the payment history
+  const [listPayment, setListPayment] = useState([]);
+  const getListPayment = useCallback(async () => {
+    let res = await getListHTTT(idHdParam);
+    console.log("getListPayment: ", res);
+    setListPayment(res);
+  }, [idHdParam]);
+  useEffect(() => {
+    getListPayment();
+  }, [getListPayment]);
   //Handle click Confirm
   const handleConfirm = async () => {
     try {
@@ -87,7 +98,6 @@ const OrderManagementTimeline = ({ classes }) => {
       console.error(error);
     }
   };
-
   //Edit show modals
   const [showModalsAdd, setShowModalAdd] = useState(false);
   const handleClose = () => {
@@ -249,7 +259,47 @@ const OrderManagementTimeline = ({ classes }) => {
             </Button>
           </div>
         </div>
-        <div className="row row-botton">HOHO</div>
+        <div className="row row-botton">
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Bill Code</TableCell>
+                  <TableCell align="right">Date</TableCell>
+                  <TableCell align="right">Pay&nbsp;($)</TableCell>
+                  <TableCell align="right">Payment Method</TableCell>
+                  <TableCell align="right">Description</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {listPayment && listPayment.length > 0 ? (
+                  listPayment.map((item, index) => (
+                    <TableRow
+                      key={index}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell component="th" scope="row">
+                        {item.idHd.maHd}
+                      </TableCell>
+                      <TableCell align="right">
+                        {item.idHd.ngayThanhToan}
+                      </TableCell>
+                      <TableCell align="right">{item.idHd.tienDua}</TableCell>
+                      <TableCell align="right">{item.hinhThuc}</TableCell>
+                      <TableCell align="right">{item.moTa}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center">
+                      <Null />
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
       </div>
       <div className="row-order-management-timeline">
         <div className="row row-top">

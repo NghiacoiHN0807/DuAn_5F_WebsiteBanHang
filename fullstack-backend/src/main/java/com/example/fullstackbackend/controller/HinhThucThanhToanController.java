@@ -35,7 +35,7 @@ public class HinhThucThanhToanController {
 
     @GetMapping("view-all-list/{id}")
     public List<HinhThucThanhToan> viewAllList(@PathVariable("id") Integer id) {
-        List<HinhThucThanhToan> HinhThucThanhToans = HinhThucThanhToanSevice.detail(id);
+        List<HinhThucThanhToan> HinhThucThanhToans = HinhThucThanhToanSevice.detailByIdHd(id);
         return HinhThucThanhToans;
     }
 

@@ -15,7 +15,7 @@ import java.util.Optional;
 public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanSevice {
 
     @Autowired
-    private HinhThucThanhToanRepository HinhThucThanhToanRepository;
+    private HinhThucThanhToanRepository hinhThucThanhToanRepository;
 
     @Override
     public List<HinhThucThanhToan> getAll() {
@@ -30,17 +30,17 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanSevice {
 
     @Override
     public HinhThucThanhToan add(HinhThucThanhToan add) {
-        return HinhThucThanhToanRepository.save(add);
+        return hinhThucThanhToanRepository.save(add);
     }
 
     @Override
     public void delete(Integer id) {
-        HinhThucThanhToanRepository.deleteById(id);
+        hinhThucThanhToanRepository.deleteById(id);
     }
 
     @Override
     public Boolean checkExists(Integer id) {
-        return HinhThucThanhToanRepository.existsById(id);
+        return hinhThucThanhToanRepository.existsById(id);
     }
 
     @Override
@@ -49,8 +49,8 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanSevice {
     }
 
     @Override
-    public List<HinhThucThanhToan> detail(Integer id) {
-
-        return HinhThucThanhToanRepository.findAllById(Collections.singleton(id));
+    public List<HinhThucThanhToan> detailByIdHd(Integer id) {
+        List<HinhThucThanhToan> getList = hinhThucThanhToanRepository.selectByIdHd(id);
+        return getList;
     }
 }

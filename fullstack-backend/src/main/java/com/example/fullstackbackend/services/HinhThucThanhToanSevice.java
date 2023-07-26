@@ -19,6 +19,6 @@ public interface HinhThucThanhToanSevice {
 
     HinhThucThanhToan update(HinhThucThanhToan update);
 
-    List<HinhThucThanhToan> detail(Integer id);
+    List<HinhThucThanhToan> detailByIdHd(Integer id);
 
 }

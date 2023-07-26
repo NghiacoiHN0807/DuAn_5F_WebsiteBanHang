@@ -110,9 +110,10 @@ const OrderManagement = () => {
           >
             <option value="All">All</option>
             <option value="1">Waiting for confirm</option>
-            <option value="2">Confirm payment</option>
+            <option value="2">Confirm information payment</option>
             <option value="3">Delivered to the carrier</option>
-            <option value="4">Item received</option>
+            <option value="4">Confirm payment</option>
+            <option value="5">Item received</option>
           </select>
         </div>
         <div className="col-6">
