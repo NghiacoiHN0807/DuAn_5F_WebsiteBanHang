@@ -3,6 +3,7 @@ package com.example.fullstackbackend.services;
 
 import com.example.fullstackbackend.entity.ChatLieu;
 import com.example.fullstackbackend.entity.ChucVu;
+import com.example.fullstackbackend.entity.TaiKhoanNhanVien;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -13,15 +14,12 @@ public interface ChucvuService {
 
     Page<ChucVu> phanTrang(Integer pageNo, Integer size);
 
-    Object add(ChucVu chucVu);
+    ChucVu add(ChucVu chucVu);
 
     void delete(Integer id);
 
-    Object update(ChucVu chucVu);
-
-    Optional<ChucVu> detail(Integer id);
-
+    ChucVu update(ChucVu chucVu);
     Boolean existsById(Integer id);
 
-    List<ChucVu> getByMa(String ma);
+    Optional<ChucVu> detail(Integer id);
 }

@@ -2,17 +2,24 @@ package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.ChucVu;
 import com.example.fullstackbackend.entity.GiamGia;
+import com.example.fullstackbackend.entity.TaiKhoanNhanVien;
+import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.ChucvuService;
+import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,60 +36,48 @@ public class ChucVuController {
     private ChucvuService chucvuService;
 
     @GetMapping("view-all")
-    Page<ChucVu> viewAll(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer size,
-                         @RequestParam("p") Optional<Integer> p) {
-        return chucvuService.phanTrang(page, size);
+    public Page<ChucVu> viewAll(@RequestParam(defaultValue = "0") Integer page,
+                                          @RequestParam(defaultValue = "5") Integer size,
+                                          @RequestParam("p") Optional<Integer> p) {
+
+        return chucvuService.phanTrang(p.orElse(page), size);
     }
 
     @PostMapping("add")
-    ResponseEntity<ResponObj> getAll(@RequestBody ChucVu chucVu) {
-        List<ChucVu> chucVus = chucvuService.getByMa(chucVu.getMaCv().trim());
-        if (chucVus.size() > 0) {
-            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(
-                    new ResponObj("Failed!", "khong tim thay ma!", "")
-            );
+    public ChucVu add(@Valid @RequestBody ChucVu chucVu,
+                                BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return null;
+        } else {
+            return chucvuService.add(chucVu);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ResponObj("Ok!", "Success!", chucvuService.add(chucVu))
-        );
     }
 
     @GetMapping("detail/{id}")
-    public String detail(@PathVariable("id") Integer id, @RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "5") Integer size, @RequestParam("p") Optional<Integer> p, Model model) {
-
-        ChucVu chucVu = new ChucVu();
-        model.addAttribute("add", chucVu);
-
-        Optional<ChucVu> chucVu1 = chucvuService.detail(id);
-        model.addAttribute("getOne", chucVu1.get());
-
-        Page<ChucVu> phanTrang = chucvuService.phanTrang(p.orElse(page), size);
-        model.addAttribute("xuatxus", phanTrang);
-
-        return "ChucVu";
+    public Optional<ChucVu> detail(@PathVariable("id") Integer id
+    ) {
+        return chucvuService.detail(id);
     }
 
-    @GetMapping("delete/{id}")
-    public String delete(@PathVariable("id") Integer id, Model model) {
-        chucvuService.delete(id);
-        return "redirect:/chuc-vu/view-all";
+    @DeleteMapping("delete/{id}")
+    public String delete(@PathVariable("id") Integer id) {
+        if (!chucvuService.existsById(id)) {
+            throw new xuatXuNotFoundException(id);
+        } else {
+            chucvuService.delete(id);
+            return "";
+        }
     }
 
-    @GetMapping("view-update/{id}")
-    public String viewUpdate(@PathVariable("id") Integer id, Model model) {
 
-        ChucVu chucVu = new ChucVu();
-        model.addAttribute("update", chucVu);
+    @PutMapping("update/{id}")
+    public ChucVu update(@PathVariable("id") Integer id,@RequestBody ChucVu chucVu, BindingResult bindingResult) {
+        chucVu.setIdCv(id);
+        if (bindingResult.hasErrors()) {
+            return null;
+        } else {
 
-        Optional<ChucVu> chucVu1 = chucvuService.detail(id);
-        model.addAttribute("getOne", chucVu1.get());
-
-        return "Update-ChucVu";
-    }
-
-    @PostMapping("update")
-    public String update(@ModelAttribute("update") ChucVu chucVu) {
-        chucvuService.update(chucVu);
-        return "redirect:/chuc-vu/view-all";
+            return chucvuService.update(chucVu);
+        }
     }
 }
