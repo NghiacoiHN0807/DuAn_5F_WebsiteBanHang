@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -18,9 +19,27 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     private GiamGiaChiTietRepository giamGiaChiTietRepository;
 
     @Override
-    public Page<GiamGiaChiTiet> getAll(Integer pageNo, Integer size, Integer trangThai) {
+    public Page<GiamGiaChiTiet> getAll(Integer pageNo, Integer size) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        return giamGiaChiTietRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<GiamGiaChiTiet> getAllByTrangThai(Integer pageNo, Integer size, Integer trangThai) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return giamGiaChiTietRepository.findAllByTrangThai(trangThai, pageable);
+    }
+
+    @Override
+    public Page<GiamGiaChiTiet> search(Integer pageNo, Integer size, String value) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        return giamGiaChiTietRepository.findAllByValue(value, pageable);
+    }
+
+    @Override
+    public Page<GiamGiaChiTiet> getAllByDate(Integer pageNo, Integer size, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        return giamGiaChiTietRepository.findAllByDate(ngayBatDau, ngayKetThuc, pageable);
     }
 
     @Override

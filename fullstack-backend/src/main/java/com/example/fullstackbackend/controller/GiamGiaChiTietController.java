@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @RestController
@@ -27,9 +28,30 @@ public class GiamGiaChiTietController {
     @Autowired
     private GiamGiaChiTietService giamGiaChiTietService;
 
+    @GetMapping("view-all")
+    Page<GiamGiaChiTiet> getAll(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
+                                @RequestParam(value = "size", defaultValue = "5") Integer size) {
+        return giamGiaChiTietService.getAll(pageNo, size);
+    }
+
+    @GetMapping("search")
+    Page<GiamGiaChiTiet> search(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
+                                @RequestParam(value = "size", defaultValue = "5") Integer size,
+                                @RequestParam("value") String value) {
+        return giamGiaChiTietService.search(pageNo, size, value);
+    }
+
+    @GetMapping("filter-date")
+    Page<GiamGiaChiTiet> filterDate(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
+                                    @RequestParam(value = "size", defaultValue = "5") Integer size,
+                                    @RequestParam("first") LocalDate first,
+                                    @RequestParam("last") LocalDate last) {
+        return giamGiaChiTietService.getAllByDate(pageNo, size, first, last);
+    }
+
     @GetMapping("views")
     Page<GiamGiaChiTiet> getAll(@RequestParam(value = "page", defaultValue = "0") Integer pageNo, @RequestParam(value = "size", defaultValue = "5") Integer size, @RequestParam(value = "trangThai", defaultValue = "0") Integer trangThai) {
-        return giamGiaChiTietService.getAll(pageNo, size, trangThai);
+        return giamGiaChiTietService.getAllByTrangThai(pageNo, size, trangThai);
     }
 
     @GetMapping("detail/{id}")

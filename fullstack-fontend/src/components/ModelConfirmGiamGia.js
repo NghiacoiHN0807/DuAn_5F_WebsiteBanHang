@@ -14,11 +14,11 @@ const ModelConfirm = (props) => {
     if (res.status === "Ok!") {
       toast.success("This data has been deleted");
       handleClose();
-      getGiamGia(0, 5, 0);
+      getGiamGia(0, 5);
     } else {
       toast.error("This data hasn't been deleted");
       handleClose();
-      getGiamGia(0, 5, 0);
+      getGiamGia(0, 5);
     }
   };
   return (

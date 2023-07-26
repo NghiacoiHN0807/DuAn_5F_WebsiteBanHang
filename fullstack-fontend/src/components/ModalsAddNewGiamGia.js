@@ -3,12 +3,13 @@ import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
-import { add, addGiamGia, getAllLoaiSp } from "../services/giamGiaService";
+import { add, addGiamGia, detailGiamGia, getAllLoaiSp } from "../services/giamGiaService";
 import GiamGiaAdd from "../scss/GiamGiaAdd.scss";
 import { useNavigate } from "react-router-dom";
 
 const ModelAddNewGiamGia = (props) => {
   const { show, handleClose } = props;
+
 
   let navigate = useNavigate();
 
@@ -49,6 +50,9 @@ const ModelAddNewGiamGia = (props) => {
   console.log(selected)
 
   const handleSave = async (e) => {
+
+    // const ObjGiamGia = await detailGiamGia();
+
     e.preventDefault();
     if (giamGia.maGiamGia.trim().length < 1 
     || giamGia.tenChuongTrinh.trim().length < 1 
@@ -100,7 +104,7 @@ const ModelAddNewGiamGia = (props) => {
                 <div className="col-sm-10">
                   <select className="form-select" aria-label="Default select example">
                     {loaiSps.map((loaisp) => {
-                      return <option key={loaisp.idLoaisp} value={loaisp.idLoaisp}>{loaisp.tenLsp}</option>;
+                      return <option key={loaisp.idLoaisp} value={loaisp}>{loaisp.tenLsp}</option>;
                     })}
                   </select>
                 </div>
