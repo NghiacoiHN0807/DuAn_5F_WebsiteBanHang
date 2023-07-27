@@ -9,6 +9,8 @@ import java.util.Optional;
 public interface ChitietsanphamService {
     Page<ChiTietSanPham> chiTietSP(Integer pageNo, Integer size);
 
+    List<ChiTietSanPham> findByProductName(String name);
+
     ChiTietSanPham add(ChiTietSanPham add);
 
     void delete(Integer id);
