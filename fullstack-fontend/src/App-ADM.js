@@ -11,6 +11,7 @@ import OngTayAoMain from "./components/OngTayAo/OngTayAoMain";
 import SanPhamMain from "./components/SanPham/SanPhamMain";
 import SizeMain from "./components/Size/SizeMain";
 import Container from "react-bootstrap/Container";
+import TableGiamGia from "./components/TableGiamGia";
 import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import { ToastContainer } from "react-toastify";
@@ -72,6 +73,7 @@ function AppADM() {
                     path="/table-taiKhoanKH"
                     element={<TableTaiKhoanKH />}
                   />
+                  <Route path="/quan-ly-giam-gia" element={<TableGiamGia/>}/>
                 </Routes>
               </div>
             </Container>
