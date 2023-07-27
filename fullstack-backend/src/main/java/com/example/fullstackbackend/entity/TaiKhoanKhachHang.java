@@ -1,12 +1,18 @@
 package com.example.fullstackbackend.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Table(name = "tai_khoan")
 
 public class TaiKhoanKhachHang {
     @Id
@@ -14,15 +20,7 @@ public class TaiKhoanKhachHang {
     @Column(name = "id_tai_khoan")
     private Integer idTaiKhoan;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_chuc_vu", referencedColumnName = "id_cv")
-    private ChucVu idChucVu;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_dia_chi", referencedColumnName = "id_dia_chi")
-    private DiaChi idDC;
-
-    @Column(name = "ma_tai_khoan")
+    @Column(name = "ma_tai_khoan", unique = true)
     private String maTaiKhoan;
 
     @Column(name = "ho")
@@ -42,4 +40,5 @@ public class TaiKhoanKhachHang {
 
     @Column(name = "trang_thai")
     private Integer trangThai;
+
 }

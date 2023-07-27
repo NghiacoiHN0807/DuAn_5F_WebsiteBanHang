@@ -1,52 +1,54 @@
 package com.example.fullstackbackend.entity;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-@Entity
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@Entity
+@NoArgsConstructor
+@Builder
+@AllArgsConstructor
 @Table(name = "dia_chi")
 public class DiaChi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_dia_chi")
-    private Integer idDiaChi;
+    @Column(name = "id_dia_chi", nullable = false)
+    private Integer id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ma_tai_khoan", referencedColumnName = "ma_tai_khoan")
+    private TaiKhoanKhachHang maTaiKhoanKhachHang;
+
+    @Size(max = 255)
     @Column(name = "dia_chi_cu_the")
     private String diaChiCuThe;
-
-    @Column(name = "phuong_xa")
-    private String phuongXa;
-
-    @Column(name = "quan_huyen")
-    private String quanHuyen;
-
-    @Column(name = "tinh_thanh")
-    private String tinhThanh;
 
     @Column(name = "loai_dia_chi")
     private Integer loaiDiaChi;
 
+    @Size(max = 255)
+    @Column(name = "phuong_xa")
+    private String phuongXa;
+
+    @Size(max = 255)
+    @Column(name = "quan_huyen")
+    private String quanHuyen;
+
+    @Size(max = 255)
     @Column(name = "sdt")
     private String sdt;
 
+    @Size(max = 255)
     @Column(name = "ten_nguoi_nhan")
     private String tenNguoiNhan;
 
+    @Size(max = 255)
+    @Column(name = "tinh_thanh")
+    private String tinhThanh;
+
     @Column(name = "trang_thai")
     private Integer trangThai;
-
 
 }
