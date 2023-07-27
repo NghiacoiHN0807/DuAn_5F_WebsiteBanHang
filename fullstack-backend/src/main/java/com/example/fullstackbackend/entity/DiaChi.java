@@ -48,4 +48,5 @@ public class DiaChi {
     @Column(name = "trang_thai")
     private Integer trangThai;
 
+
 }
