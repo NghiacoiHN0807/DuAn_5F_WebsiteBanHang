@@ -1,7 +1,7 @@
 package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
-import com.example.fullstackbackend.exception.HoaDonChiTietNotFoundException;
+import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.HoadonchitietSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +66,7 @@ public class HoaDonChiTietController {
                         hoaDonChiTiet.setSoLuong(newHDCT.getSoLuong());
                         hoaDonChiTiet.setDonGia(newHDCT.getDonGia());
                         return hoadonchitietSevice.add(hoaDonChiTiet);
-                    }).orElseThrow(() -> new HoaDonChiTietNotFoundException(id));
+                    }).orElseThrow(() -> new xuatXuNotFoundException(id));
         return newHD;
     }
     @PutMapping ("update-cart/{id}")
@@ -81,13 +81,13 @@ public class HoaDonChiTietController {
                             newHDCT.getSoLuong(),
                             newHDCT.getDonGia(),
                             id);
-                }).orElseThrow(() -> new HoaDonChiTietNotFoundException(id));
+                }).orElseThrow(() -> new xuatXuNotFoundException(id));
         return newHD;
     }
     @DeleteMapping("delete/{id}")
     public String delete(@PathVariable("id") Integer id) {
         if (!hoadonchitietSevice.checkExists(id)) {
-            throw new HoaDonChiTietNotFoundException(id);
+            throw new xuatXuNotFoundException(id);
         } else {
             hoadonchitietSevice.delete(id);
             return "";
