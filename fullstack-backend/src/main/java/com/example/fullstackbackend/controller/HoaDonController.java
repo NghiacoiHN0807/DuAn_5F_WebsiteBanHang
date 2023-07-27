@@ -1,7 +1,7 @@
 package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.HoaDon;
-import com.example.fullstackbackend.exception.HoaDonChiTietNotFoundException;
+import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.HoadonSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ public class HoaDonController {
     @GetMapping("detail/{id}")
     public HoaDon detail(@PathVariable("id") Integer id) {
         HoaDon findHDCT = hoadonSevice.detail(id).
-                orElseThrow(() -> new HoaDonChiTietNotFoundException(id));
+                orElseThrow(() -> new xuatXuNotFoundException(id));
         return findHDCT;
     }
 
@@ -88,7 +88,7 @@ public class HoaDonController {
             hoaDon.setNgayGiaoThanhCong(newHD.getNgayGiaoThanhCong());
             hoaDon.setTrangThai(newHD.getTrangThai());
             return hoadonSevice.add(hoaDon);
-        }).orElseThrow(() -> new HoaDonChiTietNotFoundException(id));
+        }).orElseThrow(() -> new xuatXuNotFoundException(id));
         return newHD1;
     }
     @PutMapping("update-status/{id}")
@@ -96,7 +96,7 @@ public class HoaDonController {
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTrangThai(newHD.getTrangThai());
             return hoadonSevice.add(hoaDon);
-        }).orElseThrow(() -> new HoaDonChiTietNotFoundException(id));
+        }).orElseThrow(() -> new xuatXuNotFoundException(id));
         return newHD1;
     }
 
@@ -107,7 +107,7 @@ public class HoaDonController {
             hoaDon.setTienDua(newHD.getTienDua());
             hoaDon.setTrangThai(newHD.getTrangThai());
             return hoadonSevice.add(hoaDon);
-        }).orElseThrow(() -> new HoaDonChiTietNotFoundException(id));
+        }).orElseThrow(() -> new xuatXuNotFoundException(id));
         return newHD1;
     }
 //    @PutMapping("update/{id}")
@@ -123,7 +123,7 @@ public class HoaDonController {
     @PutMapping("delete/{id}")
     public void delete(@PathVariable("id") Integer id) {
         if (!hoadonSevice.checkExists(id)) {
-            throw new HoaDonChiTietNotFoundException(id);
+            throw new xuatXuNotFoundException(id);
         } else {
             hoadonSevice.delete(id);
         }
