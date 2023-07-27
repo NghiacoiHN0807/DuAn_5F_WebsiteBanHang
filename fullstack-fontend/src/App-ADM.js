@@ -1,4 +1,3 @@
-import TableXuatXu from "./components/TableXuatXu";
 import ViewChucVu from "./components/ViewChucVu";
 import TableTKNhanVien from "./components/TableTKNhanVien";
 import XuatXuMain from "./components/XuatXu/XuatXuMain";
@@ -11,6 +10,7 @@ import OngTayAoMain from "./components/OngTayAo/OngTayAoMain";
 import SanPhamMain from "./components/SanPham/SanPhamMain";
 import SizeMain from "./components/Size/SizeMain";
 import Container from "react-bootstrap/Container";
+import TableGiamGia from "./components/TableGiamGia";
 import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import { ToastContainer } from "react-toastify";
@@ -18,6 +18,10 @@ import HeaderADM from "./layout/Header-ADM";
 import FooterADM from "./layout/Footer-ADM";
 import "./scss/App-ADM.scss";
 import TableTaiKhoanKH from "./components/TaiKhoanKhachHang/TableTKKhachHang";
+import CartBillADM from "./components/Cart-Bill-ADM";
+import OrderManagement from "./components/OrderManagement";
+import OrderManagementTimeline from "./components/OrderManagement-Timeline";
+import DireactSale from "./components/DirectSale-ADM";
 
 function AppADM() {
   return (
@@ -71,6 +75,17 @@ function AppADM() {
                   <Route
                     path="/table-taiKhoanKH"
                     element={<TableTaiKhoanKH />}
+                  />
+                  <Route path="/quan-ly-giam-gia" element={<TableGiamGia />} />
+                  <Route path="/direct-sale" element={<DireactSale />} />
+                  <Route path="/create-bill/:id" element={<CartBillADM />} />
+                  <Route
+                    path="/order-management"
+                    element={<OrderManagement />}
+                  />
+                  <Route
+                    path="/order-management-timeline/:id"
+                    element={<OrderManagementTimeline />}
                   />
                 </Routes>
               </div>
