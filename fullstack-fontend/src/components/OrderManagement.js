@@ -126,8 +126,8 @@ const OrderManagement = () => {
         </div>
       </div>
       <div className="row row-order-management">
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableContainer component={Paper} className="tableContainer">
+          <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>#</TableCell>
