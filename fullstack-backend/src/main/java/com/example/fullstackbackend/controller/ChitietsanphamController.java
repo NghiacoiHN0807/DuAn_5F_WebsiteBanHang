@@ -55,6 +55,12 @@ public class ChitietsanphamController {
         return chiTietSP;
     }
 
+    @GetMapping("select-Classify/{name}")
+    public List<ChiTietSanPham> findByProductName(@PathVariable("name") String name) {
+        List<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductName(name);
+        return chiTietSanPham;
+    }
+
     @PostMapping("add")
     public ChiTietSanPham add(@Valid @RequestBody ChiTietSanPham chiTietSanPham,
                         BindingResult bindingResult) {

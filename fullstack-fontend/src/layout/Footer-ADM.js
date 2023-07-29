@@ -1,69 +1,87 @@
 import Nav from "react-bootstrap/Nav";
-import logo5F from "../assets/logo_5F.png";
-import NavDropdown from "react-bootstrap/NavDropdown";
-import { NavLink } from "react-router-dom";
+import logoFB from "../assets/logo-facebook.png";
+import logoYTB from "../assets/logo-youtube.png";
+import logoIG from "../assets/logo-instargram.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 
 const Footer = (props) => {
   return (
     <>
       <footer>
-        <Nav defaultActiveKey="/home" className="flex-column">
-          <div className="logo-container">
-            <Nav.Link href="/home">
-              <img src={logo5F} alt="logo_5F" height={"50px"} />
-            </Nav.Link>
+        <div className="container nav-container-footer">
+          <div className="row">
+            <div className="col-2">
+              <Nav defaultActiveKey="/home" className="flex-column">
+                <Nav.Link eventKey="disabled" disabled className="nav-links">
+                  FIND OUR STORE
+                </Nav.Link>
+                <Nav.Link href="/home" className="nav-links">
+                  SIGN IN
+                </Nav.Link>
+                <Nav.Link eventKey="link-1" className="nav-links">
+                  SIGN UP
+                </Nav.Link>
+              </Nav>
+            </div>
+            <div className="col-2">
+              <Nav defaultActiveKey="/home" className="flex-column">
+                <Nav.Link eventKey="disabled" disabled className="nav-links">
+                  GET HELP
+                </Nav.Link>
+                <Nav.Link href="/home" className="nav-links">
+                  SEND FEEDBACK
+                </Nav.Link>
+                <Nav.Link eventKey="link-1" className="nav-links">
+                  Link
+                </Nav.Link>
+                <Nav.Link eventKey="link-2" className="nav-links">
+                  Link
+                </Nav.Link>
+              </Nav>
+            </div>
+            <div className="col-2">
+              <Nav defaultActiveKey="/home" className="flex-column">
+                {" "}
+                <Nav.Link eventKey="disabled" disabled className="nav-links">
+                  ABOUT ME
+                </Nav.Link>
+                <Nav.Link href="/home" className="nav-links">
+                  NEWS
+                </Nav.Link>
+                <Nav.Link eventKey="link-1" className="nav-links">
+                  SALES
+                </Nav.Link>
+                <Nav.Link eventKey="link-2" className="nav-links">
+                  PRODUCTS
+                </Nav.Link>
+              </Nav>
+            </div>
+            <div className="col-6">
+              <Nav.Link type="" className="social-link">
+                <img src={logoFB} alt="logofb" className="social-icon" />
+              </Nav.Link>
+              <Nav.Link type="" className="social-link">
+                <img src={logoIG} alt="logoig" className="social-icon" />
+              </Nav.Link>
+              <Nav.Link type="" className="social-link">
+                <img src={logoYTB} alt="logoytb" className="social-icon" />
+              </Nav.Link>
+            </div>
           </div>
-          <NavDropdown
-            color="black"
-            title="Quản lý sản phẩm"
-            id="basic-nav-dropdown"
-            className="link-footer"
-          >
-            <NavLink
-              to="/quan-ly-san-pham/chi-tiet-san-pham"
-              className={"nav-link"}
-            >
-              Chi tiết sản phẩm
-            </NavLink>
-            <NavLink to="/quan-ly-san-pham/xuat-xu" className={"nav-link"}>
-              Xuất xứ
-            </NavLink>
-            <NavLink to="/quan-ly-san-pham/chat-lieu" className={"nav-link"}>
-              Chất liệu
-            </NavLink>
-            <NavDropdown.Divider />
-            <NavLink to="/quan-ly-san-pham/loai-co-ao" className={"nav-link"}>
-              Loại cổ áo
-            </NavLink>
-            <NavLink
-              to="/quan-ly-san-pham/loai-san-pham"
-              className={"nav-link"}
-            >
-              Loại sản phẩm
-            </NavLink>
-            <NavLink to="/quan-ly-san-pham/mau-sac" className={"nav-link"}>
-              Màu sắc
-            </NavLink>
-            <NavLink to="/quan-ly-san-pham/ong-tay-ao" className={"nav-link"}>
-              Ống tay áo
-            </NavLink>
-            <NavLink to="/quan-ly-san-pham/san-pham" className={"nav-link"}>
-              Sản phẩm
-            </NavLink>
-            <NavLink to="/quan-ly-san-pham/size" className={"nav-link"}>
-              Size
-            </NavLink>
-          </NavDropdown>
-          <NavLink to="/home" className={"nav-link"}>
-            Employee manager
-          </NavLink>
-          <NavLink to="/home" className={"nav-link"}>
-            Customer management
-          </NavLink>
-          <NavLink to="/home" className={"nav-link"}>
-            Sales statistics
-          </NavLink>
-        </Nav>
+          <div className="row">
+            <div className="location">
+              <FontAwesomeIcon
+                icon={faLocationDot}
+                size="xs"
+                style={{ color: "#ffffff" }}
+              />
+              <div className="location-text">
+                <p>Ha Noi, Viet Nam</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </footer>
     </>
   );
