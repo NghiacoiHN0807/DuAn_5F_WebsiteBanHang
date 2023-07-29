@@ -18,18 +18,31 @@ code {
     justify-content: space-between;
   }
 }
+//Box
+.box {
+  background-color: rgb(243, 242, 242);
+}
 //Header
-.gray-background {
-  background-color: rgb(237, 237, 237);
-  .nav-links {
-    font-size: small;
+header {
+  background-color: white;
+  color: black;
+  border-radius: 30px 30px 30px 30px;
+  height: 0px;
+  width: 0px;
+
+  .header-adm {
+    background-color: white;
     color: black;
-  }
-  .nav-separator {
-    margin: 0 5px; /* Điều chỉnh khoảng cách giữa dấu "|" và các NavLink */
-    color: black; /* Màu sắc của dấu "|" */
+    border-radius: 30px 30px 30px 30px;
+    height: 50px;
+    width: 400px;
+    padding-bottom: 50px;
+    .avater {
+      font-size: 15px;
+    }
   }
 }
+
 .search-form {
   margin-right: 30px;
   .search-form {
@@ -54,19 +67,19 @@ code {
   }
 }
 
-//Footer
-footer {
-  background-color: rgb(201, 199, 199);
-  height: 703px;
-  .nav-container-footer {
-    .col-2 {
-      .nav-link {
-        font-size: small;
-        color: white;
-      }
-    }
+//sidbar
+.sidebar-adm {
+  .img-logo {
+    font-size: 10px;
+    size: 10px;
   }
-  .nav-link {
+  .tree-link-adm {
+    // height: 1000px;
+    background-color: white;
     color: black;
+  }
+
+  .styled-link {
+    text-decoration: none; /* Remove underline from the link */
   }
 }
