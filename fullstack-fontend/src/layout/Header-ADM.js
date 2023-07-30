@@ -1,108 +1,84 @@
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
-import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
+import { Avatar, IconButton, Menu, Tooltip, Typography } from "@mui/material";
+import { Badge } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import MailIcon from "@mui/icons-material/NotificationsActiveOutlined";
+import { Box } from "@mui/system";
 import { useState } from "react";
-import Badge from "@mui/material/Badge";
-import { Button, Form, Nav } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
+import MenuItem from "@mui/material/MenuItem";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
-function ResponsiveAppBar() {
+const NavScrollExample = () => {
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
-
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
 
   return (
-    <AppBar position="static" className="header-adm">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <Box
-            sx={{
-              flexGrow: 0,
-              marginBottom: 2,
-              display: { xs: "none", md: "flex" },
-            }}
+    <Navbar expand="lg" className="bg-body-tertiary">
+      <Container fluid>
+        {/* <Navbar.Brand href="#">Navbar scroll</Navbar.Brand> */}
+        <Navbar.Toggle aria-controls="navbarScroll" />
+        <Navbar.Collapse id="navbarScroll">
+          <Nav
+            className="me-auto my-2 my-lg-0"
+            style={{ maxHeight: "100px" }}
+            navbarScroll
           >
-            <Nav>
-              <Form className="d-flex search-form">
-                <Form.Control
-                  type="search"
-                  placeholder="Search"
-                  className="me-2 search-input"
-                  aria-label="Search"
-                  size="sm"
-                />
-                <Button variant="outline-success" className="search-button">
-                  <FontAwesomeIcon icon={faMagnifyingGlass} size="xs" />
-                </Button>
-              </Form>
-            </Nav>
-          </Box>
-
-          <Box
-            sx={{
-              marginRight: 2,
-              flexGrow: 0,
-              marginBottom: 2,
-              display: { xs: "none", md: "flex" },
-            }}
-          >
-            <Badge color="secondary" badgeContent={99}>
-              <NotificationsActiveOutlinedIcon />
+            <Form.Control
+              type="search"
+              placeholder="Search"
+              className="me-2"
+              aria-label="Search"
+            />
+            <Button variant="outline-success">Search</Button>
+          </Nav>
+          <Form className="d-flex">
+            <Badge badgeContent={4} color="success">
+              <MailIcon color="action" />
             </Badge>
-          </Box>
-
-          <Box sx={{ flexGrow: 0, marginBottom: 2 }}>
-            <Tooltip title="Open settings">
-              <IconButton
-                onClick={handleOpenUserMenu}
-                sx={{ p: 0, fontSize: 15 }}
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: "45px" }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
               >
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: "45px" }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-        </Toolbar>
+                {settings.map((setting) => (
+                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">{setting}</Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+          </Form>
+        </Navbar.Collapse>
       </Container>
-    </AppBar>
+    </Navbar>
   );
-}
-export default ResponsiveAppBar;
+};
+
+export default NavScrollExample;

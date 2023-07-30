@@ -34,15 +34,17 @@ function AppADM() {
         <AppBar
           position="fixed"
           sx={{
+            backgroundColor: "rgb(240, 240, 240)",
             width: { sm: `calc(100% - ${drawerWidth}px)` },
           }}
         >
           <HeaderADM />
         </AppBar>
+
         <Box
           component="nav"
           sx={{
-            backgroundColor: "white",
+            backgroundColor: "rgb(240, 240, 240)",
             width: { sm: drawerWidth },
             flexShrink: { sm: 0 },
           }}
@@ -56,6 +58,8 @@ function AppADM() {
             flexGrow: 1,
             p: 2,
             width: { sm: `calc(100% - ${drawerWidth}px)` },
+            paddingLeft: 5,
+            paddingRight: 3,
           }}
         >
           <Toolbar />

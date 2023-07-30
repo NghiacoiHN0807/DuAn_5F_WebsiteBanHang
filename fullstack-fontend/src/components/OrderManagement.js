@@ -6,7 +6,6 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "../scss/OderManagement.scss";
-// import Table from "react-bootstrap/Table";
 import { useState } from "react";
 import { useEffect } from "react";
 import { getAllOrderManagement } from "../services/OderManagementSevice";
