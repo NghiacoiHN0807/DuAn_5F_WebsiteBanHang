@@ -14,8 +14,6 @@ import { Routes, Route, Link } from "react-router-dom";
 import Home from "./components/Home";
 import { ToastContainer } from "react-toastify";
 import HeaderADM from "./layout/Header-ADM";
-import SideBar from "./layout/SideBar-ADM";
-import FooterADM from "./layout/Footer-ADM";
 import "./scss/App-ADM.scss";
 import TableTaiKhoanKH from "./components/TaiKhoanKhachHang/TableTKKhachHang";
 import CartBillADM from "./components/Cart-Bill-ADM";
@@ -35,13 +33,10 @@ import {
   ListItemIcon,
   ListItemText,
   Toolbar,
-  Typography,
 } from "@mui/material";
 import { useState } from "react";
-import IconButton from "@mui/material/IconButton";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-import MenuIcon from "@mui/icons-material/Menu";
 import { ExpandLess, ExpandMore, StarBorder } from "@material-ui/icons";
 
 const drawerWidth = 240;

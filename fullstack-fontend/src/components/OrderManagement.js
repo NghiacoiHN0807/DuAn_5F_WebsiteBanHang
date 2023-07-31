@@ -100,7 +100,7 @@ const OrderManagement = () => {
           </Form>
         </div>{" "}
         <div className="col-6">
-          <label htmlFor="status-select">Status: </label>
+          <label htmlFor="status-select">Trạng Thái: </label>
           <select
             id="status-select"
             className="select-green"
@@ -115,7 +115,7 @@ const OrderManagement = () => {
           </select>
         </div>
         <div className="col-6">
-          <label htmlFor="bill-type-select">Bill type: </label>
+          <label htmlFor="bill-type-select">Kiểu Hóa Đơn: </label>
           <select id="bill-type-select" className="select-green">
             <option value="apple">All</option>
             <option value="banana">Banana</option>
@@ -123,10 +123,8 @@ const OrderManagement = () => {
             <option value="grape">Grape</option>
           </select>
         </div>
-      </div>
-      <div className="row row-order-management">
         <TableContainer component={Paper} className="tableContainer">
-          <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>#</TableCell>
@@ -209,7 +207,7 @@ const OrderManagement = () => {
           <Pagination
             onChange={(event, page) => handlePageClick(page - 1)} // Subtract 1 from page value
             count={numberPages}
-            color="secondary"
+            variant="outlined"
           />
         </Stack>
       </div>
