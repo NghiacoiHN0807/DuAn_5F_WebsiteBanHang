@@ -16,9 +16,6 @@ import { ToastContainer } from "react-toastify";
 import HeaderADM from "./layout/Header-ADM";
 import "./scss/App-ADM.scss";
 import TableTaiKhoanKH from "./components/TaiKhoanKhachHang/TableTKKhachHang";
-<<<<<<< HEAD
-import ModelAddNewGiamGia from "./components/ModalsAddNewGiamGia";
-=======
 import CartBillADM from "./components/Cart-Bill-ADM";
 import OrderManagement from "./components/OrderManagement";
 import OrderManagementTimeline from "./components/OrderManagement-Timeline";
@@ -41,6 +38,7 @@ import { useState } from "react";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import { ExpandLess, ExpandMore, StarBorder } from "@material-ui/icons";
+import ModelAddNewGiamGia from "./components/ModalsAddNewGiamGia";
 
 const drawerWidth = 240;
 
@@ -121,71 +119,9 @@ function AppADM(props) {
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
->>>>>>> 4ba9354355f59fb770f67a2e7eaba5e897ca122e
 
   return (
     <>
-<<<<<<< HEAD
-      <div className="app-container">
-        <div className="row">
-          <div className="col-2">
-            <FooterADM />
-          </div>
-          <div className="col-10">
-            <Container>
-              <HeaderADM />
-              <div className="my-3">
-                <Routes>
-                  <Route path="/home" element={<Home />} />
-                  <Route
-                    path="/quan-ly-san-pham/chat-lieu"
-                    element={<ChatLieuMain />}
-                  />
-                  <Route
-                    path="/quan-ly-san-pham/chi-tiet-san-pham"
-                    element={<CTSPMain />}
-                  />
-                  <Route
-                    path="/quan-ly-san-pham/loai-co-ao"
-                    element={<LoaiCoAoMain />}
-                  />
-                  <Route
-                    path="/quan-ly-san-pham/loai-san-pham"
-                    element={<LoaiSPMain />}
-                  />
-                  <Route
-                    path="/quan-ly-san-pham/mau-sac"
-                    element={<MauSacMain />}
-                  />
-                  <Route
-                    path="/quan-ly-san-pham/ong-tay-ao"
-                    element={<OngTayAoMain />}
-                  />
-                  <Route
-                    path="/quan-ly-san-pham/san-pham"
-                    element={<SanPhamMain />}
-                  />
-                  <Route path="/quan-ly-san-pham/size" element={<SizeMain />} />
-                  <Route
-                    path="/quan-ly-san-pham/xuat-xu"
-                    element={<XuatXuMain />}
-                  />
-                  <Route path="/table-chucVu" element={<ViewChucVu />} />
-                  <Route path="/table-taiKhoan" element={<TableTKNhanVien />} />
-                  <Route
-                    path="/table-taiKhoanKH"
-                    element={<TableTaiKhoanKH />}
-                  />
-                  <Route path="/quan-ly-giam-gia" element={<TableGiamGia/>}/>
-                  <Route path="/admin/giam-gia" element={<TableGiamGia/>}/>
-                  <Route path="/add/giam-gia" element={<ModelAddNewGiamGia/>}/>
-                </Routes>
-              </div>
-            </Container>
-          </div>
-        </div>
-      </div>
-=======
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
         <AppBar
@@ -280,6 +216,8 @@ function AppADM(props) {
             <Route path="/direct-sale" element={<DireactSale />} />
             <Route path="/create-bill/:id" element={<CartBillADM />} />
             <Route path="/order-management" element={<OrderManagement />} />
+            <Route path="/admin/giam-gia" element={<TableGiamGia />} />
+            <Route path="/add/giam-gia" element={<ModelAddNewGiamGia />} />
             <Route
               path="/order-management-timeline/:id"
               element={<OrderManagementTimeline />}
@@ -288,7 +226,6 @@ function AppADM(props) {
         </Box>
       </Box>
 
->>>>>>> 4ba9354355f59fb770f67a2e7eaba5e897ca122e
       <ToastContainer
         position="top-right"
         autoClose={2000}

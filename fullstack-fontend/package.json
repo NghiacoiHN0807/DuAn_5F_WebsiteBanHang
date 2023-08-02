@@ -14,12 +14,8 @@
     "@mui/core": "^5.0.0-alpha.54",
     "@mui/icons-material": "^5.14.1",
     "@mui/lab": "^5.0.0-alpha.137",
-<<<<<<< HEAD
     "@mui/material": "^5.14.3",
     "@mui/styles": "^5.14.3",
-=======
-    "@mui/material": "^5.14.2",
->>>>>>> 4ba9354355f59fb770f67a2e7eaba5e897ca122e
     "@mui/x-data-grid": "^6.10.2",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^11.2.7",
