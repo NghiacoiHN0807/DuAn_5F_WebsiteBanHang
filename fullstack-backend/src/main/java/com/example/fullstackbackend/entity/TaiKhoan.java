@@ -28,9 +28,6 @@ public class TaiKhoan {
     private Integer idTaiKhoan;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_dia_chi", referencedColumnName = "id_dia_chi")
-    private DiaChi idDiaChi;
-    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_chuc_vu", referencedColumnName = "id_cv")
     private ChucVu idChucVu;
 
@@ -54,6 +51,5 @@ public class TaiKhoan {
 
     @Column(name = "trang_thai")
     private Integer trangThai;
-
 }
 
