@@ -19,6 +19,7 @@ import HeaderADM from "./layout/Header-ADM";
 import FooterADM from "./layout/Footer-ADM";
 import "./scss/App-ADM.scss";
 import TableTaiKhoanKH from "./components/TaiKhoanKhachHang/TableTKKhachHang";
+import ModelAddNewGiamGia from "./components/ModalsAddNewGiamGia";
 
 function AppADM() {
   return (
@@ -74,6 +75,8 @@ function AppADM() {
                     element={<TableTaiKhoanKH />}
                   />
                   <Route path="/quan-ly-giam-gia" element={<TableGiamGia/>}/>
+                  <Route path="/admin/giam-gia" element={<TableGiamGia/>}/>
+                  <Route path="/add/giam-gia" element={<ModelAddNewGiamGia/>}/>
                 </Routes>
               </div>
             </Container>
