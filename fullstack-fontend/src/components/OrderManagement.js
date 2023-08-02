@@ -6,7 +6,6 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "../scss/OderManagement.scss";
-// import Table from "react-bootstrap/Table";
 import { useState } from "react";
 import { useEffect } from "react";
 import { getAllOrderManagement } from "../services/OderManagementSevice";
@@ -21,6 +20,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { DataGrid } from "@mui/x-data-grid";
 
 const OrderManagement = () => {
   const [listData, setListData] = useState([]);
@@ -48,6 +48,83 @@ const OrderManagement = () => {
   useEffect(() => {
     getListData(0);
   }, []);
+
+  const columns = [
+    { field: "index", headerName: "#", width: 70 },
+    { field: "maHd", headerName: "Code Bill", width: 200 },
+    { field: "thanhTien", headerName: "Subtotal", width: 150 },
+    { field: "tenKh", headerName: "Customer name", width: 200 },
+    {
+      field: "sdtKh",
+      headerName: "Customer number",
+      width: 200,
+    },
+    {
+      field: "ngayTao",
+      headerName: "Date created",
+      width: 200,
+    },
+    {
+      field: "trangThai",
+      headerName: "Status",
+      width: 200,
+      renderCell: (params) => {
+        const { value: trangThai } = params;
+        let badgeVariant, statusText;
+        switch (trangThai) {
+          case 1:
+            badgeVariant = "warning";
+            statusText = "Waiting for confirm";
+            break;
+          case 2:
+            badgeVariant = "primary";
+            statusText = "Confirm information payment";
+            break;
+          case 3:
+            badgeVariant = "info";
+            statusText = "Delivered to the carrier";
+            break;
+          case 4:
+            badgeVariant = "primary";
+            statusText = "Confirm payment";
+            break;
+          case 5:
+            badgeVariant = "success";
+            statusText = "Item received";
+            break;
+          default:
+            badgeVariant = "light";
+            statusText = "Unknown status";
+            break;
+        }
+
+        return (
+          <Badge bg={badgeVariant} text="dark">
+            {statusText}
+          </Badge>
+        );
+      },
+    },
+  ];
+
+  // Xử lý dữ liệu của bảng vào mảng rows
+  const rows = listData
+    .filter((item) =>
+      Object.values(item).some((value) =>
+        String(value).toLowerCase().includes(searchKeyword.toLowerCase())
+      )
+    )
+    .map((item, index) => ({
+      idHd: item.idHd,
+      id: index + 1,
+      index: index + 1,
+      maHd: item.maHd,
+      thanhTien: item.thanhTien,
+      tenKh: item.tenKh,
+      sdtKh: item.sdtKh,
+      ngayTao: item.ngayTao,
+      trangThai: item.trangThai,
+    }));
   //Next Page
   const handlePageClick = (page) => {
     getListData(page);
@@ -62,10 +139,11 @@ const OrderManagement = () => {
           );
     setListData(filteredData);
   }, [selectedStatus, originalListData]);
+
   //Click on the table
   const navigate = useNavigate();
   const handlClickRow = (item) => {
-    console.log("Check click: ", item.idHd);
+    console.log("Check click: ", item);
     navigate(`/order-management-timeline/${item.idHd}`);
   };
   return (
@@ -101,7 +179,7 @@ const OrderManagement = () => {
           </Form>
         </div>{" "}
         <div className="col-6">
-          <label htmlFor="status-select">Status: </label>
+          <label htmlFor="status-select">Trạng Thái: </label>
           <select
             id="status-select"
             className="select-green"
@@ -116,7 +194,7 @@ const OrderManagement = () => {
           </select>
         </div>
         <div className="col-6">
-          <label htmlFor="bill-type-select">Bill type: </label>
+          <label htmlFor="bill-type-select">Kiểu Hóa Đơn: </label>
           <select id="bill-type-select" className="select-green">
             <option value="apple">All</option>
             <option value="banana">Banana</option>
@@ -124,83 +202,19 @@ const OrderManagement = () => {
             <option value="grape">Grape</option>
           </select>
         </div>
-      </div>
-      <div className="row row-order-management">
-        <TableContainer component={Paper} className="tableContainer">
-          <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>#</TableCell>
-                <TableCell>Code Bill</TableCell>
-                <TableCell align="right">Subtotal</TableCell>
-                <TableCell align="right">Customer name</TableCell>
-                <TableCell align="right">Customer number</TableCell>
-                <TableCell align="right">Date created</TableCell>
-                <TableCell align="right">Status</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {listData &&
-                listData.length > 0 &&
-                listData
-                  .filter((item) =>
-                    Object.values(item).some((value) =>
-                      String(value)
-                        .toLowerCase()
-                        .includes(searchKeyword.toLowerCase())
-                    )
-                  )
-                  .map((item, index) => {
-                    return (
-                      <TableRow
-                        onClick={() => handlClickRow(item)}
-                        key={index}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <TableCell component="th" scope="row">
-                          {index + 1}
-                        </TableCell>
-                        <TableCell align="right">{item.maHd}</TableCell>
-
-                        <TableCell align="right">{item.thanhTien}</TableCell>
-                        <TableCell align="right">{item.tenKh}</TableCell>
-                        <TableCell align="right">{item.sdtKh}</TableCell>
-                        <TableCell align="right">{item.ngayTao}</TableCell>
-                        <TableCell align="right">
-                          {item.trangThai === 1 ? (
-                            <Badge bg="warning" text="dark">
-                              Waiting for confirm
-                            </Badge>
-                          ) : item.trangThai === 2 ? (
-                            <Badge bg="primary" text="dark">
-                              Confirm information payment
-                            </Badge>
-                          ) : item.trangThai === 3 ? (
-                            <Badge bg="info" text="dark">
-                              Delivered to the carrier
-                            </Badge>
-                          ) : item.trangThai === 4 ? (
-                            <Badge bg="primary" text="dark">
-                              Confirm payment
-                            </Badge>
-                          ) : item.trangThai === 5 ? (
-                            <Badge bg="success" text="dark">
-                              Item received
-                            </Badge>
-                          ) : (
-                            <Badge variant="light" text="dark">
-                              Unknown status
-                            </Badge>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <div style={{ height: 400, width: "100%" }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            onRowClick={(params) => handlClickRow(params.row)}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 5 },
+              },
+            }}
+            pageSizeOptions={[5, 10]}
+          />
+        </div>
         <Stack
           direction="row"
           spacing={2}
@@ -210,7 +224,7 @@ const OrderManagement = () => {
           <Pagination
             onChange={(event, page) => handlePageClick(page - 1)} // Subtract 1 from page value
             count={numberPages}
-            color="secondary"
+            variant="outlined"
           />
         </Stack>
       </div>
