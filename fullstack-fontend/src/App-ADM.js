@@ -81,6 +81,7 @@ function AppADM(props) {
                   activeLink === item.text ? "rgb(240, 240, 240)" : "inherit",
                 "&:hover": {
                   backgroundColor: "rgb(240, 240, 240)",
+                  borderRadius: "15px",
                 },
               }}
             >
