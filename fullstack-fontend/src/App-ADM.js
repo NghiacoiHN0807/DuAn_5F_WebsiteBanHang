@@ -104,12 +104,39 @@ function AppADM(props) {
         </ListItemButton>
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItemButton sx={{ pl: 4 }}>
-              <ListItemIcon>
-                <StarBorder />
-              </ListItemIcon>
-              <ListItemText primary="Starred" />
-            </ListItemButton>
+            {[
+              {
+                text: "Chi Tiết Sản Phẩm",
+                link: "/quan-ly-san-pham/chi-tiet-san-pham",
+              },
+              { text: "Bán Hàng Tại Quầy", link: "/direct-sale" },
+              { text: "Quản Lý Nhân Viên", link: "/quan-ly-nhan-vien" },
+              { text: "Khuyến Mãi", link: "/khuyen-mai" },
+            ].map((item, index) => (
+              <ListItem key={item.text} disablePadding>
+                <ListItemButton
+                  component={Link}
+                  to={item.link}
+                  onClick={() => handleLinkClick(item.text)}
+                  sx={{
+                    pl: 4,
+                    backgroundColor:
+                      activeLink === item.text
+                        ? "rgb(240, 240, 240)"
+                        : "inherit",
+                    "&:hover": {
+                      backgroundColor: "rgb(240, 240, 240)",
+                      borderRadius: "15px",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  </ListItemIcon>
+                  <ListItemText primary={item.text} />
+                </ListItemButton>
+              </ListItem>
+            ))}
           </List>
         </Collapse>
       </List>
