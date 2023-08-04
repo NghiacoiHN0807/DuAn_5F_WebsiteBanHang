@@ -84,6 +84,9 @@ public class HoaDon {
     @Column(name = "ngay_giao_thanh_cong")
     private LocalDate ngayGiaoThanhCong;
 
+    @Column(name = "kieu_hoa_don")
+    private Integer kieuHoaDon;
+
     @Column(name = "trang_thai")
     private Integer trangThai;
 

@@ -107,43 +107,43 @@ const OrderManagementTimeline = ({ classes }) => {
               <TimelineEvent
                 color={activeIndex >= 1 ? "#64a338" : "#E3E3E3"}
                 icon={FaRegFileAlt}
-                title="Waiting for confirm"
+                title="Đang chờ xác nhận"
                 subtitle={listData.ngayTao}
               />
               <TimelineEvent
                 color={activeIndex >= 2 ? "#87a2c7" : "#E3E3E3"}
                 icon={FaRegCalendarCheck}
-                title="Confirm information payment"
+                title="Xác nhận thông tin"
                 subtitle={listData.ngayDuTinhNhan}
               />
               <TimelineEvent
                 color={activeIndex >= 3 ? "#ffcc00" : "#E3E3E3"}
                 icon={FaPaperPlane}
-                title="Delivered to the carrier"
+                title="Đã chuyển cho đơn vị"
                 subtitle={listData.ngayBatDauGiao}
               />
               <TimelineEvent
                 color={activeIndex >= 4 ? "#9c2919" : "#E3E3E3"}
                 icon={FaMoneyBillWave}
-                title="Confirm payment"
+                title="Xác nhận thanh toán"
                 subtitle={listData.ngayGiaoThanhCong}
               />
               <TimelineEvent
                 color={activeIndex >= 5 ? "#3865a3" : "#E3E3E3"}
                 icon={FaRegCheckCircle}
-                title="Item received"
+                title="Đã giao thành công"
                 subtitle={listData.ngayGiaoThanhCong}
               />
               <TimelineEvent
                 color={activeIndex >= 6 ? "#64a338" : "#E3E3E3"}
                 icon={FaCogs}
-                title="Return Item"
+                title="Đổi trả hàng"
                 subtitle="26/03/2019 09:51"
               />
               <TimelineEvent
                 color={activeIndex === 10 ? "#9c2919" : "#E3E3E3"}
                 icon={FaBug}
-                title="Confirm payment"
+                title="Hủy đơn hàng"
                 subtitle={listData.ngayGiaoThanhCong}
               />
             </Timeline>
@@ -162,11 +162,11 @@ const OrderManagementTimeline = ({ classes }) => {
             {activeIndex === 1
               ? "Confirm"
               : activeIndex === 2
-              ? "Delivered to the carrier"
+              ? "Đã chuyển cho đơn vị"
               : activeIndex === 3
-              ? "Confirm payment"
+              ? "Xác nhận thanh toán"
               : activeIndex === 4
-              ? "Item received"
+              ? "Đã giao thành công"
               : "Default text"}
           </Button>{" "}
           <Button
@@ -175,19 +175,19 @@ const OrderManagementTimeline = ({ classes }) => {
             onClick={handleNextClick}
             disabled={activeIndex <= 2}
           >
-            Cancel
+            Hủy Đơn Hàng
           </Button>
         </div>
       </div>
       <div className="row-order-management-timeline">
         <div className="row row-top">
           <div className="col-6">
-            <h6>CUSTOMER INFORMATION</h6>
+            <h6>Thông Tin Khách Hàng</h6>
           </div>
 
           <div className="col-6 button-edit">
             <Button size="small" variant="outlined">
-              EDIT INFORMATION
+              Chỉnh sửa thông tin
             </Button>
           </div>
         </div>
@@ -197,23 +197,23 @@ const OrderManagementTimeline = ({ classes }) => {
               Status:{" "}
               {listData.trangThai === 1 ? (
                 <Badge bg="warning" text="dark">
-                  Waiting for confirm
+                  Đang chờ xác nhận
                 </Badge>
               ) : listData.trangThai === 2 ? (
                 <Badge bg="primary" text="dark">
-                  Confirm information payment
+                  Xác nhận thông tin
                 </Badge>
               ) : listData.trangThai === 3 ? (
                 <Badge bg="info" text="dark">
-                  Delivered to the carrier
+                  Đã chuyển cho đơn vị
                 </Badge>
               ) : listData.trangThai === 4 ? (
                 <Badge bg="primary" text="dark">
-                  Confirm payment
+                  Xác nhận thanh toán
                 </Badge>
               ) : listData.trangThai === 5 ? (
                 <Badge bg="success" text="dark">
-                  Item received
+                  Đã giao thành công
                 </Badge>
               ) : (
                 <Badge variant="light" text="dark">
@@ -221,21 +221,21 @@ const OrderManagementTimeline = ({ classes }) => {
                 </Badge>
               )}
             </p>
-            <p>Bill Code: {listData.maHd}</p>
+            <p>Mã Hóa Đơn: {listData.maHd}</p>
             {/* <p>Oder Creator: {listData.idTK.ten}</p> */}
           </div>
           <div className="col-6">
-            <p> Full Name: {listData.tenKh}</p>
-            <p>Number Phone: {listData.sdtKh}</p>
-            <p> Email: {listData.email}</p>
-            <p>Address: {listData.diaChi}</p>
+            <p>Tên Khách Hàng: {listData.tenKh}</p>
+            <p>Số Điện Thoại: {listData.sdtKh}</p>
+            <p>Email: {listData.email}</p>
+            <p>Địa Chỉ: {listData.diaChi}</p>
           </div>
         </div>
       </div>
       <div className="row-order-management-timeline">
         <div className="row row-top">
           <div className="col-6">
-            <h6>PAYMENT HISTORY</h6>
+            <h6>Lịch Sử Thanh Toán</h6>
           </div>
 
           <div className="col-6 button-edit">
@@ -245,7 +245,7 @@ const OrderManagementTimeline = ({ classes }) => {
               variant="outlined"
               disabled={activeIndex < 3 || activeIndex > 3}
             >
-              Payment confirmation
+              Xác nhận thanh toán
             </Button>
           </div>
         </div>
@@ -254,7 +254,7 @@ const OrderManagementTimeline = ({ classes }) => {
       <div className="row-order-management-timeline">
         <div className="row row-top">
           <div className="col-6">
-            <h6>CART</h6>
+            <h6>Giỏ Hàng</h6>
           </div>
         </div>
         <div className="row row-botton">
@@ -262,12 +262,12 @@ const OrderManagementTimeline = ({ classes }) => {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Name Product</TableCell>
-                  <TableCell align="right">Price&nbsp;($)</TableCell>
-                  <TableCell align="right">Size</TableCell>
-                  <TableCell align="right">Color</TableCell>
-                  <TableCell align="right">Quantity</TableCell>
-                  <TableCell align="right">Total</TableCell>
+                  <TableCell>Tên Sản Phẩm</TableCell>
+                  <TableCell align="right">Giá&nbsp;($)</TableCell>
+                  <TableCell align="right">Kích Thước</TableCell>
+                  <TableCell align="right">Màu Sắc</TableCell>
+                  <TableCell align="right">Số Lượng</TableCell>
+                  <TableCell align="right">Tổng Tiền</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -295,7 +295,7 @@ const OrderManagementTimeline = ({ classes }) => {
                 <TableRow>
                   <TableCell rowSpan={3} />
                   <TableCell colSpan={2}>
-                    Subtotal: {listData.tongTien}
+                    Thành Tiền: {listData.tongTien}
                   </TableCell>
                   <TableCell align="right"></TableCell>
                 </TableRow>
