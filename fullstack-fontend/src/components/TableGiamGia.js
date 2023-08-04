@@ -94,9 +94,6 @@ const TableGiamGia = (props) => {
   return (
     <>
       <div className="row row-order-management">
-        <div className="my-3 add-new">
-          <samp>List Giam Gia</samp>
-        </div>
         <div>
           <form className="d-flex" role="search">
             <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" onChange={(e) => setSearchKeyword(e.target.value)} />

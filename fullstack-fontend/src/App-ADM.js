@@ -73,7 +73,7 @@ function AppADM(props) {
           { text: "Quản Lý Hóa Đơn", link: "/order-management" },
           { text: "Bán Hàng Tại Quầy", link: "/direct-sale" },
           { text: "Quản Lý Nhân Viên", link: "/quan-ly-nhan-vien" },
-          { text: "Khuyến Mãi", link: "/khuyen-mai" },
+          { text: "Khuyến Mãi", link: "/quan-ly-giam-gia" },
         ].map((item, index) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton
