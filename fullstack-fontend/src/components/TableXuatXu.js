@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import ReactPaginate from "react-paginate";
-import { fetchAllXX } from "../services/xuatXuSevice";
+import { fetchAllXX } from "../services/XuatXuService";
 import ModelAddNew from "./ModalsAddNew";
 import ModelConfirm from "./ModelConfirm";
 

@@ -19,13 +19,11 @@ import ModelConfirm from "./CTSPComfirm";
 import { toast } from "react-toastify";
 import {
   Button,
-  Col,
   Container,
   Form,
   Nav,
   NavDropdown,
   Navbar,
-  Row,
 } from "react-bootstrap";
 
 const ChiTietSP = (props) => {
@@ -127,55 +125,6 @@ const ChiTietSP = (props) => {
     setXuatXu(resXX[0].idXx);
     setTayAo(resTayAo[0].idTayAo);
     setCoAo(resCoAo[0].idCoAo);
-  };
-
-  // set select value
-  const selectCL = (event) => {
-    const selectedValue = event.target.value;
-    // setChatLieu(listCL.find((obj) => obj.idCl === Number(selectedValue)));
-    setChatLieu(selectedValue);
-  };
-
-  const selectMS = (event) => {
-    const selectedValue = event.target.value;
-    // setMauSac(listMS.find((obj) => obj.idMs === Number(selectedValue)));
-    setMauSac(selectedValue);
-  };
-
-  const selectSize = (event) => {
-    const selectedValue = event.target.value;
-    // setSize(listSize.find((obj) => obj.idSize === Number(selectedValue)));
-    setSize(selectedValue);
-  };
-
-  const selectSP = (event) => {
-    const selectedValue = event.target.value;
-    // setSanPham(listSP.find((obj) => obj.idSp === Number(selectedValue)));
-    setSanPham(selectedValue);
-  };
-
-  const selectLoaiSP = (event) => {
-    const selectedValue = event.target.value;
-    // setLoaiSP(listLSP.find((obj) => obj.idLoaisp === Number(selectedValue)));
-    setLoaiSP(selectedValue);
-  };
-
-  const selectXX = (event) => {
-    const selectedValue = event.target.value;
-    // setXuatXu(listXX.find((obj) => obj.idXx === Number(selectedValue)));
-    setXuatXu(selectedValue);
-  };
-
-  const selectTayAo = (event) => {
-    const selectedValue = event.target.value;
-    // setTayAo(listTayAo.find((obj) => obj.idTayAo === Number(selectedValue)));
-    setTayAo(selectedValue);
-  };
-
-  const selectCoAo = (event) => {
-    const selectedValue = event.target.value;
-    // setCoAo(listCoAo.find((obj) => obj.idCoAo === Number(selectedValue)));
-    setCoAo(selectedValue);
   };
 
   const handleAdd = async () => {
@@ -335,6 +284,13 @@ const ChiTietSP = (props) => {
 
   return (
     <>
+      <div className="my-3 add-new">
+        <div>
+          <button className="btn btn-success" onClick={() => handleAdd()}>
+            Add
+          </button>
+        </div>
+      </div>
       <div className="filter-and-search">
         <Navbar expand="lg" className="bg-body-tertiary">
           <Container fluid>
@@ -444,233 +400,7 @@ const ChiTietSP = (props) => {
           </Container>
         </Navbar>
       </div>
-      <div className="body-add-new">
-        <Form>
-          <Row>
-            <Col>
-              <div className="mb-3">
-                <label className="form-label">Mã CTSP</label>
-                <input
-                  value={maCTSP}
-                  onChange={(event) => setMaCTSP(event.target.value)}
-                  type="text"
-                  className="form-control"
-                />
-              </div>
-            </Col>
-            <Col>
-              <Form.Group className="mb-3">
-                <Form.Label>Chất liệu</Form.Label>
-                <Form.Select
-                  aria-label="Default select example"
-                  onChange={selectCL}
-                >
-                  {listMS.map((option) => (
-                    <option
-                      value={option.idCl}
-                      selected={chatLieu === option.idCl}
-                    >
-                      {option.tenCl}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-          </Row>
 
-          <Row>
-            <Col>
-              <Form.Group className="mb-3">
-                <Form.Label>Màu sắc</Form.Label>
-                <Form.Select
-                  aria-label="Default select example"
-                  onChange={selectMS}
-                >
-                  {listMS.map((option) => (
-                    <option
-                      value={option.idMs}
-                      selected={mauSac === option.idMs}
-                    >
-                      {option.tenMs}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group className="mb-3">
-                <Form.Label>Size</Form.Label>
-                <Form.Select
-                  aria-label="Default select example"
-                  onChange={selectSize}
-                >
-                  {listSize.map((option) => (
-                    <option
-                      value={option.idSize}
-                      selected={size === option.idSize}
-                    >
-                      {option.tenSize}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <Form.Group className="mb-3">
-                <Form.Label>Sản phẩm</Form.Label>
-                <Form.Select
-                  aria-label="Default select example"
-                  onChange={selectSP}
-                >
-                  {listSP.map((option) => (
-                    <option
-                      value={option.idSp}
-                      selected={sanPham === option.idSp}
-                    >
-                      {option.tenSp}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group className="mb-3">
-                <Form.Label>Loại sản phẩm</Form.Label>
-                <Form.Select
-                  aria-label="Default select example"
-                  onChange={selectLoaiSP}
-                >
-                  {listLSP.map((option) => (
-                    <option
-                      value={option.idLoaisp}
-                      selected={loaiSP === option.idLoaisp}
-                    >
-                      {option.tenLsp}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <Form.Group className="mb-3">
-                <Form.Label>Xuất xứ</Form.Label>
-                <Form.Select
-                  aria-label="Default select example"
-                  onChange={selectXX}
-                >
-                  {listXX.map((option) => (
-                    <option
-                      value={option.idXx}
-                      selected={xuatXu === option.idXx}
-                    >
-                      {option.tenNuoc}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group className="mb-3">
-                <Form.Label>Tay áo</Form.Label>
-                <Form.Select
-                  aria-label="Default select example"
-                  onChange={selectTayAo}
-                >
-                  {listTayAo.map((option) => (
-                    <option
-                      value={option.idTayAo}
-                      selected={tayAo === option.idTayAo}
-                    >
-                      {option.loaiTayAo}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <Form.Group className="mb-3">
-                <Form.Label>Cổ áo</Form.Label>
-                <Form.Select
-                  aria-label="Default select example"
-                  onChange={selectCoAo}
-                >
-                  {listCoAo.map((option) => (
-                    <option
-                      value={option.idCoAo}
-                      selected={coAo === option.idCoAo}
-                    >
-                      {option.loaiCoAo}
-                    </option>
-                  ))}
-                </Form.Select>
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group className="mb-3">
-                <Form.Label>Số lượng tồn</Form.Label>
-                <input
-                  value={soLuongTon}
-                  onChange={(event) => setSoLuongTon(event.target.value)}
-                  type="text"
-                  className="form-control"
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <Form.Group className="mb-3">
-                <Form.Label>Giá bán</Form.Label>
-                <input
-                  value={giaBan}
-                  onChange={(event) => setGiaBan(event.target.value)}
-                  type="text"
-                  className="form-control"
-                />
-              </Form.Group>
-            </Col>
-
-            <Col>
-              <Form.Group className="mb-3">
-                <div className="mb-3">
-                  <label className="form-label">Mô tả</label>
-                  <Form.Control
-                    as="textarea"
-                    rows={3}
-                    value={moTa}
-                    onChange={(event) => setMoTa(event.target.value)}
-                  />
-                </div>
-              </Form.Group>
-            </Col>
-          </Row>
-        </Form>
-      </div>
-      <div className="my-3 add-new">
-        <samp>List CTSP</samp>
-        <div>
-          <button className="btn btn-success" onClick={() => handleAdd()}>
-            Add
-          </button>
-          <button
-            type="button"
-            className="btn btn-warning"
-            onClick={() => handleUpdate()}
-          >
-            Update
-          </button>
-        </div>
-      </div>
       <Table striped bordered hover>
         <thead>
           <tr>

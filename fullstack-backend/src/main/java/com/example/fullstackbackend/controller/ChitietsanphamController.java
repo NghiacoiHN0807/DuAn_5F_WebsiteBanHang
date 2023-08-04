@@ -1,33 +1,15 @@
 package com.example.fullstackbackend.controller;
 
-import com.example.fullstackbackend.entity.ChatLieu;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
-import com.example.fullstackbackend.entity.LoaiCoAo;
-import com.example.fullstackbackend.entity.LoaiSp;
-import com.example.fullstackbackend.entity.MauSac;
-import com.example.fullstackbackend.entity.OngTayAo;
-import com.example.fullstackbackend.entity.SanPham;
-import com.example.fullstackbackend.entity.Size;
-import com.example.fullstackbackend.entity.XuatXu;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
-import com.example.fullstackbackend.services.ChatlieuService;
 import com.example.fullstackbackend.services.ChitietsanphamService;
-import com.example.fullstackbackend.services.LoaiCoAoService;
-import com.example.fullstackbackend.services.LoaispService;
-import com.example.fullstackbackend.services.MausacService;
-import com.example.fullstackbackend.services.OngTayAoService;
-import com.example.fullstackbackend.services.SanPhamService;
-import com.example.fullstackbackend.services.SizeService;
-import com.example.fullstackbackend.services.XuatxuService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -49,8 +31,8 @@ public class ChitietsanphamController {
 
     @GetMapping("view-all")
     public Page<ChiTietSanPham> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                          @RequestParam(defaultValue = "5") Integer size,
-                          @RequestParam("p") Optional<Integer> p) {
+                                        @RequestParam(defaultValue = "5") Integer size,
+                                        @RequestParam("p") Optional<Integer> p) {
         Page<ChiTietSanPham> chiTietSP = chitietsanphamSevice.chiTietSP(p.orElse(page), size);
         return chiTietSP;
     }
@@ -63,7 +45,7 @@ public class ChitietsanphamController {
 
     @PostMapping("add")
     public ChiTietSanPham add(@Valid @RequestBody ChiTietSanPham chiTietSanPham,
-                        BindingResult bindingResult) {
+                              BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
