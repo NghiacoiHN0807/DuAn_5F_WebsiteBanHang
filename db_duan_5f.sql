@@ -53,38 +53,15 @@ DROP TABLE IF EXISTS `chi_tiet_san_pham`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `chi_tiet_san_pham` (
   `id_ctsp` int NOT NULL AUTO_INCREMENT,
-  `ma_ctsp` varchar(255) DEFAULT NULL,
-  `id_cl` int DEFAULT NULL,
-  `id_ms` int DEFAULT NULL,
-  `id_size` int DEFAULT NULL,
   `id_sp` int DEFAULT NULL,
-  `id_loaisp` int DEFAULT NULL,
-  `id_xx` int DEFAULT NULL,
-  `id_tay_ao` int DEFAULT NULL,
-  `id_co_ao` int DEFAULT NULL,
-  `mo_ta` varchar(255) DEFAULT NULL,
-  `so_luong_ton` int DEFAULT NULL,
-  `gia_nhap` decimal(38,2) DEFAULT NULL,
-  `gia_ban` decimal(38,2) DEFAULT NULL,
+  `id_size` int DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
   PRIMARY KEY (`id_ctsp`),
-  KEY `id_cl` (`id_cl`),
-  KEY `id_size` (`id_size`),
-  KEY `id_xx` (`id_xx`),
-  KEY `id_lsp_idx` (`id_loaisp`),
-  KEY `id_ms_idx` (`id_ms`),
   KEY `id_sp_idx` (`id_sp`),
-  KEY `id_tay_ao_idx` (`id_tay_ao`),
-  KEY `id_co_ao_idx` (`id_co_ao`),
-  CONSTRAINT `id_cl` FOREIGN KEY (`id_cl`) REFERENCES `chat_lieu` (`id_cl`),
-  CONSTRAINT `id_co_ao` FOREIGN KEY (`id_co_ao`) REFERENCES `loai_co_ao` (`id_co_ao`),
-  CONSTRAINT `id_loaisp` FOREIGN KEY (`id_loaisp`) REFERENCES `loai_sp` (`id_loaisp`),
-  CONSTRAINT `id_ms` FOREIGN KEY (`id_ms`) REFERENCES `mau_sac` (`id_ms`),
+  KEY `id_size_idx` (`id_size`),
   CONSTRAINT `id_size` FOREIGN KEY (`id_size`) REFERENCES `size` (`id_size`),
-  CONSTRAINT `id_sp` FOREIGN KEY (`id_sp`) REFERENCES `san_pham` (`id_sp`),
-  CONSTRAINT `id_tay_ao` FOREIGN KEY (`id_tay_ao`) REFERENCES `ong_tay_ao` (`id_tay_ao`),
-  CONSTRAINT `id_xx` FOREIGN KEY (`id_xx`) REFERENCES `xuat_xu` (`id_xx`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `id_sp` FOREIGN KEY (`id_sp`) REFERENCES `san_pham` (`id_sp`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -93,7 +70,7 @@ CREATE TABLE `chi_tiet_san_pham` (
 
 LOCK TABLES `chi_tiet_san_pham` WRITE;
 /*!40000 ALTER TABLE `chi_tiet_san_pham` DISABLE KEYS */;
-INSERT INTO `chi_tiet_san_pham` VALUES (11,'CTSP01',11,4,5,3,4,17,1,1,'Dep',10,100.00,200.00,0),(12,'CTSP02',12,5,6,4,5,102,2,2,'Biu ty',4894,8000.00,10000.00,0);
+INSERT INTO `chi_tiet_san_pham` VALUES (14,5,5,0),(15,5,6,0),(16,7,5,0),(17,6,7,0);
 /*!40000 ALTER TABLE `chi_tiet_san_pham` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -198,9 +175,9 @@ CREATE TABLE `giam_gia_chi_tiet` (
   `so_tien_con_lai` decimal(38,2) DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
   PRIMARY KEY (`id_ggct`),
-  KEY `FK786b8qqw28gx211g92jtf34ox` (`id_ctsp`),
   KEY `id_giam_gia_idx` (`id_giam_gia`),
-  CONSTRAINT `id_ctsp` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`),
+  KEY `id_ctsp_id1x` (`id_ctsp`),
+  CONSTRAINT `id_ctsp1` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`),
   CONSTRAINT `id_giam_gia` FOREIGN KEY (`id_giam_gia`) REFERENCES `giam_gia` (`id_giam_gia`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -230,7 +207,7 @@ CREATE TABLE `hinh_thuc_thanh_toan` (
   PRIMARY KEY (`id_httt`),
   KEY `id_hd2_idx` (`id_hd`),
   CONSTRAINT `id_hd2` FOREIGN KEY (`id_hd`) REFERENCES `hoa_don` (`id_hd`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -239,6 +216,7 @@ CREATE TABLE `hinh_thuc_thanh_toan` (
 
 LOCK TABLES `hinh_thuc_thanh_toan` WRITE;
 /*!40000 ALTER TABLE `hinh_thuc_thanh_toan` DISABLE KEYS */;
+INSERT INTO `hinh_thuc_thanh_toan` VALUES (20,78,'Payment by cash','Hoho',0);
 /*!40000 ALTER TABLE `hinh_thuc_thanh_toan` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -252,7 +230,7 @@ DROP TABLE IF EXISTS `hoa_don`;
 CREATE TABLE `hoa_don` (
   `id_hd` int NOT NULL AUTO_INCREMENT,
   `id_tai_khoan` int DEFAULT NULL,
-  `ma_hd` int DEFAULT NULL,
+  `ma_hd` varchar(225) DEFAULT NULL,
   `dia_chi` varchar(255) DEFAULT NULL,
   `ngay_bat_dau_giao` date DEFAULT NULL,
   `ngay_du_tinh_nhan` date DEFAULT NULL,
@@ -269,11 +247,12 @@ CREATE TABLE `hoa_don` (
   `tien_ship` decimal(38,2) DEFAULT NULL,
   `tien_thua` decimal(38,2) DEFAULT NULL,
   `tong_tien` decimal(38,2) DEFAULT NULL,
+  `kieu_hoa_don` int DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
   PRIMARY KEY (`id_hd`),
   KEY `id_tai_khoan_idx` (`id_tai_khoan`),
   CONSTRAINT `id_tai_khoan` FOREIGN KEY (`id_tai_khoan`) REFERENCES `tai_khoan` (`id_tai_khoan`)
-) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -282,7 +261,7 @@ CREATE TABLE `hoa_don` (
 
 LOCK TABLES `hoa_don` WRITE;
 /*!40000 ALTER TABLE `hoa_don` DISABLE KEYS */;
-INSERT INTO `hoa_don` VALUES (1,1,1,'So 7 Nha A',NULL,NULL,NULL,'2023-07-23','2023-07-23','0978562378','0345897612',0.00,'Nguyen Thi Ny','Nguyen Van A',2000.00,2000.00,0.00,0.00,2000.00,9),(77,1,49,NULL,NULL,NULL,NULL,'2023-07-03',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(78,NULL,59,NULL,NULL,NULL,NULL,'2023-07-18',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(79,NULL,60,NULL,NULL,NULL,NULL,'2023-07-18',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(80,NULL,61,NULL,NULL,NULL,NULL,'2023-07-18',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(81,NULL,62,NULL,NULL,NULL,NULL,'2023-07-18',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(82,NULL,63,NULL,NULL,NULL,NULL,'2023-07-18',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,8),(83,NULL,64,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(84,NULL,65,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,8),(85,NULL,66,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(86,NULL,67,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,8),(87,NULL,68,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(88,NULL,69,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(89,NULL,70,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(90,NULL,71,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,8),(91,NULL,72,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,8),(92,NULL,73,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(93,NULL,74,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(94,NULL,75,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,8),(95,NULL,76,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,8),(96,NULL,77,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(97,NULL,78,NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0),(98,NULL,79,NULL,NULL,NULL,NULL,'2023-07-20',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0);
+INSERT INTO `hoa_don` VALUES (1,1,'HD1','So 7 Nha A','2023-07-24','2023-07-27','2023-07-26','2023-07-23','2023-07-23','0978562378','0345897612',0.00,'Nguyen Thi Ny','Nguyen Van A',6000.00,6000.00,0.00,0.00,6000.00,1,9),(77,1,'HD49','So 3 Nha A','2023-07-24','2023-07-27','2023-07-26','2023-07-03','2023-07-23','0504080906',NULL,NULL,'Nguyen Van A',NULL,6000.00,6000.00,0.00,0.00,6000.00,2,3),(78,1,'HD59','So 46 Nha A',NULL,NULL,NULL,'2023-07-03','2023-07-25','064827236',NULL,NULL,'Nguyen Van B',NULL,5000.00,5000.00,0.00,0.00,5000.00,2,4),(79,1,'HD60','So 4 Nha A',NULL,NULL,NULL,'2023-07-18',NULL,'0987326547',NULL,NULL,'Nguyen Van C',NULL,9645.00,9645.00,0.00,0.00,9645.00,2,3),(80,1,'HD61','So 5 Nha A',NULL,NULL,NULL,'2023-07-18',NULL,'0204080906',NULL,NULL,'Nguyen Van D',NULL,NULL,NULL,NULL,NULL,NULL,2,1),(81,1,'HD62','So 6 Nha A',NULL,NULL,NULL,'2023-07-18',NULL,'0708654123',NULL,NULL,'Nguyen Van E',NULL,NULL,NULL,NULL,NULL,NULL,2,1),(82,1,'HD63',NULL,NULL,NULL,NULL,'2023-07-18',NULL,NULL,NULL,NULL,'',NULL,NULL,NULL,NULL,NULL,NULL,1,8),(83,1,'HD64','So 7 Nha A',NULL,NULL,NULL,'2023-07-19',NULL,'0706090408',NULL,NULL,'Nguyen Van H',NULL,NULL,NULL,NULL,NULL,NULL,2,1),(84,1,'HD65',NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,8),(85,1,'HD66','So 8 Nha A',NULL,NULL,NULL,'2023-07-19',NULL,'0601070809',NULL,NULL,'Nguyen Van I',NULL,NULL,NULL,NULL,NULL,NULL,2,1),(86,1,'HD67',NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,8),(87,1,'HD68','So 9 Nha A',NULL,NULL,NULL,'2023-07-19',NULL,'0709080601',NULL,NULL,'Nguyen Van G',NULL,NULL,NULL,NULL,NULL,NULL,2,1),(88,1,'HD69',NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,0),(89,1,'HD70',NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,0),(90,1,'HD71',NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,10),(91,1,'HD72',NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,10),(92,1,'HD73',NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,0),(93,1,'HD74',NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,0),(94,1,'HD75',NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,8),(95,1,'HD76',NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,8),(96,1,'HD77',NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,0),(97,1,'HD78',NULL,NULL,NULL,NULL,'2023-07-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,0),(98,1,'HD79',NULL,NULL,NULL,NULL,'2023-07-20',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,0),(99,1,'HD80',NULL,NULL,NULL,NULL,'2023-07-22',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,8),(100,1,'HD81',NULL,NULL,NULL,NULL,'2023-07-22',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,8),(101,1,'HD82',NULL,NULL,NULL,NULL,'2023-07-22',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,8);
 /*!40000 ALTER TABLE `hoa_don` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -302,11 +281,11 @@ CREATE TABLE `hoa_don_chi_tiet` (
   `ly_do_huy` varchar(255) DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
   PRIMARY KEY (`id_hdct`),
-  KEY `id_ctsp1_idx` (`id_ctsp`),
   KEY `id_hd_idx` (`id_hd`),
-  CONSTRAINT `id_ctsp1` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`),
+  KEY `id_ctsp_idx` (`id_ctsp`),
+  CONSTRAINT `id_ctsp` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`),
   CONSTRAINT `id_hd` FOREIGN KEY (`id_hd`) REFERENCES `hoa_don` (`id_hd`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -315,7 +294,7 @@ CREATE TABLE `hoa_don_chi_tiet` (
 
 LOCK TABLES `hoa_don_chi_tiet` WRITE;
 /*!40000 ALTER TABLE `hoa_don_chi_tiet` DISABLE KEYS */;
-INSERT INTO `hoa_don_chi_tiet` VALUES (5,11,1,1,2000.00,NULL,0),(6,12,78,1,10000.00,NULL,0),(7,NULL,79,NULL,NULL,NULL,0),(8,NULL,80,NULL,NULL,NULL,0),(9,NULL,81,NULL,NULL,NULL,0),(12,11,82,1,200.00,NULL,NULL),(13,12,83,1,10000.00,NULL,NULL),(21,11,97,1,200.00,NULL,NULL),(22,11,84,1,200.00,NULL,NULL),(30,12,84,1,10000.00,NULL,NULL);
+INSERT INTO `hoa_don_chi_tiet` VALUES (40,14,1,1,6000.00,NULL,NULL),(41,15,77,1,6000.00,NULL,NULL),(42,16,78,1,5000.00,NULL,NULL),(43,17,79,1,9645.00,NULL,NULL);
 /*!40000 ALTER TABLE `hoa_don_chi_tiet` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -329,10 +308,10 @@ DROP TABLE IF EXISTS `images`;
 CREATE TABLE `images` (
   `id_images` int NOT NULL AUTO_INCREMENT,
   `id_ctsp` int DEFAULT NULL,
-  `images` varchar(500) DEFAULT NULL,
+  `images` longblob,
   `trang_thai` int DEFAULT NULL,
   PRIMARY KEY (`id_images`),
-  KEY `id_ctsp2` (`id_ctsp`),
+  KEY `id_ctsp2_idx` (`id_ctsp`),
   CONSTRAINT `id_ctsp2` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -343,7 +322,6 @@ CREATE TABLE `images` (
 
 LOCK TABLES `images` WRITE;
 /*!40000 ALTER TABLE `images` DISABLE KEYS */;
-INSERT INTO `images` VALUES (1,11,'yolosport00337-xamweb_be2aa8dcd55b4b1b87cf175eca19ec22_large.webp',0),(2,12,'trang_4_copy-_b1f917aa635a4889bfd1bd7fc3c94c50_large.webp',0);
 /*!40000 ALTER TABLE `images` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -388,7 +366,8 @@ DROP TABLE IF EXISTS `loai_co_ao`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `loai_co_ao` (
   `id_co_ao` int NOT NULL AUTO_INCREMENT,
-  `loai_co_ao` varchar(45) DEFAULT NULL,
+  `ma_co_ao` varchar(255) DEFAULT NULL,
+  `loai_co_ao` varchar(255) DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
   PRIMARY KEY (`id_co_ao`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -400,7 +379,7 @@ CREATE TABLE `loai_co_ao` (
 
 LOCK TABLES `loai_co_ao` WRITE;
 /*!40000 ALTER TABLE `loai_co_ao` DISABLE KEYS */;
-INSERT INTO `loai_co_ao` VALUES (1,'Co ngan',0),(2,'Co dai',0);
+INSERT INTO `loai_co_ao` VALUES (1,'CA01','Co ngan',0),(2,'CA02','Co dai',0);
 /*!40000 ALTER TABLE `loai_co_ao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -493,9 +472,31 @@ CREATE TABLE `san_pham` (
   `id_sp` int NOT NULL AUTO_INCREMENT,
   `ma_sp` varchar(255) DEFAULT NULL,
   `ten_sp` varchar(255) DEFAULT NULL,
-  `tinh_trang` int NOT NULL,
-  PRIMARY KEY (`id_sp`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `id_cl` int DEFAULT NULL,
+  `id_ms` int DEFAULT NULL,
+  `id_loaisp` int DEFAULT NULL,
+  `id_xx` int DEFAULT NULL,
+  `id_tay_ao` int DEFAULT NULL,
+  `id_co_ao` int DEFAULT NULL,
+  `mo_ta` varchar(225) DEFAULT NULL,
+  `so_luong_ton` int DEFAULT NULL,
+  `gia_nhap` decimal(38,2) DEFAULT NULL,
+  `gia_ban` decimal(38,2) DEFAULT NULL,
+  `trang_thai` int DEFAULT NULL,
+  PRIMARY KEY (`id_sp`),
+  KEY `id_cl_idx` (`id_cl`),
+  KEY `id_ms_idx` (`id_ms`),
+  KEY `id_loaisp_idx` (`id_loaisp`),
+  KEY `id_tay_ao_idx` (`id_tay_ao`),
+  KEY `id_xx_idx` (`id_xx`),
+  KEY `id_co_ao_idx` (`id_co_ao`),
+  CONSTRAINT `id_cl` FOREIGN KEY (`id_cl`) REFERENCES `chat_lieu` (`id_cl`),
+  CONSTRAINT `id_co_ao` FOREIGN KEY (`id_co_ao`) REFERENCES `loai_co_ao` (`id_co_ao`),
+  CONSTRAINT `id_loaisp` FOREIGN KEY (`id_loaisp`) REFERENCES `loai_sp` (`id_loaisp`),
+  CONSTRAINT `id_ms` FOREIGN KEY (`id_ms`) REFERENCES `mau_sac` (`id_ms`),
+  CONSTRAINT `id_tay_ao` FOREIGN KEY (`id_tay_ao`) REFERENCES `ong_tay_ao` (`id_tay_ao`),
+  CONSTRAINT `id_xx` FOREIGN KEY (`id_xx`) REFERENCES `xuat_xu` (`id_xx`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -504,7 +505,7 @@ CREATE TABLE `san_pham` (
 
 LOCK TABLES `san_pham` WRITE;
 /*!40000 ALTER TABLE `san_pham` DISABLE KEYS */;
-INSERT INTO `san_pham` VALUES (3,'SP01','Quan Cadigan',0),(4,'SP02','Ao BocPhet',0);
+INSERT INTO `san_pham` VALUES (5,'SP01','Quan Lolicon',11,4,4,17,1,1,'Xau',195,5000.00,6000.00,0),(6,'SP02','Ao Kakame',12,5,5,102,2,2,'Moi',764,1000.00,5000.00,0),(7,'SP03','Quan Hoho',13,4,4,105,1,1,'Haha',953,7820.00,9645.00,0);
 /*!40000 ALTER TABLE `san_pham` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -605,4 +606,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-07-21 23:27:38
+-- Dump completed on 2023-08-04 22:32:09

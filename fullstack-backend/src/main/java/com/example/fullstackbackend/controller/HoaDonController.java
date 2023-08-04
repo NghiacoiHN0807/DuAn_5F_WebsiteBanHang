@@ -29,7 +29,7 @@ public class HoaDonController {
 
     @GetMapping("view-all-offline-invoice")
     public Page<HoaDon> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                @RequestParam(defaultValue = "5") Integer size,
+                                @RequestParam(defaultValue = "15") Integer size,
                                 @RequestParam("p") Optional<Integer> p) {
         Page<HoaDon> hoaDons = hoadonSevice.hoaDonOffline(p.orElse(page), size);
         return hoaDons;
@@ -37,7 +37,7 @@ public class HoaDonController {
 
     @GetMapping("view-all-online-invoice")
     public Page<HoaDon> viewAllOnlineInvoice(@RequestParam(defaultValue = "0") Integer page,
-                                             @RequestParam(defaultValue = "5") Integer size,
+                                             @RequestParam(defaultValue = "15") Integer size,
                                              @RequestParam("p") Optional<Integer> p) {
         Page<HoaDon> hoaDons = hoadonSevice.hoaDonOnline(p.orElse(page), size);
         return hoaDons;

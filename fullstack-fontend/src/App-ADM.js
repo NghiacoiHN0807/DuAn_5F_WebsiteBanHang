@@ -33,11 +33,15 @@ import {
   ListItemIcon,
   ListItemText,
   Toolbar,
+  Typography,
 } from "@mui/material";
 import { useState } from "react";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import { ExpandLess, ExpandMore, StarBorder } from "@material-ui/icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 
 const drawerWidth = 240;
 
@@ -77,6 +81,7 @@ function AppADM(props) {
               to={item.link}
               onClick={() => handleLinkClick(item.text)}
               sx={{
+                borderRadius: "15px",
                 backgroundColor:
                   activeLink === item.text ? "rgb(240, 240, 240)" : "inherit",
                 "&:hover": {
@@ -86,9 +91,19 @@ function AppADM(props) {
               }}
             >
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                {index === 0 ? (
+                  <ReceiptOutlinedIcon color="action" />
+                ) : index === 1 ? (
+                  <ShoppingCartOutlinedIcon color="action" />
+                ) : (
+                  <FontAwesomeIcon icon={faCartShopping} size="lg" />
+                )}
               </ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemText>
+                <Typography variant="body1" sx={{ fontSize: "14px" }}>
+                  {item.text}
+                </Typography>
+              </ListItemText>
             </ListItemButton>
           </ListItem>
         ))}
@@ -128,6 +143,7 @@ function AppADM(props) {
           sx={{
             width: { sm: `calc(100% - ${drawerWidth}px)` },
             ml: { sm: `${drawerWidth}px` },
+            backgroundColor: "rgba(255, 255, 255, 0.7)",
           }}
         >
           <HeaderADM />

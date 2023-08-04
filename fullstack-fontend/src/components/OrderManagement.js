@@ -1,10 +1,11 @@
 import Nav from "react-bootstrap/Nav";
-import Button from "react-bootstrap/Button";
+// import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import {
+  faCartPlus,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
 import "../scss/OderManagement.scss";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -13,20 +14,14 @@ import Badge from "react-bootstrap/Badge";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import { useNavigate } from "react-router-dom";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import { DataGrid } from "@mui/x-data-grid";
+import { Button } from "@mui/material";
 
 const OrderManagement = () => {
   const [listData, setListData] = useState([]);
   const [numberPages, setNumberPages] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("Tất cả");
   const [originalListData, setOriginalListData] = useState([]);
 
   const getListData = async (page, query) => {
@@ -50,23 +45,54 @@ const OrderManagement = () => {
   }, []);
 
   const columns = [
-    { field: "index", headerName: "#", width: 70 },
-    { field: "maHd", headerName: "Code Bill", width: 200 },
-    { field: "thanhTien", headerName: "Subtotal", width: 150 },
-    { field: "tenKh", headerName: "Customer name", width: 200 },
+    { field: "index", headerName: "#", width: 50 },
+    { field: "maHd", headerName: "Mã Hóa Đơn", width: 100 },
+    { field: "thanhTien", headerName: "Thành Tiền" },
+    { field: "tenKh", headerName: "Tên Khách Hàng", width: 150 },
     {
       field: "sdtKh",
-      headerName: "Customer number",
-      width: 200,
+      headerName: "Số Điện Thoại",
+      width: 150,
     },
     {
       field: "ngayTao",
-      headerName: "Date created",
-      width: 200,
+      headerName: "Ngày Tạo",
+      width: 150,
+    },
+    {
+      field: "kieuHoaDon",
+      headerName: "Kiểu Hóa Đơn",
+      width: 150,
+      renderCell: (params) => {
+        const { value: kieuHoaDon } = params;
+        let badgeVariant, statusText, text;
+        switch (kieuHoaDon) {
+          case 1:
+            badgeVariant = "light";
+            statusText = "Bán Tại Quầy";
+            text = "black";
+            break;
+          case 2:
+            badgeVariant = "dark";
+            statusText = "Giao Hàng";
+            text = "white";
+            break;
+          default:
+            badgeVariant = "light";
+            statusText = "Unknown status";
+            break;
+        }
+
+        return (
+          <Badge bg={badgeVariant} text={text}>
+            {statusText}
+          </Badge>
+        );
+      },
     },
     {
       field: "trangThai",
-      headerName: "Status",
+      headerName: "Trạng Thái",
       width: 200,
       renderCell: (params) => {
         const { value: trangThai } = params;
@@ -74,23 +100,23 @@ const OrderManagement = () => {
         switch (trangThai) {
           case 1:
             badgeVariant = "warning";
-            statusText = "Waiting for confirm";
+            statusText = "Đang chờ xác nhận";
             break;
           case 2:
             badgeVariant = "primary";
-            statusText = "Confirm information payment";
+            statusText = "Xác nhận thông tin";
             break;
           case 3:
             badgeVariant = "info";
-            statusText = "Delivered to the carrier";
+            statusText = "Đã chuyển cho đơn vị";
             break;
           case 4:
             badgeVariant = "primary";
-            statusText = "Confirm payment";
+            statusText = "Xác nhận thanh toán";
             break;
           case 5:
             badgeVariant = "success";
-            statusText = "Item received";
+            statusText = "Đã giao thành công";
             break;
           default:
             badgeVariant = "light";
@@ -123,6 +149,7 @@ const OrderManagement = () => {
       tenKh: item.tenKh,
       sdtKh: item.sdtKh,
       ngayTao: item.ngayTao,
+      kieuHoaDon: item.kieuHoaDon,
       trangThai: item.trangThai,
     }));
   //Next Page
@@ -132,10 +159,12 @@ const OrderManagement = () => {
   //filter status
   useEffect(() => {
     const filteredData =
-      selectedStatus === "All"
+      selectedStatus === "Tất cả"
         ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
         : originalListData.filter(
-            (item) => item.trangThai === parseInt(selectedStatus)
+            (item) =>
+              item.trangThai === parseInt(selectedStatus) ||
+              item.kieuHoaDon === parseInt(selectedStatus)
           );
     setListData(filteredData);
   }, [selectedStatus, originalListData]);
@@ -149,70 +178,73 @@ const OrderManagement = () => {
   return (
     <>
       <div className="row row-order-management">
-        <div className="col-4">
-          <Nav>
-            <Form className="d-flex search-form">
-              <Form.Control
-                type="search"
-                placeholder="Search"
-                className="me-2 search-input"
-                aria-label="Search"
-                size="sm"
-                onChange={(e) => setSearchKeyword(e.target.value)}
-              />
-              <Button variant="outline-success" className="search-button">
-                <FontAwesomeIcon icon={faMagnifyingGlass} size="xs" />
-              </Button>
-            </Form>
-          </Nav>
+        <div className="row">
+          <div className="col-4">
+            <Nav>
+              <Form className="d-flex search-form">
+                <Form.Control
+                  type="search"
+                  placeholder="Search"
+                  className="me-2 search-input"
+                  aria-label="Search"
+                  size="sm"
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                />
+                <Button variant="outline-success" className="search-button">
+                  <FontAwesomeIcon icon={faMagnifyingGlass} size="xs" />
+                </Button>
+              </Form>
+            </Nav>
+          </div>
         </div>
-        <div className="col-4">
-          <Form>
-            <Row>
-              <Col>
-                <Form.Control size="sm" type="date" placeholder="First name" />
-              </Col>
-              <Col>
-                <Form.Control size="sm" type="date" placeholder="Last name" />
-              </Col>
-            </Row>
-          </Form>
-        </div>{" "}
-        <div className="col-6">
-          <label htmlFor="status-select">Trạng Thái: </label>
-          <select
-            id="status-select"
-            className="select-green"
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-          >
-            <option value="All">All</option>
-            <option value="1">Waiting for confirm</option>
-            <option value="2">Confirm payment</option>
-            <option value="3">Delivered to the carrier</option>
-            <option value="4">Item received</option>
-          </select>
+
+        <div className="row">
+          <div className="col-5">
+            <label htmlFor="status-select">Trạng Thái: </label>
+            <select
+              id="status-select"
+              className="select-green"
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+            >
+              <option value="Tất cả">Tất cả</option>
+              <option value="1">Đang chờ xác nhận</option>
+              <option value="2">Xác nhận thanh toán</option>
+              <option value="3">Đã chuyển cho đơn vị</option>
+              <option value="4">Đã giao thành công</option>
+            </select>
+          </div>
+          <div className="col-5">
+            <label htmlFor="bill-type-select">Kiểu Hóa Đơn: </label>
+            <select
+              id="bill-type-select"
+              className="select-green"
+              onChange={(e) => setSelectedStatus(e.target.value)}
+            >
+              <option value="Tất cả">Tất cả</option>
+              <option value="apple">Bán Tại Quần</option>
+              <option value="banana">Giao Hàng</option>
+            </select>
+          </div>
+          <div className="col-2">
+            <Button variant="contained" color="success">
+              Tạo Hóa Đơn
+              <FontAwesomeIcon icon={faCartPlus} size="lg" />{" "}
+            </Button>
+          </div>
         </div>
-        <div className="col-6">
-          <label htmlFor="bill-type-select">Kiểu Hóa Đơn: </label>
-          <select id="bill-type-select" className="select-green">
-            <option value="apple">All</option>
-            <option value="banana">Banana</option>
-            <option value="orange">Orange</option>
-            <option value="grape">Grape</option>
-          </select>
-        </div>
+
         <div style={{ height: 400, width: "100%" }}>
           <DataGrid
             rows={rows}
             columns={columns}
-            onRowClick={(params) => handlClickRow(params.row)}
             initialState={{
               pagination: {
-                paginationModel: { page: 0, pageSize: 5 },
+                paginationModel: { page: 0, pageSize: 10 },
               },
             }}
-            pageSizeOptions={[5, 10]}
+            pageSizeOptions={[5, 10, 15]}
+            onRowClick={(params) => handlClickRow(params.row)}
           />
         </div>
         <Stack
