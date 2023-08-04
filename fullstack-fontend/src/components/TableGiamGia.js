@@ -2,18 +2,17 @@ import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import ModelConfirmGiamGia from "./ModelConfirmGiamGia";
 import Stack from "@mui/material/Stack";
-import { getAll, getAllByTrangThai } from '../services/giamGiaService'
+import { getAll, getAllByTrangThai } from "../services/giamGiaService";
 import { Badge, Form } from "react-bootstrap";
 import "../scss/TableGiamGiaScss.scss";
 import Pagination from "@mui/material/Pagination";
 import { Chip } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDeleteLeft, faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faDeleteLeft, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const TableGiamGia = (props) => {
-
   //Set value for table
   const [listGiamGia, setListGiamGia] = useState([]);
   const [numberPages, setNumberPages] = useState(0);
@@ -90,7 +89,6 @@ const TableGiamGia = (props) => {
     navigate(`/add/giam-gia`);
   };
 
-
   return (
     <>
       <div className="row row-order-management">
@@ -99,16 +97,27 @@ const TableGiamGia = (props) => {
         </div>
         <div>
           <form className="d-flex" role="search">
-            <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search" onChange={(e) => setSearchKeyword(e.target.value)} />
-            <button className="btn btn-outline-success" type="submit">Search</button>
+            <input
+              className="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+              onChange={(e) => setSearchKeyword(e.target.value)}
+            />
+            <button className="btn btn-outline-success" type="submit">
+              Search
+            </button>
           </form>
         </div>
         <div className="d-flex justify-content-between">
-
           <div className="d-flex">
             <div className="d-flex align-items-center">
               <label>Trạng thái</label>
-              <Form.Select aria-label="Default select example" onChange={(e) => hi(e)} className="m-3">
+              <Form.Select
+                aria-label="Default select example"
+                onChange={(e) => hi(e)}
+                className="m-3"
+              >
                 <option value="1">Tất cả</option>
                 <option value="2">Hoạt động</option>
                 <option value="3">Ngưng hoạt động</option>
@@ -116,17 +125,31 @@ const TableGiamGia = (props) => {
             </div>
             <div className="d-flex align-items-center">
               <label>Ngày bắt đầu</label>
-              <input type="date" id="inputPassword6" className="form-control m-3" aria-describedby="passwordHelpInline" />
+              <input
+                type="date"
+                id="inputPassword6"
+                className="form-control m-3"
+                aria-describedby="passwordHelpInline"
+              />
             </div>
             <div className="d-flex align-items-center">
               <label>Ngày kết thúc</label>
-              <input type="date" id="inputPassword6" className="form-control m-3" aria-describedby="passwordHelpInline" />
+              <input
+                type="date"
+                id="inputPassword6"
+                className="form-control m-3"
+                aria-describedby="passwordHelpInline"
+              />
             </div>
           </div>
-          <Button variant="contained" onClick={()=>handAdd()} className="m-25" color="success">
+          <Button
+            variant="contained"
+            onClick={() => handAdd()}
+            className="m-25"
+            color="success"
+          >
             Thêm
           </Button>
-
         </div>
         <Table striped bordered hover>
           <thead>
@@ -146,68 +169,85 @@ const TableGiamGia = (props) => {
           <tbody>
             {listGiamGia &&
               listGiamGia.length > 0 &&
-              listGiamGia.filter((item) =>
-                Object.values(item).some((value) =>
-                  String(value)
-                    .toLowerCase()
-                    .includes(searchKeyword.toLowerCase())
+              listGiamGia
+                .filter((item) =>
+                  Object.values(item).some((value) =>
+                    String(value)
+                      .toLowerCase()
+                      .includes(searchKeyword.toLowerCase())
+                  )
                 )
-              ).map((item, index) => {
-                return (
-                  <tr key={item.idGiamGia} className="text-center">
-                    <th scope="row">{index + 1}</th>
-                    {/* <td>{item.maGiamGia}</td> */}
-                    <td>{item.idGiamGia.tenChuongTrinh}</td>
-                    <td>{item.idCtsp.idSp.tenSp}</td>
-                    <td>{item.idGiamGia.mucGiamTienMat === null ? item.idGiamGia.mucGiamPhanTram + "%" : formatCurrency(item.idGiamGia.mucGiamTienMat)}</td>
-                    <td>
-                      <div className="d-flex justify-content-center align-items-center">
-                        <Chip label={formatDate(item.idGiamGia.ngayBatDau) + " - " + formatDate(item.idGiamGia.ngayKetThuc)} className="bg-info" />
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex justify-content-center align-items-center">
-                        {formatCurrency(item.donGia)}
-                      </div>
-                    </td>
-                    <td>
-                      <div className="d-flex justify-content-center align-items-center">
-                        {formatCurrency(item.soTienConLai)}
-                      </div>
-                    </td>
-                    <td>
-                      {item.trangThai === 10 ? (
-                        <Badge bg="warning" text="dark">
-                          Ngưng hoạt động
-                        </Badge>
-                      ) : item.trangThai === 0 ? (
-                        <Badge bg="success" text="dark">Hoạt động</Badge>
-                      ) : (
-                        <Badge variant="light" text="dark">
-                          Không xác định
-                        </Badge>
-                      )}
-                    </td>
-                    <td>
-                      <div className="d-flex justify-content-center align-items-center">
-                        <button
-                          onClick={() => handleDelete(item)}
-                          type="button"
-                          className="btn btn-outline-danger"
-                        >
-                          <FontAwesomeIcon icon={faDeleteLeft} size="lg" />
-                        </button>{" "}
-                        <div onClick={() => handleDelete(item)}>
-                          <button type="button" className="btn btn-outline-warning">
-                            <FontAwesomeIcon icon={faPenToSquare} size="lg" />
-                          </button>
+                .map((item, index) => {
+                  return (
+                    <tr key={item.idGiamGia} className="text-center">
+                      <th scope="row">{index + 1}</th>
+                      {/* <td>{item.maGiamGia}</td> */}
+                      <td>{item.idGiamGia.tenChuongTrinh}</td>
+                      <td>{item.idCtsp.idSp.tenSp}</td>
+                      <td>
+                        {item.idGiamGia.mucGiamTienMat === null
+                          ? item.idGiamGia.mucGiamPhanTram + "%"
+                          : formatCurrency(item.idGiamGia.mucGiamTienMat)}
+                      </td>
+                      <td>
+                        <div className="d-flex justify-content-center align-items-center">
+                          <Chip
+                            label={
+                              formatDate(item.idGiamGia.ngayBatDau) +
+                              " - " +
+                              formatDate(item.idGiamGia.ngayKetThuc)
+                            }
+                            className="bg-info"
+                          />
                         </div>
-                      </div>
-                    </td>
-                  </tr>
-
-                );
-              })}
+                      </td>
+                      <td>
+                        <div className="d-flex justify-content-center align-items-center">
+                          {formatCurrency(item.donGia)}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="d-flex justify-content-center align-items-center">
+                          {formatCurrency(item.soTienConLai)}
+                        </div>
+                      </td>
+                      <td>
+                        {item.trangThai === 10 ? (
+                          <Badge bg="warning" text="dark">
+                            Ngưng hoạt động
+                          </Badge>
+                        ) : item.trangThai === 0 ? (
+                          <Badge bg="success" text="dark">
+                            Hoạt động
+                          </Badge>
+                        ) : (
+                          <Badge variant="light" text="dark">
+                            Không xác định
+                          </Badge>
+                        )}
+                      </td>
+                      <td>
+                        <div className="d-flex justify-content-center align-items-center">
+                          <button
+                            onClick={() => handleDelete(item)}
+                            type="button"
+                            className="btn btn-outline-danger"
+                          >
+                            <FontAwesomeIcon icon={faDeleteLeft} size="lg" />
+                          </button>{" "}
+                          <div onClick={() => handleDelete(item)}>
+                            <button
+                              type="button"
+                              className="btn btn-outline-warning"
+                            >
+                              <FontAwesomeIcon icon={faPenToSquare} size="lg" />
+                            </button>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
           </tbody>
         </Table>
         <Stack
