@@ -21,12 +21,12 @@ const filerDate = (pageNo, size, first, last) => {
 }
 
 const getAllSanPham = () => {
-    return custom.get(`/san-pham/api/views`);
+    return custom.get(`/san-pham/listSP`);
 }
 
-const getAllLoaiSp = () => {
-    return custom.get(`/loai-sp/api/views`);
-}
+// const getAllLoaiSp = () => {
+//     return custom.get(`/loai-sp/api/views`);
+// }
 
 const detail = (id) => {
     return custom.get(`/giam-gia-chi-tiet/api/detail/${id}`);
@@ -52,4 +52,4 @@ const update = (giamGiaChiTiet, id) => {
     return custom.put(`/giam-gia-chi-tiet/api/update/${id}`, giamGiaChiTiet);
 }
 
-export {getAll, detail, remove, add, update, getAllLoaiSp, addGiamGia, addLichSuGiamGia, getAllByTrangThai, search, filerDate, getAllSanPham, detailGiamGia};
+export {getAll, detail, remove, add, update, addGiamGia, addLichSuGiamGia, getAllByTrangThai, search, filerDate, getAllSanPham, detailGiamGia};

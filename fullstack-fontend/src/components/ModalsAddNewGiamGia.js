@@ -1,15 +1,16 @@
-// import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import * as React from 'react';
+import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
-import { add, addGiamGia, detailGiamGia, getAllLoaiSp } from "../services/giamGiaService";
+import { addGiamGia } from "../services/giamGiaService";
 import GiamGiaAdd from "../scss/GiamGiaAdd.scss";
 import { useNavigate } from "react-router-dom";
+import SelectAllTransferList from "./TableGiamGiaAdd";
+
 
 const ModelAddNewGiamGia = (props) => {
-  const { show, handleClose } = props;
-
+  const { handleClose } = props;
 
   let navigate = useNavigate();
 
@@ -24,19 +25,7 @@ const ModelAddNewGiamGia = (props) => {
     trangThai: 0
   });
 
-  useEffect(() => {
-    loadLoaiSps();
-  }, []);
-
-  const loadLoaiSps = async () => {
-    const res = await getAllLoaiSp();
-    setLoaiSps(res.content);
-    console.log(res.content)
-  }
-
-  const [loaiSps, setLoaiSps] = useState([]);
-
-  const { maGiamGia, tenChuongTrinh, ngayBatDau, ngayKetThuc, mucGiamPhanTram, mucGiamTienMat} = giamGia;
+  const { tenChuongTrinh, ngayBatDau, ngayKetThuc, mucGiamPhanTram, mucGiamTienMat } = giamGia;
 
   const onInputChange = (e) => {
     setGiamGia({ ...giamGia, [e.target.name]: e.target.value });
@@ -47,17 +36,13 @@ const ModelAddNewGiamGia = (props) => {
     setSelected(e.target.value);
   };
 
-  console.log(selected)
-
   const handleSave = async (e) => {
-
-    // const ObjGiamGia = await detailGiamGia();
-
     e.preventDefault();
-    if (giamGia.maGiamGia.trim().length < 1 
-    || giamGia.tenChuongTrinh.trim().length < 1 
-    || giamGia.ngayBatDau.trim().length < 1 
-    || giamGia.ngayKetThuc.trim().length < 1) {
+    if (
+      giamGia.tenChuongTrinh.trim().length < 1 ||
+      giamGia.ngayBatDau.trim().length < 1 ||
+      giamGia.ngayKetThuc.trim().length < 1
+    ) {
       toast.warning("Data is null!");
     } else {
       let res = await addGiamGia(giamGia);
@@ -71,104 +56,73 @@ const ModelAddNewGiamGia = (props) => {
       }
     }
   };
+
+  
   return (
     <>
-      <Modal
-        show={show}
-        onHide={handleClose}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>ADD NEW GIAM GIA</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="body-add-new">
-            <form>
-              <div className="mb-3 row">
-                <label className="col-sm-2 col-form-label">Mã chương trình giảm giá</label>
-                <div className="col-sm-10">
-                  <input type={"text"} name='maGiamGia' value={maGiamGia} onChange={(e) => onInputChange(e)} className="form-control" id="inputPassword" />
+      <div className="d-flex justify-content-around">
+        <div className="content-left">
+          <Modal.Header>
+            <Modal.Title>ADD NEW GIAM GIA</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="body-add-new">
+              <form>
+                <div className="mb-3">
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Tên chương trình</label>
+                  <input type="text" className="form-control" value={tenChuongTrinh} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" placeholder="Tên chương trình" />
                 </div>
-              </div>
 
-              <div className="mb-3 row">
-                <label className="col-sm-2 col-form-label">Tên chương trình</label>
-                <div className="col-sm-10">
-                  <input type={"text"} name='tenChuongTrinh' value={tenChuongTrinh} onChange={(e) => onInputChange(e)} className="form-control" id="inputPassword" />
-                </div>
-              </div>
-
-              <div className="mb-3 row">
-                <label className="col-sm-2 col-form-label">Áp dụng cho nhóm sản phẩm</label>
-                <div className="col-sm-10">
-                  <select className="form-select" aria-label="Default select example">
-                    {loaiSps.map((loaisp) => {
-                      return <option key={loaisp.idLoaisp} value={loaisp}>{loaisp.tenLsp}</option>;
-                    })}
-                  </select>
-                </div>
-              </div>
-
-              <div className="mb-3 row">
-                <label className="col-sm-2 col-form-label">Thiết lập giảm giá</label>
-                <div className="col-sm-10">
-                  <div className="form-check">
-                    <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="flexRadioDefault1" value={"mucGiam"} checked={selected === "mucGiam"} />
-                    <label className="form-check-label">
-                      Mức giảm
-                    </label>
-                  </div>
-                  <div className="form-check">
-                    <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="flexRadioDefault2" value={"phanTram"} checked={selected === "phanTram"} />
-                    <label className="form-check-label">
-                      Theo %
-                    </label>
+                <div className="mb-3">
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Thiết lập giảm giá</label>
+                  <div>
+                    <div className="form-check">
+                      <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="flexRadioDefault1" value={"mucGiam"} checked={selected === "mucGiam"} />
+                      <label className="form-check-label">
+                        Mức giảm
+                      </label>
+                    </div>
+                    <div className="form-check">
+                      <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="flexRadioDefault2" value={"phanTram"} checked={selected === "phanTram"} />
+                      <label className="form-check-label">
+                        Theo %
+                      </label>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-
-              <div className="mb-3 row" aria-hidden={selected !== "phanTram" ? true : false}>
-                <label className="col-sm-2 col-form-label">Mức giảm %</label>
-                <div className="col-sm-10">
-                  <input type={"number"} min={0} max={100} name='mucGiamPhanTram' value={mucGiamPhanTram} onChange={(e) => onInputChange(e)} className="form-control" id="inputPassword" />
+                <div className="mb-3" aria-hidden={selected !== "phanTram"}>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Mức giảm %</label>
+                  <input type="number" min={0} max={100} name='mucGiamPhanTram' value={mucGiamPhanTram} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Mức giảm %" />
                 </div>
-              </div>
 
-              <div className="mb-3 row" aria-hidden={selected !== "mucGiam" ? true : false}>
-                <label className="col-sm-2 col-form-label">Mức giảm tiền mặt</label>
-                <div className="col-sm-10">
-                  <input type={"number"} name='mucGiamTienMat' value={mucGiamTienMat} onChange={(e) => onInputChange(e)} className="form-control" id="inputPassword" />
+                <div className="mb-3" aria-hidden={selected !== "mucGiam"}>
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Mức giảm tiền mặt</label>
+                  <input type="number" name='mucGiamTienMat' value={mucGiamTienMat} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Mức giảm tiền mặt" />
                 </div>
-              </div>
 
-              <div className="mb-3 row">
-                <label className="col-sm-2 col-form-label">Ngày bắt đầu</label>
-                <div className="col-sm-10">
-                  <input type={"date"} name='ngayBatDau' value={ngayBatDau} onChange={(e) => onInputChange(e)} className="form-control" id="inputPassword" />
+                <div className="mb-3">
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Ngày bắt đầu</label>
+                  <input type="date" name='ngayBatDau' value={ngayBatDau} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Ngày bắt đầu" />
                 </div>
-              </div>
 
-              <div className="mb-3 row">
-                <label className="col-sm-2 col-form-label">Ngày kết thúc</label>
-                <div className="col-sm-10">
-                  <input type={"date"} name='ngayKetThuc' value={ngayKetThuc} onChange={(e) => onInputChange(e)} className="form-control" id="inputPassword" />
+                <div className="mb-3">
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Ngày kết thúc</label>
+                  <input type="date" name='ngayKetThuc' value={ngayKetThuc} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Ngày kết thúc" />
                 </div>
-              </div>
-            </form>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={(e) => handleSave(e)}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+
+                <button onClick={(e) => handleSave(e)} className="btn bg-primary text-light d-flex align-items-end">Thêm</button>
+              </form>
+            </div>
+          </Modal.Body>
+        </div>
+
+        <div className="content-right">
+          <SelectAllTransferList />
+        </div>
+      </div>
     </>
   );
 };
+
 export default ModelAddNewGiamGia;
