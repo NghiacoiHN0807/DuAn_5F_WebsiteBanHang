@@ -71,7 +71,7 @@ public class SanPham {
     @Column(name = "gia_ban")
     private BigDecimal giaBan;
 
-    @Column(name = "tinh_trang")
-    private Integer tinhTrang;
+    @Column(name = "trang_thai")
+    private Integer trangThai;
 
 }

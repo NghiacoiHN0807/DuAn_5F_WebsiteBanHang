@@ -30,7 +30,7 @@ public class Size {
     @Column(name = "ten_size")
     private String tenSize;
 
-    @Column(name = "tinh_trang")
-    private Integer tinhTrang;
+    @Column(name = "trang_thai")
+    private Integer trangThai;
 
 }
