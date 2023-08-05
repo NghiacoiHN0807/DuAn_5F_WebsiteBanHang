@@ -42,6 +42,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import ModelAddNewGiamGia from "./components/ModalsAddNewGiamGia";
 
 const drawerWidth = 240;
 
@@ -231,6 +232,8 @@ function AppADM(props) {
             <Route path="/direct-sale" element={<DireactSale />} />
             <Route path="/create-bill/:id" element={<CartBillADM />} />
             <Route path="/order-management" element={<OrderManagement />} />
+            <Route path="/add/giam-gia" element={<ModelAddNewGiamGia />} />
+
             <Route
               path="/order-management-timeline/:id"
               element={<OrderManagementTimeline />}
