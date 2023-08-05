@@ -58,7 +58,7 @@ const TableChucVu = (props) => {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>Ma Chuc Vu</th>
+            <th>Mã Chức Vụ</th>
             <th>Tên Chức Vụ</th>
             <th>Ngày Tạo</th>
             <th>Trạng Thái</th>

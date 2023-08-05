@@ -13,8 +13,7 @@ const ModelAddNewTKKH = (props) => {
   const [setTen, getTen] = useState("");
   const [setSdt, getSdt] = useState("");
   const [setEmail, getEmail] = useState("");
-  const [setMatKhau, getMatKhau] = useState("");
-  const [setTrangThai, getTrangThai] = useState("");
+
 
   const handleSave = async () => {
     //I want check console.log get ma and tenNuoc
@@ -25,11 +24,8 @@ const ModelAddNewTKKH = (props) => {
       getMaTaiKhoan("") &&
       getHo("") &&
       getTen("") &&
-    
       getSdt("") &&
-      getEmail("") &&
-      getMatKhau("") &&
-      getTrangThai("")
+      getEmail("") 
     ) {
       handleClose();
       toast.warning("Ma, Ten Or Trang Thai is null");
@@ -38,11 +34,11 @@ const ModelAddNewTKKH = (props) => {
         setMaTaiKhoan,
         setHo,
         setTen,
-        
+
         setSdt,
         setEmail,
-        setMatKhau,
-        setTrangThai
+        
+        0
       );
       // console.log("Check res: ", res);
       if (res && res.idTaiKhoan) {
@@ -50,11 +46,10 @@ const ModelAddNewTKKH = (props) => {
         getMaTaiKhoan("");
         getHo("");
         getTen("");
-    
+
         getSdt("");
         getEmail("");
-        getMatKhau("");
-        getTrangThai("");
+      
         toast.success("A Tài khoản is created successfully");
       } else {
         toast.error("You can't create a new Tài Khoản");
@@ -144,37 +139,7 @@ const ModelAddNewTKKH = (props) => {
                     type="email"
                   />
                 </div>
-                <div className="mb-3">
-                  <label className="form-label">Mật Khẩu</label>
-                  <Form.Control
-                    value={setMatKhau}
-                    onChange={(event) => getMatKhau(event.target.value)}
-                    type="text"
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Trạng Thái</label>
-                  <div className="form-check">
-                    <Form.Check
-                      type="radio"
-                      label="Chưa Kích Hoạt"
-                      name="flexRadioDefault"
-                      defaultChecked={setTrangThai}
-                      value={"1"}
-                      onChange={(event) => getTrangThai(event.target.value)}
-                    />
-                  </div>
-                  <div className="form-check">
-                    <Form.Check
-                      type="radio"
-                      label="Đã Kích Hoạt"
-                      name="flexRadioDefault"
-                      defaultChecked={setTrangThai}
-                      value={"0"}
-                      onChange={(event) => getTrangThai(event.target.value)}
-                    />
-                  </div>
-                </div>
+                
               </Col>
             </Row>
           </Form>
