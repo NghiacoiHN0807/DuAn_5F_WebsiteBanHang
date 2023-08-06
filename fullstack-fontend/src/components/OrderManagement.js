@@ -1,5 +1,4 @@
 import Nav from "react-bootstrap/Nav";
-// import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -16,13 +15,19 @@ import Stack from "@mui/material/Stack";
 import { useNavigate } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
 import { Button } from "@mui/material";
+import { format } from "date-fns";
+import { postAddBill } from "../services/BillSevice";
+import { toast } from "react-toastify";
 
 const OrderManagement = () => {
   const [listData, setListData] = useState([]);
   const [numberPages, setNumberPages] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("Tất cả");
+  const [selectedStatus1, setSelectedStatus1] = useState("Tất cả");
+
   const [originalListData, setOriginalListData] = useState([]);
+  const [originalListData1, setOriginalListData1] = useState([]);
 
   const getListData = async (page, query) => {
     try {
@@ -32,6 +37,7 @@ const OrderManagement = () => {
       setNumberPages(Math.ceil(res.totalPages));
       // Lưu trữ danh sách dữ liệu gốc
       setOriginalListData(res.content);
+      setOriginalListData1(res.content);
 
       // Đồng thời cập nhật danh sách dữ liệu hiện tại
       setListData(res.content);
@@ -46,9 +52,9 @@ const OrderManagement = () => {
 
   const columns = [
     { field: "index", headerName: "#", width: 50 },
-    { field: "maHd", headerName: "Mã Hóa Đơn", width: 100 },
-    { field: "thanhTien", headerName: "Thành Tiền" },
-    { field: "tenKh", headerName: "Tên Khách Hàng", width: 150 },
+    { field: "maHd", headerName: "Mã Hóa Đơn", width: 150 },
+    { field: "thanhTien", headerName: "Thành Tiền", width: 150 },
+    { field: "tenKh", headerName: "Tên Khách Hàng", width: 200 },
     {
       field: "sdtKh",
       headerName: "Số Điện Thoại",
@@ -98,6 +104,10 @@ const OrderManagement = () => {
         const { value: trangThai } = params;
         let badgeVariant, statusText;
         switch (trangThai) {
+          case 0:
+            badgeVariant = "danger";
+            statusText = "Hóa đơn treo";
+            break;
           case 1:
             badgeVariant = "warning";
             statusText = "Đang chờ xác nhận";
@@ -117,6 +127,18 @@ const OrderManagement = () => {
           case 5:
             badgeVariant = "success";
             statusText = "Đã giao thành công";
+            break;
+          case 8:
+            badgeVariant = "warning";
+            statusText = "Đơn hàng bán tại quầy";
+            break;
+          case 9:
+            badgeVariant = "success";
+            statusText = "Đã thanh toán tại quầy";
+            break;
+          case 10:
+            badgeVariant = "danger";
+            statusText = "Đơn hàng đã hủy";
             break;
           default:
             badgeVariant = "light";
@@ -162,18 +184,57 @@ const OrderManagement = () => {
       selectedStatus === "Tất cả"
         ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
         : originalListData.filter(
-            (item) =>
-              item.trangThai === parseInt(selectedStatus) ||
-              item.kieuHoaDon === parseInt(selectedStatus)
+            (item) => item.trangThai === parseInt(selectedStatus)
           );
     setListData(filteredData);
   }, [selectedStatus, originalListData]);
 
+  useEffect(() => {
+    const filteredData1 =
+      selectedStatus1 === "Tất cả"
+        ? originalListData1 // Sử dụng danh sách dữ liệu gốc khi chọn "All"
+        : originalListData1.filter(
+            (item) => item.kieuHoaDon === parseInt(selectedStatus1)
+          );
+    setListData(filteredData1);
+  }, [selectedStatus1, originalListData1]);
   //Click on the table
   const navigate = useNavigate();
   const handlClickRow = (item) => {
     console.log("Check click: ", item);
     navigate(`/order-management-timeline/${item.idHd}`);
+  };
+  //Add new bill
+  const [lastGeneratedNumber, setLastGeneratedNumber] = useState(0);
+
+  useEffect(() => {
+    // Đọc số lớn nhất từ cơ sở dữ liệu (localStorage) khi ứng dụng khởi động
+    const savedNumber = localStorage.getItem("lastGeneratedNumber");
+    if (savedNumber) {
+      setLastGeneratedNumber(Number(savedNumber));
+    }
+  }, []);
+  const generateNewCode = () => {
+    const newNumber = lastGeneratedNumber + 1;
+    setLastGeneratedNumber(newNumber);
+
+    // Lưu số mới vào cơ sở dữ liệu (localStorage)
+    localStorage.setItem("lastGeneratedNumber", newNumber.toString());
+
+    return `HD${newNumber.toString().padStart(5, "0")}`;
+  };
+
+  let getIdHttp;
+
+  const currentDate = new Date();
+  const formattedDate = format(currentDate, "yyyy-MM-dd");
+  const handleAdd = async () => {
+    const newCode = generateNewCode();
+    let res = await postAddBill(newCode, formattedDate, 8);
+    toast.success("A shopping cart is created successfully");
+    getIdHttp = res.idHd;
+    // await getDataCart(getIdHttp);
+    navigate(`/create-bill/${getIdHttp}`);
   };
   return (
     <>
@@ -219,40 +280,41 @@ const OrderManagement = () => {
             <select
               id="bill-type-select"
               className="select-green"
-              onChange={(e) => setSelectedStatus(e.target.value)}
+              value={selectedStatus1}
+              onChange={(e) => setSelectedStatus1(e.target.value)}
             >
               <option value="Tất cả">Tất cả</option>
-              <option value="apple">Bán Tại Quần</option>
-              <option value="banana">Giao Hàng</option>
+              <option value="1">Bán Tại Quần</option>
+              <option value="2">Giao Hàng</option>
             </select>
           </div>
           <div className="col-2">
-            <Button variant="contained" color="success">
+            <Button
+              aria-label="Example"
+              endIcon={<FontAwesomeIcon icon={faCartPlus} size="lg" />}
+              variant="contained"
+              color="success"
+              onClick={() => handleAdd()}
+            >
               Tạo Hóa Đơn
-              <FontAwesomeIcon icon={faCartPlus} size="lg" />{" "}
             </Button>
           </div>
         </div>
 
-        <div style={{ height: 400, width: "100%" }}>
+        <div style={{ height: 500, width: "100%" }}>
           <DataGrid
             rows={rows}
             columns={columns}
             initialState={{
               pagination: {
-                paginationModel: { page: 0, pageSize: 10 },
+                paginationModel: { page: 0, pageSize: 15 },
               },
             }}
             pageSizeOptions={[5, 10, 15]}
             onRowClick={(params) => handlClickRow(params.row)}
           />
         </div>
-        <Stack
-          direction="row"
-          spacing={2}
-          justifyContent="center"
-          alignItems="center"
-        >
+        <Stack direction="row" spacing={2} justify="center" alignitems="center">
           <Pagination
             onChange={(event, page) => handlePageClick(page - 1)} // Subtract 1 from page value
             count={numberPages}

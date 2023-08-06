@@ -43,6 +43,8 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import FiberManualRecordOutlinedIcon from "@mui/icons-material/FiberManualRecordOutlined";
 import LoyaltyOutlinedIcon from "@mui/icons-material/LoyaltyOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
+import { Col, Image } from "react-bootstrap";
+import logo5F from "./assets/logo_5F.png";
 
 const drawerWidth = 240;
 
@@ -72,7 +74,9 @@ function AppADM(props) {
 
   const drawer = (
     <div>
-      <Toolbar />
+      <Toolbar>
+        <Image src={logo5F} style={{ width: "100px", height: "auto" }} />
+      </Toolbar>
       <Divider />
       <List>
         {[
@@ -86,6 +90,7 @@ function AppADM(props) {
               to={item.link}
               onClick={() => handleLinkClick(item.text)}
               sx={{
+                color: activeLink === item.text ? "cornflowerblue" : "inherit",
                 borderRadius: "15px",
                 backgroundColor:
                   activeLink === item.text ? "rgb(240, 240, 240)" : "inherit",
@@ -119,7 +124,10 @@ function AppADM(props) {
           <ListItemIcon>
             <InboxIcon />
           </ListItemIcon>
-          <ListItemText primary="Sản Phẩm" />
+          <ListItemText
+            primary="Sản Phẩm"
+            primaryTypographyProps={{ variant: "body1", fontSize: 14 }}
+          />
           {open ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={open} timeout="auto" unmountOnExit>
@@ -175,7 +183,10 @@ function AppADM(props) {
           <ListItemIcon>
             <GroupsOutlinedIcon />
           </ListItemIcon>
-          <ListItemText primary="Tài Khoản" />
+          <ListItemText
+            primary="Tài Khoản"
+            primaryTypographyProps={{ variant: "body1", fontSize: 14 }}
+          />
           {open1 ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={open1} timeout="auto" unmountOnExit>
