@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { useState } from "react";
-import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
 import { addGiamGia } from "../services/giamGiaService";
-import GiamGiaAdd from "../scss/GiamGiaAdd.scss";
+import "../scss/GiamGiaAdd.scss";
 import { useNavigate } from "react-router-dom";
 import SelectAllTransferList from "./TableGiamGiaAdd";
 
 
 const ModelAddNewGiamGia = (props) => {
   const { handleClose } = props;
-
+  // console.log(dataSanPham)
   let navigate = useNavigate();
 
   const [giamGia, setGiamGia] = useState({
@@ -60,11 +59,11 @@ const ModelAddNewGiamGia = (props) => {
   
   return (
     <>
+    <Modal.Header>
+      <Modal.Title className='text-center m-25 w-100'>ADD NEW GIAM GIA</Modal.Title>
+    </Modal.Header>
       <div className="d-flex justify-content-around">
         <div className="content-left">
-          <Modal.Header>
-            <Modal.Title>ADD NEW GIAM GIA</Modal.Title>
-          </Modal.Header>
           <Modal.Body>
             <div className="body-add-new">
               <form>

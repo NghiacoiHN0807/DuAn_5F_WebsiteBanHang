@@ -47,6 +47,7 @@ import LoyaltyOutlinedIcon from "@mui/icons-material/LoyaltyOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import { Col, Image } from "react-bootstrap";
 import logo5F from "./assets/logo_5F.png";
+import ModelAddNewGiamGia from "./components/ModalsAddNewGiamGia";
 
 const drawerWidth = 240;
 
@@ -84,6 +85,7 @@ function AppADM(props) {
         {[
           { text: "Quản Lý Hóa Đơn", link: "/order-management" },
           { text: "Bán Hàng Tại Quầy", link: "/direct-sale" },
+          { text: "Quản Lý Nhân Viên", link: "/quan-ly-nhan-vien" },
           { text: "Khuyến Mãi", link: "/quan-ly-giam-gia" },
         ].map((item, index) => (
           <ListItem key={item.text} disablePadding>
@@ -340,6 +342,8 @@ function AppADM(props) {
             <Route path="/direct-sale" element={<DireactSale />} />
             <Route path="/create-bill/:id" element={<CartBillADM />} />
             <Route path="/order-management" element={<OrderManagement />} />
+            <Route path="/add/giam-gia" element={<ModelAddNewGiamGia />} />
+
             <Route
               path="/order-management-timeline/:id"
               element={<OrderManagementTimeline />}

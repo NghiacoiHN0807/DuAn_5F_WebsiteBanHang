@@ -184,7 +184,9 @@ const OrderManagement = () => {
       selectedStatus === "Tất cả"
         ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
         : originalListData.filter(
-            (item) => item.trangThai === parseInt(selectedStatus)
+            (item) =>
+              item.trangThai === parseInt(selectedStatus) ||
+              item.kieuHoaDon === parseInt(selectedStatus)
           );
     setListData(filteredData);
   }, [selectedStatus, originalListData]);

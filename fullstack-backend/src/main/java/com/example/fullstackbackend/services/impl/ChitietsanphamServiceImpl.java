@@ -28,11 +28,18 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
     }
 
     @Override
+<<<<<<< HEAD
     public List<ChiTietSanPham> findByIdSp(Integer id) {
         return chitietsanphamRepository.findByIdSp(id);
     }
 
 
+=======
+    public List<ChiTietSanPham> findByProductId(Integer id) {
+        return chitietsanphamRepository.findByProductId(id);
+    }
+
+>>>>>>> origin/longthtruemilk
     @Override
     public ChiTietSanPham add(ChiTietSanPham add) {
         return chitietsanphamRepository.save(add);

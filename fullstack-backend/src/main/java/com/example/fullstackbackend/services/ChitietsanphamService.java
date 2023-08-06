@@ -13,7 +13,11 @@ public interface ChitietsanphamService {
 
     List<ChiTietSanPham> findByProductName(String name);
 
+<<<<<<< HEAD
     List<ChiTietSanPham> findByIdSp(Integer id);
+=======
+    List<ChiTietSanPham> findByProductId(Integer id);
+>>>>>>> origin/longthtruemilk
 
     ChiTietSanPham add(ChiTietSanPham add);
 

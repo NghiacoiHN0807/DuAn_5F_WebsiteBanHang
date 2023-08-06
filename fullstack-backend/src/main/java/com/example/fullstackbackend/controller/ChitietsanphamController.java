@@ -38,9 +38,15 @@ public class ChitietsanphamController {
         return chiTietSP;
     }
 
+<<<<<<< HEAD
     @GetMapping("select-ctsp-byId/{id}")
     public List<ChiTietSanPham> listCTSP(@PathVariable("id") Integer id) {
         return chitietsanphamSevice.findByIdSp(id);
+=======
+    @GetMapping("detail/{id}")
+    public ChiTietSanPham detail(@PathVariable("id") Integer id) {
+        return chitietsanphamSevice.detail(id).orElse(null);
+>>>>>>> origin/longthtruemilk
     }
 
     @GetMapping("select-Classify/{name}")
@@ -49,9 +55,16 @@ public class ChitietsanphamController {
         return chiTietSanPham;
     }
 
+<<<<<<< HEAD
     @GetMapping("detail/{id}")
     public ChiTietSanPham detail(@PathVariable("id") Integer id) {
         return chitietsanphamSevice.detail(id).orElse(null);
+=======
+    @GetMapping("select-ctsp-byid/{id}")
+    public List<ChiTietSanPham> findByProductId(@PathVariable("id") Integer id) {
+        List<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductId(id);
+        return chiTietSanPham;
+>>>>>>> origin/longthtruemilk
     }
 
     @PostMapping("add")

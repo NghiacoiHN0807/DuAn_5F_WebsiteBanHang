@@ -15,6 +15,11 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
     @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.tenSp = :tenSp")
     List<ChiTietSanPham> findByProductName(@Param("tenSp") String tenSp);
 
+<<<<<<< HEAD
     @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.idSp = ?1")
     List<ChiTietSanPham> findByIdSp(Integer idSp);
+=======
+    @Query("SELECT c FROM ChiTietSanPham c WHERE c.idSp.idSp = :idSp")
+    List<ChiTietSanPham> findByProductId(@Param("idSp") Integer idSp);
+>>>>>>> origin/longthtruemilk
 }
