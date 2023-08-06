@@ -1,180 +1,202 @@
-import {useEffect, useState} from "react";
-import Table from "react-bootstrap/Table";
-import ReactPaginate from "react-paginate";
+import Nav from "react-bootstrap/Nav";
+// import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {
+    faCartPlus,
+    faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
+// import "../scss/OderManagement.scss";
+import {useState} from "react";
+import {useEffect} from "react";
 import {fetchAllTKKH} from "../../services/taiKhoanKhachHangSevice";
-import ModelAddNewTKKH from "./ModelAddNewTKKH";
-import ModelConfirmTKKH from "./ModelConfirmTKKH";
-import ModalUpdate from "./ModelUpdateTKKH";
+import Badge from "react-bootstrap/Badge";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
+import {useNavigate} from "react-router-dom";
+import {DataGrid} from "@mui/x-data-grid";
+import {Button} from "@mui/material";
 
+const TableTKKhachHang = () => {
+    const [listData, setListData] = useState([]);
+    const [numberPages, setNumberPages] = useState(0);
+    const [searchKeyword, setSearchKeyword] = useState("");
+    const [selectedStatus, setSelectedStatus] = useState("Tất cả");
+    const [originalListData, setOriginalListData] = useState([]);
+    const navigate = useNavigate();
+    const getListData = async (page, query) => {
+        try {
+            let res = await fetchAllTKKH(page, query);
+            console.log("Check res: ", res);
+            setListData(res.content);
+            setNumberPages(Math.ceil(res.totalPages));
+            // Lưu trữ danh sách dữ liệu gốc
+            setOriginalListData(res.content);
 
-const TableTaiKhoanKH = (props) => {
-
-
-    //Set value for table
-    const [listTaiKhoanKH, setlistTaiKhoanKH] = useState([]);
-    const [totalPages, setTotalPages] = useState(0);
-
-    //Set value for Model Add New is defalut
-    const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
-    const handleClose = () => {
-        setIsShowModalAddNew(false);
-        setIsShowModalDelete(false);
-        setIsShowModalUpdate(false);
-    };
-    // Show Data On Tables
-    useEffect(() => {
-        getTaiKhoanKH(0);
-    }, []);
-
-    const getTaiKhoanKH = async (page) => {
-        let res = await fetchAllTKKH(page);
-        // console.log("Data", res);
-        if (res && res.content) {
-            setlistTaiKhoanKH(res.content);
-            console.log(res);
-            setTotalPages(res.totalPages);
+            // Đồng thời cập nhật danh sách dữ liệu hiện tại
+            setListData(res.content);
+            setNumberPages(Math.ceil(res.totalPages));
+        } catch (error) {
+            console.error(error);
         }
     };
+    useEffect(() => {
+        getListData(0);
+    }, []);
+
+    const columns = [
+        {field: "index", headerName: "#####", width: 80},
+        {field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 200},
+        {field: "tenKh", headerName: "Tên Khách Hàng", width: 200},
+        {field: "sdtKh", headerName: "Số Điện Thoại", width: 200,},
+        {field: "email", headerName: "Email", width: 200,},
+        {
+            field: "trangThai",
+            headerName: "Trạng Thái",
+            width: 200,
+            renderCell: (params) => {
+                const {value: trangThai} = params;
+                let badgeVariant, statusText;
+                switch (trangThai) {
+                    case 1:
+                        badgeVariant = "primary";
+                        statusText = "Đã kích hoạt";
+                        break;
+                    case 2:
+                        badgeVariant = "info";
+                        statusText = "Đã Ngưng hoạt động";
+                        break;
+                    default:
+                        badgeVariant = "light";
+                        statusText = "Chưa Kích Hoạt";
+                        break;
+                }
+
+                return (
+                    <Badge bg={badgeVariant} text="dark">
+                        {statusText}
+                    </Badge>
+                );
+            },
+        },
+    ];
+
+    // Xử lý dữ liệu của bảng vào mảng rows
+    const rows = listData
+        .filter((item) =>
+            Object.values(item).some((value) =>
+                String(value).toLowerCase().includes(searchKeyword.toLowerCase())
+            )
+        )
+        .map((item, index) => ({
+            idTaiKhoan: item.idTaiKhoan,
+            id: index + 1,
+            index: index + 1,
+            maTaiKhoan: item.maTaiKhoan,
+            tenKh: item.ho +' '+ item.ten ,
+            sdtKh: item.sdt,
+            email: item.email,
+            trangThai: item.trangThai,
+        }));
     //Next Page
-    const handlePageClick = (event) => {
-        getTaiKhoanKH(+event.selected);
+    const handlePageClick = (page) => {
+        getListData(page);
     };
-    //Delete
-    const [isShowModalDelete, setIsShowModalDelete] = useState(false);
-    const [isDataTaiKhoanKH, setDataTaiKhoanKH] = useState({});
-    const handleDelete = (maTKKH) => {
-        // console.log("Check delete: ", maTKKH);
-        setIsShowModalDelete(true);
-        setDataTaiKhoanKH(maTKKH);
+    //filter status
+    useEffect(() => {
+        const filteredData =
+            selectedStatus === "Tất cả"
+                ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
+                : originalListData.filter(
+                    (item) =>
+                        item.trangThai === parseInt(selectedStatus)
+                );
+        setListData(filteredData);
+    }, [selectedStatus, originalListData]);
+
+    //Click on the table
+
+    const handAdd = () => {
+        navigate("/tai-khoan-KH/them-tai-khoan");
     };
-
-    const [isShowModalUpdate, setIsShowModalUpdate] = useState(false);
-
-
-    const handleUpdateTable = (taiKhoanKH) => {
-        setlistTaiKhoanKH([taiKhoanKH, ...listTaiKhoanKH]);
-        getTaiKhoanKH(0);
+    const handlClickRow = (item) => {
+        // console.log("Check click: ", item);
+        navigate(`/tai-khoan-KH/detail/${item.idTaiKhoan}`);
     };
-
-
-    const handleUpdate = (taiKhoanKH) => {
-        setDataTaiKhoanKH(taiKhoanKH);
-        setIsShowModalUpdate(true);
-    };
-
-    const handleDiaChi = (TK) => {
-        setDataTaiKhoanKH(TK);
-        localStorage.setItem('TK',JSON.stringify(TK));
-        window.location.href = '/table-diaChi';
-    };
-
-
     return (
         <>
-            <div className="my-3 add-new">
-                <samp>List Tai Khoan KH</samp>
-                <button
-                    className="btn btn-success"
-                    onClick={() => setIsShowModalAddNew(true)}
+            <div className="row row-order-management">
+                <div className="row">
+                    <div className="col-4">
+                        <Nav>
+                            <Form className="d-flex search-form">
+                                <Form.Control
+                                    type="search"
+                                    placeholder="Search"
+                                    className="me-2 search-input"
+                                    aria-label="Search"
+                                    size="sm"
+                                    onChange={(e) => setSearchKeyword(e.target.value)}
+                                />
+                                <Button variant="outline-success" className="search-button">
+                                    <FontAwesomeIcon icon={faMagnifyingGlass} size="xs"/>
+                                </Button>
+                            </Form>
+                        </Nav>
+                    </div>
+                </div>
+
+                <div className="row">
+                    <div className="col-5">
+                        <label htmlFor="status-select">Trạng Thái: </label>
+                        <select
+                            id="status-select"
+                            className="select-green"
+                            value={selectedStatus}
+                            onChange={(e) => setSelectedStatus(e.target.value)}
+                        >
+                            <option value="Tất cả">Tất cả</option>
+                            <option value="0">Chưa kích hoạt</option>
+                            <option value="1">Đã kích hoạt</option>
+                            <option value="2">Đã Ngưng Hoạt động</option>
+                        </select>
+                    </div>
+                    <div className="col-5">
+                        <Button variant="contained" color="success"  onClick={() => handAdd()} >
+                            Tạo Tài Khoản Mới
+                            <FontAwesomeIcon icon={faCartPlus} size="lg"/>{" "}
+                        </Button>
+                    </div>
+                </div>
+
+                <div style={{height: 500, width: "100%"}}>
+                    <DataGrid
+                        rows={rows}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: {page: 0, pageSize: 10},
+                            },
+                        }}
+                        pageSizeOptions={[5, 10, 15]}
+                        onRowClick={(params) => handlClickRow(params.row)}
+                    />
+                </div>
+                <Stack
+                    direction="row"
+                    spacing={2}
+                    justifyContent="center"
+                    alignItems="center"
                 >
-                    Them
-                </button>
+                    <Pagination
+                        onChange={(event, page) => handlePageClick(page - 1)} // Subtract 1 from page value
+                        count={numberPages}
+                        variant="outlined"
+                    />
+                </Stack>
             </div>
-            <Table striped bordered hover>
-                <thead>
-                <tr>
-                    <th>Ma Tai Khoan</th>
-                    <th>Ho</th>
-                    <th>Ten</th>
-                    <th>SDT</th>
-                    <th>Email</th>
-                    {/*<th>Mat Khau</th>*/}
-                    <th>Trang Thai</th>
-                    <th>Dia Chi</th>
-                    <th>Function</th>
-                </tr>
-                </thead>
-                <tbody>
-                {listTaiKhoanKH &&
-                    listTaiKhoanKH.length > 0 &&
-                    listTaiKhoanKH.map((item, index) => {
-                        return (
-                            <tr key={`xuatXu-${index}`}>
-                                <td>{item.maTaiKhoan}</td>
-                                <td>{item.ho}</td>
-                                <td>{item.ten}</td>
-                                <td>{item.sdt}</td>
-                                <td>{item.email}</td>
-                                {/*<td>{item.matKhau}</td>*/}
-                                <td>{item.trangThai === 1 ? 'Hoat Dong' : 'Ngung Hoat Dong'}</td>
-                                <td>
-                                    <button onClick={() => handleDiaChi(item)}
-                                            type="button"
-                                            className="btn btn-outline-danger">
-                                        Dia Chi
-                                    </button>
-
-                                </td>
-                                <td>
-                                    <button onClick={() => handleDelete(item)}
-                                            type="button"
-                                            className="btn btn-outline-danger">
-                                        Delete
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-warning"
-                                        onClick={() => handleUpdate(item)}
-                                    >
-                                        Update
-                                    </button>
-
-
-                                </td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </Table>
-            <ReactPaginate
-                breakLabel="..."
-                nextLabel="next >"
-                onPageChange={handlePageClick}
-                pageRangeDisplayed={5}
-                pageCount={totalPages}
-                previousLabel="< previous"
-                renderOnZeroPageCount={null}
-                //Class form
-                pageClassName="page-item"
-                pageLinkClassName="page-link"
-                previousClassName="page-item"
-                previousLinkClassName="page-link"
-                nextClassName="page-item"
-                nextLinkClassName="page-link"
-                breakClassName="page-item"
-                breakLinkClassName="page-link"
-                containerClassName="pagination"
-                activeClassName="active"
-            />
-            {/* Add Model */}
-            <ModelAddNewTKKH
-                show={isShowModalAddNew}
-                handleClose={handleClose}/>
-            <ModelConfirmTKKH
-                show={isShowModalDelete}
-                handleClose={handleClose}
-                isDataTaiKhoanKH={isDataTaiKhoanKH}
-                getTaiKhoanKH={getTaiKhoanKH}
-            />
-            <ModalUpdate
-                show={isShowModalUpdate}
-                handleClose={handleClose}
-                isDataTaiKhoanKH={isDataTaiKhoanKH}
-                handleUpdateTable={handleUpdateTable}
-            />
-
-
         </>
     );
 };
-export default TableTaiKhoanKH;
+
+export default TableTKKhachHang;

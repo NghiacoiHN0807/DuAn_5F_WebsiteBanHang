@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
-import Table from "react-bootstrap/Table";
 import ModelConfirmGiamGia from "./ModelConfirmGiamGia";
 import Stack from "@mui/material/Stack";
 import { getAll, getAllByTrangThai } from "../services/giamGiaService";
-import { Badge, Form } from "react-bootstrap";
+import { Badge, Form, Nav } from "react-bootstrap";
 import "../scss/TableGiamGiaScss.scss";
 import Pagination from "@mui/material/Pagination";
-import { Chip } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDeleteLeft, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { DataGrid } from "@mui/x-data-grid";
 
 const TableGiamGia = (props) => {
   //Set value for table
@@ -43,6 +42,7 @@ const TableGiamGia = (props) => {
   const getGiamGia = async (page, size) => {
     let res = await getAll(page, size);
     if (res && res.content) {
+      console.log(res)
       setListGiamGia(res.content);
       setNumberPages(Math.ceil(res.totalPages));
     }
@@ -88,59 +88,134 @@ const TableGiamGia = (props) => {
     // Chuyển hướng đến đường dẫn /add/giam-gia
     navigate(`/add/giam-gia`);
   };
+  console.log(listGiamGia)
+  const rows = listGiamGia
+    .filter((item) =>
+      Object.values(item).some((value) =>
+        String(value).toLowerCase().includes(searchKeyword.toLowerCase())
+      )
+    )
+    .map((item, index) => ({
+      idHd: item.idGiamGia,
+      id: index + 1,
+      index: index + 1,
+      tenChuongTrinh: item.idGiamGia.tenChuongTrinh,
+      tenSp: item.idCtsp.idSp.tenSp,
+      mucGiam: item.idGiamGia.mucGiamTienMat === null
+        ? item.idGiamGia.mucGiamPhanTram + "%"
+        : formatCurrency(item.idGiamGia.mucGiamTienMat),
+      thoiGian: formatDate(item.idGiamGia.ngayBatDau) +
+        " - " +
+        formatDate(item.idGiamGia.ngayKetThuc),
+      donGia: formatCurrency(item.donGia),
+      sauGiam: formatCurrency(item.soTienConLai),
+      trangThai: item.trangThai
+    }));
+
+  const columns = [
+    { field: "index", headerName: "#", width: 50 },
+    { field: "tenChuongTrinh", headerName: "Tên chương trình", width: 150 },
+    { field: "tenSp", headerName: "Tên sản phẩm", width: 150  },
+    { field: "mucGiam", headerName: "Mức giảm", width: 100 },
+    {
+      field: "thoiGian",
+      headerName: "Thời giảm",
+      width: 200,
+    },
+    {
+      field: "donGia",
+      headerName: "Đơn giá",
+      width: 100,
+    },
+    {
+      field: "sauGiam",
+      headerName: "Số tiền còn lại",
+      width: 150
+    },
+    {
+      field: "trangThai",
+      headerName: "Trạng Thái",
+      width: 200,
+      renderCell: (params) => {
+        const { value: trangThai } = params;
+        let badgeVariant, statusText;
+        switch (trangThai) {
+          case 10:
+            badgeVariant = "warning";
+            statusText = "Ngưng hoạt động";
+            break;
+          case 0:
+            badgeVariant = "success";
+            statusText = "Hoạt động";
+            break;
+          default:
+            badgeVariant = "light";
+            statusText = "Không xác định";
+            break;
+        }
+
+        return (
+          <Badge bg={badgeVariant} text="dark">
+            {statusText}
+          </Badge>
+        );
+      },
+    },
+  ];
 
   return (
     <>
       <div className="row row-order-management">
-        <div className="my-3 add-new">
-          <samp>List Giam Gia</samp>
+        <div className="row">
+          <div className="col-4">
+            <Nav>
+              <Form className="d-flex search-form">
+                <Form.Control
+                  type="search"
+                  placeholder="Search"
+                  className="me-2 search-input"
+                  aria-label="Search"
+                  size="sm"
+                  onChange={(e) => setSearchKeyword(e.target.value)}
+                />
+                <Button variant="outline-success" className="search-button">
+                  <FontAwesomeIcon icon={faMagnifyingGlass} size="xs" />
+                </Button>
+              </Form>
+            </Nav>
+          </div>
         </div>
-        <div>
-          <form className="d-flex" role="search">
+
+        <div className="d-flex">
+          <div className="d-flex align-items-center">
+            <label>Trạng thái</label>
+            <Form.Select
+              aria-label="Default select example"
+              onChange={(e) => hi(e)}
+              className="m-3"
+            >
+              <option value="1">Tất cả</option>
+              <option value="2">Hoạt động</option>
+              <option value="3">Ngưng hoạt động</option>
+            </Form.Select>
+          </div>
+          <div className="d-flex align-items-center">
+            <label>Ngày bắt đầu</label>
             <input
-              className="form-control me-2"
-              type="search"
-              placeholder="Search"
-              aria-label="Search"
-              onChange={(e) => setSearchKeyword(e.target.value)}
+              type="date"
+              id="inputPassword6"
+              className="form-control m-3"
+              aria-describedby="passwordHelpInline"
             />
-            <button className="btn btn-outline-success" type="submit">
-              Search
-            </button>
-          </form>
-        </div>
-        <div className="d-flex justify-content-between">
-          <div className="d-flex">
-            <div className="d-flex align-items-center">
-              <label>Trạng thái</label>
-              <Form.Select
-                aria-label="Default select example"
-                onChange={(e) => hi(e)}
-                className="m-3"
-              >
-                <option value="1">Tất cả</option>
-                <option value="2">Hoạt động</option>
-                <option value="3">Ngưng hoạt động</option>
-              </Form.Select>
-            </div>
-            <div className="d-flex align-items-center">
-              <label>Ngày bắt đầu</label>
-              <input
-                type="date"
-                id="inputPassword6"
-                className="form-control m-3"
-                aria-describedby="passwordHelpInline"
-              />
-            </div>
-            <div className="d-flex align-items-center">
-              <label>Ngày kết thúc</label>
-              <input
-                type="date"
-                id="inputPassword6"
-                className="form-control m-3"
-                aria-describedby="passwordHelpInline"
-              />
-            </div>
+          </div>
+          <div className="d-flex align-items-center">
+            <label>Ngày kết thúc</label>
+            <input
+              type="date"
+              id="inputPassword6"
+              className="form-control m-3"
+              aria-describedby="passwordHelpInline"
+            />
           </div>
           <Button
             variant="contained"
@@ -151,105 +226,20 @@ const TableGiamGia = (props) => {
             Thêm
           </Button>
         </div>
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              {/* <th scope="col">Mã chương trình</th> */}
-              <th scope="col">Tên chương trình</th>
-              <th scope="col">Loại sản phẩm áp dụng</th>
-              <th scope="col">Mức giảm giá</th>
-              <th scope="col">Thời gian</th>
-              <th scope="col">Đơn giá</th>
-              <th scope="col">Giá sau giảm</th>
-              <th scope="col">Trạng thái</th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {listGiamGia &&
-              listGiamGia.length > 0 &&
-              listGiamGia
-                .filter((item) =>
-                  Object.values(item).some((value) =>
-                    String(value)
-                      .toLowerCase()
-                      .includes(searchKeyword.toLowerCase())
-                  )
-                )
-                .map((item, index) => {
-                  return (
-                    <tr key={item.idGiamGia} className="text-center">
-                      <th scope="row">{index + 1}</th>
-                      {/* <td>{item.maGiamGia}</td> */}
-                      <td>{item.idGiamGia.tenChuongTrinh}</td>
-                      <td>{item.idCtsp.idSp.tenSp}</td>
-                      <td>
-                        {item.idGiamGia.mucGiamTienMat === null
-                          ? item.idGiamGia.mucGiamPhanTram + "%"
-                          : formatCurrency(item.idGiamGia.mucGiamTienMat)}
-                      </td>
-                      <td>
-                        <div className="d-flex justify-content-center align-items-center">
-                          <Chip
-                            label={
-                              formatDate(item.idGiamGia.ngayBatDau) +
-                              " - " +
-                              formatDate(item.idGiamGia.ngayKetThuc)
-                            }
-                            className="bg-info"
-                          />
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex justify-content-center align-items-center">
-                          {formatCurrency(item.donGia)}
-                        </div>
-                      </td>
-                      <td>
-                        <div className="d-flex justify-content-center align-items-center">
-                          {formatCurrency(item.soTienConLai)}
-                        </div>
-                      </td>
-                      <td>
-                        {item.trangThai === 10 ? (
-                          <Badge bg="warning" text="dark">
-                            Ngưng hoạt động
-                          </Badge>
-                        ) : item.trangThai === 0 ? (
-                          <Badge bg="success" text="dark">
-                            Hoạt động
-                          </Badge>
-                        ) : (
-                          <Badge variant="light" text="dark">
-                            Không xác định
-                          </Badge>
-                        )}
-                      </td>
-                      <td>
-                        <div className="d-flex justify-content-center align-items-center">
-                          <button
-                            onClick={() => handleDelete(item)}
-                            type="button"
-                            className="btn btn-outline-danger"
-                          >
-                            <FontAwesomeIcon icon={faDeleteLeft} size="lg" />
-                          </button>{" "}
-                          <div onClick={() => handleDelete(item)}>
-                            <button
-                              type="button"
-                              className="btn btn-outline-warning"
-                            >
-                              <FontAwesomeIcon icon={faPenToSquare} size="lg" />
-                            </button>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-          </tbody>
-        </Table>
+
+        <div style={{ height: 400, width: "100%" }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 10 },
+              },
+            }}
+            pageSizeOptions={[5, 10, 15]}
+          // onRowClick={(params) => handlClickRow(params.row)}
+          />
+        </div>
         <Stack
           direction="row"
           spacing={2}
@@ -262,12 +252,6 @@ const TableGiamGia = (props) => {
             variant="outlined"
           />
         </Stack>
-        <ModelConfirmGiamGia
-          show={isShowModalDelete}
-          handleClose={handleClose}
-          isDataGiamGia={isDataGiamGia}
-          getGiamGia={getGiamGia}
-        />
       </div>
     </>
   );

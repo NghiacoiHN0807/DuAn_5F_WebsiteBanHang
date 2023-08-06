@@ -17,14 +17,26 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
 
     @Autowired
     private ChitietsanphamRepository chitietsanphamRepository;
+
     @Override
     public Page<ChiTietSanPham> chiTietSP(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return chitietsanphamRepository.findAll(pageable);
     }
+
     @Override
     public List<ChiTietSanPham> findByProductName(String name) {
         return chitietsanphamRepository.findByProductName(name);
+    }
+
+    @Override
+    public List<ChiTietSanPham> findByIdSp(Integer id) {
+        return chitietsanphamRepository.findByIdSp(id);
+    }
+
+
+    public List<ChiTietSanPham> findByProductId(Integer id) {
+        return chitietsanphamRepository.findByProductId(id);
     }
 
     @Override
@@ -34,7 +46,8 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
 
     @Override
     public void delete(Integer id) {
-        chitietsanphamRepository.deleteById(id);
+
+        chitietsanphamRepository.findById(id).orElse(null).setTrangThai(10);
     }
 
     @Override

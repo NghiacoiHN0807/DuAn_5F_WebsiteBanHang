@@ -20,7 +20,7 @@ public class TaiKhoanKhachHangController {
 
     @GetMapping("view-all")
     public Page<TaiKhoanKhachHang> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                           @RequestParam(defaultValue = "5") Integer size,
+                                           @RequestParam(defaultValue = "15") Integer size,
                                            @RequestParam("p") Optional<Integer> p) {
 
         return TaiKhoanKhachHangKHSevice.Page(p.orElse(page), size);
@@ -39,7 +39,6 @@ public class TaiKhoanKhachHangController {
     @GetMapping("detail/{id}")
     public Optional<TaiKhoanKhachHang> detail(@PathVariable("id") Integer id
     ) {
-
         return TaiKhoanKhachHangKHSevice.detail(id);
     }
 

@@ -12,6 +12,7 @@ import Paper from '@mui/material/Paper';
 import TablePagination from '@mui/material/TablePagination';
 import { getAllSanPham } from '../services/giamGiaService';
 import { Chip } from '@mui/material';
+import ModelAddNewGiamGia from './ModalsAddNewGiamGia';
 
 function not(a, b) {
     return a.filter((value) => b.indexOf(value) === -1);
@@ -34,8 +35,6 @@ export default function SelectAllTransferList() {
     const [rightPage, setRightPage] = React.useState(0);
     const [rightRowsPerPage, setRightRowsPerPage] = React.useState(5);
     const [selectedRight, setSelectedRight] = React.useState([]);
-    const [rightChecked, setRightChecked] = React.useState([]);
-
 
     const getAllSp = async () => {
         let res = await getAllSanPham();
@@ -69,7 +68,6 @@ export default function SelectAllTransferList() {
             } else {
                 newSelectedRight.splice(currentIndex, 1);
             }
-
             setSelectedRight(newSelectedRight);
         }
     };
@@ -92,21 +90,14 @@ export default function SelectAllTransferList() {
         const newRight = right.concat(leftChecked);
         const newLeft = not(left, leftChecked);
 
-        // Move the selected items to the top of the newRight array
         const sortedRight = leftChecked.concat(newRight.filter((value) => leftChecked.indexOf(value) === -1));
 
         setRight(sortedRight);
         setLeft(newLeft);
         setChecked(not(checked, leftChecked));
 
-        // Add selected items to the selectedRight state and auto check them
         setSelectedRight([...selectedRight, ...leftChecked]);
     };
-
-    React.useEffect(() => {
-        const newRightChecked = intersection(checked, right);
-        setRightChecked(newRightChecked);
-    }, [selectedRight, checked, right]);
 
 
     const handleCheckedLeft = () => {
@@ -145,6 +136,19 @@ export default function SelectAllTransferList() {
 
     const isMoveLeftDisabled = selectedRight.length === 0;
 
+  function formatCurrency(price) {
+    if (!price) return "0";
+
+    const formatter = new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
+
+  console.log(selectedRight)
 
     return (
         <div>
@@ -176,6 +180,7 @@ export default function SelectAllTransferList() {
                                     <TableRow key={`left_${value.idSp}`}>
                                         <TableCell padding="checkbox">
                                             <Checkbox
+                                                value={value.idSp}
                                                 checked={checked.indexOf(value) !== -1}
                                                 onClick={handleToggle(value, true)}
                                             />
@@ -183,7 +188,7 @@ export default function SelectAllTransferList() {
                                         <TableCell>{index + 1}</TableCell>
                                         <TableCell>{value.maSp}</TableCell>
                                         <TableCell>{value.tenSp}</TableCell>
-                                        <TableCell>{value.tinhTrang === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
+                                        <TableCell>{value.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -240,8 +245,10 @@ export default function SelectAllTransferList() {
                                         /> */}
                                     </TableCell>
                                     <TableCell>STT</TableCell>
-                                    <TableCell>Mã</TableCell>
+                                    <TableCell>Ảnh sản phẩm</TableCell>
+                                    <TableCell>Mã sản phẩm</TableCell>
                                     <TableCell>Tên sản phẩm</TableCell>
+                                    <TableCell>Giá sản phẩm</TableCell>
                                     <TableCell>Trạng thái</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -250,14 +257,18 @@ export default function SelectAllTransferList() {
                                     <TableRow key={`right_${value.idSp}`}>
                                         <TableCell padding="checkbox">
                                             <Checkbox
+                                                value={value.idSp}
                                                 checked={selectedRight.indexOf(value) !== -1} // Sử dụng selectedRight thay vì checked
                                                 onClick={handleToggle(value, false)} // Đặt isLeft là false để xác định là bảng phải
+                                                // onChange={handleChange}
                                             />
                                         </TableCell>
                                         <TableCell>{index + 1}</TableCell>
+                                        <TableCell>{`Ảnh sản phẩm ${value.maSp}`}</TableCell>
                                         <TableCell>{value.maSp}</TableCell>
                                         <TableCell>{value.tenSp}</TableCell>
-                                        <TableCell>{value.tinhTrang === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
+                                        <TableCell>{formatCurrency(value.giaBan)}</TableCell>
+                                        <TableCell>{value.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -274,6 +285,9 @@ export default function SelectAllTransferList() {
                     />
                 </Grid>
             </Grid>
+            {/* <ModelAddNewGiamGia dataSanPham={selectedRight}/> */}
         </div>
     );
 }
+
+// export default 

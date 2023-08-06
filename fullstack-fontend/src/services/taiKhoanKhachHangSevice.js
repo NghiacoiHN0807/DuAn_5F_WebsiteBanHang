@@ -1,12 +1,12 @@
 import custom from "./custom-axios";
 
-const fetchAllTKKH = (page) => {
-    return custom.get(`/tai-khoan-khach-hang/view-all?p=${page}`); // Call API
+const fetchAllTKKH = (page, keyword) => {
+    return custom.get(`/tai-khoan-khach-hang/view-all?p=${page}&keyword=${keyword}`); // Call API
 };
 const postAddTaiKhoanKhachHang = (maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) => {
     return custom.post("/tai-khoan-khach-hang/add", {maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai});
 };
-export const postUpdateTaiKhoanKhachHang = (idTaiKhoan, maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) => {
+const postUpdateTaiKhoanKhachHang = (idTaiKhoan, maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) => {
     return custom.post("/tai-khoan-khach-hang/update", {
         idTaiKhoan,
         maTaiKhoan,
@@ -18,10 +18,12 @@ export const postUpdateTaiKhoanKhachHang = (idTaiKhoan, maTaiKhoan, ho, ten, sdt
         trangThai
     });
 };
-
+const getDetailOneTK = (idTaiKhoan) => {
+    return custom.get(`/tai-khoan-khach-hang/detail/${idTaiKhoan}`);
+};
 
 const deleteTaiKhoan = (id) => {
     return custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
 };
 
-export {fetchAllTKKH, postAddTaiKhoanKhachHang, deleteTaiKhoan};
+export {fetchAllTKKH,postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoan,getDetailOneTK};

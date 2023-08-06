@@ -29,7 +29,7 @@ public class TaiKhoanNhanVienController {
 
     @GetMapping("view-all")
     public Page<TaiKhoanNhanVien> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                             @RequestParam(defaultValue = "5") Integer size,
+                                             @RequestParam(defaultValue = "15") Integer size,
                                              @RequestParam("p") Optional<Integer> p) {
 
         return taiKhoanNhanVienService.phanTrang(p.orElse(page), size);
@@ -37,7 +37,7 @@ public class TaiKhoanNhanVienController {
 
     @GetMapping("view-alls")
     public Page<TaiKhoanNhanVien> viewAlll(@RequestParam(defaultValue = "0", value= "page") Integer page,
-                                          @RequestParam(defaultValue = "5") Integer size,
+                                          @RequestParam(defaultValue = "15") Integer size,
                                            @RequestParam("trangThai") Integer trangThai) {
 
         return taiKhoanNhanVienService.phanTrang(page, size, trangThai);

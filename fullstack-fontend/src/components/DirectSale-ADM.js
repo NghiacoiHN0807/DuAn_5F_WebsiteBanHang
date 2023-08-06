@@ -12,7 +12,6 @@ import { Button, IconButton, Pagination } from "@mui/material";
 import "../scss/DirectSaleADM.scss";
 import { Badge, Form, Nav, Stack } from "react-bootstrap";
 import { DataGrid } from "@mui/x-data-grid";
-import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { pink } from "@mui/material/colors";
