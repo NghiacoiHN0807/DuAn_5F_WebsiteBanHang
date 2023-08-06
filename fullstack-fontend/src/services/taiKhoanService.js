@@ -5,11 +5,11 @@ const taiKhoan = (page) => {
 const taiKhoan2 = (page, trangThai) => {
   return custom.get(`/tai-khoan/view-alls?p=${page}&trangThai=${trangThai}`); // Call API
 };
-const postAddTaiKhoan = (maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) => {
-  return custom.post("/tai-khoan/add", { maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai });
+const postAddTaiKhoan = (maTaiKhoan, ho, ten, sdt, email,  trangThai) => {
+  return custom.post("/tai-khoan/add", { maTaiKhoan, ho, ten, sdt, email,  trangThai });
 };
-const postUpdateTaiKhoan = (id,maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) => {
-  return custom.put(`/tai-khoan/update/${id}`, {maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai });
+const postUpdateTaiKhoan = (id,maTaiKhoan, ho, ten, sdt, email,  trangThai) => {
+  return custom.put(`/tai-khoan/update/${id}`, {maTaiKhoan, ho, ten, sdt, email,  trangThai });
 };
 const deleteTaiKhoan = (id) => {
   return custom.delete(`/tai-khoan/delete/${id}`);

@@ -16,7 +16,6 @@ import java.util.UUID;
 @Getter
 @Setter
 @Table(name = "tai_khoan")
-
 public class TaiKhoanKhachHang {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

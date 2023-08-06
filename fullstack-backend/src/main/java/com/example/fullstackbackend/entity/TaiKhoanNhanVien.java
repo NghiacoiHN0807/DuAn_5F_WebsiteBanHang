@@ -38,8 +38,6 @@ public class TaiKhoanNhanVien {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "mat_khau")
-    private String matKhau;
 
     @Column(name = "trang_thai")
     private Integer trangThai;
