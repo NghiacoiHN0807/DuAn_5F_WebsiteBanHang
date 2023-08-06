@@ -5,6 +5,9 @@ import { toast } from "react-toastify";
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -25,18 +28,56 @@ import { fetchCL, detailCL } from "../../services/ChatLieuService";
 import { fetchCoAo, detailCoAo } from "../../services/LoaiCoAoService";
 import { fetchLSP, detailLSP } from "../../services/LoaiSPService";
 import { fetchMS, detailMS } from "../../services/MauSacService";
-import { fetchSize } from "../../services/SizeService";
+import { detailSize, fetchSize } from "../../services/SizeService";
 import { fetchTayAo, detailTayAo } from "../../services/OngTayAoService";
 import { detailSP } from "../../services/SanPhamService";
-import { findSizeById } from "../../services/ChiTietSPService";
+import { findSizeById, postAddCTSP } from "../../services/ChiTietSPService";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCallback } from "react";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import ToggleButton from "react-bootstrap/ToggleButton";
+import { Badge } from "react-bootstrap";
+
+const QuantityInput = ({ value, onChange }) => {
+  const handleDecrease = () => {
+    if (value > 1) {
+      onChange(value - 1);
+    }
+  };
+
+  const handleIncrease = () => {
+    onChange(value + 1);
+  };
+
+  const handleInputChange = (event) => {
+    const inputValue = event.target.value;
+    onChange(parseInt(inputValue, 10));
+  };
+
+  return (
+    <div>
+      <ButtonGroup>
+        <ToggleButton variant="outline-success" onClick={handleDecrease}>
+          -
+        </ToggleButton>
+        <input
+          type="number"
+          value={value}
+          onChange={handleInputChange}
+          style={{ width: "50px", textAlign: "center" }}
+        />
+        <ToggleButton variant="outline-success" onClick={handleIncrease}>
+          +
+        </ToggleButton>
+      </ButtonGroup>
+    </div>
+  );
+};
 
 const ModelUpdate = (props) => {
   const [maSp, setMaSp] = useState("");
   const [tenSp, setTenSp] = useState("");
   const [moTa, setMoTa] = useState("");
-  const [soLuongTon, setSoLuongTon] = useState("");
   const [giaBan, setGiaBan] = useState("");
   const [trangThai, setTrangThai] = useState("");
 
@@ -53,8 +94,11 @@ const ModelUpdate = (props) => {
   const [listXX, setListXX] = useState([]);
   const [listTayAo, setListTayAo] = useState([]);
   const [listCoAo, setListCoAo] = useState([]);
+  const [listSize, setListSize] = useState([]);
 
   const [listCTSP, setListCTSP] = useState([]);
+
+  const [radioValue, setRadioValue] = useState("1");
 
   // get param
   const param = useParams();
@@ -81,14 +125,13 @@ const ModelUpdate = (props) => {
     getSizeData();
   }, [getSizeData]);
 
-  //Select bill
+  //Select data
   const getListData = useCallback(async () => {
     try {
       let res = await detailSP(idSpHttp);
       setMaSp(res.maSp);
       setTenSp(res.tenSp);
       setMoTa(res.moTa);
-      setSoLuongTon(res.soLuongTon);
       setGiaBan(res.giaBan);
       setTrangThai(res.trangThai);
 
@@ -124,6 +167,9 @@ const ModelUpdate = (props) => {
 
     let resCoAo = await fetchCoAo();
     setListCoAo(resCoAo);
+
+    let resSize = await fetchSize();
+    setListSize(resSize);
   };
 
   // chuyen trang
@@ -176,6 +222,38 @@ const ModelUpdate = (props) => {
       }
     }
   };
+
+  // show form add size
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const hanldeAgree = async () => {
+    let getObjSp = await detailSP(idSpHttp);
+    let getObjSize = await detailSize(radioValue);
+
+    let res = await postAddCTSP(getObjSp, getObjSize, quantity, 0);
+    console.log("Check res: ", res);
+    if (res && res.idCtsp) {
+      toast.success("Thêm thành công!");
+    } else {
+      toast.error("Thêm thất bại!");
+    }
+    setOpen(false);
+    getSizeData();
+  };
+  // size
+  const handleQuantityChange = (newQuantity) => {
+    setQuantity(newQuantity);
+  };
+  const [quantity, setQuantity] = useState(1);
+
   return (
     <>
       <div className="row row-order-management">
@@ -392,8 +470,26 @@ const ModelUpdate = (props) => {
                         {item.idSize.tenSize}
                       </TableCell>
                       <TableCell>{item.soLuongTon}</TableCell>
-                      <TableCell>{item.trangThai}</TableCell>
-                      <TableCell>Button</TableCell>
+                      <TableCell>
+                        {item.trangThai === 0 ? (
+                          <Badge bg="success" text="dark">
+                            Hoạt động
+                          </Badge>
+                        ) : item.trangThai === 10 ? (
+                          <Badge bg="warning" text="dark">
+                            Ngừng hoạt động
+                          </Badge>
+                        ) : (
+                          <Badge variant="light" text="dark">
+                            Unknown status
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Button variant="contained" color="warning">
+                          Đổi trạng thái
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
               </TableBody>
@@ -401,9 +497,54 @@ const ModelUpdate = (props) => {
           </TableContainer>
         </div>
         <div style={{ textAlign: "center", margin: "20px 0" }}>
-          <Button variant="contained" color="success">
+          <Button variant="outlined" onClick={handleClickOpen}>
             Thêm kích thước
           </Button>
+
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            fullWidth={"sm"}
+            maxWidth={"sm"}
+          >
+            <DialogContent>
+              <div>
+                {" "}
+                <p>Chọn size: </p>
+                <ButtonGroup>
+                  {listSize.map((radio, idx) => (
+                    <ToggleButton
+                      key={idx}
+                      id={`radio-${idx}`}
+                      type="radio"
+                      variant={"outline-success"}
+                      name="radio"
+                      value={radio.idSize}
+                      checked={radioValue === radio.idSize} // Sửa thành radioValue === radio.idSize
+                      onChange={(e) => setRadioValue(e.currentTarget.value)}
+                    >
+                      {radio.tenSize}
+                    </ToggleButton>
+                  ))}
+                </ButtonGroup>
+              </div>
+              <div style={{ marginTop: "15px" }}>
+                <p>Số lượng: </p>
+                <QuantityInput
+                  value={quantity}
+                  onChange={handleQuantityChange}
+                />
+              </div>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Disagree</Button>
+              <Button onClick={() => hanldeAgree()} autoFocus>
+                Agree
+              </Button>
+            </DialogActions>
+          </Dialog>
         </div>
       </div>
     </>

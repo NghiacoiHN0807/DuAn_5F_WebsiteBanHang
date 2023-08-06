@@ -9,8 +9,8 @@ const findSizeById = (id) => {
 
 const postAddCTSP = (idSp, idSize, soLuongTon, trangThai) => {
   return custom.post("/chi-tiet-san-pham/add", {
-    idSize,
     idSp,
+    idSize,
     soLuongTon,
     trangThai,
   });
