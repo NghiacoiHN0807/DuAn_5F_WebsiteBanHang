@@ -40,9 +40,9 @@ const AddTkKH = (props) => {
             console.log("Check res: ", res);
             if (res && res.idTaiKhoan) {
                 toast.success("Thêm Thành Công");
-                navigate("/tai-khoan-KH/detail/:id" + res.idTaiKhoan);
+                navigate("/tai-khoan-KH");
             } else {
-                toast.error("Add ctsp failed!");
+                toast.error("Thêm Thất Bại!");
             }
         }
     };
