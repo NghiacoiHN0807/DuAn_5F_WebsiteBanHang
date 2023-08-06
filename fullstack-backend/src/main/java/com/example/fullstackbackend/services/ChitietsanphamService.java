@@ -13,11 +13,9 @@ public interface ChitietsanphamService {
 
     List<ChiTietSanPham> findByProductName(String name);
 
-<<<<<<< HEAD
     List<ChiTietSanPham> findByIdSp(Integer id);
-=======
+
     List<ChiTietSanPham> findByProductId(Integer id);
->>>>>>> origin/longthtruemilk
 
     ChiTietSanPham add(ChiTietSanPham add);
 
@@ -26,5 +24,6 @@ public interface ChitietsanphamService {
     ChiTietSanPham update(ChiTietSanPham update);
 
     Optional<ChiTietSanPham> detail(Integer id);
+
     Boolean checkExists(Integer id);
 }
