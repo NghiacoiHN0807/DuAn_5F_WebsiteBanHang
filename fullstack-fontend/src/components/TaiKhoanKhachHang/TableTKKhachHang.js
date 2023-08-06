@@ -45,7 +45,7 @@ const TableTKKhachHang = () => {
     }, []);
 
     const columns = [
-        {field: "index", headerName: "#####", width: 80},
+        {field: "index", headerName: "#####", width: 50},
         {field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 200},
         {field: "tenKh", headerName: "Tên Khách Hàng", width: 200},
         {field: "sdtKh", headerName: "Số Điện Thoại", width: 200,},
@@ -62,7 +62,7 @@ const TableTKKhachHang = () => {
                         badgeVariant = "primary";
                         statusText = "Đã kích hoạt";
                         break;
-                    case 2:
+                    case 4:
                         badgeVariant = "info";
                         statusText = "Đã Ngưng hoạt động";
                         break;
