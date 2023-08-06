@@ -11,6 +11,7 @@ import SelectAllTransferList from "./TableGiamGiaAdd";
 const ModelAddNewGiamGia = (props) => {
   const { handleClose } = props;
   // console.log(dataSanPham)
+  console.log('Selected Right from Table:', selectedRightFromTable);
   let navigate = useNavigate();
 
   const [giamGia, setGiamGia] = useState({
@@ -117,7 +118,7 @@ const ModelAddNewGiamGia = (props) => {
         </div>
 
         <div className="content-right">
-          <SelectAllTransferList />
+        <SelectAllTransferList setSelectedRightFromTable={setSelectedRightFromTable} />
         </div>
       </div>
     </>
