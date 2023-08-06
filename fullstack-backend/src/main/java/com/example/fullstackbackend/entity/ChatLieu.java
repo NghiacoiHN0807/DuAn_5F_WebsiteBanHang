@@ -29,7 +29,7 @@ public class ChatLieu {
     @Column(name = "ten_cl")
     private String tenCl;
 
-    @Column(name = "tinh_trang")
-    private Integer tinhTrang;
+    @Column(name = "trang_thai")
+    private Integer trangThai;
 
 }

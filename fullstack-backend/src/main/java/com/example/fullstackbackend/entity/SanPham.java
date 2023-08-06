@@ -62,16 +62,11 @@ public class SanPham {
     @Column(name = "mo_ta")
     private String moTa;
 
-    @Column(name = "so_luong_ton")
-    private Integer soLuongTon;
-
-    @Column(name = "gia_nhap")
-    private BigDecimal giaNhap;
 
     @Column(name = "gia_ban")
     private BigDecimal giaBan;
 
-    @Column(name = "tinh_trang")
-    private Integer tinhTrang;
+    @Column(name = "trang_thai")
+    private Integer trangThai;
 
 }

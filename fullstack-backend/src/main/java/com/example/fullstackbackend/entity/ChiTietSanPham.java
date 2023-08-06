@@ -29,9 +29,6 @@ public class ChiTietSanPham {
     @Column(name = "id_ctsp")
     private Integer idCtsp;
 
-    @Column(name = "ma_ctsp")
-    private String maCtsp;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_size", referencedColumnName = "id_size")
     private Size idSize;
@@ -39,6 +36,9 @@ public class ChiTietSanPham {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_sp", referencedColumnName = "id_sp")
     private SanPham idSp;
+
+    @Column(name = "so_luong_ton")
+    private Integer soLuongTon;
 
     @Column(name = "trang_thai")
     private Integer trangThai;
