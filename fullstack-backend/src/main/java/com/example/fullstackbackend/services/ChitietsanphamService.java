@@ -12,6 +12,8 @@ public interface ChitietsanphamService {
 
     List<ChiTietSanPham> findByProductName(String name);
 
+    List<ChiTietSanPham> findByProductId(Integer id);
+
     ChiTietSanPham add(ChiTietSanPham add);
 
     void delete(Integer id);
