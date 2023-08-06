@@ -11,8 +11,32 @@ const detailSP = (idSp) => {
   return custom.get(`/san-pham/detail/${idSp}`); // Call API
 };
 
-const postAddSanPham = (maSp, tenSp, trangThai) => {
-  return custom.post("/san-pham/add", { maSp, tenSp, trangThai });
+const postAddSanPham = (
+  maSp,
+  tenSp,
+  idCl,
+  idMs,
+  idLsp,
+  idXx,
+  idCoAo,
+  idTayAo,
+  moTa,
+  giaBan,
+  trangThai
+) => {
+  return custom.post("/san-pham/add", {
+    maSp,
+    tenSp,
+    idCl,
+    idMs,
+    idLsp,
+    idXx,
+    idCoAo,
+    idTayAo,
+    moTa,
+    giaBan,
+    trangThai,
+  });
 };
 const deleteSanPham = (id) => {
   return custom.delete(`/san-pham/delete/${id}`);

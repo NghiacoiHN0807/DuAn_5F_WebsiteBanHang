@@ -8,6 +8,8 @@ import LoaiSPMain from "./components/LoaiSP/LoaiSPMain";
 import MauSacMain from "./components/MauSac/MauSacMain";
 import OngTayAoMain from "./components/OngTayAo/OngTayAoMain";
 import SanPhamMain from "./components/SanPham/SanPhamMain";
+import AddNewSanPham from "./components/SanPham/ModelAdd";
+import UpdateSanPham from "./components/SanPham/ModelUpdate";
 import SizeMain from "./components/Size/SizeMain";
 import TableGiamGia from "./components/TableGiamGia";
 import { Routes, Route, Link } from "react-router-dom";
@@ -311,6 +313,14 @@ function AppADM(props) {
             <Route
               path="/quan-ly-san-pham/loai-san-pham"
               element={<LoaiSPMain />}
+            />
+            <Route
+              path="/quan-ly-san-pham/san-pham/them-san-pham"
+              element={<AddNewSanPham />}
+            />
+            <Route
+              path="/quan-ly-san-pham/san-pham/sua-san-pham/:id"
+              element={<UpdateSanPham />}
             />
             <Route path="/quan-ly-san-pham/mau-sac" element={<MauSacMain />} />
             <Route

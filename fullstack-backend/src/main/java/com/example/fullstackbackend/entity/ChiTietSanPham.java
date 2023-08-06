@@ -37,6 +37,9 @@ public class ChiTietSanPham {
     @JoinColumn(name = "id_sp", referencedColumnName = "id_sp")
     private SanPham idSp;
 
+    @Column(name = "so_luong_ton")
+    private Integer soLuongTon;
+
     @Column(name = "trang_thai")
     private Integer trangThai;
 

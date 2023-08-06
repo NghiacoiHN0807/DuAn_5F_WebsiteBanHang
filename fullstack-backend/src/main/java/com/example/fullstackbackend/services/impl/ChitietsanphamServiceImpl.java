@@ -28,13 +28,20 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
     }
 
     @Override
+    public List<ChiTietSanPham> findByIdSp(Integer id) {
+        return chitietsanphamRepository.findByIdSp(id);
+    }
+
+
+    @Override
     public ChiTietSanPham add(ChiTietSanPham add) {
         return chitietsanphamRepository.save(add);
     }
 
     @Override
     public void delete(Integer id) {
-        chitietsanphamRepository.deleteById(id);
+
+        chitietsanphamRepository.findById(id).orElse(null).setTrangThai(10);
     }
 
     @Override

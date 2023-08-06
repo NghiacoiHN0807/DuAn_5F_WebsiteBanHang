@@ -30,7 +30,7 @@ public class SanPhamController {
 
     @GetMapping("view-all")
     public Page<SanPham> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                  @RequestParam(defaultValue = "5") Integer size,
+                                  @RequestParam(defaultValue = "15") Integer size,
                                   @RequestParam("p") Optional<Integer> p) {
         return sanPhamService.sanPhamPage(p.orElse(page), size);
     }

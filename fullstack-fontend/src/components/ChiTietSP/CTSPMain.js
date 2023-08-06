@@ -116,75 +116,6 @@ const ChiTietSP = (props) => {
 
     let resCoAo = await fetchCoAo();
     setListCoAo(resCoAo);
-
-    setChatLieu(resCL[0].idCl);
-    setMauSac(resMS[0].idMs);
-    setSize(resSize[0].idSize);
-    setSanPham(resSP[0].idSp);
-    setLoaiSP(resLSP[0].idLoaisp);
-    setXuatXu(resXX[0].idXx);
-    setTayAo(resTayAo[0].idTayAo);
-    setCoAo(resCoAo[0].idCoAo);
-  };
-
-  const handleAdd = async () => {
-    // get object all\
-    const getObjChatLieu = await detailCL(chatLieu);
-    const getObjMauSac = await detailMS(mauSac);
-    const getObjSize = await detailSize(size);
-    const getObjSanPham = await detailSP(sanPham);
-    const getObjLoaiSP = await detailLSP(loaiSP);
-    const getObjXuatXu = await detailXX(xuatXu);
-    const getObjTayAo = await detailTayAo(tayAo);
-    const getObjCoAo = await detailCoAo(coAo);
-    if (
-      maCTSP.trim() === "" ||
-      moTa.trim() === "" ||
-      soLuongTon.trim() === "" ||
-      giaBan.trim() === "" ||
-      trangThai.trim() === ""
-    ) {
-      handleClose();
-      toast.warning("Không được để trống trường nào!");
-    } else {
-      let res = await postAddCTSP(
-        maCTSP,
-        getObjChatLieu,
-        getObjMauSac,
-        getObjSize,
-        getObjSanPham,
-        getObjLoaiSP,
-        getObjXuatXu,
-        getObjCoAo,
-        getObjTayAo,
-        moTa,
-        soLuongTon,
-        giaBan,
-        trangThai
-      );
-
-      console.log("Check res: ", res);
-      if (res && res.idCtsp) {
-        handleClose();
-        setMaCTSP("");
-        setChatLieu(listCL[0].idCl);
-        setMauSac(listMS[0].idMs);
-        setSize(listSize[0].idSize);
-        setSanPham(listSP[0].idSp);
-        setLoaiSP(listLSP[0].idLoaisp);
-        setXuatXu(listXX[0].idXx);
-        setTayAo(listCoAo[0].idCoAo);
-        setCoAo(listTayAo[0].idTayAo);
-        setMoTa("");
-        setSoLuongTon("");
-        setGiaBan("");
-        setTrangThai("");
-        toast.success("Thêm thành công!");
-        getCTSP(0);
-      } else {
-        toast.error("Thêm thất bại!");
-      }
-    }
   };
 
   const getCTSP = async (page) => {
@@ -209,74 +140,6 @@ const ChiTietSP = (props) => {
     setDataCTSP(maCtsp);
   };
 
-  //Update
-  const handleUpdate = async () => {
-    // get object chatlieu\
-    const getObjChatLieu = await detailCL(chatLieu);
-    const getObjMauSac = await detailMS(mauSac);
-    const getObjSize = await detailSize(size);
-    const getObjSanPham = await detailSP(sanPham);
-    const getObjLoaiSP = await detailLSP(loaiSP);
-    const getObjXuatXu = await detailXX(xuatXu);
-    const getObjTayAo = await detailTayAo(tayAo);
-    const getObjCoAo = await detailCoAo(coAo);
-
-    //And now add to DB
-    //Check null
-
-    if (isNaN(idCtsp)) {
-      toast.warning("Hãy chọn 1 chi tiết sản phẩm để update!");
-    } else if (
-      maCTSP.trim() === "" ||
-      moTa.trim() === "" ||
-      isNaN(soLuongTon) ||
-      isNaN(giaBan) ||
-      isNaN(trangThai)
-    ) {
-      toast.warning("Không được để trường nào!");
-    } else {
-      let res = await putUpdateCTSP(
-        idCtsp,
-        maCTSP,
-        getObjChatLieu,
-        getObjMauSac,
-        getObjSize,
-        getObjSanPham,
-        getObjLoaiSP,
-        getObjXuatXu,
-        getObjCoAo,
-        getObjTayAo,
-        moTa,
-        soLuongTon,
-        giaBan,
-        trangThai
-      );
-
-      console.log("Check res: ", res);
-      if (res && res.idCtsp) {
-        handleClose();
-        setIdCtsp("");
-        setMaCTSP("");
-        setChatLieu(listCL[0].idCl);
-        setMauSac(listMS[0].idMs);
-        setSize(listSize[0].idSize);
-        setSanPham(listSP[0].idSp);
-        setLoaiSP(listLSP[0].idLoaisp);
-        setXuatXu(listXX[0].idXx);
-        setTayAo(listCoAo[0].idCoAo);
-        setCoAo(listTayAo[0].idTayAo);
-        setMoTa("");
-        setSoLuongTon("");
-        setGiaBan("");
-        setTrangThai("");
-        toast.success("Sửa thành công!");
-        getCTSP(0);
-      } else {
-        toast.error("Sửa thất bại!");
-      }
-    }
-  };
-
   // filter
   const handleFillter = (eventKey) => {
     // eventKey === "All"
@@ -286,9 +149,7 @@ const ChiTietSP = (props) => {
     <>
       <div className="my-3 add-new">
         <div>
-          <button className="btn btn-success" onClick={() => handleAdd()}>
-            Add
-          </button>
+          <button className="btn btn-success">Add</button>
         </div>
       </div>
       <div className="filter-and-search">
@@ -405,11 +266,9 @@ const ChiTietSP = (props) => {
         <thead>
           <tr>
             <th>STT</th>
-            <th>Mã CTSP</th>
+            <th>Tên sản phẩm</th>
             <th>Chất liệu</th>
             <th>Màu sắc</th>
-            <th>Size</th>
-            <th>Sản phẩm</th>
             <th>Loại sản phẩm</th>
             <th>Xuất xứ</th>
             <th>Cổ áo</th>
@@ -438,18 +297,16 @@ const ChiTietSP = (props) => {
                     onClick={() => handleDetail(item)}
                   >
                     <td>{index + 1}</td>
-                    <td>{item.maCtsp}</td>
-                    <td>{item.idCl.tenCl}</td>
-                    <td>{item.idMs.tenMs}</td>
-                    <td>{item.idSize.tenSize}</td>
                     <td>{item.idSp.tenSp}</td>
-                    <td>{item.idXx.tenNuoc}</td>
-                    <td>{item.idTayAo.loaiTayAo}</td>
-                    <td>{item.idCoAo.loaiCoAo}</td>
-                    <td>{item.soLuongTon}</td>
-                    <td>{item.giaBan}</td>
-                    <td>{item.trangThai === 1 ? "Con" : "Het"}</td>
-                    <td>{item.moTa}</td>
+                    <td>{item.idSp.idCl.tenCl}</td>
+                    <td>{item.idSp.idMs.tenMs}</td>
+                    <td>{item.idSp.idXx.tenNuoc}</td>
+                    <td>{item.idSp.idTayAo.loaiTayAo}</td>
+                    <td>{item.idSp.idCoAo.loaiCoAo}</td>
+                    <td>{item.idSp.soLuongTon}</td>
+                    <td>{item.idSp.giaBan}</td>
+                    <td>{item.idSp.trangThai === 0 ? "Con" : "Het"}</td>
+                    <td>{item.idSp.moTa}</td>
                     <td>
                       <button
                         onClick={() => handleDelete(item)}
