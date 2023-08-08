@@ -19,7 +19,7 @@ public class DiaChi {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ma_tai_khoan", referencedColumnName = "ma_tai_khoan")
-    private TaiKhoan maTaiKhoanKhachHang;
+    private TaiKhoan taiKhoan;
 
     @Size(max = 255)
     @Column(name = "dia_chi_cu_the")

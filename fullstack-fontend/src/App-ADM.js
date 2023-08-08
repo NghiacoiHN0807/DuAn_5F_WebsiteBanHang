@@ -45,6 +45,8 @@ import LoyaltyOutlinedIcon from "@mui/icons-material/LoyaltyOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import AddTkKH from "./components/TaiKhoanKhachHang/AddTkKH";
 import UpdateTkKH from "./components/TaiKhoanKhachHang/UpdateTkKH";
+import TableAllDiaChi from "./components/DiaChi/TableAllDiaChi";
+import TableDiaChiByTK from "./components/DiaChi/TableDiaChiByTK";
 
 const drawerWidth = 240;
 
@@ -317,6 +319,8 @@ function AppADM(props) {
                         <Route path="/table-chucVu" element={<ViewChucVu/>}/>
                         <Route path="/table-taiKhoan" element={<TableTKNhanVien/>}/>
                         <Route path="/tai-Khoan-KH" element={<TableTaiKhoanKH/>}/>
+                        <Route path="/dia-chi" element={<TableAllDiaChi/>}/>
+                        <Route path="/dia-chi/:id" element={<TableDiaChiByTK/>}/>
                         <Route path="/tai-khoan-KH/them-tai-khoan" element={<AddTkKH/>}/>
                         <Route path="/tai-khoan-KH/detail/:id" element={<UpdateTkKH/>}/>
                         <Route path="/quan-ly-giam-gia" element={<TableGiamGia/>}/>

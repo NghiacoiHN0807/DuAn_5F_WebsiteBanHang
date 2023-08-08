@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import {deleteTaiKhoan} from "../../services/taiKhoanKhachHangSevice";
 
-const ModelConfirmDiaChi = (props) => {
+const ModelConfirmTKKH = (props) => {
   const { show, handleClose, isDataTaiKhoanKH, getTaiKhoanKH } = props;
 
   const confirmDelete = async () => {
@@ -45,4 +45,4 @@ const ModelConfirmDiaChi = (props) => {
     </>
   );
 };
-export default ModelConfirmDiaChi;
+export default ModelConfirmTKKH;

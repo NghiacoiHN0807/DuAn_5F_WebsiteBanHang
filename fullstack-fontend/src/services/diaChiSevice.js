@@ -1,27 +1,27 @@
 import custom from "./custom-axios";
 
-const fetchAllTKKH = (page) => {
-    return custom.get(`/tai-khoan-khach-hang/view-all?p=${page}`); // Call API
+const fetchAllDiaChi = (page) => {
+    return custom.get(`/dia-chi/view-all?p=${page}`); // Call API
 };
-const postAddTaiKhoanKhachHang = (maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) => {
-    return custom.post("/tai-khoan-khach-hang/add", {maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai});
+const fetchDiaChiByTK = (maTaiKhoan,page) => {
+    return custom.get(`/dia-chi/tai-khoan/?m=${maTaiKhoan}&p=${page}`); // Call API
 };
-export const postUpdateTaiKhoanKhachHang = (idTaiKhoan, maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) => {
-    return custom.post("/tai-khoan-khach-hang/update", {
-        idTaiKhoan,
-        maTaiKhoan,
-        ho,
-        ten,
-        sdt,
-        email,
-        matKhau,
-        trangThai
+const postAddDiaChi = (taiKhoan, diaChiCuThe, loaiDiaChi, phuongXa, quanHuyen, sdt, tenNguoiNhan, tinhThanh, trangThai) => {
+    return custom.post("/dia-chi/add", {
+        taiKhoan, diaChiCuThe, loaiDiaChi, phuongXa, quanHuyen, sdt, tenNguoiNhan, tinhThanh, trangThai
     });
 };
-
-
-const deleteTaiKhoan = (id) => {
-    return custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
+const postUpdateDiaChi = (
+    id, taiKhoan, diaChiCuThe, loaiDiaChi, phuongXa, quanHuyen, sdt, tenNguoiNhan, tinhThanh, trangThai) => {
+    return custom.post("/dia-chi/update",
+        {
+            id, taiKhoan, diaChiCuThe, loaiDiaChi, phuongXa, quanHuyen, sdt, tenNguoiNhan, tinhThanh, trangThai
+        });
 };
 
-export {fetchAllTKKH, postAddTaiKhoanKhachHang, deleteTaiKhoan};
+
+const deleteDiaChi = (id) => {
+    return custom.delete(`/dia-chi/delete/${id}`);
+};
+
+export {fetchAllDiaChi, postAddDiaChi, postUpdateDiaChi, deleteDiaChi,fetchDiaChiByTK};

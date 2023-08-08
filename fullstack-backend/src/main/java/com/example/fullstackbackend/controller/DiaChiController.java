@@ -28,15 +28,15 @@ public class DiaChiController {
 
     @GetMapping("/view-all")
     public Page<DiaChi> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                @RequestParam(defaultValue = "5") Integer size,
+                                @RequestParam(defaultValue = "15") Integer size,
                                 @RequestParam("p") Optional<Integer> p) {
         return diaChiSevice.getAll( p.orElse(page), size);
     }
 
-    @GetMapping("/view-all/{maTaiKhoan}/")
-    public Page<DiaChi> viewAllByTK(@PathVariable("maTaiKhoan") String maTaiKhoan,
+    @GetMapping("/tai-khoan/")
+    public Page<DiaChi> viewAllByTK(  @RequestParam( "m") String maTaiKhoan,
                                     @RequestParam(defaultValue = "0") Integer page,
-                                    @RequestParam(defaultValue = "5") Integer size,
+                                    @RequestParam(defaultValue = "15") Integer size,
                                     @RequestParam("p") Optional<Integer> p) {
         return diaChiSevice.getAllByTK(maTaiKhoan, p.orElse(page), size);
     }

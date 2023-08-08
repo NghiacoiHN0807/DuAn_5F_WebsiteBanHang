@@ -72,7 +72,7 @@ const UpdateTkKH = (props) => {
                 <Box
                     component="form"
                     sx={{
-                        "& .MuiTextField-root": {m: 1, width: "120"},
+                        "& .MuiTextField-root": {m: 1, width: "151ch"},
                     }}
                     noValidate
                     autoComplete="off"
@@ -107,9 +107,9 @@ const UpdateTkKH = (props) => {
                         onChange={(event) => setSdt(event.target.value)}
                     />
                     <TextField
-                        fullWidth
                         id="outlined-basic"
                         label="Mật Khẩu"
+                        variant="outlined"
                         value={matKhau}
                         onChange={(event) => setMatKhau(event.target.value)}
                     />
