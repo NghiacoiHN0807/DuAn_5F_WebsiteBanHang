@@ -2,7 +2,7 @@ package com.example.fullstackbackend.services.impl;
 
 
 
-import com.example.fullstackbackend.entity.TaiKhoanKhachHang;
+import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.repository.TaiKhoanKhachHangRepository;
 import com.example.fullstackbackend.services.TaiKhoanKhachHangSevice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,18 +22,18 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
 
 
     @Override
-    public List<TaiKhoanKhachHang> getAll() {
+    public List<TaiKhoan> getAll() {
         return TaiKhoanKhachHangRepository.findAll();
     }
 
     @Override
-    public Page<TaiKhoanKhachHang> Page(Integer pageNo, Integer size) {
+    public Page<TaiKhoan> Page(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return TaiKhoanKhachHangRepository.findAll(pageable);
     }
 
     @Override
-    public TaiKhoanKhachHang add(TaiKhoanKhachHang add) {
+    public TaiKhoan add(TaiKhoan add) {
         return TaiKhoanKhachHangRepository.save(add);
     }
 
@@ -48,13 +48,13 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
     }
 
     @Override
-    public TaiKhoanKhachHang update(TaiKhoanKhachHang update) {
+    public TaiKhoan update(TaiKhoan update) {
        return TaiKhoanKhachHangRepository.save(update);
     }
 
     @Override
-    public Optional<TaiKhoanKhachHang> detail(Integer id) {
-        Optional<TaiKhoanKhachHang> TaiKhoanKhachHang = TaiKhoanKhachHangRepository.findById(id);
+    public Optional<TaiKhoan> detail(Integer id) {
+        Optional<TaiKhoan> TaiKhoanKhachHang = TaiKhoanKhachHangRepository.findById(id);
         return TaiKhoanKhachHang;
     }
 }

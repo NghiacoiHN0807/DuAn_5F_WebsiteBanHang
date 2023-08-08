@@ -20,9 +20,15 @@ public class DiaChiServiceImpl implements DiaChiSevice {
 
 
     @Override
-    public Page<DiaChi> getAll(String maTaiKhoan,Integer pageNo, Integer size) {
+    public Page<DiaChi> getAllByTK(String maTaiKhoan,Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return DiaChiRepository.findByMaTaiKhoan_MaTaiKhoan(maTaiKhoan ,pageable);
+    }
+
+    @Override
+    public Page<DiaChi> getAll(Integer pageNo, Integer size) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        return DiaChiRepository.findAll(pageable);
     }
 
 

@@ -1,6 +1,6 @@
 package com.example.fullstackbackend.services;
 
-import com.example.fullstackbackend.entity.TaiKhoanKhachHang;
+import com.example.fullstackbackend.entity.TaiKhoan;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -8,17 +8,17 @@ import java.util.Optional;
 
 public interface TaiKhoanKhachHangSevice {
 
-    List<TaiKhoanKhachHang> getAll();
+    List<TaiKhoan> getAll();
 
-    Page<TaiKhoanKhachHang> Page(Integer pageNo, Integer size);
+    Page<TaiKhoan> Page(Integer pageNo, Integer size);
 
-    TaiKhoanKhachHang add(TaiKhoanKhachHang add);
+    TaiKhoan add(TaiKhoan add);
 
     void delete(Integer id);
 
     Boolean checkExists(Integer id);
 
-    TaiKhoanKhachHang update(TaiKhoanKhachHang update);
+    TaiKhoan update(TaiKhoan update);
 
-    Optional<TaiKhoanKhachHang> detail(Integer id);
+    Optional<TaiKhoan> detail(Integer id);
 }

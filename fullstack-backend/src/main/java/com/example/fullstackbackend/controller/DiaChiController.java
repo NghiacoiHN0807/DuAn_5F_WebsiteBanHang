@@ -26,12 +26,19 @@ public class DiaChiController {
     @Autowired
     private DiaChiSevice diaChiSevice;
 
-    @GetMapping("/view-all/{maTaiKhoan}/")
-    public Page<DiaChi> viewAll(@PathVariable("maTaiKhoan") String maTaiKhoan,
-                                @RequestParam(defaultValue = "0") Integer page,
+    @GetMapping("/view-all")
+    public Page<DiaChi> viewAll(@RequestParam(defaultValue = "0") Integer page,
                                 @RequestParam(defaultValue = "5") Integer size,
                                 @RequestParam("p") Optional<Integer> p) {
-        return diaChiSevice.getAll(maTaiKhoan, p.orElse(page), size);
+        return diaChiSevice.getAll( p.orElse(page), size);
+    }
+
+    @GetMapping("/view-all/{maTaiKhoan}/")
+    public Page<DiaChi> viewAllByTK(@PathVariable("maTaiKhoan") String maTaiKhoan,
+                                    @RequestParam(defaultValue = "0") Integer page,
+                                    @RequestParam(defaultValue = "5") Integer size,
+                                    @RequestParam("p") Optional<Integer> p) {
+        return diaChiSevice.getAllByTK(maTaiKhoan, p.orElse(page), size);
     }
 
     @PostMapping("add")

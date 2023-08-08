@@ -1,6 +1,6 @@
 package com.example.fullstackbackend.controller;
 
-import com.example.fullstackbackend.entity.TaiKhoanKhachHang;
+import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.exception.TaiKhoanKHNotFoundException;
 import com.example.fullstackbackend.services.TaiKhoanKhachHangSevice;
 import jakarta.validation.Valid;
@@ -19,7 +19,7 @@ public class TaiKhoanKhachHangController {
     private TaiKhoanKhachHangSevice TaiKhoanKhachHangKHSevice;
 
     @GetMapping("view-all")
-    public Page<TaiKhoanKhachHang> viewAll(@RequestParam(defaultValue = "0") Integer page,
+    public Page<TaiKhoan> viewAll(@RequestParam(defaultValue = "0") Integer page,
                                            @RequestParam(defaultValue = "15") Integer size,
                                            @RequestParam("p") Optional<Integer> p) {
 
@@ -27,7 +27,7 @@ public class TaiKhoanKhachHangController {
     }
 
     @PostMapping("add")
-    public TaiKhoanKhachHang add(@Valid @RequestBody TaiKhoanKhachHang TaiKhoanKhachHang,
+    public TaiKhoan add(@Valid @RequestBody TaiKhoan TaiKhoanKhachHang,
                                  BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return null;
@@ -37,7 +37,7 @@ public class TaiKhoanKhachHangController {
     }
 
     @GetMapping("detail/{id}")
-    public Optional<TaiKhoanKhachHang> detail(@PathVariable("id") Integer id
+    public Optional<TaiKhoan> detail(@PathVariable("id") Integer id
     ) {
         return TaiKhoanKhachHangKHSevice.detail(id);
     }
@@ -54,7 +54,7 @@ public class TaiKhoanKhachHangController {
 
 
     @PostMapping("update")
-    public TaiKhoanKhachHang update(@RequestBody TaiKhoanKhachHang TaiKhoanKhachHang, BindingResult bindingResult) {
+    public TaiKhoan update(@RequestBody TaiKhoan TaiKhoanKhachHang, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
