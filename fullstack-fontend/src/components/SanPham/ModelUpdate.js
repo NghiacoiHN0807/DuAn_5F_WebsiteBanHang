@@ -1,6 +1,6 @@
 // import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { postAddSanPham } from "../../services/SanPhamService";
+import { putUpdateSanPham } from "../../services/SanPhamService";
 import { toast } from "react-toastify";
 import {
   Box,
@@ -8,6 +8,8 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -31,7 +33,11 @@ import { fetchMS, detailMS } from "../../services/MauSacService";
 import { detailSize, fetchSize } from "../../services/SizeService";
 import { fetchTayAo, detailTayAo } from "../../services/OngTayAoService";
 import { detailSP } from "../../services/SanPhamService";
-import { findSizeById, postAddCTSP } from "../../services/ChiTietSPService";
+import {
+  findSizeById,
+  postAddCTSP,
+  deleteCTSP,
+} from "../../services/ChiTietSPService";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCallback } from "react";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
@@ -75,6 +81,7 @@ const QuantityInput = ({ value, onChange }) => {
 };
 
 const ModelUpdate = (props) => {
+  // const [idCtsp, setIdCtsp] = useState("");
   const [maSp, setMaSp] = useState("");
   const [tenSp, setTenSp] = useState("");
   const [moTa, setMoTa] = useState("");
@@ -175,7 +182,7 @@ const ModelUpdate = (props) => {
   // chuyen trang
   const navigate = useNavigate();
 
-  const handleSave = async () => {
+  const handleUpdate = async () => {
     // get object all\
     const getObjChatLieu = await detailCL(chatLieu);
     const getObjMauSac = await detailMS(mauSac);
@@ -199,7 +206,8 @@ const ModelUpdate = (props) => {
     ) {
       toast.warning("Some field is empty!");
     } else {
-      let res = await postAddSanPham(
+      let res = await putUpdateSanPham(
+        idSpHttp,
         maSp,
         tenSp,
         getObjChatLieu,
@@ -216,7 +224,7 @@ const ModelUpdate = (props) => {
       console.log("Check res: ", res);
       if (res && res.idSp) {
         toast.success("Cập nhật thành công!");
-        navigate("/quan-ly-san-pham/san-pham/sua-san-pham/" + res.idSp);
+        navigate("/quan-ly-san-pham/san-pham");
       } else {
         toast.error("Cập nhật thất bại!");
       }
@@ -224,14 +232,20 @@ const ModelUpdate = (props) => {
   };
 
   // show form add size
-  const [open, setOpen] = useState(false);
+  const [openAddSize, setOpenAddSize] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickAddSize = () => {
+    setOpenAddSize(true);
+  };
+
+  const handleClickUpdate = () => {
+    setOpenUpdate(true);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setOpenAddSize(false);
+    setOpenUpdate(false);
   };
 
   const hanldeAgree = async () => {
@@ -245,7 +259,13 @@ const ModelUpdate = (props) => {
     } else {
       toast.error("Thêm thất bại!");
     }
-    setOpen(false);
+    setOpenAddSize(false);
+    getSizeData();
+  };
+
+  const hanldeDelete = async (idCtsp) => {
+    let res = await deleteCTSP(idCtsp);
+    console.log("Check res: ", res);
     getSizeData();
   };
   // size
@@ -419,13 +439,15 @@ const ModelUpdate = (props) => {
                 value="0"
                 control={<Radio />}
                 label="Kinh doanh"
-                checked={trangThai === 0 ? true : ""}
+                checked={Number(trangThai) === 0 ? "true" : ""}
+                onChange={(event) => setTrangThai(event.target.value)}
               />
               <FormControlLabel
                 value="10"
                 control={<Radio />}
                 label="Ngừng kinh doanh"
-                checked={trangThai === 10 ? true : ""}
+                checked={Number(trangThai) === 10 ? "true" : ""}
+                onChange={(event) => setTrangThai(event.target.value)}
               />
             </RadioGroup>
           </FormControl>
@@ -434,7 +456,7 @@ const ModelUpdate = (props) => {
           <Button
             variant="contained"
             color="success"
-            onClick={() => handleSave()}
+            onClick={() => handleClickUpdate()}
           >
             Cập nhật
           </Button>
@@ -486,7 +508,11 @@ const ModelUpdate = (props) => {
                         )}
                       </TableCell>
                       <TableCell>
-                        <Button variant="contained" color="warning">
+                        <Button
+                          variant="contained"
+                          color="warning"
+                          onClick={() => hanldeDelete(item.idCtsp)}
+                        >
                           Đổi trạng thái
                         </Button>
                       </TableCell>
@@ -497,12 +523,12 @@ const ModelUpdate = (props) => {
           </TableContainer>
         </div>
         <div style={{ textAlign: "center", margin: "20px 0" }}>
-          <Button variant="outlined" onClick={handleClickOpen}>
+          <Button variant="outlined" onClick={handleClickAddSize}>
             Thêm kích thước
           </Button>
 
           <Dialog
-            open={open}
+            open={openAddSize}
             onClose={handleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
@@ -542,6 +568,27 @@ const ModelUpdate = (props) => {
               <Button onClick={handleClose}>Disagree</Button>
               <Button onClick={() => hanldeAgree()} autoFocus>
                 Agree
+              </Button>
+            </DialogActions>
+          </Dialog>
+          <Dialog
+            open={openUpdate}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Xác nhận cập nhật?"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Bạn có chắc chắn muốn cập nhật sản phẩm này không?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Canel</Button>
+              <Button onClick={() => handleUpdate()} autoFocus>
+                Ok
               </Button>
             </DialogActions>
           </Dialog>

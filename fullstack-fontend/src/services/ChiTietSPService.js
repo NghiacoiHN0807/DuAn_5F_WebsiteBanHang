@@ -17,7 +17,7 @@ const postAddCTSP = (idSp, idSize, soLuongTon, trangThai) => {
 };
 
 const deleteCTSP = (id) => {
-  return custom.delete(`/chi-tiet-san-pham/delete/${id}`);
+  return custom.put(`/chi-tiet-san-pham/delete/${id}`);
 };
 
 const putUpdateCTSP = (idCtsp, idSize, idSp, soLuongTon, trangThai) => {

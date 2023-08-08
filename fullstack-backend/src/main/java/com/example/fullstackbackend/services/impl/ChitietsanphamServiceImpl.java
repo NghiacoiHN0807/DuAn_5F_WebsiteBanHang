@@ -39,9 +39,15 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
     }
 
     @Override
-    public void delete(Integer id) {
+    public ChiTietSanPham delete(Integer id) {
+        ChiTietSanPham ctsp = chitietsanphamRepository.findById(id).orElse(null);
+        if(ctsp.getTrangThai() == 0){
+            ctsp.setTrangThai(10);
+        }else{
+            ctsp.setTrangThai(0);
+        }
 
-        chitietsanphamRepository.findById(id).orElse(null).setTrangThai(10);
+        return chitietsanphamRepository.save(ctsp);
     }
 
     @Override

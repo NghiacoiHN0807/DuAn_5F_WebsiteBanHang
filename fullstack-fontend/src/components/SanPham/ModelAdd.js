@@ -2,7 +2,17 @@
 import { useEffect, useState } from "react";
 import { postAddSanPham } from "../../services/SanPhamService";
 import { toast } from "react-toastify";
-import { Box, Button, MenuItem, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  MenuItem,
+  TextField,
+} from "@mui/material";
 import { fetchXX, detailXX } from "../../services/XuatXuService";
 import { fetchCL, detailCL } from "../../services/ChatLieuService";
 import { fetchCoAo, detailCoAo } from "../../services/LoaiCoAoService";
@@ -62,6 +72,17 @@ const ModelAddNew = (props) => {
 
   // chuyen trang
   const navigate = useNavigate();
+
+  // dong mo confirm
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpenAdd = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleSave = async () => {
     // get object all\
@@ -256,11 +277,31 @@ const ModelAddNew = (props) => {
           <Button
             variant="contained"
             color="success"
-            onClick={() => handleSave()}
+            onClick={() => handleClickOpenAdd()}
           >
             Thêm
           </Button>
         </div>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Xác nhận thêm?"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Bạn có chắc chắn muốn thêm sản phẩm này không?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Canel</Button>
+            <Button onClick={() => handleSave()} autoFocus>
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </>
   );

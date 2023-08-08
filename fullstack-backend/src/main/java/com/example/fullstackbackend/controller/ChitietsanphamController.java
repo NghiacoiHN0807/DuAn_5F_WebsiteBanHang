@@ -64,14 +64,9 @@ public class ChitietsanphamController {
         }
     }
 
-    @DeleteMapping("delete/{id}")
-    public String delete(@PathVariable("id") Integer id) {
-        if (!chitietsanphamSevice.checkExists(id)) {
-            throw new xuatXuNotFoundException(id);
-        } else {
-            chitietsanphamSevice.delete(id);
-            return "";
-        }
+    @PutMapping("delete/{id}")
+    public ChiTietSanPham delete(@PathVariable("id") Integer id) {
+        return chitietsanphamSevice.delete(id);
     }
 
     @PutMapping("update")

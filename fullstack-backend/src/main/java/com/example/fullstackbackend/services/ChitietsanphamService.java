@@ -17,7 +17,7 @@ public interface ChitietsanphamService {
 
     ChiTietSanPham add(ChiTietSanPham add);
 
-    void delete(Integer id);
+    ChiTietSanPham delete(Integer id);
 
     ChiTietSanPham update(ChiTietSanPham update);
 
