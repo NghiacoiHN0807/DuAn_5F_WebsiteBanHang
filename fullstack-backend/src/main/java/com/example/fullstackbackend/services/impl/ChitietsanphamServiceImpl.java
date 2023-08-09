@@ -32,11 +32,16 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
         return chitietsanphamRepository.findByIdSp(id);
     }
 
-
     @Override
-    public ChiTietSanPham add(ChiTietSanPham add) {
-        return chitietsanphamRepository.save(add);
+    public ChiTietSanPham addAndUpdateSize(ChiTietSanPham ctsp, Integer soLuong) {
+        ChiTietSanPham ctspUp = chitietsanphamRepository.checkExistSPandSize(ctsp.getIdSp().getIdSp(), ctsp.getIdSize().getIdSize());
+        if (ctspUp != null) {
+            ctspUp.setSoLuongTon(ctspUp.getSoLuongTon() + soLuong);
+            return chitietsanphamRepository.save(ctspUp);
+        }
+        return chitietsanphamRepository.save(ctsp);
     }
+
 
     @Override
     public ChiTietSanPham delete(Integer id) {

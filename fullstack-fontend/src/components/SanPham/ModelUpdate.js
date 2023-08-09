@@ -252,7 +252,7 @@ const ModelUpdate = (props) => {
     let getObjSp = await detailSP(idSpHttp);
     let getObjSize = await detailSize(radioValue);
 
-    let res = await postAddCTSP(getObjSp, getObjSize, quantity, 0);
+    let res = await postAddCTSP(getObjSp, getObjSize, quantity, 0, quantity);
     console.log("Check res: ", res);
     if (res && res.idCtsp) {
       toast.success("Thêm thành công!");
@@ -261,6 +261,8 @@ const ModelUpdate = (props) => {
     }
     setOpenAddSize(false);
     getSizeData();
+    setQuantity(1);
+    setRadioValue("");
   };
 
   const hanldeDelete = async (idCtsp) => {
@@ -539,8 +541,8 @@ const ModelUpdate = (props) => {
               <div>
                 {" "}
                 <p>Chọn size: </p>
-                <ButtonGroup>
-                  {listSize.map((radio, idx) => (
+                {listSize.map((radio, idx) => (
+                  <span style={{ marginLeft: "15px" }}>
                     <ToggleButton
                       key={idx}
                       id={`radio-${idx}`}
@@ -548,13 +550,13 @@ const ModelUpdate = (props) => {
                       variant={"outline-success"}
                       name="radio"
                       value={radio.idSize}
-                      checked={radioValue === radio.idSize} // Sửa thành radioValue === radio.idSize
+                      checked={Number(radioValue) === radio.idSize} // Sửa thành radioValue === radio.idSize
                       onChange={(e) => setRadioValue(e.currentTarget.value)}
                     >
                       {radio.tenSize}
                     </ToggleButton>
-                  ))}
-                </ButtonGroup>
+                  </span>
+                ))}
               </div>
               <div style={{ marginTop: "15px" }}>
                 <p>Số lượng: </p>
@@ -565,9 +567,9 @@ const ModelUpdate = (props) => {
               </div>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose}>Disagree</Button>
+              <Button onClick={handleClose}>Canel</Button>
               <Button onClick={() => hanldeAgree()} autoFocus>
-                Agree
+                Ok
               </Button>
             </DialogActions>
           </Dialog>
@@ -592,6 +594,14 @@ const ModelUpdate = (props) => {
               </Button>
             </DialogActions>
           </Dialog>
+        </div>
+      </div>
+      <div className="row row-order-management">
+        <div
+          className="title"
+          style={{ textAlign: "center", margin: "20px 0" }}
+        >
+          <h4>THÊM ẢNH</h4>
         </div>
       </div>
     </>

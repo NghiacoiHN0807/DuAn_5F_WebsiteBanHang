@@ -15,7 +15,7 @@ public interface ChitietsanphamService {
 
     List<ChiTietSanPham> findByIdSp(Integer id);
 
-    ChiTietSanPham add(ChiTietSanPham add);
+    ChiTietSanPham addAndUpdateSize(ChiTietSanPham ctsp, Integer soLuong);
 
     ChiTietSanPham delete(Integer id);
 
@@ -23,4 +23,5 @@ public interface ChitietsanphamService {
 
     Optional<ChiTietSanPham> detail(Integer id);
     Boolean checkExists(Integer id);
+
 }

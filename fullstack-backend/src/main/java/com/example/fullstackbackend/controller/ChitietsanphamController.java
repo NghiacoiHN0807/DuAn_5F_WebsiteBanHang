@@ -54,13 +54,14 @@ public class ChitietsanphamController {
         return chitietsanphamSevice.detail(id).orElse(null);
     }
 
-    @PostMapping("add")
+    @PostMapping("add/{soLuong}")
     public ChiTietSanPham add(@Valid @RequestBody ChiTietSanPham chiTietSanPham,
-                              BindingResult bindingResult) {
+                              BindingResult bindingResult,
+                              @PathVariable("soLuong") Integer soLuong) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
-            return chitietsanphamSevice.add(chiTietSanPham);
+            return chitietsanphamSevice.addAndUpdateSize(chiTietSanPham, soLuong);
         }
     }
 
@@ -73,4 +74,5 @@ public class ChitietsanphamController {
     public ChiTietSanPham update(@RequestBody ChiTietSanPham chiTietSanPham) {
         return chitietsanphamSevice.update(chiTietSanPham);
     }
+
 }
