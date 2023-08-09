@@ -15,9 +15,12 @@ public interface TaiKhoanNhanVienService {
 
     TaiKhoanNhanVien add(TaiKhoanNhanVien taiKhoanNhanVien);
 
+    Optional<TaiKhoanNhanVien> getOne(Integer id);
+
     void delete(Integer id);
 
     TaiKhoanNhanVien update(TaiKhoanNhanVien taiKhoanNhanVien);
+
     Boolean existsById(Integer id);
 
     Optional<TaiKhoanNhanVien> detail(Integer id);

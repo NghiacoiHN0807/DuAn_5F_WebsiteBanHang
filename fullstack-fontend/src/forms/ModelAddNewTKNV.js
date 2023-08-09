@@ -13,7 +13,7 @@ const ModelAddNewTKKH = (props) => {
   const [setTen, getTen] = useState("");
   const [setSdt, getSdt] = useState("");
   const [setEmail, getEmail] = useState("");
-
+  const [setSoCanCuoc, getSoCanCuoc] = useState("");
 
   const handleSave = async () => {
     //I want check console.log get ma and tenNuoc
@@ -25,7 +25,8 @@ const ModelAddNewTKKH = (props) => {
       getHo("") &&
       getTen("") &&
       getSdt("") &&
-      getEmail("") 
+      getEmail("") &&
+      getSoCanCuoc("")
     ) {
       handleClose();
       toast.warning("Ma, Ten Or Trang Thai is null");
@@ -34,10 +35,9 @@ const ModelAddNewTKKH = (props) => {
         setMaTaiKhoan,
         setHo,
         setTen,
-
         setSdt,
         setEmail,
-        
+        setSoCanCuoc,
         0
       );
       // console.log("Check res: ", res);
@@ -46,10 +46,9 @@ const ModelAddNewTKKH = (props) => {
         getMaTaiKhoan("");
         getHo("");
         getTen("");
-
         getSdt("");
         getEmail("");
-      
+        getSoCanCuoc("");
         toast.success("A Tài khoản is created successfully");
       } else {
         toast.error("You can't create a new Tài Khoản");
@@ -79,7 +78,7 @@ const ModelAddNewTKKH = (props) => {
         size={"lg"}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Thêm Một Tài Khoản Mới</Modal.Title>
+          <Modal.Title>Thêm Một Tài Khoản Nhân Viên Mới</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form>
@@ -110,6 +109,7 @@ const ModelAddNewTKKH = (props) => {
                     type="text"
                   />
                 </div>
+
                 {/* <div className="mb-3">
                   <label className="form-label">Chức Vụ</label>
                   <select
@@ -139,7 +139,14 @@ const ModelAddNewTKKH = (props) => {
                     type="email"
                   />
                 </div>
-                
+                <div className="mb-3">
+                  <label className="form-label">Số Căn Cước</label>
+                  <Form.Control
+                    value={setSoCanCuoc}
+                    onChange={(event) => getSoCanCuoc(event.target.value)}
+                    type="text"
+                  />
+                </div>
               </Col>
             </Row>
           </Form>

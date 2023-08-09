@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.services.impl;
 
+import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.entity.TaiKhoanNhanVien;
 import com.example.fullstackbackend.repository.TaiKhoanNhanVienRepository;
 import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
@@ -36,17 +37,24 @@ public class TaiKhoanNhanVienNhanVienServiceImpl implements TaiKhoanNhanVienServ
 
     @Override
     public TaiKhoanNhanVien add(TaiKhoanNhanVien taiKhoanNhanVien) {
-       return taiKhoanNhanVienRepository.save(taiKhoanNhanVien);
+        return taiKhoanNhanVienRepository.save(taiKhoanNhanVien);
+    }
+
+    @Override
+    public Optional<TaiKhoanNhanVien> getOne(Integer id) {
+        return taiKhoanNhanVienRepository.findById(id);
     }
 
     @Override
     public void delete(Integer id) {
-         taiKhoanNhanVienRepository.deleteById(id);
+        TaiKhoanNhanVien taiKhoanNhanVien = getOne(id).orElseThrow();
+        taiKhoanNhanVien.setTrangThai(10);
+        taiKhoanNhanVienRepository.save(taiKhoanNhanVien);
     }
 
     @Override
     public TaiKhoanNhanVien update(TaiKhoanNhanVien taiKhoanNhanVien) {
-       return taiKhoanNhanVienRepository.save(taiKhoanNhanVien);
+        return taiKhoanNhanVienRepository.save(taiKhoanNhanVien);
     }
 
     @Override

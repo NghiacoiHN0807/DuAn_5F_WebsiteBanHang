@@ -1,7 +1,7 @@
-import {toast} from "react-toastify";
+import { toast } from "react-toastify";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import {deleteTaiKhoan} from "../services/taiKhoanService";
+import { deleteTaiKhoan } from "../services/taiKhoanService";
 
 const ModelConfirmTKKH = (props) => {
   const { show, handleClose, isDataTaiKhoanKH, getTaiKhoanKH } = props;
@@ -31,7 +31,7 @@ const ModelConfirmTKKH = (props) => {
         <Modal.Body>
           <div>Are you sure want delete this data?</div>
           <br />
-          <b>Ma: {isDataTaiKhoanKH.maTaiKhoan}</b>
+          {/* <b>Ma: {isDataTaiKhoanKH.maTaiKhoan}</b> */}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>

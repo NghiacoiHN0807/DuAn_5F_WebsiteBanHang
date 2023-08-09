@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { taiKhoan, taiKhoan2 } from "../services/taiKhoanService";
-import ModelAddNewTKNV from "./ModelAddNewTKNV";
-import ModelConfirmTKNV from "./ModelConfirmTKNV";
-import ModalUpdate from "./ModelUpdateTKNV";
+import ModelAddNewTKNV from "../forms/ModelAddNewTKNV";
+import ModelConfirmTKNV from "../forms/ModelConfirmTKNV";
+import ModalUpdate from "../forms/ModelUpdateTKNV";
 import { Badge, Button, Form, Nav } from "react-bootstrap";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
@@ -10,8 +10,9 @@ import { DataGrid } from "@mui/x-data-grid";
 import { Navigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { IconButton } from "@mui/material";
 
-const TableTaiKhoanKH = (props) => {
+const TabletaiKhoanNV = (props) => {
   //Set value for table
   const [listTaiKhoanNV, setlistTaiKhoanNV] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -28,10 +29,10 @@ const TableTaiKhoanKH = (props) => {
   };
   // Show Data On Tables
   useEffect(() => {
-    getTaiKhoanKH(0);
+    gettaiKhoanNV(0);
   }, []);
 
-  const getTaiKhoanKH = async (page) => {
+  const gettaiKhoanNV = async (page) => {
     let res = await taiKhoan(page);
     // console.log("Data", res);
     if (res && res.content) {
@@ -42,26 +43,28 @@ const TableTaiKhoanKH = (props) => {
   };
   //Next Page
   const handlePageClick = (page) => {
-    getTaiKhoanKH(page);
+    gettaiKhoanNV(page);
   };
   //Delete
   const [isShowModalDelete, setIsShowModalDelete] = useState(false);
-  const [isDataTaiKhoanKH, setDataTaiKhoanKH] = useState({});
-  const handleDelete = (maTKKH) => {
+  const [isDatataiKhoanNV, setDatataiKhoanNV] = useState({});
+  const handleDelete = (maTaiKhoan) => {
     // console.log("Check delete: ", maTKKH);
     setIsShowModalDelete(true);
-    setDataTaiKhoanKH(maTKKH);
+    setDatataiKhoanNV(maTaiKhoan);
   };
+  
 
+  //update
   const [isShowModalUpdate, setIsShowModalUpdate] = useState(false);
 
-  const handleUpdateTable = (taiKhoanKH) => {
-    setlistTaiKhoanNV([taiKhoanKH, ...listTaiKhoanNV]);
-    getTaiKhoanKH(0);
+  const handleUpdateTable = (taiKhoanNV) => {
+    setlistTaiKhoanNV([taiKhoanNV, ...listTaiKhoanNV]);
+    gettaiKhoanNV(0);
   };
 
-  const handleUpdate = (taiKhoanKH) => {
-    setDataTaiKhoanKH(taiKhoanKH);
+  const handleUpdate = (taiKhoanNV) => {
+    setDatataiKhoanNV(taiKhoanNV);
     setIsShowModalUpdate(true);
   };
 
@@ -69,7 +72,7 @@ const TableTaiKhoanKH = (props) => {
 
   const [total, setTrangThai] = useState(0);
 
-  const hi = async (e) => {
+  const status = async (e) => {
     const value = e.target.value;
     setTrangThai(value);
     if (value === "1") {
@@ -89,24 +92,29 @@ const TableTaiKhoanKH = (props) => {
 
   const columns = [
     { field: "index", headerName: "#", width: 50 },
-    { field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 100 },
-    { field: "ho" , headerName: "Họ Và Tên", width: 150 },
+    { field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 110 },
+    { field: "idChucVu", headerName: "Tên Chức Vụ", width: 110 },
+    { field: "ho", headerName: "Họ Và Tên", width: 130 },
     // { field: "ten", headerName: "Tên", width: 150 },
     {
       field: "sdt",
       headerName: "Số Điện Thoại",
-      width: 150,
+      width: 130,
     },
     {
       field: "email",
       headerName: "Email",
       width: 230,
     },
-
+    {
+      field: "soCanCuoc",
+      headerName: "Số Căn Cước",
+      width: 150,
+    },
     {
       field: "trangThai",
       headerName: "Trạng Thái",
-      width: 200,
+      width: 160,
       renderCell: (params) => {
         const { value: trangThai } = params;
         let badgeVariant, statusText;
@@ -132,7 +140,34 @@ const TableTaiKhoanKH = (props) => {
         );
       },
     },
+    {
+      field: "thaoTac",
+      headerName: "Thao Tác",
+      width: 150,
+      renderCell: (params) => {
+        return (
+          <>
+            <IconButton
+              aria-label="edit"
+              size="large"
+              // onClick={() => handleEdit(params.row.idHd)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
+            >
+              <EditOutlinedIcon color="primary" />
+            </IconButton>
+            <IconButton
+              aria-label="delete"
+              size="large"
+              onClick={() => handleDelete(params.row.idHd)}
+            >
+              <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
+            </IconButton>
+          </>
+        );
+      },
+    },
   ];
+
+  
   const rows = listTaiKhoanNV
     .filter((item) =>
       Object.values(item).some((value) =>
@@ -144,16 +179,18 @@ const TableTaiKhoanKH = (props) => {
       id: index + 1,
       index: index + 1,
       maTaiKhoan: item.maTaiKhoan,
+      chucVu: item.idChucVu,
       ho: item.ho + " " + item.ten,
-    //   ten: item.ten,
+      //   ten: item.ten,
       sdt: item.sdt,
       email: item.email,
+      soCanCuoc: item.soCanCuoc,
       trangThai: item.trangThai,
     }));
 
   const handlClickRow = (item) => {
     console.log("Check click: ", item);
-    Navigate(`/order-management-timeline/${item.idHd}`);
+    Navigate(`/order-management-timeline/${item.idTaiKhoan}`);
   };
   // console.log(listTaiKhoanNV);
   return (
@@ -186,7 +223,7 @@ const TableTaiKhoanKH = (props) => {
               id="status-select"
               className="select-green"
               //   value={selectedStatus}
-              onChange={(e) => hi(e)}
+              onChange={(e) => status(e)}
             >
               <option value="1">Tất cả</option>
               <option value="2">Hoạt động</option>
@@ -259,16 +296,16 @@ const TableTaiKhoanKH = (props) => {
       <ModelConfirmTKNV
         show={isShowModalDelete}
         handleClose={handleClose}
-        isDataTaiKhoanKH={isDataTaiKhoanKH}
-        getTaiKhoanKH={getTaiKhoanKH}
+        isDatataiKhoanNV={isDatataiKhoanNV}
+        gettaiKhoanNV={gettaiKhoanNV}
       />
       <ModalUpdate
         show={isShowModalUpdate}
         handleClose={handleClose}
-        isDataTaiKhoanKH={isDataTaiKhoanKH}
+        isDatataiKhoanNV={isDatataiKhoanNV}
         handleUpdateTable={handleUpdateTable}
       />
     </>
   );
 };
-export default TableTaiKhoanKH;
+export default TabletaiKhoanNV;

@@ -6,6 +6,8 @@ import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -61,13 +63,17 @@ public class TaiKhoanNhanVienController {
     }
 
     @DeleteMapping("delete/{id}")
-    public String delete(@PathVariable("id") Integer id) {
-        if (!taiKhoanNhanVienService.existsById(id)) {
-            throw new xuatXuNotFoundException(id);
-        } else {
-            taiKhoanNhanVienService.delete(id);
-            return "";
+    ResponseEntity<ReponObject> delete(@PathVariable("id") Integer id){
+        Boolean exist = taiKhoanNhanVienService.existsById(id);
+        if (!exist) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ReponObject("Not found!", "Not could found entity by id:" + id, "")
+            );
         }
+        taiKhoanNhanVienService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ReponObject("Ok!", "Delete success " + id, "")
+        );
     }
 
 

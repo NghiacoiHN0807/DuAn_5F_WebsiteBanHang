@@ -38,9 +38,11 @@ public class TaiKhoanNhanVien {
     @Column(name = "email")
     private String email;
 
-
     @Column(name = "trang_thai")
     private Integer trangThai;
+
+    @Column(name = "so_can_cuoc")
+    private String soCanCuoc;
 
 }
 
