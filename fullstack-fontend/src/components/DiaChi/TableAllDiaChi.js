@@ -1,14 +1,8 @@
 import Nav from "react-bootstrap/Nav";
-// import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {
-    faCartPlus,
-    faMagnifyingGlass,
-} from "@fortawesome/free-solid-svg-icons";
-// import "../scss/OderManagement.scss";
-import {useState} from "react";
-import {useEffect} from "react";
+import {faMagnifyingGlass,} from "@fortawesome/free-solid-svg-icons";
+import {useEffect, useState} from "react";
 import {fetchAllDiaChi} from "../../services/diaChiSevice";
 import Badge from "react-bootstrap/Badge";
 import Pagination from "@mui/material/Pagination";
@@ -22,6 +16,7 @@ const TableAllDiaChi = () => {
     const [numberPages, setNumberPages] = useState(0);
     const [searchKeyword, setSearchKeyword] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("Tất cả");
+    const [selectedLoaiDiaChi, setSelectedLoaiDiaChi] = useState("Tất cả");
     const [originalListData, setOriginalListData] = useState([]);
     const navigate = useNavigate();
     const getListData = async (page, query) => {
@@ -30,16 +25,12 @@ const TableAllDiaChi = () => {
             console.log("Check res: ", res);
             setListData(res.content);
             setNumberPages(Math.ceil(res.totalPages));
-            // Lưu trữ danh sách dữ liệu gốc
             setOriginalListData(res.content);
-
-            // Đồng thời cập nhật danh sách dữ liệu hiện tại
-            setListData(res.content);
-            setNumberPages(Math.ceil(res.totalPages));
         } catch (error) {
             console.error(error);
         }
     };
+
     useEffect(() => {
         getListData(0);
     }, []);
@@ -79,14 +70,14 @@ const TableAllDiaChi = () => {
         {
             field: "trangThai",
             headerName: "Trạng Thái",
-            width: 100,
+            width: 120,
             renderCell: (params) => {
                 const {value: trangThai} = params;
                 let badgeVariant, statusText;
                 switch (trangThai) {
                     case 1:
                         badgeVariant = "primary";
-                        statusText = "Đang Hoạt Động";
+                        statusText = "Đã Xác Nhận";
                         break;
                     case 4:
                         badgeVariant = "info";
@@ -94,7 +85,7 @@ const TableAllDiaChi = () => {
                         break;
                     default:
                         badgeVariant = "light";
-                        statusText = "Mặc Định";
+                        statusText = "Chưa Xác Nhận";
                         break;
                 }
 
@@ -109,30 +100,39 @@ const TableAllDiaChi = () => {
 
     // Xử lý dữ liệu của bảng vào mảng rows
     const rows = listData
-        .filter((item) =>
-            Object.values(item).some((value) =>
+        .filter((item) => {
+            const valuesToSearch = [
+                item.taiKhoan.maTaiKhoan, // Search maTaiKhoan directly
+                item.tenNguoiNhan,
+                item.sdt,
+                item.tinhThanh,
+                item.quanHuyen,
+                item.phuongXa,
+                item.diaChiCuThe,
+                 // Convert trangThai to string for search
+            ];
+            return valuesToSearch.some((value) =>
                 String(value).toLowerCase().includes(searchKeyword.toLowerCase())
-            )
-        )
+            );
+        })
         .map((item, index) => ({
             idTaiKhoan: item.taiKhoan.idTaiKhoan,
-            id:  item.taiKhoan.idTaiKhoan,
+            id: item.id,
             index: index + 1,
             maTaiKhoan: item.taiKhoan.maTaiKhoan,
-            tenNguoiNhan: item.tenNguoiNhan ,
+            tenNguoiNhan: item.tenNguoiNhan,
             sdtKh: item.sdt,
-            diaChi:  item.tinhThanh+", "+item.quanHuyen+", "+item.phuongXa,
+            diaChi: item.tinhThanh + ", " + item.quanHuyen + ", " + item.phuongXa,
             diaChiCuThe: item.diaChiCuThe,
             loaiDiaChi: item.loaiDiaChi,
-            // tinhThanh: item.tinhThanh,
-            // quanHuyen: item.quanHuyen,
-            // phuongXa: item.phuongXa,
             trangThai: item.trangThai,
         }));
-    //Next Page
+
+
     const handlePageClick = (page) => {
-        getListData(page);
+        getListData(page + 1);
     };
+
     //filter status
     useEffect(() => {
         const filteredData =
@@ -142,15 +142,24 @@ const TableAllDiaChi = () => {
                     (item) =>
                         item.trangThai === parseInt(selectedStatus)
                 );
-        setListData(filteredData);
-    }, [selectedStatus, originalListData]);
+
+        const filteredLoai =
+            selectedLoaiDiaChi === "Tất cả"
+                ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
+                : originalListData.filter(
+                    (item) =>
+                        item.loaiDiaChi === parseInt(selectedLoaiDiaChi)
+                );
+        const combinedFilteredData = filteredData.filter(item =>
+            filteredLoai.includes(item)
+        );
+
+        setListData(combinedFilteredData);
+    }, [selectedStatus, selectedLoaiDiaChi, originalListData]);
 
     //Click on the table
 
 
-    const handAdd = (item) => {
-        navigate(`/dia-chi/them-dia-chi/${item.idTaiKhoan}`);
-    };
     const handlClickRow = (item) => {
         // console.log("Check click: ", item);
         navigate(`/dia-chi/detail/${item.idTaiKhoan}`);
@@ -188,16 +197,23 @@ const TableAllDiaChi = () => {
                             onChange={(e) => setSelectedStatus(e.target.value)}
                         >
                             <option value="Tất cả">Tất cả</option>
-                            <option value="0">Chưa kích hoạt</option>
-                            <option value="1">Đã kích hoạt</option>
-                            <option value="2">Đã Ngưng Hoạt động</option>
+                            <option value="0">Chưa Xác Nhận</option>
+                            <option value="1">Đã Xác Nhận</option>
+                            <option value="4">Đã Ngưng Hoạt động</option>
                         </select>
                     </div>
                     <div className="col-5">
-                        <Button variant="contained" color="success"  onClick={() => handAdd()} >
-                            Tạo Tài Khoản Mới
-                            <FontAwesomeIcon icon={faCartPlus} size="lg"/>{" "}
-                        </Button>
+                        <label htmlFor="status-select1">Loại Địa Chỉ: </label>
+                        <select
+                            id="status-select1"
+                            className="select-green"
+                            value={selectedLoaiDiaChi}
+                            onChange={(e) => setSelectedLoaiDiaChi(e.target.value)}
+                        >
+                            <option value="Tất cả">Tất cả</option>
+                            <option value="0">Nhà Riêng</option>
+                            <option value="1">Nơi Làm Việc</option>
+                        </select>
                     </div>
                 </div>
 

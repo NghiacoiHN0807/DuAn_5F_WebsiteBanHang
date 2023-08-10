@@ -1,12 +1,9 @@
 import Nav from "react-bootstrap/Nav";
-// import Button from "react-bootstrap/Button";
+
 import Form from "react-bootstrap/Form";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {
-    faCartPlus,
-    faMagnifyingGlass,
-} from "@fortawesome/free-solid-svg-icons";
-// import "../scss/OderManagement.scss";
+
+
+
 import {useState} from "react";
 import {useEffect} from "react";
 import {fetchAllTKKH} from "../../services/taiKhoanKhachHangSevice";
@@ -16,6 +13,10 @@ import Stack from "@mui/material/Stack";
 import {useNavigate} from "react-router-dom";
 import {DataGrid} from "@mui/x-data-grid";
 import {Button} from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit';
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import SearchIcon from "@mui/icons-material/Search";
+import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 
 const TableTKKhachHang = () => {
     const [listData, setListData] = useState([]);
@@ -50,7 +51,7 @@ const TableTKKhachHang = () => {
 
 
     const columns = [
-        {field: "index", headerName: "#####", width: 50},
+        {field: "index", headerName: "#####", width: 50 },
         {field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 120},
         {field: "tenKh", headerName: "Tên Khách Hàng", width: 120},
         {field: "sdtKh", headerName: "Số Điện Thoại", width: 120,},
@@ -88,25 +89,30 @@ const TableTKKhachHang = () => {
         {
             field: "actions",
             headerName: "Actions",
-            width: 300,
+            width: 250,
             renderCell: (params) => {
                 const {row} = params;
                 return (
                     <div>
                         <Button
+                            size={"small"}
                             variant="contained"
                             color="primary"
                             onClick={() => handlClickRow(row)}
+                            startIcon={<EditIcon/>}
                         >
-                            Xem Chi Tiết
+                            Chi Tiết
                         </Button>
                         <Button
+                            size={"small"}
                             variant="contained"
                             color="secondary"
+                            startIcon={<AddLocationAltIcon/>}
                             onClick={() => handAddDiaChi(row)}
                         >
-                            Thêm Địa Chỉ
+                            Địa Chỉ
                         </Button>
+
                     </div>
                 );
             },
@@ -175,8 +181,8 @@ const TableTKKhachHang = () => {
                                     size="sm"
                                     onChange={(e) => setSearchKeyword(e.target.value)}
                                 />
-                                <Button variant="outline-success" className="search-button">
-                                    <FontAwesomeIcon icon={faMagnifyingGlass} size="xs"/>
+                                <Button variant="outline-success"  startIcon={< SearchIcon />} className="search-button">
+
                                 </Button>
                             </Form>
                         </Nav>
@@ -199,9 +205,8 @@ const TableTKKhachHang = () => {
                         </select>
                     </div>
                     <div className="col-5">
-                        <Button variant="contained" color="success"  onClick={() => handAdd()} >
+                        <Button variant="contained" color="success" startIcon={<PersonAddAlt1Icon/>}  onClick={() => handAdd()} >
                             Tạo Tài Khoản Mới
-                            <FontAwesomeIcon icon={faCartPlus} size="lg"/>{" "}
                         </Button>
                     </div>
                 </div>

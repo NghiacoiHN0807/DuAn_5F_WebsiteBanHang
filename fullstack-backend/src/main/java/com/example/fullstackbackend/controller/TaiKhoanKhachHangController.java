@@ -37,7 +37,7 @@ public class TaiKhoanKhachHangController {
     }
 
     @GetMapping("detail/{id}")
-    public Optional<TaiKhoan> detail(@PathVariable("id") Integer id
+    public Optional<TaiKhoan> detail(@PathVariable("id") String id
     ) {
         return TaiKhoanKhachHangKHSevice.detail(id);
     }

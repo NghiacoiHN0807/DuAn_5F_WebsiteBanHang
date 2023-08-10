@@ -53,8 +53,12 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
     }
 
     @Override
-    public Optional<TaiKhoan> detail(Integer id) {
-        Optional<TaiKhoan> TaiKhoanKhachHang = TaiKhoanKhachHangRepository.findById(id);
-        return TaiKhoanKhachHang;
+    public Optional<TaiKhoan> detail(String idOrMa) {
+        if(TaiKhoanKhachHangRepository.findByMaTaiKhoanOrderByIdTaiKhoanDesc(idOrMa).isPresent()){
+            return TaiKhoanKhachHangRepository.findByMaTaiKhoanOrderByIdTaiKhoanDesc(idOrMa);
+        } if (TaiKhoanKhachHangRepository.findById(Integer.valueOf(idOrMa)).isPresent()){
+            return TaiKhoanKhachHangRepository.findById(Integer.valueOf(idOrMa));
+        }
+        return null;
     }
 }

@@ -4,7 +4,7 @@ import {toast} from "react-toastify";
 import {Box, Button, TextField} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 
-const AddTkKH = (props) => {
+const AddTkKH = () => {
     const [maTaiKhoan, setMaTaiKhoan] = useState(null);
     const [ho, setHo] = useState("");
     const [ten, setTen] = useState("");
@@ -58,54 +58,57 @@ const AddTkKH = (props) => {
                 <Box
                     component="form"
                     sx={{
-                        "& .MuiTextField-root": {m: 1, width: "151ch"},
+                        display: "flex",         // Center horizontally
+                        justifyContent: "center", // Center horizontally
+                        flexDirection: "column", // Align items vertically
+                        alignItems: "center",    // Align items horizontally
                     }}
                     noValidate
                     autoComplete="off"
-                    alignItems={"center"}
+
                 >
                     <TextField
                         fullWidth
+                        margin={"dense"}
                         label="Họ"
                         id="fullWidth"
                         onChange={(event) => setHo(event.target.value)}
                     />
                     <TextField
                         fullWidth
+                        margin={"dense"}
                         label="Tên"
                         id="fullWidth"
                         onChange={(event) => setTen(event.target.value)}
                     />
                     <TextField
                         fullWidth
+                        margin={"dense"}
                         label="Email"
                         id="fullWidth"
                         onChange={(event) => setEmail(event.target.value)}
                     />
                     <TextField
                         fullWidth
+                        margin={"dense"}
                         label="Số Điện Thoại"
                         id="fullWidth"
                         onChange={(event) => setSdt(event.target.value)}
                     />
-                    {/*<TextField*/}
-                    {/*    id="outlined-basic"*/}
-                    {/*    label="Mật Khẩu"*/}
-                    {/*    variant="outlined"*/}
-                    {/*    onChange={(event) => setMatKhau(event.target.value)}*/}
-                    {/*/>*/}
-                </Box>
 
-
-                <div style={{textAlign: "right", margin: "20px 0"}}>
                     <Button
+                        size={"large"}
                         variant="contained"
                         color="success"
                         onClick={() => handleSave()}
+                        style={{ marginTop: "20px" }} // Make button wider
                     >
-                        Thêm
+                        Thêm Tài Khoản Khách Hàng Mới
                     </Button>
-                </div>
+                </Box>
+
+
+
             </div>
         </>
     );

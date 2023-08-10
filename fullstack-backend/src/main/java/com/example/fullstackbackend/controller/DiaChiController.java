@@ -30,11 +30,11 @@ public class DiaChiController {
     public Page<DiaChi> viewAll(@RequestParam(defaultValue = "0") Integer page,
                                 @RequestParam(defaultValue = "15") Integer size,
                                 @RequestParam("p") Optional<Integer> p) {
-        return diaChiSevice.getAll( p.orElse(page), size);
+        return diaChiSevice.getAll(p.orElse(page), size);
     }
 
     @GetMapping("/tai-khoan/")
-    public Page<DiaChi> viewAllByTK(  @RequestParam( "m") String maTaiKhoan,
+    public Page<DiaChi> viewAllByTK(@RequestParam("m") String maTaiKhoan,
                                     @RequestParam(defaultValue = "0") Integer page,
                                     @RequestParam(defaultValue = "15") Integer size,
                                     @RequestParam("p") Optional<Integer> p) {
@@ -57,12 +57,13 @@ public class DiaChiController {
     }
 
     @DeleteMapping("delete/{id}")
-    public String delete(@PathVariable("id") Integer id) {
+    public boolean delete(@PathVariable("id") Integer id) {
         if (!diaChiSevice.checkExists(id)) {
             throw new DiaChiNotFoundException(id);
+
         } else {
             diaChiSevice.delete(id);
-            return "";
+            return true;
         }
     }
 

@@ -20,5 +20,5 @@ public interface TaiKhoanKhachHangSevice {
 
     TaiKhoan update(TaiKhoan update);
 
-    Optional<TaiKhoan> detail(Integer id);
+    Optional<TaiKhoan> detail(String idOrMa);
 }

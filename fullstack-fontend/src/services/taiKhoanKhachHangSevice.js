@@ -22,6 +22,8 @@ const getDetailOneTK = (idTaiKhoan) => {
     return custom.get(`/tai-khoan-khach-hang/detail/${idTaiKhoan}`);
 };
 
+
+
 const deleteTaiKhoan = (id) => {
     return custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
 };

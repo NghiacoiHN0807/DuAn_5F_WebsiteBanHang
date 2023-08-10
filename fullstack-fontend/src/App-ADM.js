@@ -47,6 +47,8 @@ import AddTkKH from "./components/TaiKhoanKhachHang/AddTkKH";
 import UpdateTkKH from "./components/TaiKhoanKhachHang/UpdateTkKH";
 import TableAllDiaChi from "./components/DiaChi/TableAllDiaChi";
 import TableDiaChiByTK from "./components/DiaChi/TableDiaChiByTK";
+import AddDiaChi from "./components/DiaChi/AddDiaChi";
+import UpdateDiaChi from "./components/DiaChi/UpdateDiaChi";
 
 const drawerWidth = 240;
 
@@ -320,6 +322,8 @@ function AppADM(props) {
                         <Route path="/table-taiKhoan" element={<TableTKNhanVien/>}/>
                         <Route path="/tai-Khoan-KH" element={<TableTaiKhoanKH/>}/>
                         <Route path="/dia-chi" element={<TableAllDiaChi/>}/>
+                        <Route path="/dia-chi/add/:id" element={<AddDiaChi/>}/>
+                        <Route path="/dia-chi/detail/:id" element={<UpdateDiaChi/>}/>
                         <Route path="/dia-chi/:id" element={<TableDiaChiByTK/>}/>
                         <Route path="/tai-khoan-KH/them-tai-khoan" element={<AddTkKH/>}/>
                         <Route path="/tai-khoan-KH/detail/:id" element={<UpdateTkKH/>}/>

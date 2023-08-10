@@ -9,10 +9,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DiaChiRepository extends JpaRepository<DiaChi, Integer> {
-//    @Query("select d from DiaChi d where d.maTaiKhoanKhachHang.maTaiKhoan = ?1") ??
-//    Page<DiaChi> findByMaTaiKhoan_MaTaiKhoan(String maTaiKhoan, Pageable pageable);
-
     @Query("select d from DiaChi d where d.taiKhoan.maTaiKhoan = ?1")
     Page<DiaChi> findByMaTaiKhoan_MaTaiKhoan(String maTaiKhoan, Pageable pageable);
+
+    @Query("select count(d) from DiaChi d where d.taiKhoan.maTaiKhoan = ?1")
+    long CountTaiKhoan(String maTaiKhoan);
+
 
 }

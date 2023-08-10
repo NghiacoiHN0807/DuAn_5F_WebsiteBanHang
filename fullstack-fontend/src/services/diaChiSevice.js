@@ -18,10 +18,12 @@ const postUpdateDiaChi = (
             id, taiKhoan, diaChiCuThe, loaiDiaChi, phuongXa, quanHuyen, sdt, tenNguoiNhan, tinhThanh, trangThai
         });
 };
-
+const getDiaChiById = (id) => {
+    return custom.get(`/dia-chi/detail/${id}`); // Call API
+};
 
 const deleteDiaChi = (id) => {
     return custom.delete(`/dia-chi/delete/${id}`);
 };
 
-export {fetchAllDiaChi, postAddDiaChi, postUpdateDiaChi, deleteDiaChi,fetchDiaChiByTK};
+export {fetchAllDiaChi, postAddDiaChi, postUpdateDiaChi, deleteDiaChi,fetchDiaChiByTK,getDiaChiById};

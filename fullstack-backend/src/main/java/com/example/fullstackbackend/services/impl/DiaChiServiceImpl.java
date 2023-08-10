@@ -34,7 +34,11 @@ public class DiaChiServiceImpl implements DiaChiSevice {
 
     @Override
     public DiaChi add(DiaChi add) {
-        return DiaChiRepository.save(add);
+        if(DiaChiRepository.CountTaiKhoan(add.getTaiKhoan().getMaTaiKhoan()) > 5){
+            return null;
+        }else {
+            return DiaChiRepository.save(add);
+        }
     }
 
     @Override
