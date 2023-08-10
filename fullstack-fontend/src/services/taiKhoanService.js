@@ -7,6 +7,7 @@ const taiKhoan2 = (page, trangThai) => {
 };
 const postAddTaiKhoan = (
   maTaiKhoan,
+  idChucVu,
   ho,
   ten,
   sdt,
@@ -16,6 +17,7 @@ const postAddTaiKhoan = (
 ) => {
   return custom.post("/tai-khoan/add", {
     maTaiKhoan,
+    idChucVu,
     ho,
     ten,
     sdt,
@@ -27,6 +29,7 @@ const postAddTaiKhoan = (
 const postUpdateTaiKhoan = (
   id,
   maTaiKhoan,
+  idChucVu,
   ho,
   ten,
   sdt,
@@ -36,6 +39,7 @@ const postUpdateTaiKhoan = (
 ) => {
   return custom.put(`/tai-khoan/update/${id}`, {
     maTaiKhoan,
+    idChucVu,
     ho,
     ten,
     sdt,

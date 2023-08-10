@@ -43,6 +43,8 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import FiberManualRecordOutlinedIcon from "@mui/icons-material/FiberManualRecordOutlined";
 import LoyaltyOutlinedIcon from "@mui/icons-material/LoyaltyOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
+import AddTKNV from "./forms/Models-AddTKNV";
+import UpdateTkNV from "./forms/ModelUpdateTKNV";
 
 const drawerWidth = 240;
 
@@ -314,6 +316,8 @@ function AppADM(props) {
             <Route path="/quan-ly-san-pham/xuat-xu" element={<XuatXuMain />} />
             <Route path="/table-chucVu" element={<ViewChucVu />} />
             <Route path="/table-taiKhoan" element={<TableTKNhanVien />} />
+            <Route path="/tai-khoan/them-tai-khoan" element={<AddTKNV />} />
+            <Route path="/tai-khoan/detail/:id" element={<UpdateTkNV />} />
             <Route path="/table-taiKhoanKH" element={<TableTaiKhoanKH />} />
             <Route path="/quan-ly-giam-gia" element={<TableGiamGia />} />
             <Route path="/direct-sale" element={<DireactSale />} />

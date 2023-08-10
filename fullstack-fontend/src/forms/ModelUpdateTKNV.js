@@ -1,214 +1,222 @@
-import { useState, useEffect } from "react";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import { postUpdateTaiKhoan } from "../services/taiKhoanService";
+import { useCallback, useEffect, useState } from "react";
+import {
+  detailTaiKhoan,
+  postUpdateTaiKhoan,
+} from "../services/taiKhoanService";
+import {
+ chucVu3,
+} from "../services/chucVuService";
 import { toast } from "react-toastify";
-import Form from "react-bootstrap/Form";
-import { Col, Row } from "react-bootstrap";
-import { chucVu } from "../services/chucVuService";
 
-const ModalUpdate = (props) => {
-  const { show, handleClose, handleUpdateTable, isDataTaiKhoanKH } = props;
-  const [idTaiKhoan, setIdTaiKhoan] = useState("");
-  const [maTaiKhoan, setMaTaiKhoan] = useState("");
+import {
+  Box,
+  Button,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  InputLabel,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  TextField,
+} from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+
+const UpdateTkNV = (props) => {
+  const param = useParams();
+  const idNV = param.id;
+  const [Data, setData] = useState([]);
+  const [chucVu, setChucVu] = useState("");
   const [ho, setHo] = useState("");
   const [ten, setTen] = useState("");
   const [sdt, setSdt] = useState("");
   const [email, setEmail] = useState("");
   const [matKhau, setMatKhau] = useState("");
-  const [trangThai, setTrangThai] = useState("");
+  const [soCanCuoc, setSoCanCuoc] = useState("");
+  const [trangThai, setTrangThai] = useState("0");
 
-  const handleUpdate = async () => {
-    if (setMaTaiKhoan("") && setTen("")) {
-      handleClose();
-      toast.warning("Mã hoặc tên không được để trống!");
+  const [myChucVu, setMyChucVu] = useState([]);
+
+  const getAllChucVu = async () => {
+    let rs = await chucVu3(0);
+    setMyChucVu(rs);
+  };
+
+  useEffect(() => {
+    getAllChucVu();
+  }, []);
+  // chuyen trang
+  const navigate = useNavigate();
+  const getListData = useCallback(async () => {
+    try {
+      let res = await detailTaiKhoan(idNV);
+      setData(res);
+      setChucVu(res.idChucVu);
+      setHo(res.ho);
+      setTen(res.ten);
+      setEmail(res.email);
+      setSdt(res.sdt);
+      setMatKhau(res.matKhau);
+      setSoCanCuoc(res.soCanCuoc);
+      setTrangThai(res.trangThai);
+      console.log("check res: ", res);
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  }, [idNV]);
+  useEffect(() => {
+    getListData();
+  }, [getListData]);
+
+  const handleSave = async () => {
+    if (
+      !chucVu ||
+      !ho ||
+      !ten ||
+      !email ||
+      !sdt ||
+      !matKhau ||
+      !soCanCuoc ||
+      !trangThai
+    ) {
+      toast.warning("Một Số Trường Đang Trống!");
     } else {
       let res = await postUpdateTaiKhoan(
-        idTaiKhoan,
-        maTaiKhoan,
+        Data.idTaiKhoan,
+        Data.maTaiKhoan,
+        chucVu,
         ho,
         ten,
         sdt,
         email,
         matKhau,
+        soCanCuoc,
         trangThai
       );
-      console.log("check", res);
-      if (res) {
-        handleClose();
-        toast.success("Sửa thành công!");
-        handleUpdateTable({
-          idTaiKhoan: res.idTaiKhoan,
-          maTaiKhoan: res.maTaiKhoan,
-          ho: res.ho,
-          ten: res.ten,
-          sdt: res.sdt,
-          email: res.email,
-          matKhau: res.matKhau,
-          trangThai: res.trangThai,
-        });
+      console.log("Check res: ", res);
+      if (res && res.idTaiKhoan) {
+        toast.success("Cập Nhập Tài Khoản Thành Công!");
+        navigate("/tai-Khoan");
+      } else {
+        toast.error("Cập Nhập Tài Khoản Thất Bại");
       }
     }
   };
-
-  useEffect(() => {
-    if (show) {
-      setIdTaiKhoan(Number(isDataTaiKhoanKH.idTaiKhoan));
-      setMaTaiKhoan(isDataTaiKhoanKH.maTaiKhoan);
-      setHo(isDataTaiKhoanKH.ho);
-      setTen(isDataTaiKhoanKH.ten);
-      setSdt(isDataTaiKhoanKH.sdt);
-      setEmail(isDataTaiKhoanKH.email);
-      setMatKhau(isDataTaiKhoanKH.matKhau);
-      setTrangThai(Number(isDataTaiKhoanKH.trangThai));
-    }
-  }, [isDataTaiKhoanKH, show]);
-  // console.log("trangThai", trangThai);
-  const [MyChucVu, setMyChucVu] = useState([]);
-
-  const getAllChucVu = async () => {
-    let rs = await chucVu(0);
-    setMyChucVu(rs.content);
-  };
-  console.log(MyChucVu);
-
-  useEffect(() => {
-    getAllChucVu();
-  }, []);
-
   return (
     <>
-      <Modal
-        show={show}
-        onHide={handleClose}
-        backdrop="static"
-        keyboard={false}
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Xuất xứ</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="body-add-new">
-            <Form>
-              <Row>
-                <Col>
-                  <div className="mb-3">
-                    <label className="form-label">Ma</label>
-                    <input
-                      value={maTaiKhoan}
-                      onChange={(event) => setMaTaiKhoan(event.target.value)}
-                      type="text"
-                      className="form-control"
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Họ</label>
-                    <input
-                      value={ho}
-                      onChange={(event) => setHo(event.target.value)}
-                      type="text"
-                      className="form-control"
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Tên</label>
-                    <input
-                      value={ten}
-                      onChange={(event) => setTen(event.target.value)}
-                      type="text"
-                      className="form-control"
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Số Điện Thoại</label>
-                    <input
-                      value={sdt}
-                      onChange={(event) => setSdt(event.target.value)}
-                      type="text"
-                      className="form-control"
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Chức Vụ</label>
-                    <select
-                      class="form-select"
-                      aria-label="Default select example"
-                    >
-                      {MyChucVu.map((item, index) => {
-                        return <option value={item.tenCv}>{item.tenCv}</option>;
-                      })}
-                    </select>
-                  </div>
-                </Col>
-                <Col>
-                  <div className="mb-3">
-                    <label className="form-label">Email</label>
-                    <input
-                      value={email}
-                      onChange={(event) => setEmail(event.target.value)}
-                      type="email"
-                      className="form-control"
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Mật Khẩu</label>
-                    <input
-                      value={matKhau}
-                      onChange={(event) => setMatKhau(event.target.value)}
-                      type="password"
-                      className="form-control"
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Trạng Thái</label>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault"
-                        checked={Number(trangThai) === 0}
-                        value={"0"}
-                        onChange={(event) => setTrangThai(event.target.value)}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="flexRadioDefault1"
-                      >
-                        Chưa Kích Hoạt
-                      </label>
-                    </div>
-                    <div className="form-check">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="flexRadioDefault"
-                        checked={Number(trangThai) === 1}
-                        value={"1"}
-                        onChange={(event) => setTrangThai(event.target.value)}
-                      />
-                      <label
-                        className="form-check-label"
-                        htmlFor="flexRadioDefault2"
-                      >
-                        Đang Hoạt Động
-                      </label>
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            </Form>
-          </div>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Đóng
+      <div className="row row-order-management">
+        <div
+          className="title"
+          style={{ textAlign: "center", margin: "20px 0" }}
+        >
+          <h4>Cập Nhập Tài Khoản Nhân Viên Mã: {Data.maTaiKhoan}</h4>
+        </div>
+        <Box
+          component="form"
+          sx={{
+            "& .MuiTextField-root": { m: 1, width: "120" },
+          }}
+          noValidate
+          autoComplete="off"
+          alignItems={"center"}
+        >
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Chức Vụ</InputLabel>
+            <Select
+              value={chucVu}
+              onChange={(event) => setChucVu(event.target.value)}
+            >
+              {myChucVu.map((item, index) => (
+                <MenuItem key={index} value={item}>
+                  {item.tenCv}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            fullWidth
+            label="Họ"
+            id="fullWidth"
+            value={ho}
+            onChange={(event) => setHo(event.target.value)}
+          />
+          <TextField
+            fullWidth
+            label="Tên"
+            id="fullWidth"
+            value={ten}
+            onChange={(event) => setTen(event.target.value)}
+          />
+          <TextField
+            fullWidth
+            label="Email"
+            id="fullWidth"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+          />
+          <TextField
+            fullWidth
+            label="Số Điện Thoại"
+            id="fullWidth"
+            value={sdt}
+            onChange={(event) => setSdt(event.target.value)}
+          />
+          <TextField
+            fullWidth
+            id="outlined-basic"
+            label="Mật Khẩu"
+            value={matKhau}
+            onChange={(event) => setMatKhau(event.target.value)}
+          />
+          <TextField
+            fullWidth
+            id="outlined-basic"
+            label="Số Căn Cước"
+            value={soCanCuoc}
+            onChange={(event) => setSoCanCuoc(event.target.value)}
+          />
+          <FormControl style={{ marginLeft: "10px" }}>
+            <FormLabel id="demo-radio-buttons-group-label">
+              Trạng thái
+            </FormLabel>
+            <RadioGroup
+              row
+              aria-labelledby="demo-row-radio-buttons-group-label"
+              name="row-radio-buttons-group"
+              value={trangThai}
+              onChange={(event) => setTrangThai(event.target.value)}
+            >
+              <FormControlLabel
+                value="0"
+                control={<Radio />}
+                label="Chưa Kích Hoạt"
+              />
+              <FormControlLabel
+                value="1"
+                control={<Radio />}
+                label="Được Kích Hoạt"
+              />
+              <FormControlLabel
+                value="4"
+                control={<Radio />}
+                label="Ngưng Hoạt Động"
+              />
+            </RadioGroup>
+          </FormControl>
+        </Box>
+
+        <div style={{ textAlign: "right", margin: "20px 0" }}>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => handleSave()}
+          >
+            Sửa
           </Button>
-          <Button variant="primary" onClick={() => handleUpdate()}>
-            Lưu Thay Đổi
-          </Button>
-        </Modal.Footer>
-      </Modal>
+        </div>
+      </div>
     </>
   );
 };
-export default ModalUpdate;
+export default UpdateTkNV;

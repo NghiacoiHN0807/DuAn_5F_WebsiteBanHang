@@ -5,22 +5,21 @@ import { postAddTaiKhoan } from "../services/taiKhoanService";
 import { toast } from "react-toastify";
 import { Col, Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import { chucVu } from "../services/chucVuService";
+import { chucVu, detail } from "../services/chucVuService";
 //QRcode
 // import React, { } from 'react';
 // import Webcam from 'react-webcam-qrcode';
 // import QrReader from "react-qr-reader";
 
-const ModelAddNewTKKH = (props) => {
+const ModelAddNewTKNV = (props) => {
   const { show, handleClose } = props;
   const [setMaTaiKhoan, getMaTaiKhoan] = useState("");
   const [setHo, getHo] = useState("");
   const [setTen, getTen] = useState("");
-  const [setChucVu, getChucVu] = useState({});
+  const [setChucVu, getChucVu] = useState("");
   const [setSdt, getSdt] = useState("");
   const [setEmail, getEmail] = useState("");
   const [setSoCanCuoc, getSoCanCuoc] = useState("");
-
 
   //QRcode
   // const [result, setResult] = useState("No QR code detected");
@@ -43,6 +42,7 @@ const ModelAddNewTKKH = (props) => {
   //     setScannedData(data);
   //   }
   // };
+  const [chucVuOk, setChucVuOk] = useState({});
 
   const handleSave = async () => {
     //I want check console.log get ma and tenNuoc
@@ -51,9 +51,9 @@ const ModelAddNewTKKH = (props) => {
     //Check null
     if (
       getMaTaiKhoan("") &&
+      getChucVu("") &&
       getHo("") &&
       getTen("") &&
-      getChucVu("") &&
       getSdt("") &&
       getEmail("") &&
       getSoCanCuoc("")
@@ -61,23 +61,32 @@ const ModelAddNewTKKH = (props) => {
       handleClose();
       toast.warning("Ma, Ten Or Trang Thai is null");
     } else {
+      // console.log("Check res: ", detail(setChucVu));
+      const resultPromise = detail(setChucVu); // Ví dụ: hàm trả về Promise
+      resultPromise
+        .then((result) => {
+          setChucVuOk(result);
+        })
+        .catch((error) => {
+          console.error(error); // Xử lý lỗi nếu có
+        });
+        console.log("chucVuOk?", chucVuOk);
       let res = await postAddTaiKhoan(
         setMaTaiKhoan,
+        chucVuOk,
         setHo,
         setTen,
-        // setChucVu,
         setSdt,
         setEmail,
         setSoCanCuoc,
         0
       );
-      console.log("Check res: ", res);
       if (res && res.idTaiKhoan) {
         handleClose();
         getMaTaiKhoan("");
+        getChucVu("");
         getHo("");
         getTen("");
-        // getChucVu("");
         getSdt("");
         getEmail("");
         getSoCanCuoc("");
@@ -89,8 +98,6 @@ const ModelAddNewTKKH = (props) => {
   };
 
   const [MyChucVu, setMyChucVu] = useState([]);
-
-
 
   const getAllChucVu = async () => {
     let rs = await chucVu(0);
@@ -104,7 +111,7 @@ const ModelAddNewTKKH = (props) => {
 
   return (
     <>
-     {/* <div>
+      {/* <div>
         <h2>QR Code Scanner</h2>
         <QrReader
           delay={300}
@@ -169,9 +176,10 @@ const ModelAddNewTKKH = (props) => {
                   <select
                     class="form-select"
                     aria-label="Default select example"
+                    onChange={(event) => getChucVu(event.target.value)}
                   >
                     {MyChucVu.map((item, index) => {
-                      return <option value={item} onChange={(event) => getChucVu(event.target.value)}>{item.tenCv}</option>;
+                      return <option value={item.idCv}>{item.tenCv}</option>;
                     })}
                   </select>
                 </div>
@@ -217,4 +225,4 @@ const ModelAddNewTKKH = (props) => {
     </>
   );
 };
-export default ModelAddNewTKKH;
+export default ModelAddNewTKNV;
