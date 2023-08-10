@@ -1,6 +1,7 @@
 package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
+import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.ChitietsanphamService;
 import jakarta.validation.Valid;
@@ -37,9 +38,24 @@ public class ChitietsanphamController {
         return chiTietSP;
     }
 
+    @GetMapping("select-ctsp-byId/{id}")
+    public List<ChiTietSanPham> listCTSP(@PathVariable("id") Integer id) {
+        return chitietsanphamSevice.findByIdSp(id);}
+    @GetMapping("detail/{id}")
+    public ChiTietSanPham detail(@PathVariable("id") Integer id) {
+        return chitietsanphamSevice.detail(id).orElse(null);
+    }
+
     @GetMapping("select-Classify/{name}")
     public List<ChiTietSanPham> findByProductName(@PathVariable("name") String name) {
         List<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductName(name);
+        return chiTietSanPham;
+    }
+
+
+    @GetMapping("select-ctsp-byid/{id}")
+    public List<ChiTietSanPham> findByProductId(@PathVariable("id") Integer id) {
+        List<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductId(id);
         return chiTietSanPham;
     }
 

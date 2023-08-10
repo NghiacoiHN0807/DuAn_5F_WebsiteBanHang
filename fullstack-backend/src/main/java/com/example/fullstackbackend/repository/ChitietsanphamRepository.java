@@ -14,4 +14,10 @@ import java.util.List;
 public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, Integer> {
     @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.tenSp = :tenSp")
     List<ChiTietSanPham> findByProductName(@Param("tenSp") String tenSp);
+
+    @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.idSp = ?1")
+    List<ChiTietSanPham> findByIdSp(Integer idSp);
+
+    @Query("SELECT c FROM ChiTietSanPham c WHERE c.idSp.idSp = :idSp")
+    List<ChiTietSanPham> findByProductId(@Param("idSp") Integer idSp);
 }

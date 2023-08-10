@@ -3,34 +3,15 @@ const fetchAllCTSP = (page) => {
   return custom.get(`/chi-tiet-san-pham/view-all?p=${page}`); // Call API
 };
 
-const postAddCTSP = (
-  maCtsp,
-  idCl,
-  idMs,
-  idSize,
-  idSp,
-  idLsp,
-  idXx,
-  idCoAo,
-  idTayAo,
-  moTa,
-  soLuongTon,
-  giaBan,
-  trangThai
-) => {
+const findSizeById = (id) => {
+  return custom.get(`chi-tiet-san-pham/select-ctsp-byId/${id}`); // Call API
+};
+
+const postAddCTSP = (idSp, idSize, soLuongTon, trangThai) => {
   return custom.post("/chi-tiet-san-pham/add", {
-    maCtsp,
-    idCl,
-    idMs,
-    idSize,
     idSp,
-    idLsp,
-    idXx,
-    idCoAo,
-    idTayAo,
-    moTa,
+    idSize,
     soLuongTon,
-    giaBan,
     trangThai,
   });
 };
@@ -39,38 +20,14 @@ const deleteCTSP = (id) => {
   return custom.delete(`/chi-tiet-san-pham/delete/${id}`);
 };
 
-const putUpdateCTSP = (
-  idCtsp,
-  maCtsp,
-  idCl,
-  idMs,
-  idSize,
-  idSp,
-  idLsp,
-  idXx,
-  idCoAo,
-  idTayAo,
-  moTa,
-  soLuongTon,
-  giaBan,
-  trangThai
-) => {
+const putUpdateCTSP = (idCtsp, idSize, idSp, soLuongTon, trangThai) => {
   return custom.put(`/chi-tiet-san-pham/update`, {
     idCtsp,
-    maCtsp,
-    idCl,
-    idMs,
     idSize,
     idSp,
-    idLsp,
-    idXx,
-    idCoAo,
-    idTayAo,
-    moTa,
     soLuongTon,
-    giaBan,
     trangThai,
   });
 };
 
-export { fetchAllCTSP, postAddCTSP, deleteCTSP, putUpdateCTSP };
+export { fetchAllCTSP, postAddCTSP, deleteCTSP, putUpdateCTSP, findSizeById };

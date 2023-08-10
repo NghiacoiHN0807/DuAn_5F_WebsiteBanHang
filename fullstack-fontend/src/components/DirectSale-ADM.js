@@ -1,12 +1,20 @@
-import Table from "react-bootstrap/Table";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { deleteHD, postAddBill, selectAllBill } from "../services/BillSevice";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
-import ReactPaginate from "react-paginate";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDeleteLeft, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCartPlus,
+  faMagnifyingGlass,
+} from "@fortawesome/free-solid-svg-icons";
+import { Button, IconButton, Pagination } from "@mui/material";
+import "../scss/DirectSaleADM.scss";
+import { Badge, Form, Nav, Stack } from "react-bootstrap";
+import { DataGrid } from "@mui/x-data-grid";
+import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { pink } from "@mui/material/colors";
 
 const DireactSale = (props) => {
   const [listBill, setListBill] = useState([]);
@@ -27,31 +35,132 @@ const DireactSale = (props) => {
   useEffect(() => {
     getListData(currentPage);
   }, [currentPage]);
+
+  const columns = [
+    { field: "index", headerName: "#", width: 50 },
+    { field: "maHd", headerName: "Mã Hóa Đơn", width: 150 },
+    { field: "thanhTien", headerName: "Thành Tiền", width: 150 },
+    { field: "tenKh", headerName: "Tên Khách Hàng", width: 150 },
+    {
+      field: "sdtKh",
+      headerName: "Số Điện Thoại",
+      width: 150,
+    },
+    {
+      field: "ngayTao",
+      headerName: "Ngày Tạo",
+      width: 150,
+    },
+    {
+      field: "trangThai",
+      headerName: "Trạng Thái",
+      width: 200,
+      renderCell: (params) => {
+        const { value: trangThai } = params;
+        let badgeVariant, statusText;
+        switch (trangThai) {
+          case 8:
+            badgeVariant = "danger";
+            statusText = "Hóa Đơn Treo";
+
+            break;
+          case 9:
+            badgeVariant = "success";
+            statusText = "Đã thanh toán";
+            break;
+          default:
+            badgeVariant = "light";
+            statusText = "Unknown status";
+            break;
+        }
+
+        return (
+          <Badge bg={badgeVariant} text="dark">
+            {statusText}
+          </Badge>
+        );
+      },
+    },
+    {
+      field: "thaoTac",
+      headerName: "Thao Tác",
+      width: 150,
+      renderCell: (params) => {
+        return (
+          <>
+            <IconButton
+              aria-label="edit"
+              size="large"
+              // onClick={() => handleEdit(params.row.idHd)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
+            >
+              <EditOutlinedIcon color="primary" />
+            </IconButton>
+            <IconButton
+              aria-label="delete"
+              size="large"
+              onClick={() => handleDelete(params.row.idHd)}
+            >
+              <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
+            </IconButton>
+          </>
+        );
+      },
+    },
+  ];
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const rows = listBill
+    .filter((item) =>
+      Object.values(item).some((value) =>
+        String(value).toLowerCase().includes(searchKeyword.toLowerCase())
+      )
+    )
+    .map((item, index) => ({
+      idHd: item.idHd,
+      id: index + 1,
+      index: index + 1,
+      maHd: item.maHd,
+      thanhTien: item.thanhTien,
+      tenKh: item.tenKh,
+      sdtKh: item.sdtKh,
+      ngayTao: item.ngayTao,
+      kieuHoaDon: item.kieuHoaDon,
+      trangThai: item.trangThai,
+    }));
+
   //Next Page
-  const handlePageClick = (event) => {
-    getListData(+event.selected);
-    setCurrentPage(+event.selected);
+  const handlePageClick = (page) => {
+    getListData(page);
+    setCurrentPage(page);
   };
 
   //Create a new Detail Direct
-  const [code, setCode] = useState(() => {
-    const savedValue = localStorage.getItem("autoValue");
-    return savedValue ? parseInt(savedValue) : 0;
-  });
+  const [lastGeneratedNumber, setLastGeneratedNumber] = useState(0);
 
   useEffect(() => {
-    localStorage.setItem("autoValue", code.toString());
-  }, [code]);
+    // Đọc số lớn nhất từ cơ sở dữ liệu (localStorage) khi ứng dụng khởi động
+    const savedNumber = localStorage.getItem("lastGeneratedNumber");
+    if (savedNumber) {
+      setLastGeneratedNumber(Number(savedNumber));
+    }
+  }, []);
+  const generateNewCode = () => {
+    const newNumber = lastGeneratedNumber + 1;
+    setLastGeneratedNumber(newNumber);
+
+    // Lưu số mới vào cơ sở dữ liệu (localStorage)
+    localStorage.setItem("lastGeneratedNumber", newNumber.toString());
+
+    return `HD${newNumber.toString().padStart(5, "0")}`;
+  };
 
   const navigate = useNavigate();
   let getIdHttp;
-  // const [position, setPosition] = useState(1);
+
   const currentDate = new Date();
   const formattedDate = format(currentDate, "yyyy-MM-dd");
   const handleAdd = async () => {
-    const newValue = code + 1;
-    setCode(newValue);
-    let res = await postAddBill(code, formattedDate, 8);
+    const newCode = generateNewCode();
+    let res = await postAddBill(newCode, formattedDate, 8);
     toast.success("A shopping cart is created successfully");
     getIdHttp = res.idHd;
     // await getDataCart(getIdHttp);
@@ -63,80 +172,64 @@ const DireactSale = (props) => {
     console.log(item);
     if (item.trangThai === 8) {
       await deleteHD(item.idHd);
-      toast.success("Successfully deleted this bill ");
+      toast.success("Đã xóa hóa đơn thành công ");
       getListData(currentPage);
     } else if (item.trangThai === 9) {
-      toast.warn("This bill has been pain ");
+      toast.warn("Hóa đơn đã được thanh toán. Không thể xóa!!!");
     } else {
-      toast.error("This bill was not deleted successfully ");
+      toast.error("Xóa không thành công ");
     }
   };
 
   return (
     <>
-      <div className="my-3 add-new">
-        <samp>List Bill</samp>
-        <button onClick={() => handleAdd()} className="btn btn-success">
-          + Create a new invoice
-        </button>
+      <div className="row row-order-management">
+        <div className="my-3 add-new">
+          <Nav>
+            <Form className="d-flex search-form">
+              <Form.Control
+                type="search"
+                placeholder="Search"
+                className="me-2 search-input"
+                aria-label="Search"
+                size="sm"
+                onChange={(e) => setSearchKeyword(e.target.value)}
+              />
+              <Button variant="outline-success" className="search-button">
+                <FontAwesomeIcon icon={faMagnifyingGlass} size="xs" />
+              </Button>
+            </Form>
+          </Nav>
+          <Button
+            aria-label="Example"
+            endIcon={<FontAwesomeIcon icon={faCartPlus} size="lg" />}
+            variant="contained"
+            color="success"
+            onClick={() => handleAdd()}
+          >
+            Tạo Hóa Đơn
+          </Button>
+        </div>
+        <div style={{ height: 500, width: "100%" }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 15 },
+              },
+            }}
+            pageSizeOptions={[5, 10, 15]}
+          />
+        </div>
+        <Stack direction="row" spacing={2} justify="center" alignitems="center">
+          <Pagination
+            onChange={(event, page) => handlePageClick(page - 1)} // Subtract 1 from page value
+            count={numberPages}
+            variant="outlined"
+          />
+        </Stack>
       </div>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Direct ID</th>
-            <th>Total Amount</th>
-            <th>Date Created</th>
-            <th>Status</th>
-            <th>Function</th>
-          </tr>
-        </thead>
-        <tbody>
-          {listBill &&
-            listBill.length > 0 &&
-            listBill.map((item, index) => {
-              return (
-                <tr key={`hoanDon-${index}`}>
-                  <td>{item.maHd}</td>
-                  <td>{item.tongTien}</td>
-                  <td>{item.ngayTao}</td>
-                  <td>{item.trangThai === 9 ? "Paid" : "Unpaid"}</td>
-                  <td>
-                    <button
-                      onClick={() => handleDelete(item)}
-                      type="button"
-                      className="btn btn-outline-danger"
-                    >
-                      <FontAwesomeIcon icon={faDeleteLeft} size="lg" />
-                    </button>{" "}
-                    <button type="button" className="btn btn-outline-warning">
-                      <FontAwesomeIcon icon={faPenToSquare} size="lg" />
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </Table>
-      <ReactPaginate
-        breakLabel="..."
-        nextLabel="next >"
-        onPageChange={handlePageClick}
-        pageRangeDisplayed={5}
-        pageCount={numberPages}
-        previousLabel="< previous"
-        renderOnZeroPageCount={null}
-        //Class form
-        pageClassName="page-item"
-        pageLinkClassName="page-link"
-        previousClassName="page-item"
-        previousLinkClassName="page-link"
-        nextClassName="page-item"
-        nextLinkClassName="page-link"
-        breakClassName="page-item"
-        breakLinkClassName="page-link"
-        containerClassName="pagination"
-        activeClassName="active"
-      />
     </>
   );
 };

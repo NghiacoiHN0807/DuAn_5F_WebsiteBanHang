@@ -1,6 +1,7 @@
 package com.example.fullstackbackend.services;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,10 @@ public interface ChitietsanphamService {
 
     List<ChiTietSanPham> findByProductName(String name);
 
+    List<ChiTietSanPham> findByIdSp(Integer id);
+
+    List<ChiTietSanPham> findByProductId(Integer id);
+
     ChiTietSanPham add(ChiTietSanPham add);
 
     void delete(Integer id);
@@ -19,5 +24,6 @@ public interface ChitietsanphamService {
     ChiTietSanPham update(ChiTietSanPham update);
 
     Optional<ChiTietSanPham> detail(Integer id);
+
     Boolean checkExists(Integer id);
 }

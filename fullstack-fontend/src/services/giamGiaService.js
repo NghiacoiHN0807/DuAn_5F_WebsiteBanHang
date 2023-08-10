@@ -8,6 +8,14 @@ const detailGiamGia = (id) => {
     return custom.get(`/giam-gia/api/detail/${id}`);
 }
 
+const detailChiTietSanPham = (id) => {
+    return custom.get(`/chi-tiet-san-pham/detail/${id}`);
+}
+
+const getCtspByIdSp = (id) => {
+    return custom.get(`/chi-tiet-san-pham/select-ctsp-byid/${id}`);
+}
+
 const getAllByTrangThai = (pageNo, size, trangThai) => {
     return custom.get(`/giam-gia-chi-tiet/api/views?page=${pageNo}&size=${size}&trangThai=${trangThai}`);
 } 
@@ -52,4 +60,4 @@ const update = (giamGiaChiTiet, id) => {
     return custom.put(`/giam-gia-chi-tiet/api/update/${id}`, giamGiaChiTiet);
 }
 
-export {getAll, detail, remove, add, update, addGiamGia, addLichSuGiamGia, getAllByTrangThai, search, filerDate, getAllSanPham, detailGiamGia};
+export {getAll, detail, remove, add, update, addGiamGia, addLichSuGiamGia, getAllByTrangThai, search, filerDate, getAllSanPham, detailGiamGia, detailChiTietSanPham, getCtspByIdSp};
