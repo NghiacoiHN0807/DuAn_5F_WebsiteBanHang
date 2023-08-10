@@ -11,14 +11,26 @@ import { Navigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { IconButton } from "@mui/material";
+import { pink } from "@mui/material/colors";
+import { DeleteSweepOutlined, EditOutlined } from "@material-ui/icons";
+import { useNavigate } from "react-router-dom";
+//QRcode
+// import React, { } from 'react';
+// import QrReader from "react-qr-reader";
 
 const TabletaiKhoanNV = (props) => {
   //Set value for table
   const [listTaiKhoanNV, setlistTaiKhoanNV] = useState([]);
+  const [chucVu, setChucVu] = useState("");
   const [totalPages, setTotalPages] = useState(0);
   const [numberPages, setNumberPages] = useState(0);
 
   //   const [selectedStatus, setSelectedStatus] = useState("Tất cả");
+  const navigate = useNavigate();
+
+  // const handlClickRow = (item) => {
+  //   navigate(`/order-management-timeline/${item.idTaiKhoan}`);
+  // };
 
   //Set value for Model Add New is defalut
   const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
@@ -37,23 +49,40 @@ const TabletaiKhoanNV = (props) => {
     // console.log("Data", res);
     if (res && res.content) {
       setlistTaiKhoanNV(res.content);
+      // setChucVu(res.content.idChucVu);
       // console.log("Data", res);
       setNumberPages(Math.ceil(res.totalPages));
     }
   };
+
+  //QRcode
+  // const [result, setResult] = useState("No QR code detected");
+
+  // const handleScan = (data) => {
+  //   if (data) {
+  //     setResult(data);
+  //   }
+  // };
+
+  // const handleError = (error) => {
+  //   console.error(error);
+  // };
+
   //Next Page
   const handlePageClick = (page) => {
     gettaiKhoanNV(page);
   };
+
   //Delete
   const [isShowModalDelete, setIsShowModalDelete] = useState(false);
   const [isDatataiKhoanNV, setDatataiKhoanNV] = useState({});
-  const handleDelete = (maTaiKhoan) => {
-    // console.log("Check delete: ", maTKKH);
+  const handleDelete = (param) => {
+    console.log("Check param: ", param);
     setIsShowModalDelete(true);
-    setDatataiKhoanNV(maTaiKhoan);
+    setDatataiKhoanNV(param);
   };
-  
+
+  // console.log(listTaiKhoanNV.idChucVu);
 
   //update
   const [isShowModalUpdate, setIsShowModalUpdate] = useState(false);
@@ -92,29 +121,29 @@ const TabletaiKhoanNV = (props) => {
 
   const columns = [
     { field: "index", headerName: "#", width: 50 },
-    { field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 110 },
-    { field: "idChucVu", headerName: "Tên Chức Vụ", width: 110 },
-    { field: "ho", headerName: "Họ Và Tên", width: 130 },
+    { field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 100 },
+    { field: "idChucVu", headerName: "Chức Vụ", width: 90 },
+    { field: "ho", headerName: "Họ Và Tên", width: 120 },
     // { field: "ten", headerName: "Tên", width: 150 },
     {
       field: "sdt",
       headerName: "Số Điện Thoại",
-      width: 130,
+      width: 120,
     },
     {
       field: "email",
       headerName: "Email",
-      width: 230,
+      width: 200,
     },
     {
       field: "soCanCuoc",
       headerName: "Số Căn Cước",
-      width: 150,
+      width: 130,
     },
     {
       field: "trangThai",
       headerName: "Trạng Thái",
-      width: 160,
+      width: 140,
       renderCell: (params) => {
         const { value: trangThai } = params;
         let badgeVariant, statusText;
@@ -152,14 +181,14 @@ const TabletaiKhoanNV = (props) => {
               size="large"
               // onClick={() => handleEdit(params.row.idHd)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
             >
-              <EditOutlinedIcon color="primary" />
+              <EditOutlined color="primary" />
             </IconButton>
             <IconButton
               aria-label="delete"
               size="large"
-              onClick={() => handleDelete(params.row.idHd)}
+              onClick={() => handleDelete(params.row.idTaiKhoan)}
             >
-              <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
+              <DeleteSweepOutlined sx={{ color: pink[500] }} value="delete" />
             </IconButton>
           </>
         );
@@ -167,7 +196,6 @@ const TabletaiKhoanNV = (props) => {
     },
   ];
 
-  
   const rows = listTaiKhoanNV
     .filter((item) =>
       Object.values(item).some((value) =>
@@ -190,11 +218,21 @@ const TabletaiKhoanNV = (props) => {
 
   const handlClickRow = (item) => {
     console.log("Check click: ", item);
-    Navigate(`/order-management-timeline/${item.idTaiKhoan}`);
+    navigate(`/table-taiKhoan/${item.idTaiKhoan}`);
   };
   // console.log(listTaiKhoanNV);
   return (
     <>
+      {/* <div>
+        <h2>QR Code Scanner</h2>
+        <QrReader
+          delay={300}
+          onError={handleError}
+          onScan={handleScan}
+          style={{ width: "100%" }}
+        />
+        <p>Result: {result}</p>
+      </div> */}
       <div className="row row-order-management">
         <div className="row">
           <div className="col-4">

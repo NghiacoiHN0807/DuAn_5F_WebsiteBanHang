@@ -1,7 +1,6 @@
 package com.example.fullstackbackend.controller;
 
-import com.example.fullstackbackend.entity.TaiKhoanNhanVien;
-import com.example.fullstackbackend.exception.xuatXuNotFoundException;
+import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,15 +29,15 @@ public class TaiKhoanNhanVienController {
     private TaiKhoanNhanVienService taiKhoanNhanVienService;
 
     @GetMapping("view-all")
-    public Page<TaiKhoanNhanVien> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                             @RequestParam(defaultValue = "15") Integer size,
-                                             @RequestParam("p") Optional<Integer> p) {
+    public Page<TaiKhoan> viewAll(@RequestParam(defaultValue = "0") Integer page,
+                                  @RequestParam(defaultValue = "15") Integer size,
+                                  @RequestParam("p") Optional<Integer> p) {
 
         return taiKhoanNhanVienService.phanTrang(p.orElse(page), size);
     }
 
     @GetMapping("view-alls")
-    public Page<TaiKhoanNhanVien> viewAlll(@RequestParam(defaultValue = "0", value= "page") Integer page,
+    public Page<TaiKhoan> viewAlll(@RequestParam(defaultValue = "0", value= "page") Integer page,
                                           @RequestParam(defaultValue = "15") Integer size,
                                            @RequestParam("trangThai") Integer trangThai) {
 
@@ -46,17 +45,17 @@ public class TaiKhoanNhanVienController {
     }
 
     @PostMapping("add")
-    public TaiKhoanNhanVien add(@Valid @RequestBody TaiKhoanNhanVien taiKhoanNhanVien,
+    public TaiKhoan add(@Valid @RequestBody TaiKhoan taiKhoan,
                         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
-            return taiKhoanNhanVienService.add(taiKhoanNhanVien);
+            return taiKhoanNhanVienService.add(taiKhoan);
         }
     }
 
     @GetMapping("detail/{id}")
-    public Optional<TaiKhoanNhanVien> detail(@PathVariable("id") Integer id
+    public Optional<TaiKhoan> detail(@PathVariable("id") Integer id
     ) {
 
         return taiKhoanNhanVienService.detail(id);
@@ -78,13 +77,13 @@ public class TaiKhoanNhanVienController {
 
 
     @PutMapping("update/{id}")
-    public TaiKhoanNhanVien update(@PathVariable("id") Integer id,@RequestBody TaiKhoanNhanVien taiKhoanNhanVien, BindingResult bindingResult) {
+    public TaiKhoan update(@PathVariable("id") Integer id,@RequestBody TaiKhoan taiKhoan, BindingResult bindingResult) {
 //        taiKhoanNhanVien.setIdTaiKhoan(id);
         if (bindingResult.hasErrors()) {
             return null;
         } else {
 
-            return taiKhoanNhanVienService.update(taiKhoanNhanVien);
+            return taiKhoanNhanVienService.update(taiKhoan);
         }
     }
 }

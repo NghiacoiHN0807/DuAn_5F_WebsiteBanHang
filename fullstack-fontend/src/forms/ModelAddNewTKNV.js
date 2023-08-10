@@ -6,14 +6,43 @@ import { toast } from "react-toastify";
 import { Col, Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import { chucVu } from "../services/chucVuService";
+//QRcode
+// import React, { } from 'react';
+// import Webcam from 'react-webcam-qrcode';
+// import QrReader from "react-qr-reader";
+
 const ModelAddNewTKKH = (props) => {
   const { show, handleClose } = props;
   const [setMaTaiKhoan, getMaTaiKhoan] = useState("");
   const [setHo, getHo] = useState("");
   const [setTen, getTen] = useState("");
+  const [setChucVu, getChucVu] = useState({});
   const [setSdt, getSdt] = useState("");
   const [setEmail, getEmail] = useState("");
   const [setSoCanCuoc, getSoCanCuoc] = useState("");
+
+
+  //QRcode
+  // const [result, setResult] = useState("No QR code detected");
+
+  // const handleScan = (data) => {
+  //   if (data) {
+  //     setResult(data);
+  //   }
+  // };
+
+  // const handleError = (error) => {
+  //   console.error(error);
+  // };
+
+  //Webcam QR
+  // const [scannedData, setScannedData] = useState('');
+
+  // const handleScan = (data) => {
+  //   if (data) {
+  //     setScannedData(data);
+  //   }
+  // };
 
   const handleSave = async () => {
     //I want check console.log get ma and tenNuoc
@@ -24,6 +53,7 @@ const ModelAddNewTKKH = (props) => {
       getMaTaiKhoan("") &&
       getHo("") &&
       getTen("") &&
+      getChucVu("") &&
       getSdt("") &&
       getEmail("") &&
       getSoCanCuoc("")
@@ -35,28 +65,32 @@ const ModelAddNewTKKH = (props) => {
         setMaTaiKhoan,
         setHo,
         setTen,
+        // setChucVu,
         setSdt,
         setEmail,
         setSoCanCuoc,
         0
       );
-      // console.log("Check res: ", res);
+      console.log("Check res: ", res);
       if (res && res.idTaiKhoan) {
         handleClose();
         getMaTaiKhoan("");
         getHo("");
         getTen("");
+        // getChucVu("");
         getSdt("");
         getEmail("");
         getSoCanCuoc("");
-        toast.success("A Tài khoản is created successfully");
+        toast.success("Tạo tài khoản thành công ");
       } else {
-        toast.error("You can't create a new Tài Khoản");
+        toast.error("Tạo Tài Khoản Không Thành Công");
       }
     }
   };
 
   const [MyChucVu, setMyChucVu] = useState([]);
+
+
 
   const getAllChucVu = async () => {
     let rs = await chucVu(0);
@@ -70,6 +104,26 @@ const ModelAddNewTKKH = (props) => {
 
   return (
     <>
+     {/* <div>
+        <h2>QR Code Scanner</h2>
+        <QrReader
+          delay={300}
+          onError={handleError}
+          onScan={handleScan}
+          style={{ width: "100%" }}
+        />
+        <p>Result: {result}</p>
+      </div> */}
+      {/* <div>
+      <h2>QR Code Scanner</h2>
+      <Webcam
+        onQRCodeScanned={handleScan}
+        facingMode="environment"
+        showViewFinder={true}
+        style={{ width: '100%' }}
+      />
+      <p>Scanned Data: {scannedData}</p>
+    </div> */}
       <Modal
         show={show}
         onHide={handleClose}
@@ -110,17 +164,17 @@ const ModelAddNewTKKH = (props) => {
                   />
                 </div>
 
-                {/* <div className="mb-3">
+                <div className="mb-3">
                   <label className="form-label">Chức Vụ</label>
                   <select
                     class="form-select"
                     aria-label="Default select example"
                   >
                     {MyChucVu.map((item, index) => {
-                      return <option value={item.tenCv}>{item.tenCv}</option>;
+                      return <option value={item} onChange={(event) => getChucVu(event.target.value)}>{item.tenCv}</option>;
                     })}
                   </select>
-                </div> */}
+                </div>
               </Col>
               <Col>
                 <div className="mb-3">

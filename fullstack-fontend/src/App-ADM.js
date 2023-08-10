@@ -37,11 +37,12 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
-import { ExpandLess, ExpandMore, StarBorder } from "@material-ui/icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
+import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import FiberManualRecordOutlinedIcon from "@mui/icons-material/FiberManualRecordOutlined";
+import LoyaltyOutlinedIcon from "@mui/icons-material/LoyaltyOutlined";
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 
 const drawerWidth = 240;
 
@@ -59,9 +60,14 @@ function AppADM(props) {
   };
 
   const [open, setOpen] = useState(false);
+  const [open1, setOpen1] = useState(false);
 
   const handleClickDropdown = () => {
     setOpen(!open);
+  };
+
+  const handleClickDropdown1 = () => {
+    setOpen1(!open1);
   };
 
   const drawer = (
@@ -72,8 +78,7 @@ function AppADM(props) {
         {[
           { text: "Quản Lý Hóa Đơn", link: "/order-management" },
           { text: "Bán Hàng Tại Quầy", link: "/direct-sale" },
-          { text: "Quản Lý Nhân Viên", link: "/quan-ly-nhan-vien" },
-          { text: "Khuyến Mãi", link: "/khuyen-mai" },
+          { text: "Khuyến Mãi", link: "/quan-ly-giam-gia" },
         ].map((item, index) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton
@@ -96,7 +101,7 @@ function AppADM(props) {
                 ) : index === 1 ? (
                   <ShoppingCartOutlinedIcon color="action" />
                 ) : (
-                  <FontAwesomeIcon icon={faCartShopping} size="lg" />
+                  <LoyaltyOutlinedIcon color="action" />
                 )}
               </ListItemIcon>
               <ListItemText>
@@ -119,12 +124,95 @@ function AppADM(props) {
         </ListItemButton>
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            <ListItemButton sx={{ pl: 4 }}>
-              <ListItemIcon>
-                <StarBorder />
-              </ListItemIcon>
-              <ListItemText primary="Starred" />
-            </ListItemButton>
+            {[
+              { text: "Sản Phẩm", link: "/quan-ly-san-pham/san-pham" },
+              { text: "Màu Sắc", link: "/quan-ly-san-pham/mau-sac" },
+              { text: "Chất Liệu", link: "/quan-ly-san-pham/chat-lieu" },
+              { text: "Loại Cổ Áo", link: "/quan-ly-san-pham/loai-co-ao" },
+              {
+                text: "Loại Sản Phẩm",
+                link: "/quan-ly-san-pham/loai-san-pham",
+              },
+              { text: "Ống Tay Áo", link: "/quan-ly-san-pham/ong-tay-ao" },
+              { text: "Size", link: "/quan-ly-san-pham/size" },
+              { text: "Xuất Xứ", link: "/quan-ly-san-pham/xuat-xu" },
+            ].map((item, index) => (
+              <ListItem key={item.text} disablePadding>
+                <ListItemButton
+                  component={Link}
+                  to={item.link}
+                  onClick={() => handleLinkClick(item.text)}
+                  sx={{
+                    pl: 4,
+                    borderRadius: "15px",
+                    backgroundColor:
+                      activeLink === item.text
+                        ? "rgb(240, 240, 240)"
+                        : "inherit",
+                    "&:hover": {
+                      backgroundColor: "rgb(240, 240, 240)",
+                      borderRadius: "15px",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <FiberManualRecordOutlinedIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>
+                    <Typography variant="body1" sx={{ fontSize: "14px" }}>
+                      {item.text}
+                    </Typography>
+                  </ListItemText>
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Collapse>
+      </List>
+      <Divider />
+      <List>
+        <ListItemButton onClick={handleClickDropdown1}>
+          <ListItemIcon>
+            <GroupsOutlinedIcon />
+          </ListItemIcon>
+          <ListItemText primary="Tài Khoản" />
+          {open1 ? <ExpandLess /> : <ExpandMore />}
+        </ListItemButton>
+        <Collapse in={open1} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {[
+              { text: "Nhân Viên", link: "/table-taiKhoan" },
+              { text: "Khách Hàng", link: "/table-taiKhoanKH" },
+            ].map((item, index) => (
+              <ListItem key={item.text} disablePadding>
+                <ListItemButton
+                  component={Link}
+                  to={item.link}
+                  onClick={() => handleLinkClick(item.text)}
+                  sx={{
+                    pl: 4,
+                    borderRadius: "15px",
+                    backgroundColor:
+                      activeLink === item.text
+                        ? "rgb(240, 240, 240)"
+                        : "inherit",
+                    "&:hover": {
+                      backgroundColor: "rgb(240, 240, 240)",
+                      borderRadius: "15px",
+                    },
+                  }}
+                >
+                  <ListItemIcon>
+                    <FiberManualRecordOutlinedIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText>
+                    <Typography variant="body1" sx={{ fontSize: "14px" }}>
+                      {item.text}
+                    </Typography>
+                  </ListItemText>
+                </ListItemButton>
+              </ListItem>
+            ))}
           </List>
         </Collapse>
       </List>
