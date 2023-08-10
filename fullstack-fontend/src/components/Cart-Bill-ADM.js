@@ -2,7 +2,6 @@ import "../scss/Car-Bill-ADM.scss";
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { detailBill } from "../services/BillSevice";
-import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
 import ModalAddProduct from "../forms/Modals-AddProduct";
@@ -14,12 +13,25 @@ import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faDeleteLeft,
-  faClipboardList,
   faCartPlus,
   faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import Null from "../forms/Null";
-import ModalUpdateProductOnCart from "../forms/Modals-Update-Product-Cart";
+import {
+  Button,
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+  Switch,
+  TextField,
+} from "@mui/material";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import axios from "axios";
+import { LoadingButton } from "@mui/lab";
+import SaveIcon from "@mui/icons-material/Save";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
 
 const CartBillADM = (props) => {
   //Get IdHd on http
@@ -70,7 +82,7 @@ const CartBillADM = (props) => {
   const handleDelete = async (item) => {
     await deleteProductOnCart(item.idHdct);
     selectDataCart();
-    toast.success("Delete the product is successfully");
+    toast.success("Xóa Sản Phẩm Thành Công");
   };
   //Update classify on the cart
   const [showModalsUpdate, setShowModalsUpdate] = useState(false);
@@ -81,39 +93,115 @@ const CartBillADM = (props) => {
     if (item.length < 0) {
       return null;
     } else {
-      setItemUpdateClassify(item);
+      setItemUpdateClassify(item.idCtsp.idSp.tenSp);
     }
   };
   const handleCloseUpdateClassify = () => {
     setShowModalsUpdate(false);
   };
+  //Show  payment information
+  const [isDeliveryChecked, setIsDeliveryChecked] = useState(false);
+
+  const handleDeliveryChange = (event) => {
+    setIsDeliveryChecked(event.target.checked);
+  };
+
+  // Fetch list of provinces on component mount
+  useEffect(() => {
+    fetchProvinces();
+  }, []);
+
+  //Get API Provinces
+  const host = "https://provinces.open-api.vn/api/";
+
+  const [provinces, setProvinces] = useState([]);
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [districts, setDistricts] = useState([]);
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [wards, setWards] = useState([]);
+  const [selectedWard, setSelectedWard] = useState("");
+
+  const [result, setResult] = useState("");
+
+  useEffect(() => {
+    fetchProvinces();
+  }, []);
+
+  const fetchProvinces = async () => {
+    try {
+      const response = await axios.get(host);
+      setProvinces(response.data);
+    } catch (error) {
+      console.error("Error fetching provinces:", error);
+    }
+  };
+
+  const callApiDistrict = async (api) => {
+    try {
+      const response = await axios.get(api);
+      setDistricts(response.data.districts);
+    } catch (error) {
+      console.error("Error fetching districts:", error);
+    }
+  };
+
+  const callApiWard = async (api) => {
+    try {
+      const response = await axios.get(api);
+      setWards(response.data.wards);
+    } catch (error) {
+      console.error("Error fetching wards:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedProvince) {
+      callApiDistrict(`${host}p/${selectedProvince}?depth=2`);
+    }
+  }, [selectedProvince]);
+
+  useEffect(() => {
+    if (selectedDistrict) {
+      callApiWard(`${host}d/${selectedDistrict}?depth=2`);
+    }
+  }, [selectedDistrict]);
+
+  useEffect(() => {
+    if (selectedDistrict && selectedProvince && selectedWard) {
+      setResult(`${selectedProvince} | ${selectedDistrict} | ${selectedWard}`);
+    }
+  }, [selectedProvince, selectedDistrict, selectedWard]);
+  //Handle Save
+  const [loading, setLoading] = useState(false);
+  const handleClick = () => {
+    // setLoading(true);
+  };
   return (
     <>
       <p>Bill Code: {listHD.maHd}</p>
       <div className="class-add-product">
-        <Button
-          onClick={() => handleAddProduct()}
-          className="button-checkout"
-          variant="outline-success"
-        >
+        <Button onClick={() => handleAddProduct()} variant="outlined">
           <FontAwesomeIcon icon={faCartPlus} size="lg" />
-          Add Product
+          Thêm Sản Phẩm
         </Button>{" "}
       </div>
       <div className="row customer-information">
-        <h5>Cart</h5>
+        <div className="col-6">
+          <h6>Giỏ Hàng</h6>
+        </div>
+
         <Table className="table-Cart" striped hover borderless>
           <thead>
             <tr>
               <th>
                 <Form.Check aria-label="option 1" />
               </th>
-              <th>Product</th>
-              <th>Classify</th>
-              <th>Price</th>
-              <th>Quantity</th>
-              <th>Total</th>
-              <th>Function</th>
+              <th>Sản Phẩm</th>
+              <th>Thuộc tính</th>
+              <th>Giá</th>
+              <th>Số Lượng</th>
+              <th>Tổng</th>
+              <th>Thao Tác</th>
             </tr>
           </thead>
           <tbody>
@@ -131,8 +219,7 @@ const CartBillADM = (props) => {
                         size="sm"
                         variant="outline-dark"
                       >
-                        Size: {item.idCtsp.idSize.tenSize} \ Color:{" "}
-                        {item.idCtsp.idMs.tenMs}
+                        Size: {item.idCtsp.idSize.tenSize}
                       </Button>
                     </td>
 
@@ -159,7 +246,7 @@ const CartBillADM = (props) => {
           </tbody>
         </Table>
         <div className="col-2">
-          <Button variant="outline-danger">
+          <Button variant="outlined">
             <FontAwesomeIcon icon={faTrashCan} size="sm" />
           </Button>
         </div>
@@ -167,37 +254,201 @@ const CartBillADM = (props) => {
       </div>
       <div className="row customer-information">
         <div className="row">
-          <div className="col-5">
-            <h5>Customer Information</h5>
+          <div className="col-6">
+            <h6>Thông Tin Khách Hàng</h6>
           </div>
-          <div className="col-7 button-list-personal">
-            <Button size="sm" variant="outline-info">
-              <FontAwesomeIcon icon={faClipboardList} size="lg" />
-              List Persional
+          <div className="col-6 button-list-personal">
+            <Button size="small" variant="outlined">
+              Khách Hàng
             </Button>
           </div>
         </div>
 
-        <Form>
-          <Form.Label>Name</Form.Label>
-          <Form.Control type="text" placeholder="Normal text" />
-          <br />
-          <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-            <Form.Label>Email</Form.Label>
-            <Form.Control type="email" placeholder="name@example.com" />
-          </Form.Group>
-          <Form.Label>Number Phone</Form.Label>
-          <Form.Control type="text" placeholder="Normal text" />
-          <br />
-          <Form.Label>Address</Form.Label>
-          <Form.Control type="text" placeholder="Normal text" />
-          <br />
-        </Form>
+        <div className="text-information">
+          <TextField
+            id="standard-multiline-flexible"
+            label="Tên Khách Hàng"
+            multiline
+            maxRows={4}
+            variant="outlined"
+            size="small"
+            fullWidth
+            sx={{ marginTop: 2 }}
+          />
+          <TextField
+            id="standard-multiline-flexible"
+            label="Địa Chỉ"
+            multiline
+            maxRows={4}
+            variant="outlined"
+            size="small"
+            fullWidth
+            sx={{ marginTop: 2 }}
+          />
+          <TextField
+            id="standard-multiline-flexible"
+            label="Email"
+            multiline
+            maxRows={4}
+            variant="outlined"
+            size="small"
+            fullWidth
+            sx={{ marginTop: 2 }}
+          />
+        </div>
+      </div>
+      <div className="row information-payment">
+        <div className="row header-information">
+          <div className="col-6">
+            <h6>Thông Tin Thanh Toán</h6>
+          </div>
+          <div className="col-6 button-list">
+            <Button size="small" variant="outlined">
+              Primary
+            </Button>
+          </div>
+        </div>
+        <div className="row section-information">
+          <div className="col-7">
+            {isDeliveryChecked && (
+              <div className="text-information">
+                <div>
+                  <h5>
+                    {" "}
+                    <AccountBoxIcon />
+                    Thông Tin Người Nhận
+                  </h5>
+                </div>
+                <TextField
+                  id="standard-multiline-flexible"
+                  label="Tên Người Nhận"
+                  multiline
+                  maxRows={4}
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  sx={{ marginTop: 2 }}
+                />
+                <TextField
+                  id="standard-multiline-flexible"
+                  label="Số Điện Thoại"
+                  multiline
+                  maxRows={4}
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  sx={{ marginTop: 2 }}
+                />
+                <div className="address">
+                  <FormControl
+                    size="small"
+                    sx={{ m: 0, minWidth: 200, marginRight: 5 }}
+                  >
+                    <InputLabel id="province-label">Tỉnh/Thành Phố</InputLabel>
+                    <Select
+                      labelId="province-label"
+                      id="province-select"
+                      value={selectedProvince}
+                      onChange={(e) => setSelectedProvince(e.target.value)}
+                      label="Tỉnh/Thành Phố"
+                    >
+                      <MenuItem value="">
+                        <em>Chọn Tỉnh/Thành Phố</em>
+                      </MenuItem>
+                      {provinces.map((province) => (
+                        <MenuItem key={province.code} value={province.code}>
+                          {province.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl
+                    size="small"
+                    sx={{ m: 0, minWidth: 200, marginRight: 5 }}
+                  >
+                    <InputLabel id="district-label">Quận/Huyện</InputLabel>
+                    <Select
+                      labelId="district-label"
+                      id="district-select"
+                      value={selectedDistrict}
+                      onChange={(e) => setSelectedDistrict(e.target.value)}
+                      label="Quận/Huyện"
+                    >
+                      <MenuItem value="">
+                        <em>Chọn Quận/Huyện</em>
+                      </MenuItem>
+                      {districts.map((district) => (
+                        <MenuItem key={district.code} value={district.code}>
+                          {district.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl size="small" sx={{ m: 0, minWidth: 200 }}>
+                    <InputLabel id="ward-label">Phường/Xã</InputLabel>
+                    <Select
+                      labelId="ward-label"
+                      id="ward-select"
+                      value={selectedWard}
+                      onChange={(e) => setSelectedWard(e.target.value)}
+                      label="Phường/Xã"
+                    >
+                      <MenuItem value="">
+                        <em>Chọn Phường/Xã</em>
+                      </MenuItem>
+                      {wards.map((ward) => (
+                        <MenuItem key={ward.code} value={ward.code}>
+                          {ward.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </div>
+
+                <div>
+                  <TextField
+                    id="standard-multiline-flexible"
+                    label="Địa Chỉ Cụ Thể"
+                    multiline
+                    maxRows={4}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="col-5">
+            <h5>
+              <AccountBalanceWalletIcon />
+              THÔNG TIN THANH TOÁN
+            </h5>
+            <FormControlLabel
+              control={<Switch />}
+              onChange={handleDeliveryChange}
+              label="Giao Hàng"
+            />
+            <br />
+            <p>Tiền Hàng</p>
+            <p>Giảm Giá</p>
+            <p>TỔNG: </p>
+          </div>
+        </div>
       </div>
       <div className="class-checkout">
-        <Button className="button-checkout" variant="dark">
-          Checkout
-        </Button>{" "}
+        <LoadingButton
+          size="small"
+          color="secondary"
+          onClick={handleClick}
+          loading={loading}
+          loadingPosition="start"
+          startIcon={<SaveIcon />}
+          variant="contained"
+        >
+          <span>Save</span>
+        </LoadingButton>
       </div>
       {/* Add Modals */}
       <ModalAddProduct
@@ -205,11 +456,11 @@ const CartBillADM = (props) => {
         selectDataCart={selectDataCart}
         handleClose={handleClose}
       />
-      <ModalUpdateProductOnCart
+      {/* <ModalUpdateProductOnCart
         show={showModalsUpdate}
         handleClose={handleCloseUpdateClassify}
         itemUpdateClassify={itemUpdateClassify}
-      />
+      /> */}
     </>
   );
 };

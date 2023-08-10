@@ -21,7 +21,48 @@
   }
 }
 .customer-information {
-  .button-list-personal {
-    text-align: right;
+  .row {
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #000;
+    h6 {
+      margin-top: 5px;
+      font-size: 18px;
+    }
+
+    .button-list-personal {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+  }
+  .text-information {
+    margin-top: 5px;
+  }
+}
+.information-payment {
+  border: 1px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  .header-information {
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #000;
+    h6 {
+      margin-top: 5px;
+      font-size: 18px;
+    }
+
+    .button-list {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+  }
+  .section-information {
+    margin-top: 10px;
+    .address {
+      margin-top: 20px;
+    }
   }
 }

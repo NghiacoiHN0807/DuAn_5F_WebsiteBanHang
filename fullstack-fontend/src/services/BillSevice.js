@@ -20,6 +20,12 @@ const selectAllImgProduct = (page) => {
 const selectClassify = (nameSP) => {
   return custom.get(`chi-tiet-san-pham/select-Classify/${nameSP}`);
 };
+const fetchAllCTSPBySize = (page) => {
+  return custom.get(`/chi-tiet-san-pham/view-all-ctsp?p=${page}`); // Call API
+};
+const findByProductNameAndSize = (name, size) => {
+  return custom.get(`/chi-tiet-san-pham/get-one-ctsp/${name}/${size}`); // Call API
+};
 export {
   selectAllBill,
   postAddBill,
@@ -28,4 +34,6 @@ export {
   selectAllImgProduct,
   deleteHD,
   selectClassify,
+  fetchAllCTSPBySize,
+  findByProductNameAndSize,
 };

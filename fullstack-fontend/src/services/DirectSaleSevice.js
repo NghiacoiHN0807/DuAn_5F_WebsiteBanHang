@@ -23,6 +23,7 @@ const addProduct = (idCtsp, soLuong, donGia, idHd) => {
 const deleteProductOnCart = (idHdct) => {
   return custom.delete(`/hoa-don-chi-tiet/delete/${idHdct}`);
 };
+
 export {
   addProduct,
   getDataCart,

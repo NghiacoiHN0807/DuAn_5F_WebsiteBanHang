@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { deleteHD, postAddBill, selectAllBill } from "../services/BillSevice";
+import { postAddBill, selectAllBill } from "../services/BillSevice";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,6 +15,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { pink } from "@mui/material/colors";
+import ModalDeleteDirectSale from "../forms/Modal-Delete-DirectSale";
 
 const DireactSale = (props) => {
   const [listBill, setListBill] = useState([]);
@@ -91,14 +92,14 @@ const DireactSale = (props) => {
             <IconButton
               aria-label="edit"
               size="large"
-              // onClick={() => handleEdit(params.row.idHd)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
+              onClick={() => handleEdit(params)}
             >
               <EditOutlinedIcon color="primary" />
             </IconButton>
             <IconButton
               aria-label="delete"
               size="large"
-              onClick={() => handleDelete(params.row.idHd)}
+              onClick={() => handleDelete(params)}
             >
               <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
             </IconButton>
@@ -161,24 +162,27 @@ const DireactSale = (props) => {
   const handleAdd = async () => {
     const newCode = generateNewCode();
     let res = await postAddBill(newCode, formattedDate, 8);
-    toast.success("A shopping cart is created successfully");
+    toast.success("Tạo thành công hóa đơn");
     getIdHttp = res.idHd;
-    // await getDataCart(getIdHttp);
     navigate(`/create-bill/${getIdHttp}`);
   };
 
   //Delete
-  const handleDelete = async (item) => {
-    console.log(item);
-    if (item.trangThai === 8) {
-      await deleteHD(item.idHd);
-      toast.success("Đã xóa hóa đơn thành công ");
-      getListData(currentPage);
-    } else if (item.trangThai === 9) {
-      toast.warn("Hóa đơn đã được thanh toán. Không thể xóa!!!");
-    } else {
-      toast.error("Xóa không thành công ");
-    }
+  const [open, setOpen] = useState(false);
+  const [information, setInformation] = useState();
+
+  const handleDelete = (params) => {
+    setOpen(true);
+    setInformation(params.row);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    getListData(currentPage);
+  };
+  //Edit
+  const handleEdit = (params) => {
+    navigate(`/create-bill/${params.row.idHd}`);
   };
 
   return (
@@ -230,6 +234,12 @@ const DireactSale = (props) => {
           />
         </Stack>
       </div>
+      {/* Dialog xác nhận xóa */}
+      <ModalDeleteDirectSale
+        open={open}
+        handleClose={handleClose}
+        information={information}
+      />
     </>
   );
 };

@@ -11,7 +11,11 @@ import java.util.Optional;
 public interface ChitietsanphamService {
     Page<ChiTietSanPham> chiTietSP(Integer pageNo, Integer size);
 
+    Page<Object[]> getSanPhamsWithSizes(Integer pageNo, Integer size);
+
     List<ChiTietSanPham> findByProductName(String name);
+
+    Optional<ChiTietSanPham> findByProductNameAndSize(String name, String Size);
 
     List<ChiTietSanPham> findByIdSp(Integer id);
 

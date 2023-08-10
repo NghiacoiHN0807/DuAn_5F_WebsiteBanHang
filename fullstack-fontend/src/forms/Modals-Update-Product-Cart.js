@@ -56,12 +56,6 @@ const ModalUpdateProductOnCart = (props) => {
                 );
               })}
           </div>
-          <div className="">
-            <p>Size: </p>
-          </div>
-          <div className="">
-            <p>Size: </p>
-          </div>
         </Modal.Body>
         <Button variant="secondary" onClick={handleClose}>
           Close
