@@ -1,26 +1,18 @@
 import "../scss/Car-Bill-ADM.scss";
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
-import { detailBill } from "../services/BillSevice";
-import Form from "react-bootstrap/Form";
+import { detailBill, findById } from "../services/BillSevice";
 import Table from "react-bootstrap/Table";
 import ModalAddProduct from "../forms/Modals-AddProduct";
-import {
-  deleteProductOnCart,
-  getDetailOne,
-} from "../services/DirectSaleSevice";
-import { toast } from "react-toastify";
+import { getDetailOne } from "../services/DirectSaleSevice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faDeleteLeft,
-  faCartPlus,
-  faTrashCan,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
 import Null from "../forms/Null";
 import {
   Button,
   FormControl,
   FormControlLabel,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -32,6 +24,12 @@ import axios from "axios";
 import { LoadingButton } from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
+import { pink } from "@mui/material/colors";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ModalUpdateProductOnCart from "../forms/Modals-Update-Product-Cart";
+import ModalDeleteProductOnCart from "../forms/Modal-Delete-Product";
+import ModalDeleteAllProductOnCart from "../forms/Modal-Delete-All-Product";
 
 const CartBillADM = (props) => {
   //Get IdHd on http
@@ -45,7 +43,6 @@ const CartBillADM = (props) => {
   const getDetailHD = useCallback(async () => {
     try {
       let getData = await detailBill(idHdParam);
-      console.log("checkDaTa: ", getData);
       setlistHD(getData);
     } catch (error) {
       console.error("Error: ", error);
@@ -59,17 +56,14 @@ const CartBillADM = (props) => {
 
   const selectDataCart = useCallback(async () => {
     try {
-      console.log("Check Data Cart: ", idHdParam);
       let res = await getDetailOne(idHdParam);
-      console.log("Check Data Cart: ", res);
       setDataCart(res);
-    } catch (error) {
-      console.error("Error: ", error);
-    }
+    } catch (error) {}
   }, [idHdParam]);
   useEffect(() => {
     selectDataCart();
   }, [selectDataCart]);
+
   //Add Product
   const [showModalsAdd, setShowModalAdd] = useState(false);
   const handleAddProduct = () => {
@@ -78,22 +72,43 @@ const CartBillADM = (props) => {
   const handleClose = () => {
     setShowModalAdd(false);
   };
+
   //Delete product on cart
-  const handleDelete = async (item) => {
-    await deleteProductOnCart(item.idHdct);
-    selectDataCart();
-    toast.success("Xóa Sản Phẩm Thành Công");
+  const [showModalsDelete, setShowModalDelete] = useState(false);
+  const [itemDelete, setIntemDelete] = useState();
+  const handleDelete = (item) => {
+    console.log("Check item", item);
+    setShowModalDelete(true);
+    setIntemDelete(item);
+  };
+  const handleCloseModalDelelte = () => {
+    setShowModalDelete(false);
+  };
+  //Delete all products
+  const [showModalsDeleteAll, setShowModalDeleteAll] = useState(false);
+  const handDeleteAll = () => {
+    setShowModalDeleteAll(true);
+  };
+  const handCloseDeleteAll = () => {
+    setShowModalDeleteAll(false);
   };
   //Update classify on the cart
   const [showModalsUpdate, setShowModalsUpdate] = useState(false);
   const [itemUpdateClassify, setItemUpdateClassify] = useState({});
-  const handleUpdateClassify = (item) => {
+  const [itemUpdate, setItemUpdate] = useState({});
+  const handleUpdateClassify = async (item) => {
     setShowModalsUpdate(true);
     console.log("Check item: ", item);
     if (item.length < 0) {
       return null;
     } else {
-      setItemUpdateClassify(item.idCtsp.idSp.tenSp);
+      try {
+        let getOneSP = await findById(item.idCtsp.idSp.idSp);
+        setItemUpdateClassify(getOneSP);
+        setItemUpdate(item);
+      } catch (error) {
+        console.error(error);
+      }
     }
   };
   const handleCloseUpdateClassify = () => {
@@ -176,26 +191,50 @@ const CartBillADM = (props) => {
   const handleClick = () => {
     // setLoading(true);
   };
+  //Show thanhTien
+  const [thanhTien, setThanhTien] = useState();
+  // const [discount, setDiscount] = useState(0);
+  // const [thanhTienData, setThanhTienData] = useState();
+
+  useEffect(() => {
+    const calculateTotalPrice = () => {
+      let total = 0;
+      for (const item of DataCart) {
+        total += item.donGia;
+      }
+      setThanhTien(total);
+    };
+
+    calculateTotalPrice();
+  }, [DataCart]);
+  // const inputGiaGia = (event) => {
+  //   const newDiscount = parseFloat(event.target.value);
+  //   setDiscount(newDiscount);
+  //   let giaTri = thanhTien - discount;
+  //   setThanhTienData(giaTri);
+  // };
+
   return (
     <>
-      <p>Bill Code: {listHD.maHd}</p>
-      <div className="class-add-product">
-        <Button onClick={() => handleAddProduct()} variant="outlined">
-          <FontAwesomeIcon icon={faCartPlus} size="lg" />
-          Thêm Sản Phẩm
-        </Button>{" "}
+      <div>
+        <p>Bill Code: {listHD.maHd}</p>
+        <div className="class-add-product">
+          <Button onClick={() => handleAddProduct()} variant="outlined">
+            <FontAwesomeIcon icon={faCartPlus} size="lg" />
+            Thêm Sản Phẩm
+          </Button>{" "}
+        </div>
       </div>
-      <div className="row customer-information">
-        <div className="col-6">
+
+      <div className="row cart-information">
+        <div className="row">
           <h6>Giỏ Hàng</h6>
         </div>
 
         <Table className="table-Cart" striped hover borderless>
           <thead>
             <tr>
-              <th>
-                <Form.Check aria-label="option 1" />
-              </th>
+              <th>Mã Sản Phẩm</th>
               <th>Sản Phẩm</th>
               <th>Thuộc tính</th>
               <th>Giá</th>
@@ -209,31 +248,29 @@ const CartBillADM = (props) => {
               DataCart.map((item, index) => {
                 return (
                   <tr key={`hoaDonChiTiet-${index}`}>
-                    <td>
-                      <Form.Check aria-label="option 1" />
-                    </td>
+                    <td>{item.idCtsp.idSp.maSp}</td>
                     <td>{item.idCtsp.idSp.tenSp}</td>
                     <td>
                       <Button
                         onClick={() => handleUpdateClassify(item)}
-                        size="sm"
-                        variant="outline-dark"
+                        size="small"
+                        variant="outlined"
                       >
                         Size: {item.idCtsp.idSize.tenSize}
                       </Button>
                     </td>
 
-                    <td>{item.idCtsp.giaBan}</td>
+                    <td>{item.idCtsp.idSp.giaBan}</td>
                     <td>{item.soLuong}</td>
                     <td>{item.donGia}</td>
                     <td>
-                      <button
+                      <IconButton
+                        aria-label="delete"
+                        size="large"
                         onClick={() => handleDelete(item)}
-                        type="button"
-                        className="btn btn-outline-danger"
                       >
-                        <FontAwesomeIcon icon={faDeleteLeft} size="lg" />
-                      </button>
+                        <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
+                      </IconButton>
                     </td>
                   </tr>
                 );
@@ -246,11 +283,14 @@ const CartBillADM = (props) => {
           </tbody>
         </Table>
         <div className="col-2">
-          <Button variant="outlined">
-            <FontAwesomeIcon icon={faTrashCan} size="sm" />
+          <Button
+            onClick={handDeleteAll}
+            variant="outlined"
+            startIcon={<DeleteIcon />}
+          >
+            Delete
           </Button>
         </div>
-        <h6 className="col-2">Subtotal = {listHD.thanhTien}</h6>
       </div>
       <div className="row customer-information">
         <div className="row">
@@ -431,9 +471,18 @@ const CartBillADM = (props) => {
               label="Giao Hàng"
             />
             <br />
-            <p>Tiền Hàng</p>
-            <p>Giảm Giá</p>
-            <p>TỔNG: </p>
+            <div className="row">
+              <div className="col-6">
+                <p>Tiền Hàng</p>
+                <p>Giảm Giá</p>
+                <p>TỔNG: </p>
+              </div>
+              <div className="col-6">
+                <p>{thanhTien}</p>
+                <p>GIAM GIA</p>
+                <p>{thanhTien}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -455,12 +504,30 @@ const CartBillADM = (props) => {
         show={showModalsAdd}
         selectDataCart={selectDataCart}
         handleClose={handleClose}
+        DataCart={DataCart}
       />
-      {/* <ModalUpdateProductOnCart
+      {/* Modal Update Product */}
+      <ModalUpdateProductOnCart
         show={showModalsUpdate}
         handleClose={handleCloseUpdateClassify}
         itemUpdateClassify={itemUpdateClassify}
-      /> */}
+        selectDataCart={selectDataCart}
+        itemUpdate={itemUpdate}
+      />
+      {/* Modal Delete Product  */}
+      <ModalDeleteProductOnCart
+        open={showModalsDelete}
+        handleClose={handleCloseModalDelelte}
+        itemDelete={itemDelete}
+        selectDataCart={selectDataCart}
+      />
+      {/* Modal Delete Product  */}
+      <ModalDeleteAllProductOnCart
+        open={showModalsDeleteAll}
+        handleClose={handCloseDeleteAll}
+        selectDataCart={selectDataCart}
+        DataCart={DataCart}
+      />
     </>
   );
 };

@@ -3,25 +3,19 @@ import { useParams } from "react-router-dom";
 import "../scss/Car-Bill-ADM.scss";
 // import { selectAllImgProduct } from "../services/BillSevice";
 import { useEffect } from "react";
-import { postAddDirect } from "../services/DirectSaleSevice";
-
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
 } from "@mui/material";
 import { Col, Image, Table } from "react-bootstrap";
-import {
-  fetchAllCTSPBySize,
-  findByProductNameAndSize,
-} from "../services/BillSevice";
-import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import { fetchAllCTSPBySize, findById } from "../services/BillSevice";
+import ModalDetailProduct from "./Modal-Detail-SanPham";
 
 const ModalAddProduct = (props) => {
-  const { show, handleClose, selectDataCart } = props;
+  const { show, handleClose, selectDataCart, DataCart } = props;
   //Show Data on Table
   const [listData, setListData] = useState([]);
   const [numberPages, setNumberPages] = useState([]);
@@ -48,6 +42,7 @@ const ModalAddProduct = (props) => {
   //Get Name Of Size
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedSp, setSelectedSp] = useState("");
+  const [dataDetail, setDataDetail] = useState([]);
 
   const handleShowSize = (size, tenSp) => {
     setSelectedSize(size);
@@ -57,15 +52,15 @@ const ModalAddProduct = (props) => {
   //Get number
   const param = useParams();
   const idHdParam = param.id;
-  const handleChoose = async (idCtsp) => {
-    if (selectedSp === null || selectedSize === null) {
-      console.log("Please select");
-    } else {
-      let getOneSP = await findByProductNameAndSize(selectedSp, selectedSize);
-      console.log("Check getOneSP: ", getOneSP);
-      // await postAddDirect(idCtsp, 1, idCtsp.giaBan, idHdParam, 0);
-      // selectDataCart();
-    }
+  const handleChoose = async (idSp) => {
+    let getOneSP = await findById(idSp);
+    setDataDetail(getOneSP);
+    setShowModalDetail(true);
+  };
+  // Model Detail Product
+  const [showModalDetail, setShowModalDetail] = useState(false);
+  const handleCloseDetai = () => {
+    setShowModalDetail(false);
   };
 
   return (
@@ -81,7 +76,6 @@ const ModalAddProduct = (props) => {
                   <th>Mã Sản Phẩm</th>
                   <th>Tên Sản Phẩm</th>
                   <th>Giá Sản Phẩm</th>
-                  <th>Size</th>
                   <th>Thao Tác</th>
                 </tr>
               </thead>
@@ -89,7 +83,6 @@ const ModalAddProduct = (props) => {
                 {listData &&
                   listData.length &&
                   listData.map((item, index) => {
-                    const sizes = item[3].split(",");
                     return (
                       <tr key={`images-${index}`}>
                         <td>
@@ -97,33 +90,15 @@ const ModalAddProduct = (props) => {
                             <Image src={`../assets/${item.tenSp}`} rounded />
                           </Col>
                         </td>
-                        <td>{item[0]}</td>
                         <td>{item[1]}</td>
                         <td>{item[2]}</td>
-                        <td>
-                          {sizes.map((size, sizeIndex) => (
-                            <Button
-                              style={{
-                                marginRight: "4px",
-                                marginBottom: "4px",
-                              }}
-                              key={`size-button-${index}-${sizeIndex}`}
-                              onClick={() => handleShowSize(size, item[1])}
-                              variant={
-                                selectedSize === size ? "contained" : "outlined"
-                              }
-                              size="small"
-                            >
-                              {size}
-                            </Button>
-                          ))}
-                        </td>
+                        <td>{item[3]}</td>
 
                         <td>
                           <Button
                             variant="outlined"
                             size="small"
-                            onClick={() => handleChoose(item.idCtsp)}
+                            onClick={() => handleChoose(item[0])}
                           >
                             Chọn
                           </Button>
@@ -140,6 +115,13 @@ const ModalAddProduct = (props) => {
           </DialogActions>
         </Dialog>
       </div>
+      <ModalDetailProduct
+        show={showModalDetail}
+        handleCloseDetai={handleCloseDetai}
+        dataDetail={dataDetail}
+        selectDataCart={selectDataCart}
+        DataCart={DataCart}
+      />
     </>
   );
 };

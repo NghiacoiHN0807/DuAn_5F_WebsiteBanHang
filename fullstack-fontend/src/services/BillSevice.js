@@ -26,6 +26,9 @@ const fetchAllCTSPBySize = (page) => {
 const findByProductNameAndSize = (name, size) => {
   return custom.get(`/chi-tiet-san-pham/get-one-ctsp/${name}/${size}`); // Call API
 };
+const findById = (idSp) => {
+  return custom.get(`/chi-tiet-san-pham/select-ctsp-byId/${idSp}`); // Call API
+};
 export {
   selectAllBill,
   postAddBill,
@@ -36,4 +39,5 @@ export {
   selectClassify,
   fetchAllCTSPBySize,
   findByProductNameAndSize,
+  findById,
 };

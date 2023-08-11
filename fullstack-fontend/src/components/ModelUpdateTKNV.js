@@ -129,16 +129,16 @@ const ModalUpdate = (props) => {
                     />
                   </div>
                   <div className="mb-3">
-                  <label className="form-label">Chức Vụ</label>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                  >
-                    {MyChucVu.map((item, index) => {
-                      return <option value={item.tenCv}>{item.tenCv}</option>;
-                    })}
-                  </select>
-                </div>
+                    <label className="form-label">Chức Vụ</label>
+                    <select
+                      className="form-select"
+                      aria-label="Default select example"
+                    >
+                      {MyChucVu.map((item, index) => {
+                        return <option value={item.tenCv}>{item.tenCv}</option>;
+                      })}
+                    </select>
+                  </div>
                 </Col>
                 <Col>
                   <div className="mb-3">

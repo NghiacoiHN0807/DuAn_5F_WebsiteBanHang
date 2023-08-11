@@ -48,7 +48,7 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 
     @Override
     public HoaDonChiTiet update(HoaDonChiTiet update) {
-        return null;
+        return hoadonchitietRepository.save(update);
     }
 
     @Override
