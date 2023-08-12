@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.services;
 
+import com.example.fullstackbackend.DTO.GiamGiaWithChiTietDTO;
 import com.example.fullstackbackend.entity.GiamGia;
 import org.springframework.data.domain.Page;
 
@@ -21,5 +22,7 @@ public interface GiamGiaService {
     Boolean existsById(Integer id);
 
     void remove(Integer id);
+
+//    void addGiamGiaWithChiTiet(GiamGiaWithChiTietDTO request);
 
 }

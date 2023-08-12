@@ -7,9 +7,12 @@ import "../scss/TableGiamGiaScss.scss";
 import Pagination from "@mui/material/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
+import { pink } from "@mui/material/colors";
+import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 const TableGiamGia = (props) => {
   //Set value for table
@@ -82,13 +85,9 @@ const TableGiamGia = (props) => {
   };
 
   const handAdd = () => {
-    // Xử lý các tác vụ liên quan đến việc thêm dữ liệu
-    // Ví dụ: lưu dữ liệu vào cơ sở dữ liệu
-
-    // Chuyển hướng đến đường dẫn /add/giam-gia
     navigate(`/add/giam-gia`);
   };
-  console.log(listGiamGia)
+  
   const rows = listGiamGia
     .filter((item) =>
       Object.values(item).some((value) =>
@@ -119,7 +118,7 @@ const TableGiamGia = (props) => {
     { field: "mucGiam", headerName: "Mức giảm", width: 100 },
     {
       field: "thoiGian",
-      headerName: "Thời giảm",
+      headerName: "Thời gian",
       width: 200,
     },
     {
@@ -158,6 +157,31 @@ const TableGiamGia = (props) => {
           <Badge bg={badgeVariant} text="dark">
             {statusText}
           </Badge>
+        );
+      },
+    },
+    {
+      field: "thaoTac",
+      headerName: "Thao Tác",
+      width: 150,
+      renderCell: (params) => {
+        return (
+          <>
+            <IconButton
+              aria-label="edit"
+              size="large"
+              // onClick={() => handleEdit(params.row.idHd)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
+            >
+              <EditOutlinedIcon color="primary" />
+            </IconButton>
+            <IconButton
+              aria-label="delete"
+              size="large"
+              onClick={() => handleDelete(params.row.idHd)}
+            >
+              <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
+            </IconButton>
+          </>
         );
       },
     },

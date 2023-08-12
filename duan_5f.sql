@@ -121,9 +121,8 @@ CREATE TABLE `dia_chi` (
   `sdt` varchar(255) DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
   PRIMARY KEY (`id_dia_chi`),
-  KEY `id_tai_khoan_idx` (`id_tai_khoan`),
   KEY `id_tai_khoan_id1x` (`id_tai_khoan`),
-  CONSTRAINT `id_tai_khoan1` FOREIGN KEY (`id_tai_khoan`) REFERENCES `xuat_xu` (`id_xx`)
+  CONSTRAINT `id_tai_khoan1` FOREIGN KEY (`id_tai_khoan`) REFERENCES `tai_khoan` (`id_tai_khoan`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -312,13 +311,13 @@ DROP TABLE IF EXISTS `images`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `images` (
   `id_images` int NOT NULL AUTO_INCREMENT,
-  `id_ctsp` int DEFAULT NULL,
-  `images` longblob,
+  `id_sp` int DEFAULT NULL,
+  `images` varchar(250) DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
   PRIMARY KEY (`id_images`),
-  KEY `id_ctsp2_idx` (`id_ctsp`),
-  CONSTRAINT `id_ctsp2` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `id_sp_id1x` (`id_sp`),
+  CONSTRAINT `id_sp1` FOREIGN KEY (`id_sp`) REFERENCES `san_pham` (`id_sp`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -607,4 +606,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-08-12  1:44:22
+-- Dump completed on 2023-08-12 10:27:14

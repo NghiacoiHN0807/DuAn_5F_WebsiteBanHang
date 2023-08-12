@@ -45,11 +45,11 @@ const remove = (id) => {
 }
 
 const add = (giamGiaChiTiet) => {
-    return custom.post(`/giam-gia-chi-tiet/api/insert`, giamGiaChiTiet);
+return custom.post(`/giam-gia-chi-tiet/api/insert`, giamGiaChiTiet);
 }
 
-const addGiamGia = (giamGia) => {
-    return custom.post(`/giam-gia/api/insert`, giamGia);
+const addGiamGia = (request) => {
+    return custom.post(`/giam-gia/api/insert`, request);
 }
 
 const addLichSuGiamGia = (lsGiamGia) => {

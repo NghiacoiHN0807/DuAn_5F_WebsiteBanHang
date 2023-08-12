@@ -48,7 +48,7 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     }
 
     @Override
-    public Object add(GiamGiaChiTiet giamGiaChiTiet) {
+    public GiamGiaChiTiet add(GiamGiaChiTiet giamGiaChiTiet) {
         return giamGiaChiTietRepository.save(giamGiaChiTiet);
     }
 

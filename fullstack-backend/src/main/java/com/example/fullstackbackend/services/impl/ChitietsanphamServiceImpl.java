@@ -76,4 +76,10 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
         return chitietsanphamRepository.existsById(id);
     }
 
+//    @Override
+//    public ChiTietSanPham getChiTietSanPhamBySanPhamIds(Integer idSp) {
+//        return chitietsanphamRepository.findByIdSp_IdSp(idSp);
+//    }
+
+
 }
