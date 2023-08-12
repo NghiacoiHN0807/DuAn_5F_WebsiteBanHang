@@ -27,9 +27,10 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
 
 //    ChiTietSanPham findByIdSp_IdSp(Integer idSp);
 
-    @Query(value = "SELECT sp.id_sp, sp.ma_sp, sp.ten_sp, sp.gia_ban\n" +
+    @Query(value = "SELECT GROUP_CONCAT(DISTINCT img.images ORDER BY img.images ASC) AS img, sp.id_sp, sp.ma_sp, sp.ten_sp, sp.gia_ban\n" +
             "FROM duan_5f.chi_tiet_san_pham ct\n" +
             "JOIN duan_5f.san_pham sp ON ct.id_sp = sp.id_sp\n" +
+            "JOIN duan_5f.images img ON img.id_sp = sp.id_sp\n" +
             "JOIN duan_5f.size s ON ct.id_size = s.id_size\n" +
             "WHERE ct.trang_thai =0\n" +
             "GROUP BY sp.id_sp, sp.ma_sp, sp.ten_sp, sp.gia_ban\n" +
@@ -39,7 +40,7 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
     @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.tenSp = :tenSp AND x.idSize.tenSize = :tenSize")
     Optional<ChiTietSanPham> findByProductNameAndSize(@Param("tenSp") String tenSp, @Param("tenSize") String tenSize);
 
-
-
+    @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.idSp = ?1 and x.idSize.idSize = ?2")
+    ChiTietSanPham checkExistSPandSize(Integer idSp, Integer idSize);
 
 }

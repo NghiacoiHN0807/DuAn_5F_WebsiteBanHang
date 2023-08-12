@@ -7,8 +7,8 @@ const findSizeById = (id) => {
   return custom.get(`chi-tiet-san-pham/select-ctsp-byId/${id}`); // Call API
 };
 
-const postAddCTSP = (idSp, idSize, soLuongTon, trangThai) => {
-  return custom.post("/chi-tiet-san-pham/add", {
+const postAddCTSP = (idSp, idSize, soLuongTon, trangThai, soLuong) => {
+  return custom.post(`/chi-tiet-san-pham/add/${soLuong}`, {
     idSp,
     idSize,
     soLuongTon,
@@ -17,7 +17,7 @@ const postAddCTSP = (idSp, idSize, soLuongTon, trangThai) => {
 };
 
 const deleteCTSP = (id) => {
-  return custom.delete(`/chi-tiet-san-pham/delete/${id}`);
+  return custom.put(`/chi-tiet-san-pham/delete/${id}`);
 };
 
 const putUpdateCTSP = (idCtsp, idSize, idSp, soLuongTon, trangThai) => {

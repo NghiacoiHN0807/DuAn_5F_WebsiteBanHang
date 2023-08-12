@@ -17,18 +17,29 @@ import { fetchCoAo } from "../../services/LoaiCoAoService";
 import { fetchLSP } from "../../services/LoaiSPService";
 import { fetchMS } from "../../services/MauSacService";
 import { fetchTayAo } from "../../services/OngTayAoService";
-import { fetchSP } from "../../services/SanPhamService";
+import { fetchSP, deleteSanPham } from "../../services/SanPhamService";
 import { fetchSize } from "../../services/SizeService";
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+} from "@mui/material";
+import { toast } from "react-toastify";
+import { pink } from "@mui/material/colors";
+import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 const TableSanPham = (props) => {
   //Set value for table
   const [listSanPham, setListSanPham] = useState([]);
   const [numberPages, setNumberPages] = useState(0);
-  const [isDataSanPham, setDataSanPham] = useState({});
   const [searchKeyword, setSearchKeyword] = useState("");
   const navigate = useNavigate();
 
@@ -83,18 +94,41 @@ const TableSanPham = (props) => {
     setListCoAo(resCoAo);
   };
 
-  //Delete
-  const [isShowModalDelete, setIsShowModalDelete] = useState(false);
-
-  const handleDelete = (maSp) => {
-    console.log("Check delete: ", maSp);
-    setIsShowModalDelete(true);
-    setDataSanPham(maSp);
-  };
-
   //Add
   const handAdd = () => {
     navigate("/quan-ly-san-pham/san-pham/them-san-pham");
+  };
+
+  //Update
+  const handUpdate = (idSp) => {
+    navigate("/quan-ly-san-pham/san-pham/sua-san-pham/" + idSp);
+  };
+
+  //Delete
+  const handleDelete = async (idSp) => {
+    let res = await deleteSanPham(idSp);
+    console.log("Check res: ", res);
+    if (res && res.idSp) {
+      toast.success("Xóa thành công!");
+      getSanPham(0);
+      handleClose();
+    } else {
+      toast.error("Xóa thất bại!");
+      handleClose();
+    }
+  };
+
+  // dong mo confirm
+  const [open, setOpen] = useState(false);
+  const [idDelete, setIdDelete] = useState("");
+
+  const handleClickOpenDelete = (idSp) => {
+    setOpen(true);
+    setIdDelete(idSp);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   // định dạng tiền
@@ -138,12 +172,6 @@ const TableSanPham = (props) => {
     },
 
     {
-      field: "soLuongTon",
-      headerName: "Số lượng",
-      width: 100,
-    },
-
-    {
       field: "giaBan",
       headerName: "Giá",
       width: 100,
@@ -158,7 +186,7 @@ const TableSanPham = (props) => {
     {
       field: "trangThai",
       headerName: "Trạng Thái",
-      width: 150,
+      width: 100,
       renderCell: (params) => {
         const { value: trangThai } = params;
         let badgeVariant, statusText;
@@ -185,6 +213,33 @@ const TableSanPham = (props) => {
         );
       },
     },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 150,
+      renderCell: (params) => {
+        const { row } = params;
+        const idSp = row.actions;
+        return (
+          <div>
+            <IconButton
+              aria-label="edit"
+              size="large"
+              onClick={() => handUpdate(idSp)}
+            >
+              <EditOutlinedIcon color="primary" />
+            </IconButton>
+            <IconButton
+              aria-label="delete"
+              size="large"
+              onClick={() => handleClickOpenDelete(idSp)}
+            >
+              <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
+            </IconButton>
+          </div>
+        );
+      },
+    },
   ];
 
   // Xử lý dữ liệu của bảng vào mảng rows
@@ -205,10 +260,10 @@ const TableSanPham = (props) => {
       idXx: item.idXx.tenNuoc,
       idCoAo: item.idCoAo.loaiCoAo,
       idTayAo: item.idTayAo.loaiTayAo,
-      soLuongTon: item.soLuongTon,
       giaBan: formatCurrency(item.giaBan),
       moTa: item.moTa,
       trangThai: item.trangThai,
+      actions: item.idSp,
     }));
   //Next Page
   const handlePageClick = (page) => {
@@ -346,6 +401,26 @@ const TableSanPham = (props) => {
             variant="outlined"
           />
         </Stack>
+
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Xác nhận xóa?"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Bạn có chắc chắn muốn xóa sản phẩm này không?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Canel</Button>
+            <Button onClick={() => handleDelete(idDelete)} autoFocus>
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </>
   );

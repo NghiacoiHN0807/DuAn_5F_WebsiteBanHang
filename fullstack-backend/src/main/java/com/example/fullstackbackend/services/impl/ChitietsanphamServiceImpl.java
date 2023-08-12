@@ -45,20 +45,36 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
         return chitietsanphamRepository.findByIdSp(id);
     }
 
-
     public List<ChiTietSanPham> findByProductId(Integer id) {
         return chitietsanphamRepository.findByProductId(id);
     }
 
     @Override
     public ChiTietSanPham add(ChiTietSanPham add) {
-        return chitietsanphamRepository.save(add);
+        return null;
     }
 
     @Override
-    public void delete(Integer id) {
+    public ChiTietSanPham addAndUpdateSize(ChiTietSanPham ctsp, Integer soLuong) {
+        ChiTietSanPham ctspUp = chitietsanphamRepository.checkExistSPandSize(ctsp.getIdSp().getIdSp(), ctsp.getIdSize().getIdSize());
+        if (ctspUp != null) {
+            ctspUp.setSoLuongTon(ctspUp.getSoLuongTon() + soLuong);
+            return chitietsanphamRepository.save(ctspUp);
+        }
+        return chitietsanphamRepository.save(ctsp);
+    }
 
-        chitietsanphamRepository.findById(id).orElse(null).setTrangThai(10);
+
+    @Override
+    public ChiTietSanPham delete(Integer id) {
+        ChiTietSanPham ctsp = chitietsanphamRepository.findById(id).orElse(null);
+        if(ctsp.getTrangThai() == 0){
+            ctsp.setTrangThai(10);
+        }else{
+            ctsp.setTrangThai(0);
+        }
+
+        return chitietsanphamRepository.save(ctsp);
     }
 
     @Override

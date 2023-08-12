@@ -56,13 +56,8 @@ public class SanPhamController {
     }
 
     @DeleteMapping("delete/{id}")
-    public String delete(@PathVariable("id") Integer id) {
-        if (!sanPhamService.checkExists(id)) {
-            throw new xuatXuNotFoundException(id);
-        } else {
-            sanPhamService.delete(id);
-            return "";
-        }
+    public SanPham delete(@PathVariable("id") Integer id) {
+        return sanPhamService.delete(id);
     }
 
     @PutMapping("update")

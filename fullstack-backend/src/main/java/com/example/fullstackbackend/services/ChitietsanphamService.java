@@ -23,11 +23,14 @@ public interface ChitietsanphamService {
 
     ChiTietSanPham add(ChiTietSanPham add);
 
-    void delete(Integer id);
+    ChiTietSanPham addAndUpdateSize(ChiTietSanPham ctsp, Integer soLuong);
+
+    ChiTietSanPham delete(Integer id);
 
     ChiTietSanPham update(ChiTietSanPham update);
 
     Optional<ChiTietSanPham> detail(Integer id);
 
     Boolean checkExists(Integer id);
+
 }

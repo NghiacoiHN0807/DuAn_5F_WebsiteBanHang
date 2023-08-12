@@ -77,28 +77,25 @@ public class ChitietsanphamController {
         return chiTietSanPham;
     }
 
-    @PostMapping("add")
+    @PostMapping("add/{soLuong}")
     public ChiTietSanPham add(@Valid @RequestBody ChiTietSanPham chiTietSanPham,
-                              BindingResult bindingResult) {
+                              BindingResult bindingResult,
+                              @PathVariable("soLuong") Integer soLuong) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
-            return chitietsanphamSevice.add(chiTietSanPham);
+            return chitietsanphamSevice.addAndUpdateSize(chiTietSanPham, soLuong);
         }
     }
 
-    @DeleteMapping("delete/{id}")
-    public String delete(@PathVariable("id") Integer id) {
-        if (!chitietsanphamSevice.checkExists(id)) {
-            throw new xuatXuNotFoundException(id);
-        } else {
-            chitietsanphamSevice.delete(id);
-            return "";
-        }
+    @PutMapping("delete/{id}")
+    public ChiTietSanPham delete(@PathVariable("id") Integer id) {
+        return chitietsanphamSevice.delete(id);
     }
 
     @PutMapping("update")
     public ChiTietSanPham update(@RequestBody ChiTietSanPham chiTietSanPham) {
         return chitietsanphamSevice.update(chiTietSanPham);
     }
+
 }
