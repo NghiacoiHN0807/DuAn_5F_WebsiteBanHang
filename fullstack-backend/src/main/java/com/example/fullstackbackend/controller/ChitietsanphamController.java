@@ -40,13 +40,9 @@ public class ChitietsanphamController {
 
     @GetMapping("select-ctsp-byId/{id}")
     public List<ChiTietSanPham> listCTSP(@PathVariable("id") Integer id) {
-<<<<<<< HEAD
-        return chitietsanphamSevice.findByIdSp(id);}
-=======
         return chitietsanphamSevice.findByIdSp(id);
     }
 
->>>>>>> origin/longthtruemilk
     @GetMapping("detail/{id}")
     public ChiTietSanPham detail(@PathVariable("id") Integer id) {
         return chitietsanphamSevice.detail(id).orElse(null);
@@ -58,10 +54,6 @@ public class ChitietsanphamController {
         return chiTietSanPham;
     }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/longthtruemilk
     @GetMapping("select-ctsp-byid/{id}")
     public List<ChiTietSanPham> findByProductId(@PathVariable("id") Integer id) {
         List<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductId(id);
