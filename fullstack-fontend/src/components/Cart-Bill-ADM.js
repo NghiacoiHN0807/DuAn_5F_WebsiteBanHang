@@ -1,9 +1,12 @@
 import "../scss/Car-Bill-ADM.scss";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
-import { detailBill, findById } from "../services/BillSevice";
+import {
+  detailBill,
+  finByProductOnCart,
+  findById,
+} from "../services/BillSevice";
 import ModalAddProduct from "../forms/Modals-AddProduct";
-import { getDetailOne } from "../services/DirectSaleSevice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
 import Null from "../forms/Null";
@@ -36,6 +39,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ModalUpdateProductOnCart from "../forms/Modals-Update-Product-Cart";
 import ModalDeleteProductOnCart from "../forms/Modal-Delete-Product";
 import ModalDeleteAllProductOnCart from "../forms/Modal-Delete-All-Product";
+import ModalAddKhachHang from "../forms/Modals-AddKhachHang";
+import SendIcon from "@mui/icons-material/Send";
+import { toast } from "react-toastify";
+import {
+  updatePayment,
+  updatePaymentShip,
+} from "../services/OrderManagementTimeLine";
+import { format } from "date-fns";
+import { Image } from "react-bootstrap";
 
 const CartBillADM = (props) => {
   //Get IdHd on http
@@ -49,6 +61,7 @@ const CartBillADM = (props) => {
   const getDetailHD = useCallback(async () => {
     try {
       let getData = await detailBill(idHdParam);
+
       setlistHD(getData);
     } catch (error) {
       console.error("Error: ", error);
@@ -62,9 +75,12 @@ const CartBillADM = (props) => {
 
   const selectDataCart = useCallback(async () => {
     try {
-      let res = await getDetailOne(idHdParam);
-      setDataCart(res);
-    } catch (error) {}
+      let res = await finByProductOnCart(idHdParam);
+      console.log("Check res: ", res);
+      setDataCart(res.content);
+    } catch (error) {
+      console.error(error);
+    }
   }, [idHdParam]);
   useEffect(() => {
     selectDataCart();
@@ -174,6 +190,9 @@ const CartBillADM = (props) => {
       console.error("Error fetching wards:", error);
     }
   };
+  //   const [selectedProvinceName, setSelectedProvinceName] = useState("");
+  // const [selectedDistrictName, setSelectedDistrictName] = useState("");
+  // const [selectedWardName, setSelectedWardName] = useState("");
 
   useEffect(() => {
     if (selectedProvince) {
@@ -189,14 +208,12 @@ const CartBillADM = (props) => {
 
   useEffect(() => {
     if (selectedDistrict && selectedProvince && selectedWard) {
-      setResult(`${selectedProvince} | ${selectedDistrict} | ${selectedWard}`);
+      setResult(
+        `${selectedProvince.name} | ${selectedDistrict.name} | ${selectedWard.name}`
+      );
     }
   }, [selectedProvince, selectedDistrict, selectedWard]);
-  //Handle Save
-  const [loading, setLoading] = useState(false);
-  const handleClick = () => {
-    // setLoading(true);
-  };
+
   //Show thanhTien
   const [thanhTien, setThanhTien] = useState();
   // const [discount, setDiscount] = useState(0);
@@ -219,6 +236,88 @@ const CartBillADM = (props) => {
   //   let giaTri = thanhTien - discount;
   //   setThanhTienData(giaTri);
   // };
+  //Add Khach Hang
+  const [selectedCustomerName, setSelectedCustomerName] = useState("");
+  const [selectedMaTK, setSelectedMaTk] = useState("");
+  const [selectedCustomerEmail, setSelectedCustomerEmail] = useState("");
+
+  const [showModalsKH, setShowModalKH] = useState(false);
+  const handleAddKH = () => {
+    setShowModalKH(true);
+  };
+  const handleCloseAddKH = () => {
+    setShowModalKH(false);
+  };
+  //Payment
+  const [cashGiven, setCashGiven] = useState("");
+  const [changeAmount, setChangeAmount] = useState(0);
+  const handleCalculateChange = () => {
+    const cashGivenValue = parseFloat(cashGiven);
+    if (!isNaN(cashGivenValue)) {
+      const change = cashGivenValue - thanhTien;
+      if (change < 0) {
+        toast.warning("Tiền Khách Đưa Chưa Đủ");
+      } else {
+        setChangeAmount(change);
+      }
+    } else {
+      setChangeAmount(0);
+    }
+  };
+  // const handleTinhTien = () => {
+  //   setCashGiven("");
+  //   setChangeAmount(0);
+  // };
+  //Handle Save
+  const [addressInfo, setAddressInfo] = useState({
+    province: "",
+    district: "",
+    ward: "",
+  });
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
+  const [tenKhTT, getTenKHTT] = useState("");
+  const [sdtKHTT, getSdtKHTT] = useState("");
+  const handleClick = async () => {
+    const currentDate = new Date();
+    const formattedDate = format(currentDate, "yyyy-MM-dd");
+    if (isDeliveryChecked === false) {
+      const cashGivenValue = parseFloat(cashGiven);
+      const change = cashGivenValue - thanhTien;
+
+      if (change < 0) {
+        toast.warning("Tiền Khách Đưa Chưa Đủ");
+      } else {
+        await updatePayment(
+          idHdParam,
+          tenKhTT,
+          sdtKHTT,
+          formattedDate,
+          thanhTien,
+          cashGiven,
+          change,
+          1,
+          9
+        );
+        toast.success("Thanh Toán Tại Quầy Thành Công!!!");
+        navigate(`/direct-sale`);
+      }
+    } else {
+      await updatePaymentShip(
+        idHdParam,
+        tenKhTT,
+        sdtKHTT,
+        formattedDate,
+        thanhTien,
+        2,
+        1
+      );
+      toast.success("Thanh Toán Tại Quầy Thành Công!!!");
+      navigate(`/order-management-timeline/${idHdParam}`);
+      toast.success("Đặt Hàng Online Thành Công!!!");
+    }
+  };
 
   return (
     <>
@@ -243,7 +342,9 @@ const CartBillADM = (props) => {
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
+                <TableCell>Ảnh</TableCell>
                 <TableCell>Mã Sản Phẩm</TableCell>
+                {/* <TableCell align="right"></TableCell> */}
                 <TableCell align="right">Sản Phẩm</TableCell>
                 <TableCell align="right">Thuộc tính</TableCell>
                 <TableCell align="right">Giá</TableCell>
@@ -260,25 +361,28 @@ const CartBillADM = (props) => {
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
-                      {item.idCtsp.idSp.maSp}
+                      <Image
+                        rounded
+                        style={{ width: "150px", height: "auto" }}
+                        src={item[2]}
+                      />
                     </TableCell>
-                    <TableCell align="right">
-                      {item.idCtsp.idSp.tenSp}
+                    <TableCell component="th" scope="row">
+                      {item[4]}
                     </TableCell>
+                    <TableCell align="right">{item[5]}</TableCell>
                     <TableCell align="right">
                       <Button
                         onClick={() => handleUpdateClassify(item)}
                         size="small"
                         variant="outlined"
                       >
-                        Size: {item.idCtsp.idSize.tenSize}
+                        Size: {item[6]}
                       </Button>
                     </TableCell>
-                    <TableCell align="right">
-                      {item.idCtsp.idSp.giaBan}
-                    </TableCell>
-                    <TableCell align="right">{item.soLuong}</TableCell>
-                    <TableCell align="right">{item.donGia}</TableCell>
+                    <TableCell align="right">{item[7]}</TableCell>
+                    <TableCell align="right">{item[8]}</TableCell>
+                    <TableCell align="right">{item[9]}</TableCell>
                     <TableCell align="right">
                       <IconButton
                         aria-label="delete"
@@ -314,7 +418,7 @@ const CartBillADM = (props) => {
             <h6>Thông Tin Khách Hàng</h6>
           </div>
           <div className="col-6 button-list-personal">
-            <Button size="small" variant="outlined">
+            <Button onClick={handleAddKH} size="small" variant="outlined">
               Khách Hàng
             </Button>
           </div>
@@ -323,24 +427,27 @@ const CartBillADM = (props) => {
         <div className="text-information">
           <TextField
             id="standard-multiline-flexible"
-            label="Tên Khách Hàng"
+            label="Mã Tài Khoản "
             multiline
             maxRows={4}
             variant="outlined"
             size="small"
+            value={selectedMaTK}
             fullWidth
             sx={{ marginTop: 2 }}
           />
           <TextField
             id="standard-multiline-flexible"
-            label="Địa Chỉ"
+            label="Tên Khách Hàng"
             multiline
             maxRows={4}
             variant="outlined"
             size="small"
+            value={selectedCustomerName}
             fullWidth
             sx={{ marginTop: 2 }}
           />
+
           <TextField
             id="standard-multiline-flexible"
             label="Email"
@@ -349,6 +456,7 @@ const CartBillADM = (props) => {
             variant="outlined"
             size="small"
             fullWidth
+            value={selectedCustomerEmail}
             sx={{ marginTop: 2 }}
           />
         </div>
@@ -366,7 +474,7 @@ const CartBillADM = (props) => {
         </div>
         <div className="row section-information">
           <div className="col-7">
-            {isDeliveryChecked && (
+            {isDeliveryChecked ? (
               <div className="text-information">
                 <div>
                   <h5>
@@ -459,6 +567,7 @@ const CartBillADM = (props) => {
                       ))}
                     </Select>
                   </FormControl>
+                  <div id="result">{result}</div>
                 </div>
 
                 <div>
@@ -473,6 +582,59 @@ const CartBillADM = (props) => {
                     sx={{ marginTop: 2 }}
                   />
                 </div>
+              </div>
+            ) : (
+              <div className="text-information">
+                <div>
+                  <h5>
+                    {" "}
+                    <AccountBoxIcon />
+                    Thông Tin Thanh Toán
+                  </h5>
+                </div>
+                <TextField
+                  id="standard-multiline-flexible"
+                  label="Người Thanh Toán"
+                  multiline
+                  maxRows={4}
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  sx={{ marginTop: 2 }}
+                  onChange={(e) => getTenKHTT(e.target.value)}
+                />
+                <TextField
+                  id="standard-multiline-flexible"
+                  label="Số Điện Thoại"
+                  multiline
+                  maxRows={4}
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  sx={{ marginTop: 2 }}
+                  onChange={(e) => getSdtKHTT(e.target.value)}
+                />
+                <TextField
+                  id="standard-multiline-flexible"
+                  label="Số Tiền Khách Gửi"
+                  type="number"
+                  multiline
+                  maxRows={4}
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  sx={{ marginTop: 2, marginBottom: 2 }}
+                  onChange={(e) => setCashGiven(e.target.value)}
+                />
+                <Button
+                  sx={{ marginBottom: 2 }}
+                  variant="contained"
+                  endIcon={<SendIcon />}
+                  onClick={handleCalculateChange}
+                >
+                  Tính Tiền
+                </Button>
+                <p>Số Tiền Thừa Của Khách: {changeAmount}</p>
               </div>
             )}
           </div>
@@ -543,6 +705,14 @@ const CartBillADM = (props) => {
         handleClose={handCloseDeleteAll}
         selectDataCart={selectDataCart}
         DataCart={DataCart}
+      />
+      {/* Modal Add Customer */}
+      <ModalAddKhachHang
+        open={showModalsKH}
+        handleClose={handleCloseAddKH}
+        setSelectedCustomerName={setSelectedCustomerName}
+        setSelectedMaTk={setSelectedMaTk}
+        setSelectedCustomerEmail={setSelectedCustomerEmail}
       />
     </>
   );

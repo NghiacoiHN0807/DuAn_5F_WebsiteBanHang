@@ -12,8 +12,13 @@ import java.util.List;
 @Repository
 
 public interface ImagesRepository extends JpaRepository<Images, Integer> {
+<<<<<<< HEAD
 
     @Query("SELECT i FROM Images i WHERE i.idSp.idSp = :idSp")
     List<Images> findByIdCtsp_IdSp(@Param("idSp") Integer idSp);
 
+=======
+    @Query("SELECT g FROM Images g WHERE g.idSp.idSp = :idSp")
+    List<Images> findImagesByIdSp(@Param("idSp") Integer idSp);
+>>>>>>> origin/main
 }
