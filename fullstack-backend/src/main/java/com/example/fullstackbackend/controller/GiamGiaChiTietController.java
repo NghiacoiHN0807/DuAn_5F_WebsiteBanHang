@@ -82,10 +82,8 @@ public class GiamGiaChiTietController {
     }
 
     @PostMapping("insert")
-    ResponseEntity<ReponObject> add(@RequestBody GiamGiaChiTiet giamGiaChiTiet) {
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ReponObject("Ok!", "Add success!", giamGiaChiTietService.add(giamGiaChiTiet))
-        );
+    GiamGiaChiTiet add(@RequestBody GiamGiaChiTiet giamGiaChiTiet) {
+        return giamGiaChiTietService.add(giamGiaChiTiet);
     }
 
     @PutMapping("update/{id}")
