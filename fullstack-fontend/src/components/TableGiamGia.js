@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import ModelConfirmGiamGia from "./ModelConfirmGiamGia";
 import Stack from "@mui/material/Stack";
 import { getAll, getAllByTrangThai } from "../services/giamGiaService";
 import { Badge, Form, Nav } from "react-bootstrap";
@@ -13,6 +12,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { pink } from "@mui/material/colors";
 import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import ModelConfirm from "./ModelConfirmGiamGia";
 
 const TableGiamGia = (props) => {
   //Set value for table
@@ -87,7 +87,7 @@ const TableGiamGia = (props) => {
   const handAdd = () => {
     navigate(`/add/giam-gia`);
   };
-  
+
   const rows = listGiamGia
     .filter((item) =>
       Object.values(item).some((value) =>
@@ -114,7 +114,7 @@ const TableGiamGia = (props) => {
   const columns = [
     { field: "index", headerName: "#", width: 50 },
     { field: "tenChuongTrinh", headerName: "Tên chương trình", width: 150 },
-    { field: "tenSp", headerName: "Tên sản phẩm", width: 150  },
+    { field: "tenSp", headerName: "Tên sản phẩm", width: 150 },
     { field: "mucGiam", headerName: "Mức giảm", width: 100 },
     {
       field: "thoiGian",
@@ -170,7 +170,7 @@ const TableGiamGia = (props) => {
             <IconButton
               aria-label="edit"
               size="large"
-              // onClick={() => handleEdit(params.row.idHd)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
+            // onClick={() => handleEdit(params.row.idHd)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
             >
               <EditOutlinedIcon color="primary" />
             </IconButton>
@@ -277,6 +277,13 @@ const TableGiamGia = (props) => {
           />
         </Stack>
       </div>
+      <ModelConfirm
+        show={isShowModalDelete}
+        handleClose={handleClose}
+        isDataGiamGia={listGiamGia[0]}
+        getGiamGia={getGiamGia}
+      />
+
     </>
   );
 };
