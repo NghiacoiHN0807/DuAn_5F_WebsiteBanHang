@@ -26,10 +26,10 @@ const ModalAddProduct = (props) => {
   const getAllData = async (page) => {
     try {
       let getData = await fetchAllCTSPBySize(page);
-      console.log("Check getDataProduct: ", getData);
 
       if (getData && getData.content) {
         setListData(getData.content);
+        console.log("Check listData: ", listData);
         setNumberPages(getData.totalPages);
       }
     } catch (error) {
@@ -83,22 +83,28 @@ const ModalAddProduct = (props) => {
                 {listData &&
                   listData.length &&
                   listData.map((item, index) => {
+                    const imagesArray = item[0].split(","); // Tách chuỗi thành mảng
+                    const firstImage = imagesArray[0];
                     return (
                       <tr key={`images-${index}`}>
                         <td>
                           <Col xs={6} md={4}>
-                            <Image src={`../assets/${item.tenSp}`} rounded />
+                            <Image
+                              rounded
+                              style={{ width: "150px", height: "auto" }}
+                              src={firstImage}
+                            />
                           </Col>
                         </td>
-                        <td>{item[1]}</td>
                         <td>{item[2]}</td>
                         <td>{item[3]}</td>
+                        <td>{item[4]}</td>
 
                         <td>
                           <Button
                             variant="outlined"
                             size="small"
-                            onClick={() => handleChoose(item[0])}
+                            onClick={() => handleChoose(item[1])}
                           >
                             Chọn
                           </Button>

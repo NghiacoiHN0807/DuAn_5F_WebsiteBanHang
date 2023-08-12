@@ -51,6 +51,7 @@ import axios from "axios";
 import { pink } from "@mui/material/colors";
 import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
 import { Image } from "cloudinary-react";
+
 const QuantityInput = ({ value, onChange }) => {
   const handleDecrease = () => {
     if (value > 1) {
@@ -308,24 +309,6 @@ const ModelUpdate = (props) => {
       }
     };
     postImage();
-  };
-
-  const handleSave = async () => {
-    // get object all\
-    const getObjSp = await detailSP(idSpHttp);
-
-    let res = await postAddAnh(
-      getObjSp,
-
-      0
-    );
-
-    console.log("Check res: ", res);
-    if (res && res.idImage) {
-      toast.success("Thêm ảnh thành công!");
-    } else {
-      toast.error("Thêm ảnh thất bại!");
-    }
   };
 
   return (
