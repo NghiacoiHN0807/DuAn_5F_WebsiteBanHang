@@ -125,7 +125,7 @@ const TableDiaChiByTK = () => {
                 </Badge>);
             },
         }, {
-            field: "actions", headerName: "Actions", width: 250, renderCell: (params) => {
+            field: "actions", headerName: "Hành Động", width: 250, renderCell: (params) => {
                 const {row} = params;
                 return (<div>
                     <Button

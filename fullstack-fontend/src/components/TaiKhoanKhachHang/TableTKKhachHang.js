@@ -90,7 +90,7 @@ const TableTKKhachHang = () => {
         // {field: "diaChi" , headerName: "Địa Chỉ",width: 100}
         {
             field: "actions",
-            headerName: "Actions",
+            headerName: "Hành Động",
             width: 300,
             renderCell: (params) => {
                 const {row} = params;
