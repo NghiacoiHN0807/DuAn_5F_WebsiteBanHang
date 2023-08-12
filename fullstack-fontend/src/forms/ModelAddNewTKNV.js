@@ -6,10 +6,6 @@ import { toast } from "react-toastify";
 import { Col, Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import { chucVu, detail } from "../services/chucVuService";
-//QRcode
-// import React, { } from 'react';
-// import Webcam from 'react-webcam-qrcode';
-// import QrReader from "react-qr-reader";
 
 const ModelAddNewTKNV = (props) => {
   const { show, handleClose } = props;
@@ -21,27 +17,6 @@ const ModelAddNewTKNV = (props) => {
   const [setEmail, getEmail] = useState("");
   const [setSoCanCuoc, getSoCanCuoc] = useState("");
 
-  //QRcode
-  // const [result, setResult] = useState("No QR code detected");
-
-  // const handleScan = (data) => {
-  //   if (data) {
-  //     setResult(data);
-  //   }
-  // };
-
-  // const handleError = (error) => {
-  //   console.error(error);
-  // };
-
-  //Webcam QR
-  // const [scannedData, setScannedData] = useState('');
-
-  // const handleScan = (data) => {
-  //   if (data) {
-  //     setScannedData(data);
-  //   }
-  // };
   const [chucVuOk, setChucVuOk] = useState({});
 
   const handleSave = async () => {
@@ -56,7 +31,8 @@ const ModelAddNewTKNV = (props) => {
       getTen("") &&
       getSdt("") &&
       getEmail("") &&
-      getSoCanCuoc("")
+      getSoCanCuoc("") &&
+      getChucVu(3)
     ) {
       handleClose();
       toast.warning("Ma, Ten Or Trang Thai is null");
@@ -70,7 +46,7 @@ const ModelAddNewTKNV = (props) => {
         .catch((error) => {
           console.error(error); // Xử lý lỗi nếu có
         });
-        console.log("chucVuOk?", chucVuOk);
+      console.log("chucVuOk?", chucVuOk);
       let res = await postAddTaiKhoan(
         setMaTaiKhoan,
         chucVuOk,
@@ -111,26 +87,6 @@ const ModelAddNewTKNV = (props) => {
 
   return (
     <>
-      {/* <div>
-        <h2>QR Code Scanner</h2>
-        <QrReader
-          delay={300}
-          onError={handleError}
-          onScan={handleScan}
-          style={{ width: "100%" }}
-        />
-        <p>Result: {result}</p>
-      </div> */}
-      {/* <div>
-      <h2>QR Code Scanner</h2>
-      <Webcam
-        onQRCodeScanned={handleScan}
-        facingMode="environment"
-        showViewFinder={true}
-        style={{ width: '100%' }}
-      />
-      <p>Scanned Data: {scannedData}</p>
-    </div> */}
       <Modal
         show={show}
         onHide={handleClose}
@@ -178,9 +134,11 @@ const ModelAddNewTKNV = (props) => {
                     aria-label="Default select example"
                     onChange={(event) => getChucVu(event.target.value)}
                   >
-                    {MyChucVu.map((item, index) => {
-                      return <option value={item.idCv}>{item.tenCv}</option>;
-                    })}
+                    <option value={1}>Manage</option>;
+                    <option value={2}>Nhân viên</option>;
+                    {/* {MyChucVu.filter(item => item.idCv === 1 && item.idCv === 2).map((item, index) => {
+                      return 
+                    })} */}
                   </select>
                 </div>
               </Col>

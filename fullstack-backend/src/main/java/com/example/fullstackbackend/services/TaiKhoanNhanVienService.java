@@ -17,13 +17,13 @@ public interface TaiKhoanNhanVienService {
 
     Optional<TaiKhoan> getOne(Integer id);
 
-    void delete(Integer id);
+    TaiKhoan delete(Integer id);
 
-    TaiKhoan update(TaiKhoan taiKhoan);
+    TaiKhoan update(TaiKhoan taiKhoan, Integer id);
 
     Boolean existsById(Integer id);
 
     Optional<TaiKhoan> detail(Integer id);
 
-
+    Page<TaiKhoan> chucVu(Integer pageNo, Integer size);
 }

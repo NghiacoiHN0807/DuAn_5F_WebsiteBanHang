@@ -32,15 +32,13 @@ public class TaiKhoanNhanVienController {
     public Page<TaiKhoan> viewAll(@RequestParam(defaultValue = "0") Integer page,
                                   @RequestParam(defaultValue = "15") Integer size,
                                   @RequestParam("p") Optional<Integer> p) {
-
-        return taiKhoanNhanVienService.phanTrang(p.orElse(page), size);
+        return taiKhoanNhanVienService.chucVu(p.orElse(page), size);
     }
 
     @GetMapping("view-alls")
     public Page<TaiKhoan> viewAlll(@RequestParam(defaultValue = "0", value= "page") Integer page,
                                           @RequestParam(defaultValue = "15") Integer size,
                                            @RequestParam("trangThai") Integer trangThai) {
-
         return taiKhoanNhanVienService.phanTrang(page, size, trangThai);
     }
 
@@ -57,22 +55,13 @@ public class TaiKhoanNhanVienController {
     @GetMapping("detail/{id}")
     public Optional<TaiKhoan> detail(@PathVariable("id") Integer id
     ) {
-
         return taiKhoanNhanVienService.detail(id);
     }
 
-    @DeleteMapping("delete/{id}")
-    ResponseEntity<ReponObject> delete(@PathVariable("id") Integer id){
-        Boolean exist = taiKhoanNhanVienService.existsById(id);
-        if (!exist) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ReponObject("Not found!", "Not could found entity by id:" + id, "")
-            );
-        }
-        taiKhoanNhanVienService.delete(id);
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ReponObject("Ok!", "Delete success " + id, "")
-        );
+    @PutMapping("delete/{id}")
+    public TaiKhoan delete(@PathVariable("id") Integer id
+    ) {
+        return taiKhoanNhanVienService.delete(id);
     }
 
 
@@ -82,8 +71,9 @@ public class TaiKhoanNhanVienController {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
-
-            return taiKhoanNhanVienService.update(taiKhoan);
+            return taiKhoanNhanVienService.update(taiKhoan, id);
         }
     }
+
+
 }

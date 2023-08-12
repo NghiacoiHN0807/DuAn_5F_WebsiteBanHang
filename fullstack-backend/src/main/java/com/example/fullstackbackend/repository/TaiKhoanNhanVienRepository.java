@@ -13,4 +13,9 @@ import org.springframework.stereotype.Repository;
 public interface TaiKhoanNhanVienRepository extends JpaRepository<TaiKhoan, Integer> {
     @Query("SELECT g FROM TaiKhoan g WHERE g.trangThai = :trangThai")
     Page<TaiKhoan> findAllByTrangThai(@Param("trangThai") Integer trangThai, Pageable pageable);
+
+    @Query("SELECT g FROM TaiKhoan g WHERE g.idChucVu.idCv = 1 or g.idChucVu.idCv = 2")
+    Page<TaiKhoan> chucVu( Pageable pageable);
+
+
 }

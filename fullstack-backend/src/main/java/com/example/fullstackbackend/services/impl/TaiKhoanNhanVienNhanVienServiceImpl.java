@@ -47,15 +47,17 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
     }
 
     @Override
-    public void delete(Integer id) {
-        TaiKhoan TaiKhoan = getOne(id).orElseThrow();
-        TaiKhoan.setTrangThai(10);
-        taiKhoanRepository.save(TaiKhoan);
+    public TaiKhoan delete(Integer id) {
+        TaiKhoan taiKhoan = getOne(id).orElseThrow();
+        taiKhoan.setTrangThai(10);
+        taiKhoanRepository.save(taiKhoan);
+        return taiKhoan;
     }
 
     @Override
-    public TaiKhoan update(TaiKhoan TaiKhoan) {
-        return taiKhoanRepository.save(TaiKhoan);
+    public TaiKhoan update(TaiKhoan taiKhoan, Integer id) {
+        taiKhoan.setIdTaiKhoan(id);
+        return taiKhoanRepository.save(taiKhoan);
     }
 
     @Override
@@ -67,5 +69,11 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
     public Optional<TaiKhoan> detail(Integer id) {
         Optional<TaiKhoan> taiKhoan = taiKhoanRepository.findById(id);
         return taiKhoan;
+    }
+
+    @Override
+    public Page<TaiKhoan> chucVu(Integer pageNo, Integer size) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        return taiKhoanRepository.chucVu(pageable);
     }
 }

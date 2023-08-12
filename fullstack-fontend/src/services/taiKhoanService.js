@@ -34,6 +34,7 @@ const postUpdateTaiKhoan = (
   ten,
   sdt,
   email,
+  matKhau,
   soCanCuoc,
   trangThai
 ) => {
@@ -44,12 +45,13 @@ const postUpdateTaiKhoan = (
     ten,
     sdt,
     email,
+    matKhau,
     soCanCuoc,
-    trangThai,
+    trangThai
   });
 };
 const deleteTaiKhoan = (id) => {
-  return custom.delete(`/tai-khoan/delete/${id}`);
+  return custom.put(`/tai-khoan/delete/${id}`);
 };
 const detailTaiKhoan = (id) => {
   return custom.get(`/tai-khoan/detail/${id}`);

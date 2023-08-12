@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { postAddTaiKhoan } from "../services/taiKhoanService";
 import { toast } from "react-toastify";
-import { Box, Button, TextField, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { chucVu } from "../services/chucVuService";
 
@@ -20,10 +28,10 @@ const AddTKNV = () => {
   const navigate = useNavigate();
 
   const handleSave = async () => {
-    if ( !chucVuId || !ho || !ten || !email || !sdt || !soCanCuoc) {
+    if (!chucVuId || !ho || !ten || !email || !sdt || !soCanCuoc) {
       toast.warning("Có trường dữ liệu còn trống!");
     } else {
-        console.log(soCanCuoc);
+      console.log(soCanCuoc);
       let res = await postAddTaiKhoan(
         maTaiKhoan,
         chucVuId,
@@ -33,7 +41,6 @@ const AddTKNV = () => {
         email,
         soCanCuoc,
         trangThai
-        
       );
       console.log("Kiểm tra res: ", res);
       if (res && res.idTaiKhoan) {
@@ -51,7 +58,7 @@ const AddTKNV = () => {
     let rs = await chucVu(0);
     setMyChucVu(rs.content);
   };
-  
+
   useEffect(() => {
     getAllChucVu();
   }, []);
@@ -78,9 +85,13 @@ const AddTKNV = () => {
             value={chucVuId}
             onChange={(event) => setChucVuId(event.target.value)}
           >
-            {myChucVu.map((item, index) => (
-              <MenuItem key={index} value={item}>{item.tenCv}</MenuItem>
-            ))}
+            {myChucVu
+              .filter((item) => item.idCv === 1 || item.idCv === 2) // Lọc theo idCv
+              .map((item, index) => (
+                <MenuItem key={index} value={item}>
+                  {item.tenCv}
+                </MenuItem>
+              ))}
           </Select>
         </FormControl>
         <TextField

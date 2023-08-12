@@ -45,14 +45,11 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import FiberManualRecordOutlinedIcon from "@mui/icons-material/FiberManualRecordOutlined";
 import LoyaltyOutlinedIcon from "@mui/icons-material/LoyaltyOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
-<<<<<<< HEAD
 import AddTKNV from "./forms/Models-AddTKNV";
 import UpdateTkNV from "./forms/ModelUpdateTKNV";
-=======
 import { Image } from "react-bootstrap";
 import logo5F from "./assets/logo_5F.png";
 import ModelAddNewGiamGia from "./components/ModalsAddNewGiamGia";
->>>>>>> origin/main
 
 const drawerWidth = 240;
 

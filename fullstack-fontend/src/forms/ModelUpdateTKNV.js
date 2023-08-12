@@ -3,9 +3,7 @@ import {
   detailTaiKhoan,
   postUpdateTaiKhoan,
 } from "../services/taiKhoanService";
-import {
- chucVu3,
-} from "../services/chucVuService";
+import { chucVu3 } from "../services/chucVuService";
 import { toast } from "react-toastify";
 
 import {
@@ -71,14 +69,12 @@ const UpdateTkNV = (props) => {
 
   const handleSave = async () => {
     if (
-      !chucVu ||
-      !ho ||
-      !ten ||
-      !email ||
-      !sdt ||
-      !matKhau ||
-      !soCanCuoc ||
-      !trangThai
+      ho === "" ||
+      ten === "" ||
+      email === "" ||
+      sdt === "" ||
+      matKhau === "" ||
+      soCanCuoc === "" 
     ) {
       toast.warning("Một Số Trường Đang Trống!");
     } else {
@@ -97,7 +93,7 @@ const UpdateTkNV = (props) => {
       console.log("Check res: ", res);
       if (res && res.idTaiKhoan) {
         toast.success("Cập Nhập Tài Khoản Thành Công!");
-        navigate("/tai-Khoan");
+        navigate("/table-taiKhoan");
       } else {
         toast.error("Cập Nhập Tài Khoản Thất Bại");
       }
@@ -127,7 +123,9 @@ const UpdateTkNV = (props) => {
               value={chucVu}
               onChange={(event) => setChucVu(event.target.value)}
             >
-              {myChucVu.map((item, index) => (
+              {myChucVu
+              .filter((item) => item.idCv === 1 || item.idCv === 2) // Lọc theo idCv
+              .map((item, index) => (
                 <MenuItem key={index} value={item}>
                   {item.tenCv}
                 </MenuItem>
@@ -190,17 +188,12 @@ const UpdateTkNV = (props) => {
               <FormControlLabel
                 value="0"
                 control={<Radio />}
-                label="Chưa Kích Hoạt"
+                label="Đang Hoạt Động"
               />
               <FormControlLabel
                 value="1"
                 control={<Radio />}
-                label="Được Kích Hoạt"
-              />
-              <FormControlLabel
-                value="4"
-                control={<Radio />}
-                label="Ngưng Hoạt Động"
+                label="Không Hoạt Động"
               />
             </RadioGroup>
           </FormControl>
