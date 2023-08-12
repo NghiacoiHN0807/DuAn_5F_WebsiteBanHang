@@ -3,6 +3,7 @@ package com.example.fullstackbackend.services.impl;
 
 
 import com.example.fullstackbackend.entity.TaiKhoanKhachHang;
+import com.example.fullstackbackend.entity.TaiKhoanNhanVien;
 import com.example.fullstackbackend.repository.TaiKhoanKhachHangRepository;
 import com.example.fullstackbackend.services.TaiKhoanKhachHangSevice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,12 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
     public Page<TaiKhoanKhachHang> Page(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return TaiKhoanKhachHangRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<TaiKhoanNhanVien> PageKhachHang(Integer pageNo, Integer size) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        return TaiKhoanKhachHangRepository.findAllKhachHang(pageable);
     }
 
     @Override

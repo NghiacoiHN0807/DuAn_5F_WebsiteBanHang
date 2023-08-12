@@ -24,14 +24,14 @@ export default function ModalDeleteProductOnCart(props) {
   // Update maHd when information changes
   useEffect(() => {
     if (itemDelete != null) {
-      setMaSp(itemDelete.idCtsp.idSp.maSp);
+      setMaSp(itemDelete[4]);
     } else {
       setMaSp("");
     }
   }, [itemDelete]);
   // Handle Delete
   const handleDelete = async () => {
-    await deleteProductOnCart(itemDelete.idHdct);
+    await deleteProductOnCart(itemDelete[1]);
     selectDataCart();
     toast.success("Xóa Sản Phẩm Thành Công");
     handleClose();

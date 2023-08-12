@@ -112,8 +112,28 @@ public class HoaDonController {
     @PutMapping("update-payment/{id}")
     public HoaDon updateThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+            hoaDon.setTenKh(newHD.getTenKh());
+            hoaDon.setSdtKh(newHD.getSdtKh());
             hoaDon.setNgayThanhToan(newHD.getNgayThanhToan());
+            hoaDon.setThanhTien(newHD.getThanhTien());
             hoaDon.setTienDua(newHD.getTienDua());
+            hoaDon.setTienThua(newHD.getTienThua());
+            hoaDon.setKieuHoaDon(newHD.getKieuHoaDon());
+            hoaDon.setTrangThai(newHD.getTrangThai());
+            return hoadonSevice.add(hoaDon);
+        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+        return newHD1;
+    }
+
+    @PutMapping("update-payment-online/{id}")
+    public HoaDon updateThanhToanOnline(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+            hoaDon.setTenKh(newHD.getTenKh());
+            hoaDon.setSdtKh(newHD.getSdtKh());
+            hoaDon.setNgayThanhToan(newHD.getNgayThanhToan());
+            hoaDon.setDiaChi(newHD.getDiaChi());
+            hoaDon.setThanhTien(newHD.getThanhTien());
+            hoaDon.setKieuHoaDon(newHD.getKieuHoaDon());
             hoaDon.setTrangThai(newHD.getTrangThai());
             return hoadonSevice.add(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));

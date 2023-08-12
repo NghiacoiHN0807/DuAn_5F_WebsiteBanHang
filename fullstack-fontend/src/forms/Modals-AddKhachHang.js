@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "../scss/Car-Bill-ADM.scss";
-// import { selectAllImgProduct } from "../services/BillSevice";
 import { useEffect } from "react";
 import {
   Button,
@@ -12,22 +11,27 @@ import {
   Stack,
 } from "@mui/material";
 import { Image, Table } from "react-bootstrap";
-import { fetchAllCTSPBySize, findById } from "../services/BillSevice";
-import ModalDetailProduct from "./Modal-Detail-SanPham";
+import { getAllDataTaiKhoan } from "../services/BillSevice";
 import { useCallback } from "react";
 
-const ModalAddProduct = (props) => {
-  const { show, handleClose, selectDataCart, DataCart } = props;
-  //Show Data on Table
+const ModalAddKhachHang = (props) => {
+  const {
+    open,
+    handleClose,
+    setSelectedCustomerName,
+    setSelectedCustomerEmail,
+    setSelectedMaTk,
+  } = props;
+  //open Data on Table
   const [listData, setListData] = useState([]);
   const [numberPages, setNumberPages] = useState([]);
 
   const getAllData = useCallback(async (page) => {
     try {
-      let getData = await fetchAllCTSPBySize(page);
-
+      let getData = await getAllDataTaiKhoan(page);
       if (getData && getData.content) {
         setListData(getData.content);
+
         setNumberPages(getData.totalPages);
       }
     } catch (error) {
@@ -45,45 +49,30 @@ const ModalAddProduct = (props) => {
     getAllData(page);
     setCurrentPage(page);
   };
-  //Insert product
-  //Get Name Of Size
-  // const [selectedSize, setSelectedSize] = useState(null);
-  // const [selectedSp, setSelectedSp] = useState("");
-  const [dataDetail, setDataDetail] = useState([]);
-  const [listImages, setListImages] = useState([]);
 
-  // const handleShowSize = (size, tenSp) => {
-  //   setSelectedSize(size);
-  //   setSelectedSp(tenSp);
-  //   console.log("Selected size for product:", size, tenSp);
-  // };
   //Get number
-  const handleChoose = async (idSp, imgs) => {
-    let getOneSP = await findById(idSp);
-    console.log("Selected imgs:", imgs[0]);
-    setListImages(imgs[0]);
-    setDataDetail(getOneSP);
-    setShowModalDetail(true);
+  const handleChoose = async (item) => {
+    setSelectedMaTk(`${item.maTaiKhoan}`);
+    setSelectedCustomerName(`${item.ho} ${item.ten}`);
+    setSelectedCustomerEmail(`${item.email}`);
+    handleClose();
   };
   // Model Detail Product
-  const [showModalDetail, setShowModalDetail] = useState(false);
-  const handleCloseDetai = () => {
-    setShowModalDetail(false);
-  };
 
   return (
     <>
       <div>
-        <Dialog open={show} onClose={handleClose} maxWidth="xl" fullWidth>
-          <DialogTitle>DANH SÁCH SẢN PHẨM</DialogTitle>
+        <Dialog open={open} onClose={handleClose} maxWidth="xl" fullWidth>
+          <DialogTitle>DANH SÁCH TÀI KHOẢN KHÁCH HÀNG</DialogTitle>
           <DialogContent>
             <Table className="table-Cart" striped hover borderless>
               <thead>
                 <tr>
                   <th>Ảnh</th>
-                  <th>Mã Sản Phẩm</th>
-                  <th>Tên Sản Phẩm</th>
-                  <th>Giá Sản Phẩm</th>
+                  <th>Mã Khách Hàng</th>
+                  <th>Tên Khách Hàng</th>
+                  <th>Email</th>
+                  <th>Số Điện Thoại</th>
                   <th>Thao Tác</th>
                 </tr>
               </thead>
@@ -91,26 +80,26 @@ const ModalAddProduct = (props) => {
                 {listData &&
                   listData.length &&
                   listData.map((item, index) => {
-                    const imagesArray = item[0].split(","); // Tách chuỗi thành mảng
-                    const firstImage = imagesArray[0];
                     return (
                       <tr key={`images-${index}`}>
                         <td>
                           <Image
                             rounded
                             style={{ width: "150px", height: "auto" }}
-                            src={firstImage}
+                            src={item.maKh}
                           />
                         </td>
-                        <td>{item[2]}</td>
-                        <td>{item[3]}</td>
-                        <td>{item[4]}</td>
-
+                        <td>{item.maTaiKhoan}</td>
+                        <td>
+                          {item.ho} {item.ten}
+                        </td>
+                        <td>{item.email}</td>
+                        <td>{item.sdt}</td>
                         <td>
                           <Button
                             variant="outlined"
                             size="small"
-                            onClick={() => handleChoose(item[1], imagesArray)}
+                            onClick={() => handleChoose(item)}
                           >
                             Chọn
                           </Button>
@@ -139,15 +128,7 @@ const ModalAddProduct = (props) => {
           </DialogActions>
         </Dialog>
       </div>
-      <ModalDetailProduct
-        show={showModalDetail}
-        handleCloseDetai={handleCloseDetai}
-        dataDetail={dataDetail}
-        selectDataCart={selectDataCart}
-        DataCart={DataCart}
-        listImages={listImages}
-      />
     </>
   );
 };
-export default ModalAddProduct;
+export default ModalAddKhachHang;

@@ -113,7 +113,7 @@ function AppADM(props) {
                 )}
               </ListItemIcon>
               <ListItemText>
-                <Typography variant="body1" sx={{ fontSize: "14px" }}>
+                <Typography variant="body1" sx={{ fontSize: 14 }}>
                   {item.text}
                 </Typography>
               </ListItemText>

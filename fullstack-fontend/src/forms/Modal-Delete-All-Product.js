@@ -23,7 +23,7 @@ export default function ModalDeleteAllProductOnCart(props) {
       console.log("Check DataCart: ", DataCart);
 
       try {
-        await deleteProductOnCart(DataCart[i].idHdct);
+        await deleteProductOnCart(DataCart[1][i]);
       } catch (error) {
         console.error(error);
       }
