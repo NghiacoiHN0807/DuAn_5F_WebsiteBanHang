@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.controller;
 
+import com.example.fullstackbackend.DTO.GiamGiaWithChiTietDTO;
 import com.example.fullstackbackend.entity.GiamGia;
 import com.example.fullstackbackend.services.GiamGiaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class GiamGiaController {
         );
     }
 
-    @PostMapping("insert")
+        @PostMapping("insert")
     ResponseEntity<ReponObject> insert(@RequestBody GiamGia giamGia) {
         List<GiamGia> giamGias = giamGiaService.getByMa(giamGia.getMaGiamGia().trim());
         if (giamGias.size() > 0) {
@@ -86,5 +87,15 @@ public class GiamGiaController {
                 new ReponObject("Failed!", "Not found id!", "")
         );
     }
+
+//    @PostMapping("addGiamGiaWithChiTiet")
+//    public ResponseEntity<String> addGiamGiaWithChiTiet(@RequestBody GiamGiaWithChiTietDTO request) {
+//        try {
+//            giamGiaService.addGiamGiaWithChiTiet(request);
+//            return ResponseEntity.status(HttpStatus.CREATED).body("Thêm giảm giá và chi tiết thành công");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi thêm giảm giá và chi tiết");
+//        }
+//    }
 
 }

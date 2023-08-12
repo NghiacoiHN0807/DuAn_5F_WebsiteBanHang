@@ -18,7 +18,7 @@ public interface GiamGiaChiTietService {
 
     Optional<GiamGiaChiTiet> getOne(Integer id);
 
-    Object add(GiamGiaChiTiet giamGiaChiTiet);
+    GiamGiaChiTiet add(GiamGiaChiTiet giamGiaChiTiet);
 
     Object update(GiamGiaChiTiet giamGiaChiTiet);
 
