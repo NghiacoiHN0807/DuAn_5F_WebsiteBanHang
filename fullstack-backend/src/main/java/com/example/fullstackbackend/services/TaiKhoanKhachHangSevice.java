@@ -1,6 +1,7 @@
 package com.example.fullstackbackend.services;
 
 import com.example.fullstackbackend.entity.TaiKhoanKhachHang;
+import com.example.fullstackbackend.entity.TaiKhoanNhanVien;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -11,6 +12,8 @@ public interface TaiKhoanKhachHangSevice {
     List<TaiKhoanKhachHang> getAll();
 
     Page<TaiKhoanKhachHang> Page(Integer pageNo, Integer size);
+
+    Page<TaiKhoanNhanVien> PageKhachHang(Integer pageNo, Integer size);
 
     TaiKhoanKhachHang add(TaiKhoanKhachHang add);
 

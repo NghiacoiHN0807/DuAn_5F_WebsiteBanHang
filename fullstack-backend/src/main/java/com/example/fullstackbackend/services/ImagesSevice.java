@@ -10,6 +10,8 @@ public interface ImagesSevice {
 
     List<Images> getAll();
 
+    List<Images> findImagesByIdSp(Integer idSp);
+
     Page<Images> imagesPage(Integer pageNo, Integer size);
 
     Images add(Images add);

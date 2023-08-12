@@ -20,10 +20,17 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { findByProductNameAndSize } from "../services/BillSevice";
 import { postAddDirect, updateCart } from "../services/DirectSaleSevice";
 import { toast } from "react-toastify";
+import { Carousel } from "react-bootstrap";
 
 const ModalDetailProduct = (props) => {
-  const { show, handleCloseDetai, dataDetail, selectDataCart, DataCart } =
-    props;
+  const {
+    show,
+    handleCloseDetai,
+    dataDetail,
+    selectDataCart,
+    DataCart,
+    listImages,
+  } = props;
 
   //Insert product
   //Get Name Of Size And Number
@@ -52,24 +59,28 @@ const ModalDetailProduct = (props) => {
 
   const handleChoose = async () => {
     let selectedSp = dataDetail[0].idSp.tenSp;
+    console.log("Selected selectedSp:", selectedSp);
 
     let getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize);
 
     const existingItem = DataCart.find(
-      (item) => item.idCtsp.idCtsp === getOneCTSP.idCtsp
+      (item) => item[10] === getOneCTSP.idCtsp
     );
+    console.log("Selected existingItem:", existingItem);
+
     if (selectedSize === null || selectedSp === "") {
       toast.warn("Xin mời chọn size của sản phẩm");
     } else if (quantity < 1 || quantity === "" || isNaN(quantity)) {
       toast.warn("Vui lòng chọn số lượng lớn hơn 0");
     } else if (existingItem) {
       //Get IdHdct
-      let getIdHdct = existingItem.idHdct;
+      let getIdHdct = existingItem[1];
       //Get soLuong
-      let oldQuantity = existingItem.soLuong;
+      let oldQuantity = existingItem[8];
       let newQuantity = oldQuantity + quantity;
       //Get donGia
-      let donGia = existingItem.idCtsp.idSp.giaBan * newQuantity;
+      let donGia = existingItem[7] * newQuantity;
+
       //Update Product On Cart
       await updateCart(getIdHdct, getOneCTSP, newQuantity, donGia);
       //Close the modal
@@ -104,12 +115,24 @@ const ModalDetailProduct = (props) => {
           {dataDetail.length > 0 && (
             <DialogContent>
               <Card sx={{ display: "flex" }}>
-                <CardMedia
-                  component="img"
-                  sx={{ width: 151 }}
-                  image="/static/images/cards/live-from-space.jpg"
-                  alt="Live from space album cover"
-                />
+                <Carousel
+                  interval={null}
+                  style={{ maxWidth: 500, margin: "0 auto" }}
+                >
+                  {/* {listImages.map((item, index) => {
+                    return key={`carousel-item-${index}`} ( */}
+                  <Carousel.Item>
+                    <CardMedia
+                      component="img"
+                      sx={{ maxWidth: 250, height: 300 }}
+                      image={listImages}
+                      alt={listImages}
+                    />
+                  </Carousel.Item>
+                  {/* );
+                  })} */}
+                </Carousel>
+
                 <Box sx={{ display: "flex", flexDirection: "column" }}>
                   <CardContent sx={{ flex: "1 0 auto" }}>
                     <Typography component="div" variant="h5">

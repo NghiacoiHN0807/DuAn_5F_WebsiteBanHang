@@ -47,6 +47,12 @@ public class ImagesController {
         }
     }
 
+    @GetMapping("detail-image/{idSp}")
+    public List<Images> findImagesByIdSp(@PathVariable("idSp") Integer idSp) {
+
+        return imagesSevice.findImagesByIdSp(idSp);
+    }
+
     @GetMapping("detail/{id}")
     public String detail(@PathVariable("id") Integer id) {
         return "XuatXu";

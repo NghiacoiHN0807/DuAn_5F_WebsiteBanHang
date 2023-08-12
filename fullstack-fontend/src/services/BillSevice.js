@@ -29,6 +29,12 @@ const findByProductNameAndSize = (name, size) => {
 const findById = (idSp) => {
   return custom.get(`/chi-tiet-san-pham/select-ctsp-byId/${idSp}`); // Call API
 };
+const finByProductOnCart = (idHd) => {
+  return custom.get(`/hoa-don-chi-tiet/view-all-prduct/${idHd}`); // Call API
+};
+const getAllDataTaiKhoan = (page) => {
+  return custom.get(`/tai-khoan-khach-hang/view-all-kh?p=${page}`); // Call API
+};
 export {
   selectAllBill,
   postAddBill,
@@ -40,4 +46,6 @@ export {
   fetchAllCTSPBySize,
   findByProductNameAndSize,
   findById,
+  finByProductOnCart,
+  getAllDataTaiKhoan,
 };
