@@ -13,8 +13,8 @@ const postAddDirect = (idCtsp, soLuong, donGia, idHd, postAddDirect) => {
     idHd,
   });
 };
-const addProduct = (idCtsp, soLuong, donGia, idHd) => {
-  return custom.put(`/hoa-don-chi-tiet/update-cart/${idHd}`, {
+const updateCart = (idHdct, idCtsp, soLuong, donGia) => {
+  return custom.put(`/hoa-don-chi-tiet/update/${idHdct}`, {
     idCtsp,
     soLuong,
     donGia,
@@ -24,7 +24,7 @@ const deleteProductOnCart = (idHdct) => {
   return custom.delete(`/hoa-don-chi-tiet/delete/${idHdct}`);
 };
 export {
-  addProduct,
+  updateCart,
   getDataCart,
   postAddDirect,
   getDetailOne,
