@@ -4,19 +4,19 @@ import Form from "react-bootstrap/Form";
 
 
 import {useEffect, useState} from "react";
-import {fetchDiaChiByTK} from "../../services/diaChiSevice";
+import {deleteDiaChi, fetchDiaChiByTK} from "../../services/diaChiSevice";
 import Badge from "react-bootstrap/Badge";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import {useNavigate, useParams} from "react-router-dom";
 import {DataGrid} from "@mui/x-data-grid";
-import {Button} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
 import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from '@mui/icons-material/Delete';
-import ModalDeleteDiaChi from "./ModalDeleteDiaChi";
 import {getPhuong_Xa, getQuan_Huyen, getTinh_ThanhPho} from "../../services/apiDiaChi";
+import {toast} from "react-toastify";
 
 const TableDiaChiByTK = () => {
     const param = useParams();
@@ -27,7 +27,6 @@ const TableDiaChiByTK = () => {
     const [selectedStatus, setSelectedStatus] = useState("Tất cả");
     const [selectedLoaiDiaChi, setSelectedLoaiDiaChi] = useState("Tất cả");
     const [originalListData, setOriginalListData] = useState([]);
-    const [diaChi, setDiaChi] = useState("");
     const navigate = useNavigate();
 
     const [listTP, setListTP] = useState([]);
@@ -62,6 +61,7 @@ const TableDiaChiByTK = () => {
                 fetchQuanHuyenAndPhuongXa(item.tinhThanh, item.quanHuyen);
             });
         }
+        // eslint-disable-next-line
     }, [listData]);
 
     const fetchUpdatedData = (page) => {
@@ -136,7 +136,7 @@ const TableDiaChiByTK = () => {
                         variant="contained"
                         color="secondary"
                         startIcon={<DeleteIcon/>}
-                        onClick={() => deleteByID(row)}
+                        onClick={() => handleClickOpenDelete(row)}
                     >
                         Xóa
                     </Button>
@@ -146,9 +146,7 @@ const TableDiaChiByTK = () => {
         },];
     const getListTP = async () => {
         let resTP = await getTinh_ThanhPho();
-
         setListTP(resTP?.data.results);
-
     };
 
     const getNameByIdTP = (id) => {
@@ -220,26 +218,41 @@ const TableDiaChiByTK = () => {
         setListData(combinedFilteredData);
     }, [selectedStatus, selectedLoaiDiaChi, originalListData]);
 
-    //Click on the table
-
+    const handlClickRow = (item) => {
+        navigate(`/dia-chi/detail/${item.id}`);
+    };
     const handAdd = () => {
         navigate(`/dia-chi/add/${idTK}`);
     };
-    const deleteByID = (item) => {
-        setIsShowModalDelete(true);
-        setDiaChi(item);
-    };
-    const handlClickRow = (item) => {
-        // console.log("Check click: ", item);
-        navigate(`/dia-chi/detail/${item.id}`);
+
+    //Click on the table
+    const handleDelete = async (item) => {
+        let res = await deleteDiaChi(item.id);
+        console.log("Check res: ", res);
+        if (res) {
+            toast.success("Xóa thành công!");
+            handleClose();
+            fetchUpdatedData(0);
+        } else {
+            toast.error("Xóa thất bại!");
+            handleClose();
+        }
     };
 
+    // dong mo confirm
+    const [open, setOpen] = useState(false);
+    const [idDelete, setIdDelete] = useState("");
+
+    const handleClickOpenDelete = (id) => {
+        setOpen(true);
+        setIdDelete(id);
+    };
 
     const handleClose = () => {
-        setIsShowModalDelete(false);
+        setOpen(false);
     };
 
-    const [isShowModalDelete, setIsShowModalDelete] = useState(false);
+
     return (<>
         <div className="row row-order-management">
             <div className="row">
@@ -323,13 +336,27 @@ const TableDiaChiByTK = () => {
                     variant="outlined"
                 />
             </Stack>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Xác nhận xóa?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Bạn có chắc chắn muốn xóa địa chỉ này không?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Hủy</Button>
+                    <Button onClick={() => handleDelete(idDelete)} autoFocus>
+                        Xóa
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
-        <ModalDeleteDiaChi
-            show={isShowModalDelete}
-            handleClose={handleClose}
-            data={diaChi}
-            onSuccessfulDelete={fetchUpdatedData}
-        />
+
     </>);
 };
 

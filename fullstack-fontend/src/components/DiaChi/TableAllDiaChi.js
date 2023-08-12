@@ -48,6 +48,7 @@ const TableAllDiaChi = () => {
                 fetchQuanHuyenAndPhuongXa(item.tinhThanh, item.quanHuyen);
             });
         }
+        // eslint-disable-next-line
     }, [listData]);
     const getListTP = async () => {
         let resTP = await getTinh_ThanhPho();

@@ -43,7 +43,7 @@ public class DiaChiServiceImpl implements DiaChiSevice {
 
     @Override
     public void delete(Integer id) {
-        DiaChiRepository.deleteById(id);
+        DiaChiRepository.XoaMem(id);
     }
 
     @Override
