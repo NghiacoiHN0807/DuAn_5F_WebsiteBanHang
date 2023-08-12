@@ -1,16 +1,20 @@
-// import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { postAddSanPham } from "../../services/SanPhamService";
+import { putUpdateSanPham } from "../../services/SanPhamService";
 import { toast } from "react-toastify";
 import {
   Box,
   Button,
+  Card,
+  CardContent,
   Dialog,
   DialogActions,
   DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormControlLabel,
   FormLabel,
+  IconButton,
   MenuItem,
   Paper,
   Radio,
@@ -22,6 +26,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import { fetchXX, detailXX } from "../../services/XuatXuService";
 import { fetchCL, detailCL } from "../../services/ChatLieuService";
@@ -31,13 +36,21 @@ import { fetchMS, detailMS } from "../../services/MauSacService";
 import { detailSize, fetchSize } from "../../services/SizeService";
 import { fetchTayAo, detailTayAo } from "../../services/OngTayAoService";
 import { detailSP } from "../../services/SanPhamService";
-import { findSizeById, postAddCTSP } from "../../services/ChiTietSPService";
+import { postAddAnh } from "../../services/AnhService";
+import {
+  findSizeById,
+  postAddCTSP,
+  deleteCTSP,
+} from "../../services/ChiTietSPService";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCallback } from "react";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
-import { Badge } from "react-bootstrap";
-
+import { Badge, Form } from "react-bootstrap";
+import axios from "axios";
+import { pink } from "@mui/material/colors";
+import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
+import { Image } from "cloudinary-react";
 const QuantityInput = ({ value, onChange }) => {
   const handleDecrease = () => {
     if (value > 1) {
@@ -75,6 +88,7 @@ const QuantityInput = ({ value, onChange }) => {
 };
 
 const ModelUpdate = (props) => {
+  // const [idCtsp, setIdCtsp] = useState("");
   const [maSp, setMaSp] = useState("");
   const [tenSp, setTenSp] = useState("");
   const [moTa, setMoTa] = useState("");
@@ -175,7 +189,7 @@ const ModelUpdate = (props) => {
   // chuyen trang
   const navigate = useNavigate();
 
-  const handleSave = async () => {
+  const handleUpdate = async () => {
     // get object all\
     const getObjChatLieu = await detailCL(chatLieu);
     const getObjMauSac = await detailMS(mauSac);
@@ -199,7 +213,8 @@ const ModelUpdate = (props) => {
     ) {
       toast.warning("Some field is empty!");
     } else {
-      let res = await postAddSanPham(
+      let res = await putUpdateSanPham(
+        idSpHttp,
         maSp,
         tenSp,
         getObjChatLieu,
@@ -216,7 +231,7 @@ const ModelUpdate = (props) => {
       console.log("Check res: ", res);
       if (res && res.idSp) {
         toast.success("Cập nhật thành công!");
-        navigate("/quan-ly-san-pham/san-pham/sua-san-pham/" + res.idSp);
+        navigate("/quan-ly-san-pham/san-pham");
       } else {
         toast.error("Cập nhật thất bại!");
       }
@@ -224,28 +239,42 @@ const ModelUpdate = (props) => {
   };
 
   // show form add size
-  const [open, setOpen] = useState(false);
+  const [openAddSize, setOpenAddSize] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickAddSize = () => {
+    setOpenAddSize(true);
+  };
+
+  const handleClickUpdate = () => {
+    setOpenUpdate(true);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setOpenAddSize(false);
+    setOpenUpdate(false);
   };
 
   const hanldeAgree = async () => {
     let getObjSp = await detailSP(idSpHttp);
     let getObjSize = await detailSize(radioValue);
 
-    let res = await postAddCTSP(getObjSp, getObjSize, quantity, 0);
+    let res = await postAddCTSP(getObjSp, getObjSize, quantity, 0, quantity);
     console.log("Check res: ", res);
     if (res && res.idCtsp) {
       toast.success("Thêm thành công!");
     } else {
       toast.error("Thêm thất bại!");
     }
-    setOpen(false);
+    setOpenAddSize(false);
+    getSizeData();
+    setQuantity(1);
+    setRadioValue("");
+  };
+
+  const hanldeDelete = async (idCtsp) => {
+    let res = await deleteCTSP(idCtsp);
+    console.log("Check res: ", res);
     getSizeData();
   };
   // size
@@ -253,6 +282,51 @@ const ModelUpdate = (props) => {
     setQuantity(newQuantity);
   };
   const [quantity, setQuantity] = useState(1);
+
+  // image
+  const [selectedImage, setSelectImage] = useState([]);
+  const [imageData, setImageData] = useState(null);
+
+  const uploadImage = () => {
+    const formData = new FormData();
+    formData.append("file", selectedImage);
+    formData.append("upload_preset", "tq5orakd");
+
+    const postImage = async () => {
+      try {
+        const response = await axios.post(
+          "https://api.cloudinary.com/v1_1/dqptpylda/image/upload",
+          formData
+          // Replace YOUR_CLOUD_NAME with your cloudName which you can find in your Dashboard
+        );
+        const getObjSp = await detailSP(idSpHttp);
+        setImageData(response.data);
+        const addAnh = await postAddAnh(getObjSp, response.data.secure_url, 0);
+        console.log(addAnh);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    postImage();
+  };
+
+  const handleSave = async () => {
+    // get object all\
+    const getObjSp = await detailSP(idSpHttp);
+
+    let res = await postAddAnh(
+      getObjSp,
+
+      0
+    );
+
+    console.log("Check res: ", res);
+    if (res && res.idImage) {
+      toast.success("Thêm ảnh thành công!");
+    } else {
+      toast.error("Thêm ảnh thất bại!");
+    }
+  };
 
   return (
     <>
@@ -419,13 +493,15 @@ const ModelUpdate = (props) => {
                 value="0"
                 control={<Radio />}
                 label="Kinh doanh"
-                checked={trangThai === 0 ? true : ""}
+                checked={Number(trangThai) === 0 ? "true" : ""}
+                onChange={(event) => setTrangThai(event.target.value)}
               />
               <FormControlLabel
                 value="10"
                 control={<Radio />}
                 label="Ngừng kinh doanh"
-                checked={trangThai === 10 ? true : ""}
+                checked={Number(trangThai) === 10 ? "true" : ""}
+                onChange={(event) => setTrangThai(event.target.value)}
               />
             </RadioGroup>
           </FormControl>
@@ -434,7 +510,7 @@ const ModelUpdate = (props) => {
           <Button
             variant="contained"
             color="success"
-            onClick={() => handleSave()}
+            onClick={() => handleClickUpdate()}
           >
             Cập nhật
           </Button>
@@ -486,7 +562,11 @@ const ModelUpdate = (props) => {
                         )}
                       </TableCell>
                       <TableCell>
-                        <Button variant="contained" color="warning">
+                        <Button
+                          variant="contained"
+                          color="warning"
+                          onClick={() => hanldeDelete(item.idCtsp)}
+                        >
                           Đổi trạng thái
                         </Button>
                       </TableCell>
@@ -497,12 +577,12 @@ const ModelUpdate = (props) => {
           </TableContainer>
         </div>
         <div style={{ textAlign: "center", margin: "20px 0" }}>
-          <Button variant="outlined" onClick={handleClickOpen}>
+          <Button variant="outlined" onClick={handleClickAddSize}>
             Thêm kích thước
           </Button>
 
           <Dialog
-            open={open}
+            open={openAddSize}
             onClose={handleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
@@ -513,8 +593,8 @@ const ModelUpdate = (props) => {
               <div>
                 {" "}
                 <p>Chọn size: </p>
-                <ButtonGroup>
-                  {listSize.map((radio, idx) => (
+                {listSize.map((radio, idx) => (
+                  <span style={{ marginLeft: "15px" }}>
                     <ToggleButton
                       key={idx}
                       id={`radio-${idx}`}
@@ -522,13 +602,13 @@ const ModelUpdate = (props) => {
                       variant={"outline-success"}
                       name="radio"
                       value={radio.idSize}
-                      checked={radioValue === radio.idSize} // Sửa thành radioValue === radio.idSize
+                      checked={Number(radioValue) === radio.idSize} // Sửa thành radioValue === radio.idSize
                       onChange={(e) => setRadioValue(e.currentTarget.value)}
                     >
                       {radio.tenSize}
                     </ToggleButton>
-                  ))}
-                </ButtonGroup>
+                  </span>
+                ))}
               </div>
               <div style={{ marginTop: "15px" }}>
                 <p>Số lượng: </p>
@@ -539,12 +619,76 @@ const ModelUpdate = (props) => {
               </div>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose}>Disagree</Button>
+              <Button onClick={handleClose}>Canel</Button>
               <Button onClick={() => hanldeAgree()} autoFocus>
-                Agree
+                Ok
               </Button>
             </DialogActions>
           </Dialog>
+          <Dialog
+            open={openUpdate}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Xác nhận cập nhật?"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Bạn có chắc chắn muốn cập nhật sản phẩm này không?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Canel</Button>
+              <Button onClick={() => handleUpdate()} autoFocus>
+                Ok
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+      </div>
+      <div className="row row-order-management">
+        <div
+          className="title"
+          style={{ textAlign: "center", margin: "20px 0" }}
+        >
+          <h4>THÊM ẢNH</h4>
+        </div>
+        <div>
+          <Form.Group className="position-relative mb-3">
+            <Form.Label>File</Form.Label>
+            <Form.Control
+              type="file"
+              required
+              name="file"
+              onChange={(event) => setSelectImage(event.target.files[0])}
+            />
+            <Button onClick={uploadImage} variant="contained">
+              Upload ảnh
+            </Button>
+          </Form.Group>
+        </div>
+        <div className="image-container">
+          <Card sx={{ width: 300 }}>
+            <CardContent>
+              <Typography gutterBottom>
+                {imageData && (
+                  <Image
+                    cloudName="dqptpylda"
+                    publicId={`https://res.cloudinary.com/dqptpylda/image/upload/v1691739931/${imageData.public_id}`}
+                    width={265}
+                    height={265}
+                  />
+                )}
+                <Box>
+                  <IconButton aria-label="delete" size="large">
+                    <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
+                  </IconButton>
+                </Box>
+              </Typography>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </>

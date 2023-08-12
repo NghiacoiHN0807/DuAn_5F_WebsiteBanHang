@@ -19,15 +19,20 @@ public interface ChitietsanphamService {
 
     List<ChiTietSanPham> findByIdSp(Integer id);
 
+<<<<<<< HEAD
     List<ChiTietSanPham> findByProductId(Integer id);
 
     ChiTietSanPham add(ChiTietSanPham add);
+=======
+    ChiTietSanPham addAndUpdateSize(ChiTietSanPham ctsp, Integer soLuong);
+>>>>>>> origin/vinhlt
 
-    void delete(Integer id);
+    ChiTietSanPham delete(Integer id);
 
     ChiTietSanPham update(ChiTietSanPham update);
 
     Optional<ChiTietSanPham> detail(Integer id);
 
     Boolean checkExists(Integer id);
+
 }
