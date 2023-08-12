@@ -43,12 +43,12 @@ public class TaiKhoanKhachHangController {
     }
 
     @DeleteMapping("delete/{id}")
-    public String delete(@PathVariable("id") Integer id) {
+    public Boolean delete(@PathVariable("id") Integer id) {
         if (!TaiKhoanKhachHangKHSevice.checkExists(id)) {
             throw new TaiKhoanKHNotFoundException(id);
         } else {
             TaiKhoanKhachHangKHSevice.delete(id);
-            return "";
+            return true;
         }
     }
 

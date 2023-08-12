@@ -1,22 +1,37 @@
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Nav from "react-bootstrap/Nav";
-
 import Form from "react-bootstrap/Form";
-
-
-import {useEffect, useState} from "react";
-import {deleteDiaChi, fetchDiaChiByTK} from "../../services/diaChiSevice";
 import Badge from "react-bootstrap/Badge";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import {useNavigate, useParams} from "react-router-dom";
-import {DataGrid} from "@mui/x-data-grid";
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
-import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
-import SearchIcon from '@mui/icons-material/Search';
+import {
+    DataGrid,
+    GridToolbarContainer,
+    GridToolbarExport,
+} from "@mui/x-data-grid";
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+} from "@mui/material";
+import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
+import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from '@mui/icons-material/Delete';
-import {getPhuong_Xa, getQuan_Huyen, getTinh_ThanhPho} from "../../services/apiDiaChi";
-import {toast} from "react-toastify";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { toast } from "react-toastify";
+import {
+    fetchDiaChiByTK,
+    deleteDiaChi,
+} from "../../services/diaChiSevice";
+import {
+    getPhuong_Xa,
+    getQuan_Huyen,
+    getTinh_ThanhPho,
+} from "../../services/apiDiaChi";
 
 const TableDiaChiByTK = () => {
     const param = useParams();
@@ -35,33 +50,24 @@ const TableDiaChiByTK = () => {
 
     const getListData = async (idTK, page) => {
         try {
-            let res = await fetchDiaChiByTK(idTK, page);
-            console.log("Check res: ", res);
+            const res = await fetchDiaChiByTK(idTK, page);
             setListData(res.content);
             setNumberPages(Math.ceil(res.totalPages));
-            // Lưu trữ danh sách dữ liệu gốc
             setOriginalListData(res.content);
-
-            // Đồng thời cập nhật danh sách dữ liệu hiện tại
-            setListData(res.content);
-            setNumberPages(Math.ceil(res.totalPages));
         } catch (error) {
             console.error(error);
         }
     };
+
     useEffect(() => {
         getListData(idTK, 0);
         getListTP();
-
     }, [idTK]);
 
     useEffect(() => {
-        if (listData.length > 0) {
-            listData.forEach((item) => {
-                fetchQuanHuyenAndPhuongXa(item.tinhThanh, item.quanHuyen);
-            });
-        }
-        // eslint-disable-next-line
+        listData.forEach((item) => {
+            fetchQuanHuyenAndPhuongXa(item.tinhThanh, item.quanHuyen);
+        });
     }, [listData]);
 
     const fetchUpdatedData = (page) => {
@@ -256,6 +262,9 @@ const TableDiaChiByTK = () => {
     return (<>
         <div className="row row-order-management">
             <div className="row">
+                <div className="col-8">
+                   <h4>Tài Khoản: {idTK}</h4>
+                </div>
                 <div className="col-4">
                     <Nav>
                         <Form className="d-flex search-form">
@@ -311,31 +320,26 @@ const TableDiaChiByTK = () => {
                 </div>
             </div>
 
-            <div style={{height: 500, width: "100%"}}>
+            <div style={{ height: 500, width: "100%" }}>
                 <DataGrid
                     rows={rows}
                     columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: {page: 0, pageSize: 10},
-                        },
+                    pageSize={10}
+                    components={{
+                        Toolbar: GridToolbarContainer,
+                        Export: GridToolbarExport,
                     }}
-                    pageSizeOptions={[5, 10, 15]}
-                    // onRowClick={(params) => handlClickRow(params.row)}
+
                 />
             </div>
-            <Stack
-                direction="row"
-                spacing={2}
-                justifyContent="center"
-                alignItems="center"
-            >
+            <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
                 <Pagination
-                    onChange={(event, page) => handlePageClick(page - 1)} // Subtract 1 from page value
+                    onChange={(event, page) => handlePageClick(page - 1)}
                     count={numberPages}
                     variant="outlined"
                 />
             </Stack>
+
             <Dialog
                 open={open}
                 onClose={handleClose}

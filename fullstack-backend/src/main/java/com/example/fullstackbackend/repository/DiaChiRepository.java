@@ -11,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface DiaChiRepository extends JpaRepository<DiaChi, Integer> {
-    @Query("select d from DiaChi d where d.taiKhoan.maTaiKhoan = ?1 and d.trangThai = 0 or d.trangThai=1 or d.trangThai = 4")
+    @Query("select d from DiaChi d where d.taiKhoan.maTaiKhoan = ?1 and d.trangThai between 0 and 4")
     Page<DiaChi> findByMaTaiKhoan_MaTaiKhoan(String maTaiKhoan, Pageable pageable);
 
-    @Query("select count(d) from DiaChi d where d.taiKhoan.maTaiKhoan = ?1 and d.trangThai = 0 or d.trangThai=1 or d.trangThai = 4")
+    @Query("select count(d) from DiaChi d where d.taiKhoan.maTaiKhoan = ?1 and d.trangThai between 0 and 4")
     long CountTaiKhoan(String maTaiKhoan);
 
     @Transactional

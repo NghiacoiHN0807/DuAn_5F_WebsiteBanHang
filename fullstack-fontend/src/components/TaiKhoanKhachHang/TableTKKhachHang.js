@@ -4,19 +4,22 @@ import Form from "react-bootstrap/Form";
 
 
 
-import {useState} from "react";
+import React, {useState} from "react";
 import {useEffect} from "react";
-import {fetchAllTKKH} from "../../services/taiKhoanKhachHangSevice";
+import {deleteTaiKhoanKH, fetchAllTKKH} from "../../services/taiKhoanKhachHangSevice";
 import Badge from "react-bootstrap/Badge";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import {useNavigate} from "react-router-dom";
 import {DataGrid} from "@mui/x-data-grid";
-import {Button} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import SearchIcon from "@mui/icons-material/Search";
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
+
+import {toast} from "react-toastify";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const TableTKKhachHang = () => {
     const [listData, setListData] = useState([]);
@@ -44,7 +47,6 @@ const TableTKKhachHang = () => {
     useEffect(() => {
         getListData(0);
     }, []);
-
 
 
 
@@ -89,7 +91,7 @@ const TableTKKhachHang = () => {
         {
             field: "actions",
             headerName: "Actions",
-            width: 250,
+            width: 300,
             renderCell: (params) => {
                 const {row} = params;
                 return (
@@ -112,7 +114,15 @@ const TableTKKhachHang = () => {
                         >
                             Địa Chỉ
                         </Button>
-
+                        <Button
+                            size={"small"}
+                            variant="contained"
+                            color="secondary"
+                            startIcon={<DeleteIcon/>}
+                            onClick={() => handleClickOpenDelete(row)}
+                        >
+                            Xóa
+                        </Button>
                     </div>
                 );
             },
@@ -165,6 +175,34 @@ const TableTKKhachHang = () => {
         // console.log("Check click: ", item);
         navigate(`/tai-khoan-KH/detail/${item.idTaiKhoan}`);
     };
+
+
+    const handleDelete = async (item) => {
+        let res = await deleteTaiKhoanKH(item.id);
+        console.log("Check res: ", res);
+        if (res) {
+            toast.success("Xóa thành công!");
+            handleClose();
+            handlePageClick(0);
+        } else {
+            toast.error("Xóa thất bại!");
+            handleClose();
+        }
+    };
+
+    const [open, setOpen] = useState(false);
+    const [idDelete, setIdDelete] = useState("");
+
+    const handleClickOpenDelete = (id) => {
+        setOpen(true);
+        setIdDelete(id);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+
 
     return (
         <>
@@ -236,6 +274,25 @@ const TableTKKhachHang = () => {
                         variant="outlined"
                     />
                 </Stack>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"Xác nhận xóa?"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Bạn có chắc chắn muốn xóa Tài Khoản này không?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Hủy</Button>
+                        <Button onClick={() => handleDelete(idDelete)} autoFocus>
+                            Xóa
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         </>
     );

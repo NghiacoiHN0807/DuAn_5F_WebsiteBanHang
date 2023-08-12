@@ -137,6 +137,10 @@ const TableAllDiaChi = () => {
                         badgeVariant = "info";
                         statusText = "Đã Ngưng hoạt động";
                         break;
+                    case 10:
+                        badgeVariant = "danger";
+                        statusText = "Đã Bị Xóa";
+                        break;
                     default:
                         badgeVariant = "light";
                         statusText = "Chưa Xác Nhận";
@@ -245,6 +249,7 @@ const TableAllDiaChi = () => {
                             <option value="0">Chưa Xác Nhận</option>
                             <option value="1">Đã Xác Nhận</option>
                             <option value="4">Đã Ngưng Hoạt động</option>
+                            <option value="10">Đã Bị Xóa</option>
                         </select>
                     </div>
                     <div className="col-5">
