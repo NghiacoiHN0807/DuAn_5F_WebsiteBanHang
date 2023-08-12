@@ -395,7 +395,7 @@ const ModelUpdateNewGiamGia = (props) => {
                           />
                         </TableCell>
                         <TableCell>STT</TableCell>
-                        <TableCell>Ảnh</TableCell>
+                        {/* <TableCell>Ảnh</TableCell> */}
                         <TableCell>Mã</TableCell>
                         <TableCell>Tên sản phẩm</TableCell>
                         <TableCell>Trạng thái</TableCell>
@@ -413,7 +413,7 @@ const ModelUpdateNewGiamGia = (props) => {
                             />
                           </TableCell>
                           <TableCell>{index + 1}</TableCell>
-                          <TableCell>
+                          {/* <TableCell>
                             <Col xs={6} md={4}>
                               <Image
                                 rounded
@@ -422,7 +422,7 @@ const ModelUpdateNewGiamGia = (props) => {
                                 alt={`Ảnh sản phẩm ${value.maSp}`}
                               />
                             </Col>
-                          </TableCell>
+                          </TableCell> */}
                           <TableCell>{value.maSp}</TableCell>
                           <TableCell>{value.tenSp}</TableCell>
                           <TableCell>{value.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
