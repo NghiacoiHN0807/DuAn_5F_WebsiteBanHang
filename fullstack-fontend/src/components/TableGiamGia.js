@@ -21,6 +21,10 @@ const TableGiamGia = (props) => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const navigate = useNavigate();
 
+  const handleUpdate = (id) => {
+    navigate(`/update/giam-gia/${id.idGgct}`);
+  };
+
   //Set value for Model Add New is defalut
   const handleClose = () => {
     setIsShowModalDelete(false);
@@ -95,7 +99,7 @@ const TableGiamGia = (props) => {
       )
     )
     .map((item, index) => ({
-      idHd: item.idGiamGia,
+      idHd: item,
       id: index + 1,
       index: index + 1,
       tenChuongTrinh: item.idGiamGia.tenChuongTrinh,
@@ -170,7 +174,7 @@ const TableGiamGia = (props) => {
             <IconButton
               aria-label="edit"
               size="large"
-            // onClick={() => handleEdit(params.row.idHd)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
+            onClick={() => handleUpdate(params.row.idHd)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
             >
               <EditOutlinedIcon color="primary" />
             </IconButton>
@@ -280,10 +284,10 @@ const TableGiamGia = (props) => {
       <ModelConfirm
         show={isShowModalDelete}
         handleClose={handleClose}
-        isDataGiamGia={listGiamGia[0]}
+        isDataGiamGia={isDataGiamGia}
         getGiamGia={getGiamGia}
       />
-
+      {/* <ModelAddNewGiamGia dataSanPham={listGiamGia} /> */}
     </>
   );
 };

@@ -2,11 +2,11 @@ import * as React from 'react';
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
-import { add, addGiamGia, getAllSanPham, getCtspByIdSp } from "../services/giamGiaService";
+import { add, addGiamGia, getAllSanPham, getCtspByIdSp, getImgByIdSp } from "../services/giamGiaService";
 import "../scss/GiamGiaAdd.scss";
-import { useNavigate } from "react-router-dom";
-import { Button, Checkbox, Chip, Grid, Paper, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
-import { Table } from 'react-bootstrap';
+import { useNavigate, useParams } from "react-router-dom";
+import { Button, Checkbox, Chip, Grid, Paper, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
+import { Col, Image, Table } from 'react-bootstrap';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -21,6 +21,14 @@ function union(a, b) {
 }
 
 const ModelAddNewGiamGia = (props) => {
+
+  const { listGiamGia } = props;
+
+  console.log(listGiamGia);
+
+  const { id } = useParams();
+
+  // const { show, handleClose, isDataGiamGia, getGiamGia } = props;
   // console.log(dataSanPham)
   let navigate = useNavigate();
   const [checked, setChecked] = React.useState([]);
@@ -31,11 +39,32 @@ const ModelAddNewGiamGia = (props) => {
   const [rightPage, setRightPage] = React.useState(0);
   const [rightRowsPerPage, setRightRowsPerPage] = React.useState(5);
   const [chiTietList, setchiTietList] = React.useState([]);
+  const [image, setImage] = useState([]);
 
   const getAllSp = async () => {
-    let res = await getAllSanPham();
-    setLeft(res);
+    try {
+      let res = await getAllSanPham();
+      setLeft(res);
+  
+      // Tạo một danh sách tạm thời để lưu hình ảnh
+      const tempImages = [];
+  
+      // Tải hình ảnh cho từng sản phẩm và lưu vào danh sách tạm thời
+      for (let index = 0; index < res.length; index++) {
+        let resImg = await getImgByIdSp(res[index].idSp);
+        if (resImg && resImg.length > 0) {
+          tempImages.push(resImg[0].images);
+        }
+      }
+  
+      // Cập nhật danh sách hình ảnh sau khi đã tải xong
+      setImage(tempImages);
+    } catch (error) {
+      console.error('Error loading images:', error);
+    }
   }
+
+  console.log("Img: ", image)
 
   React.useEffect(() => {
     getAllSp();
@@ -157,7 +186,7 @@ const ModelAddNewGiamGia = (props) => {
     trangThai: 0,
   });
 
-  
+
 
   const { maGiamGia, tenChuongTrinh, ngayBatDau, ngayKetThuc, mucGiamPhanTram, mucGiamTienMat } = giamGia;
 
@@ -178,7 +207,7 @@ const ModelAddNewGiamGia = (props) => {
       giamGia.ngayKetThuc.trim().length < 1 ||
       chiTietList.length === 0 // Kiểm tra danh sách sản phẩm
     ) {
-      toast.warning('Data is null!');
+      toast.warning('Dữ liệu trống!');
     } else {
       try {
         // Gọi hàm thêm giảm giá với danh sách sản phẩm
@@ -189,7 +218,7 @@ const ModelAddNewGiamGia = (props) => {
           const chiTietSanPham = await getCtspByIdSp(chiTietList[index].idSp);
           for (let i = 0; i < chiTietSanPham.length; i++) {
             let soTienConLai = 0;
-          
+
             if (giamGia.mucGiamPhanTram !== null) {
               // Nếu mucGiamPhanTram không null, tính số tiền còn lại dựa trên phần trăm giảm
               const mucGiam = giamGia.mucGiamPhanTram / 100;
@@ -199,10 +228,10 @@ const ModelAddNewGiamGia = (props) => {
               soTienConLai = chiTietList[index].giaBan - giamGia.mucGiamTienMat;
             }
             const giamGiaChiTietOk = {
-              idCtsp: chiTietSanPham[i], 
-              idGiamGia: response.data, 
-              donGia: chiTietList[index].giaBan, 
-              soTienConLai: soTienConLai, 
+              idCtsp: chiTietSanPham[i],
+              idGiamGia: response.data,
+              donGia: chiTietList[index].giaBan,
+              soTienConLai: soTienConLai,
               trangThai: 0
             }
             await add(giamGiaChiTietOk);
@@ -226,12 +255,14 @@ const ModelAddNewGiamGia = (props) => {
       }
     }
   };
-
+  // if (!giamGiaData) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <>
       <Modal.Header>
-        <Modal.Title className='text-center m-25 w-100'>ADD NEW GIAM GIA</Modal.Title>
+        <Modal.Title className='text-center m-25 w-100 text-uppercase'>Tạo chương trình giảm giá</Modal.Title>
       </Modal.Header>
       <div className="d-flex justify-content-around">
         <div className="content-left">
@@ -239,13 +270,33 @@ const ModelAddNewGiamGia = (props) => {
             <div className="body-add-new">
               <form>
                 <div className="mb-3">
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Mã chương trình</label>
-                  <input type={'text'} name='maGiamGia' className="form-control" value={maGiamGia} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" placeholder="Mã chương trình" />
+                  <TextField
+                    multiline
+                    maxRows={4}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                    name='maGiamGia'
+                    label="Mã chương trình"
+                    value={maGiamGia}
+                    onChange={(e) => onInputChange(e)}
+                  />
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Tên chương trình</label>
-                  <input type={'text'} name='tenChuongTrinh' className="form-control" value={tenChuongTrinh} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" placeholder="Tên chương trình" />
+                  <TextField
+                    multiline
+                    maxRows={4}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                    label="Tên chương trình"
+                    name='tenChuongTrinh'
+                    value={tenChuongTrinh}
+                    onChange={(e) => onInputChange(e)}
+                  />
                 </div>
 
                 <div className="mb-3">
@@ -267,13 +318,33 @@ const ModelAddNewGiamGia = (props) => {
                 </div>
 
                 <div className="mb-3" aria-hidden={selected !== "phanTram"}>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Mức giảm %</label>
-                  <input type="number" min={0} max={100} name='mucGiamPhanTram' value={mucGiamPhanTram} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Mức giảm %" />
+                  <TextField
+                    multiline
+                    maxRows={4}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                    label="Mức giảm %"
+                    name='mucGiamPhanTram'
+                    value={mucGiamPhanTram}
+                    onChange={(e) => onInputChange(e)}
+                  />
                 </div>
 
                 <div className="mb-3" aria-hidden={selected !== "mucGiam"}>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Mức giảm tiền mặt</label>
-                  <input type="number" name='mucGiamTienMat' value={mucGiamTienMat} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Mức giảm tiền mặt" />
+                  <TextField
+                    multiline
+                    maxRows={4}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                    label="Mức giảm tiền mặt"
+                    name='mucGiamTienMat'
+                    value={mucGiamTienMat}
+                    onChange={(e) => onInputChange(e)}
+                  />
                 </div>
 
                 <div className="mb-3">
@@ -312,22 +383,34 @@ const ModelAddNewGiamGia = (props) => {
                           />
                         </TableCell>
                         <TableCell>STT</TableCell>
+                        <TableCell>Ảnh</TableCell>
                         <TableCell>Mã</TableCell>
                         <TableCell>Tên sản phẩm</TableCell>
                         <TableCell>Trạng thái</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {left.slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage).map((value, index) => (
-                        <TableRow key={`left_${value.idSp}`}>
+                      {left.slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage).map((value, index) => 
+                        (
+                        <TableRow key={`left_${value.idSp}`} onClick={handleToggle(value, true)}>
                           <TableCell padding="checkbox">
                             <Checkbox
                               value={value.idSp}
                               checked={checked.indexOf(value) !== -1}
-                              onClick={handleToggle(value, true)}
+                              
                             />
                           </TableCell>
                           <TableCell>{index + 1}</TableCell>
+                          <TableCell>
+                            <Col xs={6} md={4}>
+                            <Image
+                              rounded
+                              style={{ width: "150px", height: "auto" }}
+                              src={image[index]}
+                              alt={`Ảnh sản phẩm ${value.maSp}`}
+                            />
+                          </Col>
+                            </TableCell>
                           <TableCell>{value.maSp}</TableCell>
                           <TableCell>{value.tenSp}</TableCell>
                           <TableCell>{value.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
@@ -376,15 +459,6 @@ const ModelAddNewGiamGia = (props) => {
                     <TableHead>
                       <TableRow>
                         <TableCell padding="checkbox">
-                          {/* <Checkbox
-                                            onClick={handleToggleAll(right)}
-                                            checked={numberOfChecked(right) === right.length && right.length !== 0}
-                                            indeterminate={numberOfChecked(right) !== right.length && numberOfChecked(right) !== 0}
-                                            disabled={right.length === 0}
-                                            inputProps={{
-                                                'aria-label': 'all items selected',
-                                            }}
-                                        /> */}
                         </TableCell>
                         <TableCell>STT</TableCell>
                         <TableCell>Ảnh sản phẩm</TableCell>
@@ -406,7 +480,16 @@ const ModelAddNewGiamGia = (props) => {
                             />
                           </TableCell>
                           <TableCell>{index + 1}</TableCell>
-                          <TableCell>{`Ảnh sản phẩm ${value.maSp}`}</TableCell>
+                          <TableCell>
+                            <Col xs={6} md={4}>
+                            <Image
+                              rounded
+                              style={{ width: "150px", height: "auto" }}
+                              src={image[index]}
+                              alt={`Ảnh sản phẩm ${value.maSp}`}
+                            />
+                          </Col>
+                            </TableCell>
                           <TableCell>{value.maSp}</TableCell>
                           <TableCell>{value.tenSp}</TableCell>
                           <TableCell>{formatCurrency(value.giaBan)}</TableCell>

@@ -36,6 +36,11 @@ public class ImagesController {
         return img;
     }
 
+    @GetMapping("select-byidSP")
+    List<Images> findByIdCtsp_IdSp(@RequestParam("id") Integer idSp) {
+        return imagesSevice.findByIdCtsp_IdSp(idSp);
+    }
+
 
     @PostMapping("add")
     public Images add(@Valid @RequestBody Images newImg,

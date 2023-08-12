@@ -9,7 +9,7 @@ const ModelConfirm = (props) => {
   const { show, handleClose, isDataGiamGia, getGiamGia } = props;
 
   const confirmDelte = async () => {
-    console.log(isDataGiamGia.idGgct);
+    console.log(isDataGiamGia);
     let res = await remove(isDataGiamGia.idGgct);
     if (res.status === "Ok!") {
       toast.success("This data has been deleted");

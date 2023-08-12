@@ -60,4 +60,17 @@ const update = (giamGiaChiTiet, id) => {
     return custom.put(`/giam-gia-chi-tiet/api/update/${id}`, giamGiaChiTiet);
 }
 
-export {getAll, detail, remove, add, update, addGiamGia, addLichSuGiamGia, getAllByTrangThai, search, filerDate, getAllSanPham, detailGiamGia, detailChiTietSanPham, getCtspByIdSp};
+const updateGiamGia = (giamGia, id) => {
+    return custom.put(`/giam-gia/api/update/${id}`, giamGia);
+}
+
+const getImgByIdSp = (idSp) => {
+    return custom.get(`/images/select-byidSP?id=${idSp}`);
+}
+
+
+const getIdGiamGia = (id) => {
+    return custom.get(`/giam-gia-chi-tiet/api/getidGiamGiaByIdggct/${id}`);
+}
+
+export {getIdGiamGia, updateGiamGia, getImgByIdSp, getAll, detail, remove, add, update, addGiamGia, addLichSuGiamGia, getAllByTrangThai, search, filerDate, getAllSanPham, detailGiamGia, detailChiTietSanPham, getCtspByIdSp};
