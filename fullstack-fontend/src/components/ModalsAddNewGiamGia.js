@@ -45,10 +45,10 @@ const ModelAddNewGiamGia = (props) => {
     try {
       let res = await getAllSanPham();
       setLeft(res);
-  
+
       // Tạo một danh sách tạm thời để lưu hình ảnh
       const tempImages = [];
-  
+
       // Tải hình ảnh cho từng sản phẩm và lưu vào danh sách tạm thời
       for (let index = 0; index < res.length; index++) {
         let resImg = await getImgByIdSp(res[index].idSp);
@@ -56,7 +56,7 @@ const ModelAddNewGiamGia = (props) => {
           tempImages.push(resImg[0].images);
         }
       }
-  
+
       // Cập nhật danh sách hình ảnh sau khi đã tải xong
       setImage(tempImages);
     } catch (error) {
@@ -201,59 +201,70 @@ const ModelAddNewGiamGia = (props) => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (
-      giamGia.tenChuongTrinh.trim().length < 1 ||
-      giamGia.ngayBatDau.trim().length < 1 ||
-      giamGia.ngayKetThuc.trim().length < 1 ||
-      chiTietList.length === 0 // Kiểm tra danh sách sản phẩm
-    ) {
-      toast.warning('Dữ liệu trống!');
-    } else {
-      try {
-        // Gọi hàm thêm giảm giá với danh sách sản phẩm
-        const response = await addGiamGia(giamGia);
-
-        // console.log(chiTietList.length);
-        for (let index = 0; index < chiTietList.length; index++) {
-          const chiTietSanPham = await getCtspByIdSp(chiTietList[index].idSp);
-          for (let i = 0; i < chiTietSanPham.length; i++) {
-            let soTienConLai = 0;
-
-            if (giamGia.mucGiamPhanTram !== null) {
-              // Nếu mucGiamPhanTram không null, tính số tiền còn lại dựa trên phần trăm giảm
-              const mucGiam = giamGia.mucGiamPhanTram / 100;
-              soTienConLai = chiTietList[index].giaBan * (1 - mucGiam);
-            } else {
-              // Nếu mucGiamPhanTram là null, số tiền còn lại bằng giá tiền mặt giảm
-              soTienConLai = chiTietList[index].giaBan - giamGia.mucGiamTienMat;
-            }
-            const giamGiaChiTietOk = {
-              idCtsp: chiTietSanPham[i],
-              idGiamGia: response.data,
-              donGia: chiTietList[index].giaBan,
-              soTienConLai: soTienConLai,
-              trangThai: 0
-            }
-            await add(giamGiaChiTietOk);
-          }
-        }
-
-        console.log(response);
-        if (response.status === 'Ok!') {
-          navigate('/quan-ly-giam-gia');
-          toast.success('Thêm thành công!');
-        } else {
-          toast.error('Thêm không thành công!');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        if (error.response) {
-          console.error('Response data:', error.response.data);
-          console.error('Response status:', error.response.status);
-        }
-        toast.error('Đã xảy ra lỗi khi thêm giảm giá.');
-      }
+    if (!maGiamGia.trim() || !tenChuongTrinh.trim() || !ngayBatDau || !ngayKetThuc) {
+      toast.warning('Vui lòng nhập đầy đủ thông tin chương trình giảm giá.');
+      return;
     }
+
+    if (!selected) {
+      toast.warning('Vui lòng chọn loại giảm giá.');
+      return;
+    }
+
+    if (selected === 'phanTram' && (!mucGiamPhanTram || isNaN(mucGiamPhanTram) || mucGiamPhanTram < 1 || mucGiamPhanTram > 50)) {
+      toast.warning('Vui lòng nhập mức giảm phần trăm hợp lệ (1-50).');
+      return;
+    }
+
+    if (selected === 'mucGiam' && (!mucGiamTienMat || isNaN(mucGiamTienMat))) {
+      toast.warning('Vui lòng nhập mức giảm tiền mặt hợp lệ.');
+      return;
+    }
+
+    if (chiTietList.length === 0) {
+      toast.warning('Vui lòng chọn ít nhất một sản phẩm để áp dụng giảm giá.');
+      return;
+    }
+
+    try {
+      // Gọi hàm thêm giảm giá với danh sách sản phẩm
+      const response = await addGiamGia(giamGia);
+
+      // console.log(chiTietList.length);
+      for (let index = 0; index < chiTietList.length; index++) {
+        const chiTietSanPham = await getCtspByIdSp(chiTietList[index].idSp);
+        for (let i = 0; i < chiTietSanPham.length; i++) {
+          let soTienConLai = 0;
+
+          if (giamGia.mucGiamPhanTram !== null) {
+            // Nếu mucGiamPhanTram không null, tính số tiền còn lại dựa trên phần trăm giảm
+            const mucGiam = giamGia.mucGiamPhanTram / 100;
+            soTienConLai = chiTietList[index].giaBan * (1 - mucGiam);
+          } else {
+            // Nếu mucGiamPhanTram là null, số tiền còn lại bằng giá tiền mặt giảm
+            soTienConLai = chiTietList[index].giaBan - giamGia.mucGiamTienMat;
+          }
+          const giamGiaChiTietOk = {
+            idCtsp: chiTietSanPham[i],
+            idGiamGia: response.data,
+            donGia: chiTietList[index].giaBan,
+            soTienConLai: soTienConLai,
+            trangThai: 0
+          }
+          await add(giamGiaChiTietOk);
+        }
+      }
+
+      if (response.status === 'Ok!') {
+        navigate('/quan-ly-giam-gia');
+        toast.success('Thêm thành công!');
+      } else {
+        toast.error('Thêm không thành công!');
+      }
+    } catch (error) {
+      toast.error('Đã xảy ra lỗi khi thêm giảm giá.');
+    }
+
   };
   // if (!giamGiaData) {
   //   return <div>Loading...</div>;
@@ -390,27 +401,27 @@ const ModelAddNewGiamGia = (props) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {left.slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage).map((value, index) => 
-                        (
+                      {left.slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage).map((value, index) =>
+                      (
                         <TableRow key={`left_${value.idSp}`} onClick={handleToggle(value, true)}>
                           <TableCell padding="checkbox">
                             <Checkbox
                               value={value.idSp}
                               checked={checked.indexOf(value) !== -1}
-                              
+
                             />
                           </TableCell>
                           <TableCell>{index + 1}</TableCell>
                           <TableCell>
                             <Col xs={6} md={4}>
-                            <Image
-                              rounded
-                              style={{ width: "150px", height: "auto" }}
-                              src={image[index]}
-                              alt={`Ảnh sản phẩm ${value.maSp}`}
-                            />
-                          </Col>
-                            </TableCell>
+                              <Image
+                                rounded
+                                style={{ width: "150px", height: "auto" }}
+                                src={image[index]}
+                                alt={`Ảnh sản phẩm ${value.maSp}`}
+                              />
+                            </Col>
+                          </TableCell>
                           <TableCell>{value.maSp}</TableCell>
                           <TableCell>{value.tenSp}</TableCell>
                           <TableCell>{value.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
@@ -482,14 +493,14 @@ const ModelAddNewGiamGia = (props) => {
                           <TableCell>{index + 1}</TableCell>
                           <TableCell>
                             <Col xs={6} md={4}>
-                            <Image
-                              rounded
-                              style={{ width: "150px", height: "auto" }}
-                              src={image[index]}
-                              alt={`Ảnh sản phẩm ${value.maSp}`}
-                            />
-                          </Col>
-                            </TableCell>
+                              <Image
+                                rounded
+                                style={{ width: "150px", height: "auto" }}
+                                src={image[index]}
+                                alt={`Ảnh sản phẩm ${value.maSp}`}
+                              />
+                            </Col>
+                          </TableCell>
                           <TableCell>{value.maSp}</TableCell>
                           <TableCell>{value.tenSp}</TableCell>
                           <TableCell>{formatCurrency(value.giaBan)}</TableCell>
