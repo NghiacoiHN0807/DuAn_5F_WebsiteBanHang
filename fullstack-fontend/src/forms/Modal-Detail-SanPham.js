@@ -63,12 +63,6 @@ const ModalDetailProduct = (props) => {
     } else if (quantity < 1 || quantity === "" || isNaN(quantity)) {
       toast.warn("Vui lòng chọn số lượng lớn hơn 0");
     } else if (existingItem) {
-      // console.log("Check existingItem: ", existingItem);
-      // console.log("Check DataCart: ", DataCart);
-      // console.log("Check dataDetail: ", dataDetail);
-      // console.log("Check getOneCTSP: ", getOneCTSP);
-      // console.log("Check selectDataCart: ", selectDataCart);
-
       //Get IdHdct
       let getIdHdct = existingItem.idHdct;
       //Get soLuong
