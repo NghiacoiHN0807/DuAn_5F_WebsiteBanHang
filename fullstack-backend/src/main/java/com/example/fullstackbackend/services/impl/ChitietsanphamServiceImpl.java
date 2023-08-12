@@ -45,14 +45,15 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
         return chitietsanphamRepository.findByIdSp(id);
     }
 
-<<<<<<< HEAD
-
     public List<ChiTietSanPham> findByProductId(Integer id) {
         return chitietsanphamRepository.findByProductId(id);
     }
 
-=======
->>>>>>> origin/vinhlt
+    @Override
+    public ChiTietSanPham add(ChiTietSanPham add) {
+        return null;
+    }
+
     @Override
     public ChiTietSanPham addAndUpdateSize(ChiTietSanPham ctsp, Integer soLuong) {
         ChiTietSanPham ctspUp = chitietsanphamRepository.checkExistSPandSize(ctsp.getIdSp().getIdSp(), ctsp.getIdSize().getIdSize());

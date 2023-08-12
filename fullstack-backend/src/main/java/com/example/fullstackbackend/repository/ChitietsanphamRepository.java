@@ -22,7 +22,6 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
     @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.idSp = ?1")
     List<ChiTietSanPham> findByIdSp(Integer idSp);
 
-<<<<<<< HEAD
     @Query("SELECT c FROM ChiTietSanPham c WHERE c.idSp.idSp = :idSp")
     List<ChiTietSanPham> findByProductId(@Param("idSp") Integer idSp);
 
@@ -40,11 +39,7 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
     @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.tenSp = :tenSp AND x.idSize.tenSize = :tenSize")
     Optional<ChiTietSanPham> findByProductNameAndSize(@Param("tenSp") String tenSp, @Param("tenSize") String tenSize);
 
-
-
-=======
     @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.idSp = ?1 and x.idSize.idSize = ?2")
     ChiTietSanPham checkExistSPandSize(Integer idSp, Integer idSize);
->>>>>>> origin/vinhlt
 
 }
