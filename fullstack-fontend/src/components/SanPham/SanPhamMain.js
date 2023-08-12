@@ -17,26 +17,24 @@ import { fetchCoAo } from "../../services/LoaiCoAoService";
 import { fetchLSP } from "../../services/LoaiSPService";
 import { fetchMS } from "../../services/MauSacService";
 import { fetchTayAo } from "../../services/OngTayAoService";
-import {
-  fetchSP,
-  detailSP,
-  deleteSanPham,
-} from "../../services/SanPhamService";
+import { fetchSP, deleteSanPham } from "../../services/SanPhamService";
 import { fetchSize } from "../../services/SizeService";
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDeleteLeft, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import {
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  IconButton,
 } from "@mui/material";
 import { toast } from "react-toastify";
+import { pink } from "@mui/material/colors";
+import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 const TableSanPham = (props) => {
   //Set value for table
@@ -224,20 +222,20 @@ const TableSanPham = (props) => {
         const idSp = row.actions;
         return (
           <div>
-            <button
-              type="button"
-              className="btn btn-outline-warning"
+            <IconButton
+              aria-label="edit"
+              size="large"
               onClick={() => handUpdate(idSp)}
             >
-              <FontAwesomeIcon icon={faPenToSquare} size="lg" />
-            </button>
-            <button
+              <EditOutlinedIcon color="primary" />
+            </IconButton>
+            <IconButton
+              aria-label="delete"
+              size="large"
               onClick={() => handleClickOpenDelete(idSp)}
-              type="button"
-              className="btn btn-outline-danger"
             >
-              <FontAwesomeIcon icon={faDeleteLeft} size="lg" />
-            </button>{" "}
+              <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
+            </IconButton>
           </div>
         );
       },

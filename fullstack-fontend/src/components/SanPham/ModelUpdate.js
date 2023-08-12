@@ -1,10 +1,11 @@
-// import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { putUpdateSanPham } from "../../services/SanPhamService";
 import { toast } from "react-toastify";
 import {
   Box,
   Button,
+  Card,
+  CardContent,
   Dialog,
   DialogActions,
   DialogContent,
@@ -13,6 +14,7 @@ import {
   FormControl,
   FormControlLabel,
   FormLabel,
+  IconButton,
   MenuItem,
   Paper,
   Radio,
@@ -24,6 +26,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Typography,
 } from "@mui/material";
 import { fetchXX, detailXX } from "../../services/XuatXuService";
 import { fetchCL, detailCL } from "../../services/ChatLieuService";
@@ -33,6 +36,7 @@ import { fetchMS, detailMS } from "../../services/MauSacService";
 import { detailSize, fetchSize } from "../../services/SizeService";
 import { fetchTayAo, detailTayAo } from "../../services/OngTayAoService";
 import { detailSP } from "../../services/SanPhamService";
+import { postAddAnh } from "../../services/AnhService";
 import {
   findSizeById,
   postAddCTSP,
@@ -42,8 +46,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useCallback } from "react";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
-import { Badge } from "react-bootstrap";
-
+import { Badge, Form } from "react-bootstrap";
+import axios from "axios";
+import { pink } from "@mui/material/colors";
+import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
+import { Image } from "cloudinary-react";
 const QuantityInput = ({ value, onChange }) => {
   const handleDecrease = () => {
     if (value > 1) {
@@ -275,6 +282,51 @@ const ModelUpdate = (props) => {
     setQuantity(newQuantity);
   };
   const [quantity, setQuantity] = useState(1);
+
+  // image
+  const [selectedImage, setSelectImage] = useState([]);
+  const [imageData, setImageData] = useState(null);
+
+  const uploadImage = () => {
+    const formData = new FormData();
+    formData.append("file", selectedImage);
+    formData.append("upload_preset", "tq5orakd");
+
+    const postImage = async () => {
+      try {
+        const response = await axios.post(
+          "https://api.cloudinary.com/v1_1/dqptpylda/image/upload",
+          formData
+          // Replace YOUR_CLOUD_NAME with your cloudName which you can find in your Dashboard
+        );
+        const getObjSp = await detailSP(idSpHttp);
+        setImageData(response.data);
+        const addAnh = await postAddAnh(getObjSp, response.data.secure_url, 0);
+        console.log(addAnh);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    postImage();
+  };
+
+  const handleSave = async () => {
+    // get object all\
+    const getObjSp = await detailSP(idSpHttp);
+
+    let res = await postAddAnh(
+      getObjSp,
+
+      0
+    );
+
+    console.log("Check res: ", res);
+    if (res && res.idImage) {
+      toast.success("Thêm ảnh thành công!");
+    } else {
+      toast.error("Thêm ảnh thất bại!");
+    }
+  };
 
   return (
     <>
@@ -602,6 +654,41 @@ const ModelUpdate = (props) => {
           style={{ textAlign: "center", margin: "20px 0" }}
         >
           <h4>THÊM ẢNH</h4>
+        </div>
+        <div>
+          <Form.Group className="position-relative mb-3">
+            <Form.Label>File</Form.Label>
+            <Form.Control
+              type="file"
+              required
+              name="file"
+              onChange={(event) => setSelectImage(event.target.files[0])}
+            />
+            <Button onClick={uploadImage} variant="contained">
+              Upload ảnh
+            </Button>
+          </Form.Group>
+        </div>
+        <div className="image-container">
+          <Card sx={{ width: 300 }}>
+            <CardContent>
+              <Typography gutterBottom>
+                {imageData && (
+                  <Image
+                    cloudName="dqptpylda"
+                    publicId={`https://res.cloudinary.com/dqptpylda/image/upload/v1691739931/${imageData.public_id}`}
+                    width={265}
+                    height={265}
+                  />
+                )}
+                <Box>
+                  <IconButton aria-label="delete" size="large">
+                    <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
+                  </IconButton>
+                </Box>
+              </Typography>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </>
