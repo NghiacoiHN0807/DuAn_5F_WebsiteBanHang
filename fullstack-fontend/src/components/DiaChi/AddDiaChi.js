@@ -21,7 +21,7 @@ import MenuItem from "@mui/material/MenuItem";
 const AddDiaChi = () => {
         const param = useParams();
         const idTK = param.id;
-        const [taiKhoan, setMaTaiKhoan] = useState("");
+        const [taiKhoan, setTaiKhoan] = useState("");
         const [tenNguoiNhan, setTenNguoiNhan] = useState("");
         const [diaChiCuThe, setDiaChiCuThe] = useState("");
         const [sdt, setSdt] = useState("");
@@ -49,7 +49,7 @@ const AddDiaChi = () => {
         const getTaiKhoan = async (idTK) => {
             let resTK = await getDetailOneTK(idTK);
             console.log(resTK);
-            setMaTaiKhoan(resTK);
+            setTaiKhoan(resTK);
         };
 
         const getListTP = async () => {

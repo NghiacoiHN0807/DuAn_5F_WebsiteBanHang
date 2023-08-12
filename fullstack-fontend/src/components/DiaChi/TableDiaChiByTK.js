@@ -16,6 +16,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModalDeleteDiaChi from "./ModalDeleteDiaChi";
+import {getPhuong_Xa, getQuan_Huyen, getTinh_ThanhPho} from "../../services/apiDiaChi";
 
 const TableDiaChiByTK = () => {
     const param = useParams();
@@ -28,6 +29,11 @@ const TableDiaChiByTK = () => {
     const [originalListData, setOriginalListData] = useState([]);
     const [diaChi, setDiaChi] = useState("");
     const navigate = useNavigate();
+
+    const [listTP, setListTP] = useState([]);
+    const [listQH, setListQH] = useState([]);
+    const [listPX, setListPX] = useState([]);
+
     const getListData = async (idTK, page) => {
         try {
             let res = await fetchDiaChiByTK(idTK, page);
@@ -46,7 +52,17 @@ const TableDiaChiByTK = () => {
     };
     useEffect(() => {
         getListData(idTK, 0);
+        getListTP();
+
     }, [idTK]);
+
+    useEffect(() => {
+        if (listData.length > 0) {
+            listData.forEach((item) => {
+                fetchQuanHuyenAndPhuongXa(item.tinhThanh, item.quanHuyen);
+            });
+        }
+    }, [listData]);
 
     const fetchUpdatedData = (page) => {
         getListData(idTK, page);
@@ -128,6 +144,44 @@ const TableDiaChiByTK = () => {
                 </div>);
             },
         },];
+    const getListTP = async () => {
+        let resTP = await getTinh_ThanhPho();
+
+        setListTP(resTP?.data.results);
+
+    };
+
+    const getNameByIdTP = (id) => {
+        const province = listTP.find((item) => item.province_id === id);
+        return province ? province.province_name : null;
+    };
+    const getNameByIdQH = (id) => {
+        const province = listQH.find((item) => item.district_id === id);
+        return province ? province.district_name : null;
+    };
+    const getNameByIdPX = (id) => {
+        const province = listPX.find((item) => item.ward_id === id);
+        return province ? province.ward_name : null;
+    };
+
+    const fetchQuanHuyenAndPhuongXa = async (tinhThanhID, quanHuyenID) => {
+        const existingQH = listQH.find(item => item.district_id === quanHuyenID);
+        const existingPX = listPX.find(item => item.ward_id === quanHuyenID);
+
+        if (existingQH && existingPX) {
+            // Data already exists, no need to fetch again
+            return;
+        }
+
+        const quanHuyenData = await getQuan_Huyen(tinhThanhID);
+        const phuongXaData = await getPhuong_Xa(quanHuyenID);
+
+        if (quanHuyenData.status === 200 && phuongXaData.status === 200) {
+            setListQH(prevListQH => [...prevListQH, ...quanHuyenData.data.results]);
+            setListPX(prevListPX => [...prevListPX, ...phuongXaData.data.results]);
+        }
+    };
+
 
     // Xử lý dữ liệu của bảng vào mảng rows
     const rows = listData
@@ -144,10 +198,12 @@ const TableDiaChiByTK = () => {
             maTaiKhoan: item.taiKhoan.maTaiKhoan,
             tenNguoiNhan: item.tenNguoiNhan,
             sdtKh: item.sdt,
-            diaChi: item.tinhThanh + ", " + item.quanHuyen + ", " + item.phuongXa, // diaChiCuThe: item.diaChiCuThe,
+            diaChi: `${getNameByIdTP(item.tinhThanh)}, ${getNameByIdQH(item.quanHuyen)}, ${getNameByIdPX(item.phuongXa)}`,
+            // diaChiCuThe: item.diaChiCuThe,
             loaiDiaChi: item.loaiDiaChi,
             trangThai: item.trangThai,
         }));
+
     //Next Page
     const handlePageClick = (page) => {
         getListData(page + 1);

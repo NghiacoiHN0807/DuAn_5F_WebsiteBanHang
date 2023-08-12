@@ -17,9 +17,10 @@ public class DiaChi {
     @Column(name = "id_dia_chi", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ma_tai_khoan", referencedColumnName = "ma_tai_khoan")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_tai_khoan")
     private TaiKhoan taiKhoan;
+
 
     @Size(max = 255)
     @Column(name = "dia_chi_cu_the")
@@ -50,5 +51,6 @@ public class DiaChi {
 
     @Column(name = "trang_thai")
     private Integer trangThai;
+
 
 }

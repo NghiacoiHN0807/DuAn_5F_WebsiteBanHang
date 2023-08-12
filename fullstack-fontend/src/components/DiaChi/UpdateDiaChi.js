@@ -22,7 +22,7 @@ const UpdateDiaChi = (props) => {
         const param = useParams();
         const idDc = param.id;
         const [diaChi, setDiaChi] = useState([]);
-        const [maTaiKhoan, setTaiKhoan] = useState("");
+        const [taiKhoan, setTaiKhoan] = useState("");
         const [tenNguoiNhan, setTenNguoiNhan] = useState("");
         const [diaChiCuThe, setDiaChiCuThe] = useState("");
         const [sdt, setSdt] = useState("");
@@ -89,7 +89,7 @@ const UpdateDiaChi = (props) => {
             } else {
                 let res = await postUpdateDiaChi(
                     diaChi.id,
-                    maTaiKhoan,
+                    taiKhoan,
                     diaChiCuThe,
                     loaiDiaChi,
                     phuongXa,
@@ -102,7 +102,7 @@ const UpdateDiaChi = (props) => {
                 console.log("Check res: ", res);
                 if (res && res.id) {
                     toast.success("Cập nhập Thành Công");
-                    navigate(`/dia-chi/${maTaiKhoan.maTaiKhoan}`);
+                    navigate(`/dia-chi/${taiKhoan.maTaiKhoan}`);
                 } else {
                     toast.error("Cập Nhập Thất Bại!");
                 }
@@ -135,7 +135,7 @@ const UpdateDiaChi = (props) => {
                         className="title"
                         style={{textAlign: "center", margin: "20px 0"}}
                     >
-                        <h4>Cập Nhập Địa Chỉ Của Tài Khoản: {maTaiKhoan.maTaiKhoan}</h4>
+                        <h4>Cập Nhập Địa Chỉ Của Tài Khoản: {taiKhoan.maTaiKhoan}</h4>
                     </div>
                     <Box
                         component="form"

@@ -10,6 +10,7 @@ import Stack from "@mui/material/Stack";
 import {useNavigate} from "react-router-dom";
 import {DataGrid} from "@mui/x-data-grid";
 import {Button} from "@mui/material";
+import {getPhuong_Xa, getQuan_Huyen, getTinh_ThanhPho} from "../../services/apiDiaChi";
 
 const TableAllDiaChi = () => {
     const [listData, setListData] = useState([]);
@@ -19,6 +20,11 @@ const TableAllDiaChi = () => {
     const [selectedLoaiDiaChi, setSelectedLoaiDiaChi] = useState("Tất cả");
     const [originalListData, setOriginalListData] = useState([]);
     const navigate = useNavigate();
+
+    const [listTP, setListTP] = useState([]);
+    const [listQH, setListQH] = useState([]);
+    const [listPX, setListPX] = useState([]);
+
     const getListData = async (page, query) => {
         try {
             let res = await fetchAllDiaChi(page, query);
@@ -33,7 +39,54 @@ const TableAllDiaChi = () => {
 
     useEffect(() => {
         getListData(0);
+        getListTP();
     }, []);
+
+    useEffect(() => {
+        if (listData.length > 0) {
+            listData.forEach((item) => {
+                fetchQuanHuyenAndPhuongXa(item.tinhThanh, item.quanHuyen);
+            });
+        }
+    }, [listData]);
+    const getListTP = async () => {
+        let resTP = await getTinh_ThanhPho();
+
+        setListTP(resTP?.data.results);
+
+    };
+
+    const getNameByIdTP = (id) => {
+        const province = listTP.find((item) => item.province_id === id);
+        return province ? province.province_name : null;
+    };
+    const getNameByIdQH = (id) => {
+        const province = listQH.find((item) => item.district_id === id);
+        return province ? province.district_name : null;
+    };
+    const getNameByIdPX = (id) => {
+        const province = listPX.find((item) => item.ward_id === id);
+        return province ? province.ward_name : null;
+    };
+
+    const fetchQuanHuyenAndPhuongXa = async (tinhThanhID, quanHuyenID) => {
+        const existingQH = listQH.find(item => item.district_id === quanHuyenID);
+        const existingPX = listPX.find(item => item.ward_id === quanHuyenID);
+
+        if (existingQH && existingPX) {
+            // Data already exists, no need to fetch again
+            return;
+        }
+
+        const quanHuyenData = await getQuan_Huyen(tinhThanhID);
+        const phuongXaData = await getPhuong_Xa(quanHuyenID);
+
+        if (quanHuyenData.status === 200 && phuongXaData.status === 200) {
+            setListQH(prevListQH => [...prevListQH, ...quanHuyenData.data.results]);
+            setListPX(prevListPX => [...prevListPX, ...phuongXaData.data.results]);
+        }
+    };
+
 
     const columns = [
         {field: "index", headerName: "##", width: 30},
@@ -101,19 +154,10 @@ const TableAllDiaChi = () => {
     // Xử lý dữ liệu của bảng vào mảng rows
     const rows = listData
         .filter((item) => {
-            const valuesToSearch = [
-                item.taiKhoan.maTaiKhoan, // Search maTaiKhoan directly
-                item.tenNguoiNhan,
-                item.sdt,
-                item.tinhThanh,
-                item.quanHuyen,
-                item.phuongXa,
-                item.diaChiCuThe,
-                 // Convert trangThai to string for search
+            const valuesToSearch = [item.taiKhoan.maTaiKhoan, // Search maTaiKhoan directly
+                item.tenNguoiNhan, item.sdt, item.tinhThanh, item.quanHuyen, item.phuongXa, item.diaChiCuThe, // Convert trangThai to string for search
             ];
-            return valuesToSearch.some((value) =>
-                String(value).toLowerCase().includes(searchKeyword.toLowerCase())
-            );
+            return valuesToSearch.some((value) => String(value).toLowerCase().includes(searchKeyword.toLowerCase()));
         })
         .map((item, index) => ({
             idTaiKhoan: item.taiKhoan.idTaiKhoan,
@@ -122,7 +166,7 @@ const TableAllDiaChi = () => {
             maTaiKhoan: item.taiKhoan.maTaiKhoan,
             tenNguoiNhan: item.tenNguoiNhan,
             sdtKh: item.sdt,
-            diaChi: item.tinhThanh + ", " + item.quanHuyen + ", " + item.phuongXa,
+            diaChi: `${getNameByIdTP(item.tinhThanh)}, ${getNameByIdQH(item.quanHuyen)}, ${getNameByIdPX(item.phuongXa)}`,
             diaChiCuThe: item.diaChiCuThe,
             loaiDiaChi: item.loaiDiaChi,
             trangThai: item.trangThai,
@@ -162,7 +206,7 @@ const TableAllDiaChi = () => {
 
     const handlClickRow = (item) => {
         // console.log("Check click: ", item);
-        navigate(`/dia-chi/detail/${item.idTaiKhoan}`);
+        navigate(`/dia-chi/detail/${item.id}`);
     };
     return (
         <>
