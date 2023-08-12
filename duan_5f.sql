@@ -89,7 +89,7 @@ CREATE TABLE `chuc_vu` (
   `ngay_tao` date DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
   PRIMARY KEY (`id_cv`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -98,7 +98,7 @@ CREATE TABLE `chuc_vu` (
 
 LOCK TABLES `chuc_vu` WRITE;
 /*!40000 ALTER TABLE `chuc_vu` DISABLE KEYS */;
-INSERT INTO `chuc_vu` VALUES (1,'CV01','Manage',NULL,0);
+INSERT INTO `chuc_vu` VALUES (1,'CV01','Quản Lý','2023-07-23',0),(8,'CV02','Nhân Viên','2023-07-23',0),(9,'CV03','Khách Hàng','2023-07-23',0);
 /*!40000 ALTER TABLE `chuc_vu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -111,15 +111,19 @@ DROP TABLE IF EXISTS `dia_chi`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `dia_chi` (
   `id_dia_chi` int NOT NULL AUTO_INCREMENT,
-  `dia_chi_cu_the` varchar(255) DEFAULT NULL,
+  `id_tai_khoan` int DEFAULT NULL,
   `loai_dia_chi` int DEFAULT NULL,
+  `dia_chi_cu_the` varchar(255) DEFAULT NULL,
   `phuong_xa` varchar(255) DEFAULT NULL,
   `quan_huyen` varchar(255) DEFAULT NULL,
-  `sdt` varchar(255) DEFAULT NULL,
-  `ten_nguoi_nhan` varchar(255) DEFAULT NULL,
   `tinh_thanh` varchar(255) DEFAULT NULL,
+  `ten_nguoi_nhan` varchar(255) DEFAULT NULL,
+  `sdt` varchar(255) DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
-  PRIMARY KEY (`id_dia_chi`)
+  PRIMARY KEY (`id_dia_chi`),
+  KEY `id_tai_khoan_idx` (`id_tai_khoan`),
+  KEY `id_tai_khoan_id1x` (`id_tai_khoan`),
+  CONSTRAINT `id_tai_khoan1` FOREIGN KEY (`id_tai_khoan`) REFERENCES `xuat_xu` (`id_xx`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -286,7 +290,7 @@ CREATE TABLE `hoa_don_chi_tiet` (
   KEY `id_ctsp_idx` (`id_ctsp`),
   CONSTRAINT `id_ctsp` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`),
   CONSTRAINT `id_hd` FOREIGN KEY (`id_hd`) REFERENCES `hoa_don` (`id_hd`)
-) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -295,7 +299,7 @@ CREATE TABLE `hoa_don_chi_tiet` (
 
 LOCK TABLES `hoa_don_chi_tiet` WRITE;
 /*!40000 ALTER TABLE `hoa_don_chi_tiet` DISABLE KEYS */;
-INSERT INTO `hoa_don_chi_tiet` VALUES (40,14,1,1,6000.00,NULL,0),(41,15,77,1,6000.00,NULL,0),(42,16,78,1,5000.00,NULL,0),(43,17,79,1,9645.00,NULL,0),(44,17,84,1,9645.00,NULL,0),(45,16,82,2,19290.00,NULL,NULL),(51,17,82,1,5000.00,NULL,NULL),(52,14,82,2,12000.00,NULL,NULL);
+INSERT INTO `hoa_don_chi_tiet` VALUES (40,14,1,1,6000.00,NULL,0),(41,15,77,1,6000.00,NULL,0),(42,16,78,1,5000.00,NULL,0),(43,17,79,1,9645.00,NULL,0),(44,17,84,1,9645.00,NULL,0),(88,17,82,3,15000.00,NULL,NULL),(89,14,82,1,6000.00,NULL,NULL);
 /*!40000 ALTER TABLE `hoa_don_chi_tiet` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -544,7 +548,6 @@ DROP TABLE IF EXISTS `tai_khoan`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `tai_khoan` (
   `id_tai_khoan` int NOT NULL AUTO_INCREMENT,
-  `id_dia_chi` int DEFAULT NULL,
   `id_chuc_vu` int DEFAULT NULL,
   `ma_tai_khoan` varchar(255) DEFAULT NULL,
   `ho` varchar(255) DEFAULT NULL,
@@ -555,10 +558,8 @@ CREATE TABLE `tai_khoan` (
   `trang_thai` int DEFAULT NULL,
   PRIMARY KEY (`id_tai_khoan`),
   KEY `id_chuc_vu_idx` (`id_chuc_vu`),
-  KEY `id_dia_chi_idx` (`id_dia_chi`),
-  CONSTRAINT `id_cv` FOREIGN KEY (`id_chuc_vu`) REFERENCES `chuc_vu` (`id_cv`),
-  CONSTRAINT `id_dia_chi` FOREIGN KEY (`id_dia_chi`) REFERENCES `dia_chi` (`id_dia_chi`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `id_cv` FOREIGN KEY (`id_chuc_vu`) REFERENCES `chuc_vu` (`id_cv`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -567,7 +568,7 @@ CREATE TABLE `tai_khoan` (
 
 LOCK TABLES `tai_khoan` WRITE;
 /*!40000 ALTER TABLE `tai_khoan` DISABLE KEYS */;
-INSERT INTO `tai_khoan` VALUES (1,NULL,1,'TK01','Nguyen','Nghia','nghiacoivipne@gmail.com','0337842655','123456',0);
+INSERT INTO `tai_khoan` VALUES (1,1,'TK01','Nguyen','Nghia','nghiacoivipne@gmail.com','0337842655','123456',0),(2,8,'TK02','Nguyen','Van Hung','nguyenvanhung@gmail.com','0578267849','465789',0),(3,9,'TK03','Hoang','Nam','nguyenVanA@gmail.com','0578694258','123456',0),(4,9,'TK04','Nguyen','Huy Cuong','nguyenVanB@gmail.com','0206070809','258479',0),(5,9,'TK05','Nguyen','Hoang Yen','nguyenVanC@gmail.com','0708681458','147895',0),(6,9,'TK06','Ta','Dinh Nam','nguyenVanD@gmail.com','0802147869','125789',0);
 /*!40000 ALTER TABLE `tai_khoan` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -606,4 +607,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-08-11 15:40:14
+-- Dump completed on 2023-08-12  1:44:22

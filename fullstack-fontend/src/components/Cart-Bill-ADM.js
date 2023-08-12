@@ -2,7 +2,6 @@ import "../scss/Car-Bill-ADM.scss";
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import { detailBill, findById } from "../services/BillSevice";
-import Table from "react-bootstrap/Table";
 import ModalAddProduct from "../forms/Modals-AddProduct";
 import { getDetailOne } from "../services/DirectSaleSevice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,8 +14,15 @@ import {
   IconButton,
   InputLabel,
   MenuItem,
+  Paper,
   Select,
   Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   TextField,
 } from "@mui/material";
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
@@ -230,27 +236,36 @@ const CartBillADM = (props) => {
         <div className="row">
           <h6>Giỏ Hàng</h6>
         </div>
-
-        <Table className="table-Cart" striped hover borderless>
-          <thead>
-            <tr>
-              <th>Mã Sản Phẩm</th>
-              <th>Sản Phẩm</th>
-              <th>Thuộc tính</th>
-              <th>Giá</th>
-              <th>Số Lượng</th>
-              <th>Tổng</th>
-              <th>Thao Tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {DataCart && DataCart.length > 0 ? (
-              DataCart.map((item, index) => {
-                return (
-                  <tr key={`hoaDonChiTiet-${index}`}>
-                    <td>{item.idCtsp.idSp.maSp}</td>
-                    <td>{item.idCtsp.idSp.tenSp}</td>
-                    <td>
+        <TableContainer
+          sx={{ marginTop: 2, marginBottom: 2 }}
+          component={Paper}
+        >
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Mã Sản Phẩm</TableCell>
+                <TableCell align="right">Sản Phẩm</TableCell>
+                <TableCell align="right">Thuộc tính</TableCell>
+                <TableCell align="right">Giá</TableCell>
+                <TableCell align="right">Số Lượng</TableCell>
+                <TableCell align="right">Tổng</TableCell>
+                <TableCell align="right">Thao Tác</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {DataCart && DataCart.length > 0 ? (
+                DataCart.map((item, index) => (
+                  <TableRow
+                    key={index}
+                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {item.idCtsp.idSp.maSp}
+                    </TableCell>
+                    <TableCell align="right">
+                      {item.idCtsp.idSp.tenSp}
+                    </TableCell>
+                    <TableCell align="right">
                       <Button
                         onClick={() => handleUpdateClassify(item)}
                         size="small"
@@ -258,12 +273,13 @@ const CartBillADM = (props) => {
                       >
                         Size: {item.idCtsp.idSize.tenSize}
                       </Button>
-                    </td>
-
-                    <td>{item.idCtsp.idSp.giaBan}</td>
-                    <td>{item.soLuong}</td>
-                    <td>{item.donGia}</td>
-                    <td>
+                    </TableCell>
+                    <TableCell align="right">
+                      {item.idCtsp.idSp.giaBan}
+                    </TableCell>
+                    <TableCell align="right">{item.soLuong}</TableCell>
+                    <TableCell align="right">{item.donGia}</TableCell>
+                    <TableCell align="right">
                       <IconButton
                         aria-label="delete"
                         size="large"
@@ -271,17 +287,17 @@ const CartBillADM = (props) => {
                       >
                         <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
                       </IconButton>
-                    </td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <Null />
-              </tr>
-            )}
-          </tbody>
-        </Table>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableCell align="right">
+                  <Null />
+                </TableCell>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
         <div className="col-2">
           <Button
             onClick={handDeleteAll}
