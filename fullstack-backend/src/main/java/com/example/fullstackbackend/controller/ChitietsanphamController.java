@@ -62,8 +62,7 @@ public class ChitietsanphamController {
         return chiTietSanPham;
     }
 
-<<<<<<< HEAD
-=======
+
     @GetMapping("get-one-ctsp/{name}/{size}")
     public Optional<ChiTietSanPham> findByProductNameAndSize(@PathVariable("name") String name,
                                                              @PathVariable("size") String size) {
@@ -72,7 +71,6 @@ public class ChitietsanphamController {
     }
 
 
->>>>>>> nghiant0807
     @GetMapping("select-ctsp-byid/{id}")
     public List<ChiTietSanPham> findByProductId(@PathVariable("id") Integer id) {
         List<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductId(id);
