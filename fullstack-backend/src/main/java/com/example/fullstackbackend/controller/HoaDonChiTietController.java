@@ -57,6 +57,16 @@ public class HoaDonChiTietController {
         return findHDCT;
     }
 
+    @PutMapping("update-hdct/{id}")
+    public HoaDonChiTiet updateHDCT(@Valid @RequestBody HoaDonChiTiet updateHD, @PathVariable("id") Integer id,
+                             BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return null;
+        } else {
+            return hoadonchitietSevice.update(updateHD);
+        }
+    }
+
     @PutMapping ("update/{id}")
     public HoaDonChiTiet update(@RequestBody HoaDonChiTiet newHDCT,
             @PathVariable("id") Integer id) {
@@ -65,7 +75,7 @@ public class HoaDonChiTietController {
                         hoaDonChiTiet.setIdCtsp(newHDCT.getIdCtsp());
                         hoaDonChiTiet.setSoLuong(newHDCT.getSoLuong());
                         hoaDonChiTiet.setDonGia(newHDCT.getDonGia());
-                        return hoadonchitietSevice.add(hoaDonChiTiet);
+                        return hoadonchitietSevice.update(hoaDonChiTiet);
                     }).orElseThrow(() -> new xuatXuNotFoundException(id));
         return newHD;
     }

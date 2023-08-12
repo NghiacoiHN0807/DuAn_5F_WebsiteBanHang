@@ -14,7 +14,6 @@ const ModelAddNewTKKH = (props) => {
   const [setSdt, getSdt] = useState("");
   const [setEmail, getEmail] = useState("");
 
-
   const handleSave = async () => {
     //I want check console.log get ma and tenNuoc
     // console.log("Check state: ", setMaTaiKhoan, setHo, setTen, setSdt, setEmail, setMatKhau, setTrangThai);
@@ -25,7 +24,7 @@ const ModelAddNewTKKH = (props) => {
       getHo("") &&
       getTen("") &&
       getSdt("") &&
-      getEmail("") 
+      getEmail("")
     ) {
       handleClose();
       toast.warning("Ma, Ten Or Trang Thai is null");
@@ -37,7 +36,7 @@ const ModelAddNewTKKH = (props) => {
 
         setSdt,
         setEmail,
-        
+
         0
       );
       // console.log("Check res: ", res);
@@ -49,7 +48,7 @@ const ModelAddNewTKKH = (props) => {
 
         getSdt("");
         getEmail("");
-      
+
         toast.success("A Tài khoản is created successfully");
       } else {
         toast.error("You can't create a new Tài Khoản");
@@ -110,17 +109,6 @@ const ModelAddNewTKKH = (props) => {
                     type="text"
                   />
                 </div>
-                {/* <div className="mb-3">
-                  <label className="form-label">Chức Vụ</label>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                  >
-                    {MyChucVu.map((item, index) => {
-                      return <option value={item.tenCv}>{item.tenCv}</option>;
-                    })}
-                  </select>
-                </div> */}
               </Col>
               <Col>
                 <div className="mb-3">
@@ -139,7 +127,6 @@ const ModelAddNewTKKH = (props) => {
                     type="email"
                   />
                 </div>
-                
               </Col>
             </Row>
           </Form>

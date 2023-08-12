@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import "../scss/Modal-Detail-SanPham.scss";
 // import { selectAllImgProduct } from "../services/BillSevice";
@@ -18,11 +18,11 @@ import Typography from "@mui/material/Typography";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { findByProductNameAndSize } from "../services/BillSevice";
-import { updateCart } from "../services/DirectSaleSevice";
+import { postAddDirect, updateCart } from "../services/DirectSaleSevice";
 import { toast } from "react-toastify";
 
-const ModalUpdateProductOnCart = (props) => {
-  const { show, handleClose, itemUpdateClassify, selectDataCart, itemUpdate } =
+const ModalDetailProduct = (props) => {
+  const { show, handleCloseDetai, dataDetail, selectDataCart, DataCart } =
     props;
 
   //Insert product
@@ -47,38 +47,61 @@ const ModalUpdateProductOnCart = (props) => {
   };
 
   //Get number
-  const handleChoose = async () => {
-    let selectedSp = itemUpdateClassify[0].idSp.tenSp;
+  const param = useParams();
+  const idHdParam = param.id;
 
+  const handleChoose = async () => {
+    let selectedSp = dataDetail[0].idSp.tenSp;
+
+    let getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize);
+
+    const existingItem = DataCart.find(
+      (item) => item.idCtsp.idCtsp === getOneCTSP.idCtsp
+    );
     if (selectedSize === null || selectedSp === "") {
       toast.warn("Xin mời chọn size của sản phẩm");
-    } else if (quantity < 1 || isNaN(quantity) || quantity === "") {
+    } else if (quantity < 1 || quantity === "" || isNaN(quantity)) {
       toast.warn("Vui lòng chọn số lượng lớn hơn 0");
-    } else {
-      let getIdHdCt = itemUpdate.idHdct;
-
-      let getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize);
-
-      let donGia = itemUpdateClassify[0].idSp.giaBan * quantity;
-      //Insert to the cart
-
-      await updateCart(getIdHdCt, getOneCTSP, quantity, donGia);
+    } else if (existingItem) {
+      //Get IdHdct
+      let getIdHdct = existingItem.idHdct;
+      //Get soLuong
+      let oldQuantity = existingItem.soLuong;
+      let newQuantity = oldQuantity + quantity;
+      //Get donGia
+      let donGia = existingItem.idCtsp.idSp.giaBan * newQuantity;
+      //Update Product On Cart
+      await updateCart(getIdHdct, getOneCTSP, newQuantity, donGia);
       //Close the modal
       setSelectedSize(null);
-      handleClose();
+      handleCloseDetai();
       setQuantity(1);
       //Load new data on cart
       selectDataCart();
-      toast.success("Cập nhập sản phẩm thành công");
+      toast.warn(
+        "Sản phẩm đã có trong giỏ hàng. Chúng tôi đã cộng thêm số lượng vào sản phẩm"
+      );
+    } else {
+      console.log("quantity: " + quantity);
+      //Insert to the cart
+      let donGia = dataDetail[0].idSp.giaBan * quantity;
+      await postAddDirect(getOneCTSP, quantity, donGia, idHdParam, 0);
+      //Close the modal
+      setSelectedSize(null);
+      handleCloseDetai();
+      setQuantity(1);
+      //Load new data on cart
+      selectDataCart();
+      toast.success("Thêm sản phẩm thành công");
     }
   };
 
   return (
     <>
       <div>
-        <Dialog open={show} onClose={handleClose} maxWidth="xl">
-          <DialogTitle>CẬP NHẬP SẢN PHẨM</DialogTitle>
-          {itemUpdateClassify.length > 0 && (
+        <Dialog open={show} onClose={handleCloseDetai} maxWidth="xl">
+          <DialogTitle>THÔNG TIN SẢN PHẨM</DialogTitle>
+          {dataDetail.length > 0 && (
             <DialogContent>
               <Card sx={{ display: "flex" }}>
                 <CardMedia
@@ -90,16 +113,16 @@ const ModalUpdateProductOnCart = (props) => {
                 <Box sx={{ display: "flex", flexDirection: "column" }}>
                   <CardContent sx={{ flex: "1 0 auto" }}>
                     <Typography component="div" variant="h5">
-                      <h5>Tên Sản Phẩm: {itemUpdateClassify[0].idSp.tenSp}</h5>
+                      <h5>Tên Sản Phẩm: {dataDetail[0].idSp.tenSp}</h5>
                     </Typography>
                     <Typography
                       variant="subtitle1"
                       color="text.secondary"
                       component="div"
                     >
-                      <p>Xuất Xứ: {itemUpdateClassify[0].idSp.idXx.tenNuoc}</p>
-                      <p>Chất Liệu: {itemUpdateClassify[0].idSp.idCl.tenCl}</p>
-                      <h6>Giá: {itemUpdateClassify[0].idSp.giaBan}</h6>
+                      <p>Xuất Xứ: {dataDetail[0].idSp.idXx.tenNuoc}</p>
+                      <p>Chất Liệu: {dataDetail[0].idSp.idCl.tenCl}</p>
+                      <h6>Giá: {dataDetail[0].idSp.giaBan}</h6>
                     </Typography>
                   </CardContent>
                   <Box
@@ -107,7 +130,7 @@ const ModalUpdateProductOnCart = (props) => {
                   >
                     <div>
                       Size:{" "}
-                      {itemUpdateClassify.map((size, sizeIndex) => (
+                      {dataDetail.map((size, sizeIndex) => (
                         <Button
                           style={{
                             marginRight: "4px",
@@ -143,6 +166,8 @@ const ModalUpdateProductOnCart = (props) => {
                       <input
                         aria-label="quantity"
                         className="input-qty"
+                        max="Số tối đa"
+                        min="Số tối thiểu"
                         type="text"
                         pattern="[0-9]*"
                         inputMode="numeric"
@@ -163,7 +188,7 @@ const ModalUpdateProductOnCart = (props) => {
             </DialogContent>
           )}
           <DialogActions>
-            <Button onClick={handleClose}>Hủy</Button>
+            <Button onClick={handleCloseDetai}>Hủy</Button>
             <Button onClick={handleChoose}>Hoàn Tất</Button>
           </DialogActions>
         </Dialog>
@@ -171,4 +196,4 @@ const ModalUpdateProductOnCart = (props) => {
     </>
   );
 };
-export default ModalUpdateProductOnCart;
+export default ModalDetailProduct;

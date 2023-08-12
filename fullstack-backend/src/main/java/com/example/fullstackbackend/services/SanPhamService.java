@@ -14,7 +14,7 @@ public interface SanPhamService {
 
     SanPham add(SanPham add);
 
-    void delete(Integer id);
+    SanPham delete(Integer id);
 
     SanPham update(SanPham update);
 

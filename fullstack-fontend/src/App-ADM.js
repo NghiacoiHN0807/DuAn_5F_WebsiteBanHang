@@ -45,7 +45,7 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import FiberManualRecordOutlinedIcon from "@mui/icons-material/FiberManualRecordOutlined";
 import LoyaltyOutlinedIcon from "@mui/icons-material/LoyaltyOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
-import { Col, Image } from "react-bootstrap";
+import { Image } from "react-bootstrap";
 import logo5F from "./assets/logo_5F.png";
 import ModelAddNewGiamGia from "./components/ModalsAddNewGiamGia";
 
@@ -85,7 +85,6 @@ function AppADM(props) {
         {[
           { text: "Quản Lý Hóa Đơn", link: "/order-management" },
           { text: "Bán Hàng Tại Quầy", link: "/direct-sale" },
-          { text: "Quản Lý Nhân Viên", link: "/quan-ly-nhan-vien" },
           { text: "Khuyến Mãi", link: "/quan-ly-giam-gia" },
         ].map((item, index) => (
           <ListItem key={item.text} disablePadding>

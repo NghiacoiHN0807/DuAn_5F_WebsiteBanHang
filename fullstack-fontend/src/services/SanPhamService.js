@@ -42,8 +42,34 @@ const deleteSanPham = (id) => {
   return custom.delete(`/san-pham/delete/${id}`);
 };
 
-const putUpdateSanPham = (idSp, maSp, tenSp, trangThai) => {
-  return custom.put(`/san-pham/update`, { idSp, maSp, tenSp, trangThai });
+const putUpdateSanPham = (
+  idSp,
+  maSp,
+  tenSp,
+  idCl,
+  idMs,
+  idLsp,
+  idXx,
+  idCoAo,
+  idTayAo,
+  moTa,
+  giaBan,
+  trangThai
+) => {
+  return custom.put(`/san-pham/update`, {
+    idSp,
+    maSp,
+    tenSp,
+    idCl,
+    idMs,
+    idLsp,
+    idXx,
+    idCoAo,
+    idTayAo,
+    moTa,
+    giaBan,
+    trangThai,
+  });
 };
 
 export {

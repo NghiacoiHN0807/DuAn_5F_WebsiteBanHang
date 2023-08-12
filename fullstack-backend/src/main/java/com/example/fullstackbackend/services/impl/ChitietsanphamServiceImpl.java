@@ -17,14 +17,27 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
 
     @Autowired
     private ChitietsanphamRepository chitietsanphamRepository;
+
     @Override
     public Page<ChiTietSanPham> chiTietSP(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return chitietsanphamRepository.findAll(pageable);
     }
+
+    @Override
+    public Page<Object[]> getSanPhamsWithSizes(Integer pageNo, Integer size) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        return chitietsanphamRepository.getSanPhamWithSizes(pageable);
+    }
+
     @Override
     public List<ChiTietSanPham> findByProductName(String name) {
         return chitietsanphamRepository.findByProductName(name);
+    }
+
+    @Override
+    public Optional<ChiTietSanPham> findByProductNameAndSize(String name, String size) {
+        return chitietsanphamRepository.findByProductNameAndSize(name, size);
     }
 
     @Override
@@ -32,20 +45,36 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
         return chitietsanphamRepository.findByIdSp(id);
     }
 
-
     public List<ChiTietSanPham> findByProductId(Integer id) {
         return chitietsanphamRepository.findByProductId(id);
     }
 
     @Override
     public ChiTietSanPham add(ChiTietSanPham add) {
-        return chitietsanphamRepository.save(add);
+        return null;
     }
 
     @Override
-    public void delete(Integer id) {
+    public ChiTietSanPham addAndUpdateSize(ChiTietSanPham ctsp, Integer soLuong) {
+        ChiTietSanPham ctspUp = chitietsanphamRepository.checkExistSPandSize(ctsp.getIdSp().getIdSp(), ctsp.getIdSize().getIdSize());
+        if (ctspUp != null) {
+            ctspUp.setSoLuongTon(ctspUp.getSoLuongTon() + soLuong);
+            return chitietsanphamRepository.save(ctspUp);
+        }
+        return chitietsanphamRepository.save(ctsp);
+    }
 
-        chitietsanphamRepository.findById(id).orElse(null).setTrangThai(10);
+
+    @Override
+    public ChiTietSanPham delete(Integer id) {
+        ChiTietSanPham ctsp = chitietsanphamRepository.findById(id).orElse(null);
+        if(ctsp.getTrangThai() == 0){
+            ctsp.setTrangThai(10);
+        }else{
+            ctsp.setTrangThai(0);
+        }
+
+        return chitietsanphamRepository.save(ctsp);
     }
 
     @Override

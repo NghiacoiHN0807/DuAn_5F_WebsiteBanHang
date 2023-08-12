@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.services.impl;
 
+import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.repository.SanphamRepository;
 import com.example.fullstackbackend.services.SanPhamService;
@@ -35,8 +36,12 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
-    public void delete(Integer id) {
-        sanphamRepository.deleteById(id);
+    public SanPham delete(Integer id) {
+        SanPham sp = sanphamRepository.findById(id).orElse(null);
+        if(sp.getTrangThai() == 0){
+            sp.setTrangThai(10);
+        }
+        return sanphamRepository.save(sp);
     }
 
     @Override

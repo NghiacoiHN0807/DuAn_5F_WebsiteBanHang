@@ -281,12 +281,14 @@ const OrderManagementTimeline = ({ classes }) => {
                       <TableCell component="th" scope="row">
                         {item.idCtsp.idSp.tenSp}
                       </TableCell>
-                      <TableCell align="right">{item.idCtsp.giaBan}</TableCell>
+                      <TableCell align="right">
+                        {item.idCtsp.idSp.giaBan}
+                      </TableCell>
                       <TableCell align="right">
                         {item.idCtsp.idSize.tenSize}
                       </TableCell>
                       <TableCell align="right">
-                        {item.idCtsp.idMs.tenMs}
+                        {item.idCtsp.idSp.idMs.tenMs}
                       </TableCell>
                       <TableCell align="right">{item.soLuong}</TableCell>
                       <TableCell align="right">{item.donGia}</TableCell>
