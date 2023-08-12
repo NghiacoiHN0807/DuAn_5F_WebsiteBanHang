@@ -2,7 +2,7 @@ import Nav from "react-bootstrap/Nav";
 import Form from "react-bootstrap/Form";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faMagnifyingGlass,} from "@fortawesome/free-solid-svg-icons";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {fetchAllDiaChi} from "../../services/diaChiSevice";
 import Badge from "react-bootstrap/Badge";
 import Pagination from "@mui/material/Pagination";
@@ -20,7 +20,7 @@ const TableAllDiaChi = () => {
     const [selectedLoaiDiaChi, setSelectedLoaiDiaChi] = useState("Tất cả");
     const [originalListData, setOriginalListData] = useState([]);
     const navigate = useNavigate();
-
+    const isMounted = useRef(true);
     const [listTP, setListTP] = useState([]);
     const [listQH, setListQH] = useState([]);
     const [listPX, setListPX] = useState([]);
@@ -28,18 +28,23 @@ const TableAllDiaChi = () => {
     const getListData = async (page, query) => {
         try {
             let res = await fetchAllDiaChi(page, query);
-            console.log("Check res: ", res);
-            setListData(res.content);
-            setNumberPages(Math.ceil(res.totalPages));
-            setOriginalListData(res.content);
+            if (isMounted.current) {
+                setListData(res.content);
+                setNumberPages(Math.ceil(res.totalPages));
+                setOriginalListData(res.content);
+            }
         } catch (error) {
             console.error(error);
         }
     };
 
     useEffect(() => {
+        isMounted.current = true;
         getListData(0);
         getListTP();
+        return () => {
+            isMounted.current = false;
+        };
     }, []);
 
     useEffect(() => {

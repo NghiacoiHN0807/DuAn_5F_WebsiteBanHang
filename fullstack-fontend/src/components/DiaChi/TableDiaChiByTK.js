@@ -68,6 +68,7 @@ const TableDiaChiByTK = () => {
         listData.forEach((item) => {
             fetchQuanHuyenAndPhuongXa(item.tinhThanh, item.quanHuyen);
         });
+        // eslint-disable-next-line
     }, [listData]);
 
     const fetchUpdatedData = (page) => {
