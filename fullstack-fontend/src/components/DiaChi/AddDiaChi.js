@@ -6,6 +6,7 @@ import {
     Button,
     FormControl,
     FormControlLabel,
+    FormHelperText,
     FormLabel,
     Radio,
     RadioGroup,
@@ -25,11 +26,11 @@ const AddDiaChi = () => {
         const [tenNguoiNhan, setTenNguoiNhan] = useState("");
         const [diaChiCuThe, setDiaChiCuThe] = useState("");
         const [sdt, setSdt] = useState("");
-        const [loaiDiaChi,setLoaiDiaChi] = useState("0");
+        const [loaiDiaChi, setLoaiDiaChi] = useState("0");
         const [tinhThanh, setTinhThanh] = useState(null);
         const [quanHuyen, setQuanHuyen] = useState(null);
         const [phuongXa, setPhuongXa] = useState(null);
-        const [trangThai, setTrangThai] = useState("0");
+        const [trangThai] = useState("0");
 
         const [listTP, setListTP] = useState([]);
         const [listQH, setListQH] = useState([]);
@@ -77,11 +78,12 @@ const AddDiaChi = () => {
             }
         };
 
+        const [validationErrors, setValidationErrors] = useState("");
+
         const handleSave = async () => {
-            if (!taiKhoan || !tenNguoiNhan || !diaChiCuThe || !sdt || !loaiDiaChi || !trangThai) {
-                toast.warning("Some field is empty!");
-            } else {
-                let res = await postAddDiaChi(
+            let res;
+            try {
+                res = await postAddDiaChi(
                     taiKhoan,
                     diaChiCuThe,
                     loaiDiaChi,
@@ -93,13 +95,22 @@ const AddDiaChi = () => {
                     trangThai
                 );
                 console.log("Check res: ", res);
-                if (res && res.taiKhoan) {
-                    toast.success("Thêm Thành Công");
-                    navigate(`/dia-chi/${idTK}`);
+            } catch (error) {
+                if (error.response && error.response.data) {
+                    setValidationErrors(error.response.data);
                 } else {
-                    toast.error("Thêm Thất Bại!");
+                    console.error("Error:", error);
                 }
+                return;
             }
+
+            if (res && res.taiKhoan) {
+                toast.success("Thêm Thành Công");
+                navigate(`/dia-chi/${idTK}`);
+            } else {
+                toast.error("Thêm Thất Bại!");
+            }
+
         };
 
 
@@ -133,123 +144,142 @@ const AddDiaChi = () => {
 
         return (
             <>
-                <div className="row row-order-management">
-                    <div
-                        className="title"
-                        style={{textAlign: "center", margin: "20px 0"}}
-                    >
-                        <h4>THÊM Địa Chỉ Của Tài Khoản: {idTK}</h4>
-                    </div>
-                    <Box
-                        component="form"
-                        sx={{
-                            display: "flex",         // Center horizontally
-                            justifyContent: "center", // Center horizontally
-                            flexDirection: "column", // Align items vertically
-                            alignItems: "center",
-                        }}
-                        noValidate
-                        autoComplete="off"
-                    >
-
-                        <TextField
-                            margin={"dense"}
-                            fullWidth
-                            label="Tên Người Nhận"
-                            id="fullWidth"
-                            onChange={(event) => setTenNguoiNhan(event.target.value)}
-                        />
-                        <TextField
-                            margin={"dense"}
-                            fullWidth
-                            label="Địa Chỉ"
-                            id="fullWidth"
-                            onChange={(event) => setDiaChiCuThe(event.target.value)}
-                        />
-                        <TextField
-                            margin={"dense"}
-                            fullWidth
-                            label="Số Điện Thoại"
-                            id="fullWidth"
-                            onChange={(event) => setSdt(event.target.value)}
-                        />
-                        <FormControl style={{marginLeft: "10px"}}>
-                            <FormLabel id="demo-radio-buttons-group-label">
-                                Loại Địa Chỉ
-                            </FormLabel>
-                            <RadioGroup
-                                row
-                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                name="row-radio-buttons-group"
-                                value={loaiDiaChi}
-                                onChange={(event) => setLoaiDiaChi(event.target.value)}
-                            >
-                                <FormControlLabel
-                                    value="0"
-                                    control={<Radio/>}
-                                    label="Nhà Riêng"
-                                />
-                                <FormControlLabel
-                                    value="1"
-                                    control={<Radio/>}
-                                    label="Nơi Làm Việc"
-                                />
-                            </RadioGroup>
-                        </FormControl>
-                        <Box
-                            sx={{
-                                display: "flex",
-                                gap: "10px",
-                                justifyContent: "center",
-                                marginTop: "10px",
-                                marginBottom: "10px",
-                                flexWrap: "wrap"
-                            }}
-                        >
-                            <Select autoWidth={true} value={tinhThanh || ''} onChange={selectTT} displayEmpty>
-                                <MenuItem disabled value={""}>Chọn Thành Phố</MenuItem>
-                                {listTP?.map((item) => (
-                                    <MenuItem key={item?.province_id} value={item?.province_id}>
-                                        {item?.province_name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-
-                            <Select autoWidth={true} value={quanHuyen || ''} onChange={selectQH} displayEmpty>
-                                <MenuItem disabled value={""}>Chọn Quận Huyện</MenuItem>
-                                {listQH?.map((item) => (
-                                    <MenuItem key={item?.district_id} value={item?.district_id}>
-                                        {item?.district_name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-
-                            <Select autoWidth={true} value={phuongXa || ''} onChange={selectPX} displayEmpty>
-                                <MenuItem disabled value={""}>Chọn Phường Xã</MenuItem>
-                                {listPX?.map((item) => (
-                                    <MenuItem key={item?.ward_id} value={item?.ward_id}>
-                                        {item?.ward_name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-
-                        </Box>
-
-                        <Button
-                            size={"large"}
-                            variant="contained"
-                            color="success"
-                            onClick={() => handleSave()}
-                            style={{marginTop: "20px"}} // Make button wider
-                            startIcon={<AddLocationAltIcon/>}
-                        >
-                            Thêm Địa Chỉ Mới
-                        </Button>
-                    </Box>
-
+            <div className="row row-order-management">
+                <div
+                    className="title"
+                    style={{textAlign: "center", margin: "20px 0"}}
+                >
+                    <h4>THÊM Địa Chỉ Của Tài Khoản: {idTK}</h4>
                 </div>
-            </>
-        );
+                <Box
+                    component="form"
+                    sx={{
+                        display: "flex",         // Center horizontally
+                        justifyContent: "center", // Center horizontally
+                        flexDirection: "column", // Align items vertically
+                        alignItems: "center",
+                    }}
+                    noValidate
+                    autoComplete="off"
+                >
+
+                    <TextField
+                        error={!!validationErrors.tenNguoiNhan}
+                        helperText={validationErrors.tenNguoiNhan}
+                        margin={"dense"}
+                        fullWidth
+                        label="Tên Người Nhận"
+                        id="fullWidth"
+                        onChange={(event) => setTenNguoiNhan(event.target.value)}
+                    />
+                    <TextField
+                        error={!!validationErrors.diaChiCuThe}
+                        helperText={validationErrors.diaChiCuThe}
+                        margin={"dense"}
+                        fullWidth
+                        label="Địa Chỉ"
+                        id="fullWidth"
+                        onChange={(event) => setDiaChiCuThe(event.target.value)}
+                    />
+                    <TextField
+                        error={!!validationErrors.sdt}
+                        helperText={validationErrors.sdt}
+                        margin={"dense"}
+                        fullWidth
+                        label="Số Điện Thoại"
+                        id="fullWidth"
+
+                        onChange={(event) => setSdt(event.target.value)}
+                    />
+                    <FormControl style={{marginLeft: "10px"}}>
+                        <FormLabel id="demo-radio-buttons-group-label">
+                            Loại Địa Chỉ
+                        </FormLabel>
+                        <RadioGroup
+                            row
+                            aria-labelledby="demo-row-radio-buttons-group-label"
+                            name="row-radio-buttons-group"
+                            value={loaiDiaChi}
+                            onChange={(event) => setLoaiDiaChi(event.target.value)}
+                        >
+                            <FormControlLabel
+                                value="0"
+                                control={<Radio/>}
+                                label="Nhà Riêng"
+                            />
+                            <FormControlLabel
+                                value="1"
+                                control={<Radio/>}
+                                label="Nơi Làm Việc"
+                            />
+                        </RadioGroup>
+                    </FormControl>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            gap: "10px",
+                            justifyContent: "center",
+                            marginTop: "10px",
+                            marginBottom: "10px",
+                            flexWrap: "wrap"
+                        }}
+                    >
+                        <FormControl sx={{m: 1, minWidth: 120}}>
+
+                        <Select
+                            error={!!validationErrors.tinhThanh}
+                            autoWidth={true} value={tinhThanh || ''} onChange={selectTT} displayEmpty>
+                            <MenuItem disabled value={""}>Chọn Thành Phố</MenuItem>
+                            {listTP?.map((item) => (
+                                <MenuItem key={item?.province_id} value={item?.province_id}>
+                                    {item?.province_name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                            <FormHelperText>{validationErrors.tinhThanh}</FormHelperText>
+                    </FormControl>
+                    <FormControl sx={{m: 1, minWidth: 120}}>
+
+                        <Select
+                            error={!!validationErrors.quanHuyen}
+                            autoWidth={true} value={quanHuyen || ''} onChange={selectQH} displayEmpty>
+                            <MenuItem disabled value={""}>Chọn Quận Huyện</MenuItem>
+                            {listQH?.map((item) => (
+                                <MenuItem key={item?.district_id} value={item?.district_id}>
+                                    {item?.district_name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                        <FormHelperText>{validationErrors.quanHuyen}</FormHelperText>
+                    </FormControl>
+                    <FormControl sx={{m: 1, minWidth: 120}}>
+                        <Select autoWidth={true} value={phuongXa || ''} onChange={selectPX} displayEmpty>
+                            <MenuItem disabled value={""}>Chọn Phường Xã</MenuItem>
+                            {listPX?.map((item) => (
+                                <MenuItem key={item?.ward_id} value={item?.ward_id}>
+                                    {item?.ward_name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                </Box>
+
+                <Button
+                    size={"large"}
+                    variant="contained"
+                    color="success"
+                    onClick={() => handleSave()}
+                    style={{marginTop: "20px"}} // Make button wider
+                    startIcon={<AddLocationAltIcon/>}
+                >
+                    Thêm Địa Chỉ Mới
+                </Button>
+            </Box>
+
+            </div>
+    </>
+    )
+        ;
     }
 ;
 export default AddDiaChi;

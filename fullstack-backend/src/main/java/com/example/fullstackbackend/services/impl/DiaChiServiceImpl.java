@@ -34,7 +34,7 @@ public class DiaChiServiceImpl implements DiaChiSevice {
 
     @Override
     public DiaChi add(DiaChi add) {
-        if(DiaChiRepository.CountTaiKhoan(add.getTaiKhoan().getMaTaiKhoan()) > 5){
+        if(DiaChiRepository.CountTaiKhoan(add.getTaiKhoan().getMaTaiKhoan()) >= 5){
             return null;
         }else {
             return DiaChiRepository.save(add);

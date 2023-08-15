@@ -5,7 +5,7 @@ import {
     Box,
     Button,
     FormControl,
-    FormControlLabel,
+    FormControlLabel, FormHelperText,
     FormLabel,
     Radio,
     RadioGroup,
@@ -83,11 +83,11 @@ const UpdateDiaChi = (props) => {
             }
         };
 
+        const [validationErrors, setValidationErrors] = useState("");
         const handleSave = async () => {
-            if (!tenNguoiNhan || !diaChiCuThe || !sdt) {
-                toast.warning("Some field is empty!");
-            } else {
-                let res = await postUpdateDiaChi(
+            let res;
+            try {
+                 res = await postUpdateDiaChi(
                     diaChi.id,
                     taiKhoan,
                     diaChiCuThe,
@@ -100,13 +100,21 @@ const UpdateDiaChi = (props) => {
                     trangThai
                 );
                 console.log("Check res: ", res);
+            } catch (error) {
+                if (error.response && error.response.data) {
+                    setValidationErrors(error.response.data);
+                } else {
+                    console.error("Error:", error);
+                }
+                return;
+            }
                 if (res && res.id) {
                     toast.success("Cập nhập Thành Công");
                     navigate(`/dia-chi/${taiKhoan.maTaiKhoan}`);
                 } else {
                     toast.error("Cập Nhập Thất Bại!");
                 }
-            }
+
         };
 
         const selectTT = (event) => {
@@ -150,6 +158,8 @@ const UpdateDiaChi = (props) => {
                     >
 
                         <TextField
+                            error={!!validationErrors.tenNguoiNhan}
+                            helperText={validationErrors.tenNguoiNhan}
                             margin={"dense"}
                             fullWidth
                             label="Tên Người Nhận"
@@ -158,6 +168,8 @@ const UpdateDiaChi = (props) => {
                             onChange={(event) => setTenNguoiNhan(event.target.value)}
                         />
                         <TextField
+                            error={!!validationErrors.diaChiCuThe}
+                            helperText={validationErrors.diaChiCuThe}
                             margin={"dense"}
                             fullWidth
                             label="Địa Chỉ"
@@ -166,6 +178,8 @@ const UpdateDiaChi = (props) => {
                             onChange={(event) => setDiaChiCuThe(event.target.value)}
                         />
                         <TextField
+                            error={!!validationErrors.sdt}
+                            helperText={validationErrors.sdt}
                             margin={"dense"}
                             fullWidth
                             label="Số Điện Thoại"
@@ -234,6 +248,8 @@ const UpdateDiaChi = (props) => {
                                 flexWrap: "wrap"
                             }}
                         >
+                            <FormControl sx={{m: 1, minWidth: 120}}>
+
                             <Select autoWidth={true} defaultValue={diaChi.tinhThanh} value={tinhThanh || ''}
                                     onChange={selectTT} displayEmpty>
                                 <MenuItem disabled value={""}>Chọn Thành Phố</MenuItem>
@@ -243,6 +259,9 @@ const UpdateDiaChi = (props) => {
                                     </MenuItem>
                                 ))}
                             </Select>
+                                <FormHelperText>{validationErrors.tinhThanh}</FormHelperText>
+                            </FormControl>
+                            <FormControl sx={{m: 1, minWidth: 120}}>
 
                             <Select autoWidth={true} value={quanHuyen || ''} onChange={selectQH} displayEmpty>
                                 <MenuItem disabled value={""}>Chọn Quận Huyện</MenuItem>
@@ -252,7 +271,9 @@ const UpdateDiaChi = (props) => {
                                     </MenuItem>
                                 ))}
                             </Select>
-
+                                <FormHelperText>{validationErrors.quanHuyen}</FormHelperText>
+                            </FormControl>
+                            <FormControl sx={{m: 1, minWidth: 120}}>
                             <Select autoWidth={true} value={phuongXa || ''} onChange={selectPX} displayEmpty>
                                 <MenuItem disabled value={""}>Chọn Phường Xã</MenuItem>
                                 {listPX?.map((item) => (
@@ -261,7 +282,7 @@ const UpdateDiaChi = (props) => {
                                     </MenuItem>
                                 ))}
                             </Select>
-
+                            </FormControl>
 
                         </Box>
 

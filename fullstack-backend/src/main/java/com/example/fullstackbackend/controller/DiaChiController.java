@@ -6,7 +6,9 @@ import com.example.fullstackbackend.services.DiaChiSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +19,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/dia-chi/")
@@ -42,14 +48,25 @@ public class DiaChiController {
     }
 
     @PostMapping("add")
-    public DiaChi add(@Valid @RequestBody DiaChi DiaChi,
-                      BindingResult bindingResult) {
+    public ResponseEntity<?> add(@Valid @RequestBody DiaChi diaChi,
+                                 BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return null;
+            Map<String, String> errorMap = new HashMap<>();
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+
+            for (FieldError fieldError : fieldErrors) {
+                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+
+            return ResponseEntity.badRequest().body(errorMap);
         } else {
-            return diaChiSevice.add(DiaChi);
+            DiaChi addedDiaChi = diaChiSevice.add(diaChi);
+            return ResponseEntity.ok(addedDiaChi);
         }
     }
+
+
+
 
     @GetMapping("detail/{id}")
     public Optional<DiaChi> detail(@PathVariable("id") Integer id) {
@@ -69,7 +86,19 @@ public class DiaChiController {
 
 
     @PostMapping("update")
-    public DiaChi update(@RequestBody DiaChi DiaChi) {
-        return diaChiSevice.update(DiaChi);
+    public ResponseEntity<?> update(@Valid @RequestBody DiaChi diaChi,
+                                    BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            List<String> errorMessages = fieldErrors.stream()
+                    .map(error -> error.getDefaultMessage())
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.badRequest().body(errorMessages);
+        } else {
+            DiaChi updatedDiaChi = diaChiSevice.update(diaChi);
+            return ResponseEntity.ok(updatedDiaChi);
+        }
     }
+
 }
