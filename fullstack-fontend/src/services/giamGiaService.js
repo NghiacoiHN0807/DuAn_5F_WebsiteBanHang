@@ -1,7 +1,7 @@
 import custom from './custom-axios';
 
-const getAll = (pageNo, size) => {
-    return custom.get(`/giam-gia-chi-tiet/api/view-all?page=${pageNo}&size=${size}`);
+const getAll = () => {
+    return custom.get(`/giam-gia-chi-tiet/api/view-all`);
 }
 
 const detailGiamGia = (id) => {
@@ -29,12 +29,12 @@ const filerDate = (pageNo, size, first, last) => {
 }
 
 const getAllSanPham = () => {
-    return custom.get(`/san-pham/listSP`);
+    return custom.get(`/san-pham/minimage`);
 }
 
-// const getAllLoaiSp = () => {
-//     return custom.get(`/loai-sp/api/views`);
-// }
+const getSanPhamDetails = (pageNo, size) => {
+    return custom.get(`/san-pham/dto?page=${pageNo}&size=${size}`);
+}
 
 const detail = (id) => {
     return custom.get(`/giam-gia-chi-tiet/api/detail/${id}`);
@@ -73,4 +73,4 @@ const getIdGiamGia = (id) => {
     return custom.get(`/giam-gia-chi-tiet/api/getidGiamGiaByIdggct/${id}`);
 }
 
-export {getIdGiamGia, updateGiamGia, getImgByIdSp, getAll, detail, remove, add, update, addGiamGia, addLichSuGiamGia, getAllByTrangThai, search, filerDate, getAllSanPham, detailGiamGia, detailChiTietSanPham, getCtspByIdSp};
+export {getSanPhamDetails, getIdGiamGia, updateGiamGia, getImgByIdSp, getAll, detail, remove, add, update, addGiamGia, addLichSuGiamGia, getAllByTrangThai, search, filerDate, getAllSanPham, detailGiamGia, detailChiTietSanPham, getCtspByIdSp};

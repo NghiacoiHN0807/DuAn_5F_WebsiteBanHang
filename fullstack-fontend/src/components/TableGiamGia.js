@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
-import { getAll, getAllByTrangThai } from "../services/giamGiaService";
-import { Badge, Form, Nav } from "react-bootstrap";
+import { getAll, getAllByTrangThai, getAllSanPham, getSanPhamDetails } from "../services/giamGiaService";
+import { Badge, Col, Form, Image, Nav } from "react-bootstrap";
+import "../scss/saletag.scss";
 import "../scss/TableGiamGiaScss.scss";
 import Pagination from "@mui/material/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { Button, IconButton } from "@mui/material";
+import { Button, IconButton, TableCell } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
 import { pink } from "@mui/material/colors";
@@ -47,9 +48,9 @@ const TableGiamGia = (props) => {
   };
 
   const getGiamGia = async (page, size) => {
-    let res = await getAll(page, size);
+    let res = await getSanPhamDetails(page, size);
     if (res && res.content) {
-      console.log(res)
+      console.log(res.content)
       setListGiamGia(res.content);
       setNumberPages(Math.ceil(res.totalPages));
     }
@@ -58,7 +59,7 @@ const TableGiamGia = (props) => {
   const hi = async (e) => {
     const value = e.target.value;
     if (value === "1") {
-      let res = await getAll(0, 5);
+      let res = await getSanPhamDetails(0, 5);
       setListGiamGia(res.content);
     } else if (value === "2") {
       let res = await getAllByTrangThai(0, 5, 0);
@@ -102,14 +103,15 @@ const TableGiamGia = (props) => {
       idHd: item,
       id: index + 1,
       index: index + 1,
-      tenChuongTrinh: item.idGiamGia.tenChuongTrinh,
-      tenSp: item.idCtsp.idSp.tenSp,
-      mucGiam: item.idGiamGia.mucGiamTienMat === null
-        ? item.idGiamGia.mucGiamPhanTram + "%"
-        : formatCurrency(item.idGiamGia.mucGiamTienMat),
-      thoiGian: formatDate(item.idGiamGia.ngayBatDau) +
+      tenChuongTrinh: item.tenChuongTrinh,
+      url_img: item.url_image,
+      tenSp: item.tenSp,
+      mucGiam: item.mucGiamTienMat === null
+        ? item.mucGiamPhanTram + "%"
+        : formatCurrency(item.mucGiamTienMat),
+      thoiGian: formatDate(item.ngayBatDau) +
         " - " +
-        formatDate(item.idGiamGia.ngayKetThuc),
+        formatDate(item.ngayKetThuc),
       donGia: formatCurrency(item.donGia),
       sauGiam: formatCurrency(item.soTienConLai),
       trangThai: item.trangThai
@@ -117,6 +119,28 @@ const TableGiamGia = (props) => {
 
   const columns = [
     { field: "index", headerName: "#", width: 50 },
+    {
+      field: "url_img",
+      headerName: "Ảnh",
+      width: 200,
+      renderCell: function (params) {
+        const { value: url_img } = params;
+        return (
+          <TableCell style={{ height: 240 }} className="d-flex align-items-center">
+            <div className="d-flex align-items-center box">
+              <Image
+                rounded
+                className="mr-2"
+                style={{ width: "150px", height: "auto" }}
+                src={url_img}
+                alt={`Ảnh sản phẩm ${url_img}`}
+              />
+              <div class="ribbon ribbon-top-right"><span>sale</span></div>
+            </div>
+          </TableCell>
+        );
+      }
+    },
     { field: "tenChuongTrinh", headerName: "Tên chương trình", width: 150 },
     { field: "tenSp", headerName: "Tên sản phẩm", width: 150 },
     { field: "mucGiam", headerName: "Mức giảm", width: 100 },
@@ -174,7 +198,7 @@ const TableGiamGia = (props) => {
             <IconButton
               aria-label="edit"
               size="large"
-            onClick={() => handleUpdate(params.row.idHd)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
+              onClick={() => handleUpdate(params.row.idHd)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
             >
               <EditOutlinedIcon color="primary" />
             </IconButton>
@@ -255,9 +279,10 @@ const TableGiamGia = (props) => {
           </Button>
         </div>
 
-        <div style={{ height: 400, width: "100%" }}>
+        <div style={{ height: 800, width: "100%" }}>
           <DataGrid
             rows={rows}
+            getRowHeight={(params) => 240}
             columns={columns}
             initialState={{
               pagination: {

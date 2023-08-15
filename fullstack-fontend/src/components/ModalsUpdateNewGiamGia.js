@@ -233,22 +233,22 @@ const ModelUpdateNewGiamGia = (props) => {
 
       // console.log(chiTietList.length);
       for (let index = 0; index < chiTietList.length; index++) {
-        const chiTietSanPham = await getCtspByIdSp(chiTietList[index].idSp);
+        const chiTietSanPham = await getCtspByIdSp(chiTietList[index].sanPham.idSp);
         for (let i = 0; i < chiTietSanPham.length; i++) {
           let soTienConLai = 0;
 
           if (giamGia.mucGiamPhanTram !== null) {
             // Nếu mucGiamPhanTram không null, tính số tiền còn lại dựa trên phần trăm giảm
             const mucGiam = giamGia.mucGiamPhanTram / 100;
-            soTienConLai = chiTietList[index].giaBan * (1 - mucGiam);
+            soTienConLai = chiTietList[index].sanPham.giaBan * (1 - mucGiam);
           } else {
             // Nếu mucGiamPhanTram là null, số tiền còn lại bằng giá tiền mặt giảm
-            soTienConLai = chiTietList[index].giaBan - giamGia.mucGiamTienMat;
+            soTienConLai = chiTietList[index].sanPham.giaBan - giamGia.mucGiamTienMat;
           }
           const giamGiaChiTietOk = {
             idCtsp: chiTietSanPham[i],
             idGiamGia: response.data,
-            donGia: chiTietList[index].giaBan,
+            donGia: chiTietList[index].sanPham.giaBan,
             soTienConLai: soTienConLai,
             trangThai: 0
           }
@@ -404,10 +404,10 @@ const ModelUpdateNewGiamGia = (props) => {
                     <TableBody>
                       {left.slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage).map((value, index) =>
                       (
-                        <TableRow key={`left_${value.idSp}`} onClick={handleToggle(value, true)}>
+                        <TableRow key={`left_${value.sanPham.idSp}`} onClick={handleToggle(value, true)}>
                           <TableCell padding="checkbox">
                             <Checkbox
-                              value={value.idSp}
+                              value={value.sanPham.idSp}
                               checked={checked.indexOf(value) !== -1}
 
                             />
@@ -423,9 +423,9 @@ const ModelUpdateNewGiamGia = (props) => {
                               />
                             </Col>
                           </TableCell> */}
-                          <TableCell>{value.maSp}</TableCell>
-                          <TableCell>{value.tenSp}</TableCell>
-                          <TableCell>{value.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
+                          <TableCell>{value.sanPham.maSp}</TableCell>
+                          <TableCell>{value.sanPham.tenSp}</TableCell>
+                          <TableCell>{value.sanPham.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -482,10 +482,10 @@ const ModelUpdateNewGiamGia = (props) => {
                     </TableHead>
                     <TableBody>
                       {right.slice(rightPage * rightRowsPerPage, rightPage * rightRowsPerPage + rightRowsPerPage).map((value, index) => (
-                        <TableRow key={`right_${value.idSp}`}>
+                        <TableRow key={`right_${value.sanPham.idSp}`}>
                           <TableCell padding="checkbox">
                             <Checkbox
-                              value={value.idSp}
+                              value={value.sanPham.idSp}
                               checked={chiTietList.indexOf(value) !== -1} // Sử dụng chiTietList thay vì checked
                               onClick={handleToggle(value, false)} // Đặt isLeft là false để xác định là bảng phải
                             // onChange={handleChange}
@@ -497,15 +497,15 @@ const ModelUpdateNewGiamGia = (props) => {
                               <Image
                                 rounded
                                 style={{ width: "150px", height: "auto" }}
-                                src={image[index]}
+                                src={value.url_image}
                                 alt={`Ảnh sản phẩm ${value.maSp}`}
                               />
                             </Col>
                           </TableCell>
-                          <TableCell>{value.maSp}</TableCell>
-                          <TableCell>{value.tenSp}</TableCell>
-                          <TableCell>{formatCurrency(value.giaBan)}</TableCell>
-                          <TableCell>{value.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
+                          <TableCell>{value.sanPham.maSp}</TableCell>
+                          <TableCell>{value.sanPham.tenSp}</TableCell>
+                          <TableCell>{formatCurrency(value.sanPham.giaBan)}</TableCell>
+                          <TableCell>{value.sanPham.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
