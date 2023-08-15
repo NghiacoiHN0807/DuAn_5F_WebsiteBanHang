@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
 
+
+
 }

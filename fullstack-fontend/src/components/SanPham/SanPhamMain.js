@@ -306,8 +306,8 @@ const TableSanPham = (props) => {
                   <NavDropdown title="Màu sắc" id="navbarScrollingDropdown">
                     <NavDropdown.Item eventKey={"All"}>All</NavDropdown.Item>
                     {listMS.map((option) => (
-                      <NavDropdown.Item eventKey={option.idCl}>
-                        {option.tenCl}
+                      <NavDropdown.Item eventKey={option.idMs}>
+                        {option.tenMs}
                       </NavDropdown.Item>
                     ))}
                   </NavDropdown>

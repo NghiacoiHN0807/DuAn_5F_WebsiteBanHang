@@ -5,7 +5,8 @@ import {
   Box,
   Button,
   Card,
-  CardContent,
+  CardActionArea,
+  CardMedia,
   Dialog,
   DialogActions,
   DialogContent,
@@ -26,7 +27,6 @@ import {
   TableHead,
   TableRow,
   TextField,
-  Typography,
 } from "@mui/material";
 import { fetchXX, detailXX } from "../../services/XuatXuService";
 import { fetchCL, detailCL } from "../../services/ChatLieuService";
@@ -36,7 +36,8 @@ import { fetchMS, detailMS } from "../../services/MauSacService";
 import { detailSize, fetchSize } from "../../services/SizeService";
 import { fetchTayAo, detailTayAo } from "../../services/OngTayAoService";
 import { detailSP } from "../../services/SanPhamService";
-import { postAddAnh } from "../../services/AnhService";
+import { deleteAnh, fetchAnh } from "../../services/AnhService";
+import { postAddCloud, deleteCloud } from "../../services/CloudinaryService";
 import {
   findSizeById,
   postAddCTSP,
@@ -46,11 +47,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useCallback } from "react";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
-import { Badge, Form } from "react-bootstrap";
-import axios from "axios";
+import { Badge, CardGroup, Form } from "react-bootstrap";
+import { RiImageAddLine } from "react-icons/ri";
+import { FaFileImage } from "react-icons/fa";
+import { useDropzone } from "react-dropzone";
+import "../../scss/ImgSanPham.scss";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { pink } from "@mui/material/colors";
-import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
-import { Image } from "cloudinary-react";
 
 const QuantityInput = ({ value, onChange }) => {
   const handleDecrease = () => {
@@ -110,8 +113,8 @@ const ModelUpdate = (props) => {
   const [listTayAo, setListTayAo] = useState([]);
   const [listCoAo, setListCoAo] = useState([]);
   const [listSize, setListSize] = useState([]);
-
   const [listCTSP, setListCTSP] = useState([]);
+  const [listImg, setListImg] = useState([]);
 
   const [radioValue, setRadioValue] = useState("1");
 
@@ -285,31 +288,54 @@ const ModelUpdate = (props) => {
   const [quantity, setQuantity] = useState(1);
 
   // image
-  const [selectedImage, setSelectImage] = useState([]);
-  const [imageData, setImageData] = useState(null);
 
-  const uploadImage = () => {
+  const getAnhData = useCallback(async () => {
+    try {
+      let res = await fetchAnh(idSpHttp);
+      setListImg(res);
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  }, [idSpHttp]);
+  useEffect(() => {
+    getAnhData();
+  }, [getAnhData]);
+
+  const [selectedImages, setSelectedImages] = useState([]);
+
+  const uploadImage = async () => {
     const formData = new FormData();
-    formData.append("file", selectedImage);
-    formData.append("upload_preset", "tq5orakd");
-
-    const postImage = async () => {
-      try {
-        const response = await axios.post(
-          "https://api.cloudinary.com/v1_1/dqptpylda/image/upload",
-          formData
-          // Replace YOUR_CLOUD_NAME with your cloudName which you can find in your Dashboard
-        );
-        const getObjSp = await detailSP(idSpHttp);
-        setImageData(response.data);
-        const addAnh = await postAddAnh(getObjSp, response.data.secure_url, 0);
-        console.log(addAnh);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    postImage();
+    selectedImages.forEach((image) => {
+      formData.append("images", image);
+      formData.append("idSp", idSpHttp);
+    });
+    let res = await postAddCloud(formData);
+    getAnhData();
+    console.log("Check res: ", res);
+    setSelectedImages([]);
+    const input = document.querySelector('input[type="file"]');
+    if (input) {
+      input.value = "";
+    }
   };
+
+  const handleImageChange = (event) => {
+    setSelectedImages([...selectedImages, ...event.target.files]);
+  };
+
+  const handlDeleteImg = async (idImg, url) => {
+    const parts = url.split("/");
+    const publicId =
+      parts[parts.length - 2] + "/" + parts[parts.length - 1].split(".")[0];
+
+    let ces = await deleteCloud(publicId);
+    let res = await deleteAnh(idImg);
+    getAnhData();
+    console.log("Check ces: ", ces);
+    console.log("Check res: ", res);
+  };
+
+  // icon add image
 
   return (
     <>
@@ -639,39 +665,54 @@ const ModelUpdate = (props) => {
           <h4>THÊM ẢNH</h4>
         </div>
         <div>
-          <Form.Group className="position-relative mb-3">
-            <Form.Label>File</Form.Label>
+          <Form.Group
+            className="position-relative mb-3"
+            style={{ display: "flex", alignItems: "center" }}
+          >
             <Form.Control
               type="file"
               required
               name="file"
-              onChange={(event) => setSelectImage(event.target.files[0])}
+              multiple
+              onChange={handleImageChange}
+              style={{ flex: 1 }}
             />
-            <Button onClick={uploadImage} variant="contained">
+            <Button
+              variant="contained"
+              onClick={() => uploadImage()}
+              style={{ marginLeft: "10px" }}
+            >
               Upload ảnh
             </Button>
           </Form.Group>
         </div>
         <div className="image-container">
-          <Card sx={{ width: 300 }}>
-            <CardContent>
-              <Typography gutterBottom>
-                {imageData && (
-                  <Image
-                    cloudName="dqptpylda"
-                    publicId={`https://res.cloudinary.com/dqptpylda/image/upload/v1691739931/${imageData.public_id}`}
-                    width={265}
-                    height={265}
-                  />
-                )}
-                <Box>
-                  <IconButton aria-label="delete" size="large">
-                    <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
-                  </IconButton>
-                </Box>
-              </Typography>
-            </CardContent>
-          </Card>
+          <CardGroup>
+            {listImg &&
+              listImg.length > 0 &&
+              listImg.map((item, index) => (
+                <Card sx={{ width: 200, marginRight: 5, marginTop: 5 }}>
+                  <CardActionArea>
+                    <Box position="relative">
+                      <CardMedia
+                        component="img"
+                        height="200"
+                        image={item.url}
+                        alt="green iguana"
+                      />
+                      <IconButton
+                        sx={{ position: "absolute", top: 0, right: 0 }}
+                        size="small"
+                        color="primary"
+                        onClick={() => handlDeleteImg(item.idImage, item.url)}
+                      >
+                        <DeleteIcon sx={{ color: pink[500], fontSize: 40 }} />
+                      </IconButton>
+                    </Box>
+                  </CardActionArea>
+                </Card>
+              ))}
+          </CardGroup>
         </div>
       </div>
     </>
