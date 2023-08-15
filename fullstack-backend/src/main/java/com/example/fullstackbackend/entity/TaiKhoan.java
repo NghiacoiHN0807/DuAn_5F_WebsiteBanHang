@@ -2,6 +2,8 @@ package com.example.fullstackbackend.entity;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,17 +31,26 @@ public class TaiKhoan {
     @Column(name = "ma_tai_khoan")
     private String maTaiKhoan;
 
+    @NotEmpty(message = "Không Được Để Trống Họ")
     @Column(name = "ho")
     private String ho;
 
+
+    @NotEmpty(message = "Không Được Để Trống Tên")
     @Column(name = "ten")
     private String ten;
 
+    @Pattern(message = "Nhập số Điện Thoại Chưa Đúng", regexp = "^(0|\\+84)(\\s|\\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))(\\d)(\\s|\\.)?(\\d{3})(\\s|\\.)?(\\d{3})$")
+    @NotEmpty(message = "Không Được Để Trống Số Điện Thoại")
+    @Size(min = 10,max = 10,message = "Số Điện Thoại Tối Thiểu 10 Số")
     @Column(name = "sdt")
     private String sdt;
 
+    @NotEmpty(message = "Không Được Để Trống Email")
+    @Email(message = "Email Chưa Đúng Định Dạng")
     @Column(name = "email")
     private String email;
+
 
     @Column(name = "mat_khau")
     private String matKhau;
@@ -54,24 +65,32 @@ public class TaiKhoan {
             maTaiKhoan = generateMaTaiKhoan();
         }
 
-        // Tạo mật khẩu ngẫu nhiên nếu trường matKhau là null
+        // Tạo mật khẩu ngẫu nhiên nếu trường matKhau là null hoặc trống
         if (matKhau == null) {
             matKhau = generateRandomPassword();
         }
     }
 
-    private String generateRandomPassword() {
+    public static String generateRandomPassword() {
         String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lower = "abcdefghijklmnopqrstuvwxyz";
         String digits = "0123456789";
         String specialChars = "@";
 
-        String allCharacters = upper + lower + digits + specialChars;
-
         SecureRandom random = new SecureRandom();
         StringBuilder password = new StringBuilder();
-        Integer length = 12;
-        for (int i = 0; i < length; i++) {
+        int length = 8;  // Độ dài mật khẩu mong muốn
+
+        // Chọn ít nhất 1 ký tự đặc biệt và 1 số
+        password.append(specialChars.charAt(random.nextInt(specialChars.length())));
+        password.append(digits.charAt(random.nextInt(digits.length())));
+
+        // Độ dài còn lại để hoàn thành mật khẩu
+        int remainingLength = length - 2;
+
+        String allCharacters = upper + lower + digits + specialChars;
+
+        for (int i = 0; i < remainingLength; i++) {
             int index = random.nextInt(allCharacters.length());
             password.append(allCharacters.charAt(index));
         }
@@ -87,7 +106,7 @@ public class TaiKhoan {
         String uuidString = uuid.toString().replace("-", "");
 
         // Lấy 6 ký tự đầu của chuỗi UUID
-        return "TK" + uuidString.substring(0, 9);
+        return "TK" + uuidString.toUpperCase().substring(0, 9);
     }
 }
 

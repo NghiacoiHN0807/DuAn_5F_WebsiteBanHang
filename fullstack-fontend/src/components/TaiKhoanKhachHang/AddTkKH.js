@@ -5,46 +5,49 @@ import {Box, Button, TextField} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 
 const AddTkKH = () => {
-    const [maTaiKhoan, setMaTaiKhoan] = useState(null);
+    const [maTaiKhoan] = useState(null);
     const [ho, setHo] = useState("");
     const [ten, setTen] = useState("");
     const [sdt, setSdt] = useState("");
     const [email, setEmail] = useState("");
-    const [matKhau, setMatKhau] = useState(null);
-    const [trangThai, setTrangThai] = useState("0");
+    const [matKhau] = useState("");
+    const [trangThai] = useState("0");
 
     // chuyen trang
     const navigate = useNavigate();
 
+    const [validationErrors, setValidationErrors] = useState("");
     const handleSave = async () => {
-        if (
-            setMaTaiKhoan(null) &&
-            setHo("") &&
-            setTen("") &&
-            setEmail("") &&
-            setSdt("") &&
-            setMatKhau(null) &&
-            setTrangThai(0)
-        ) {
-            toast.warning("Some field is empty!");
-        } else {
-            let res = await postAddTaiKhoanKhachHang(
-                maTaiKhoan,
-                ho,
-                ten,
-                sdt,
-                email,
-                matKhau,
-                trangThai
-            );
-            console.log("Check res: ", res);
+
+            let res;
+            try {
+                res = await postAddTaiKhoanKhachHang(
+                    maTaiKhoan,
+                    ho,
+                    ten,
+                    sdt,
+                    email,
+                    matKhau,
+                    trangThai
+                );
+                console.log("Check res: ", res);
+            }catch (error){
+                if (error.response && error.response.data) {
+                    console.log(error.response.data);
+                    setValidationErrors(error.response.data);
+                } else {
+                    console.error("Error:", error);
+                }
+                return;
+            }
+
             if (res && res.idTaiKhoan) {
                 toast.success("Thêm Thành Công");
                 navigate("/tai-khoan-KH");
             } else {
                 toast.error("Thêm Thất Bại!");
             }
-        }
+
     };
     return (
         <>
@@ -68,6 +71,8 @@ const AddTkKH = () => {
 
                 >
                     <TextField
+                        error={!!validationErrors.ho}
+                        helperText={validationErrors.ho}
                         fullWidth
                         margin={"dense"}
                         label="Họ"
@@ -75,6 +80,8 @@ const AddTkKH = () => {
                         onChange={(event) => setHo(event.target.value)}
                     />
                     <TextField
+                        error={!!validationErrors.ten}
+                        helperText={validationErrors.ten}
                         fullWidth
                         margin={"dense"}
                         label="Tên"
@@ -82,6 +89,8 @@ const AddTkKH = () => {
                         onChange={(event) => setTen(event.target.value)}
                     />
                     <TextField
+                        error={!!validationErrors.email}
+                        helperText={validationErrors.email}
                         fullWidth
                         margin={"dense"}
                         label="Email"
@@ -89,6 +98,8 @@ const AddTkKH = () => {
                         onChange={(event) => setEmail(event.target.value)}
                     />
                     <TextField
+                        error={!!validationErrors.sdt}
+                        helperText={validationErrors.sdt}
                         fullWidth
                         margin={"dense"}
                         label="Số Điện Thoại"
