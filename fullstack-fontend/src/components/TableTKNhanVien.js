@@ -31,8 +31,8 @@ import ModelConfirmTKNV from "../forms/ModelConfirmTKNV";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDeleteLeft } from "@fortawesome/free-solid-svg-icons";
-import { Html5QrcodeScanner } from "html5-qrcode";
-import { BrowserQRCodeReader } from "@zxing/library";
+
+import QrReader from "react-qr-scanner";
 
 const TableTKNhanVien = () => {
   const [listData, setListData] = useState([]);
@@ -92,7 +92,7 @@ const TableTKNhanVien = () => {
     { field: "index", headerName: "#", width: 50 },
     { field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 120 },
     { field: "idChucVu", headerName: "Chức Vụ", width: 100 },
-    { field: "ten", headerName: "Tên Khách Hàng", width: 120 },
+    { field: "ten", headerName: "Tên Nhân Viên", width: 120 },
     { field: "sdt", headerName: "Số Điện Thoại", width: 120 },
     { field: "email", headerName: "Email", width: 190 },
     { field: "soCanCuoc", headerName: "Số Căn Cước", width: 120 },
@@ -202,62 +202,12 @@ const TableTKNhanVien = () => {
     navigate(`/tai-khoan/detail/${item.idTaiKhoan}`);
   };
 
-  // QR code
-  const [scanResult, setScanResult] = useState(null);
-
-  useEffect(() => {
-    const qrScanner = new Html5QrcodeScanner("reader", {
-      fps: 5,
-      qrbox: {
-        width: 250,
-        height: 250,
-      },
-      legacyMode: false,
-      formatsToSupport: ["QR_CODE"],
-    });
-
-    qrScanner.render(onScanSuccess, onScanError);
-
-    function onScanSuccess(result) {
-      qrScanner.clear();
-      setScanResult(result);
-    }
-
-    function onScanError(err) {
-      console.error("QR scan error: ", err);
-    }
-
-    return () => {
-      qrScanner.clear();
-    };
-  }, []);
-  // const [scanResult, setScanResult] = useState(null);
-
-  // useEffect(() => {
-  //   const codeReader = new BrowserQRCodeReader();
-
-  //   // Get the element where you want to render the scanner (you can replace "reader" with your actual element ID)
-  //   const previewElem = document.getElementById("reader");
-
-  //   codeReader
-  //     .decodeOnceFromVideoDevice(undefined, previewElem)
-  //     .then((result) => {
-  //       console.log("QR code scanned:", result.text);
-  //       setScanResult(result.text);
-  //     })
-  //     .catch((err) => {
-  //       console.error("QR scan error: ", err);
-  //     });
-
-  //   return () => {
-  //     codeReader.reset();
-  //   };
-  // }, []);
   
+
   return (
     <>
       <div className="row row-order-management">
-        <h2 class="text-center">Tài Khoản Nhân Viên</h2>
+        <h2 className="text-center">Tài Khoản Nhân Viên</h2>
         <div className="row">
           <div className="col-5">
             <Nav>
@@ -279,24 +229,7 @@ const TableTKNhanVien = () => {
             </Nav>
           </div>
 
-          <div className="col-5">
-            {scanResult ? (
-              <div>
-                <div>
-                  Scanned Result:
-                  <a
-                    href={scanResult}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {scanResult}
-                  </a>
-                </div>
-              </div>
-            ) : (
-              <div id="reader"></div>
-            )}
-          </div>
+          
 
           {/* <div className="col-5">
             <div id="reader"></div>

@@ -33,6 +33,7 @@
     "react-paginate": "8.1.2",
     "react-perfect-scrollbar": "^1.5.8",
     "react-qr-reader": "^3.0.0-beta-1",
+    "react-qr-scanner": "^1.0.0-alpha.11",
     "react-router-dom": "6.3.0",
     "react-scripts": "^5.0.1",
     "react-toastify": "8.2.0",
@@ -67,4 +68,5 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
+  
 }
