@@ -2,9 +2,11 @@ package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.DTO.HoaDonDTO;
 import com.example.fullstackbackend.DTO.VNPayService;
+import com.example.fullstackbackend.entity.HinhThucThanhToan;
 import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.entity.LichSuHoaDon;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
+import com.example.fullstackbackend.services.HinhThucThanhToanSevice;
 import com.example.fullstackbackend.services.HoadonSevice;
 import com.example.fullstackbackend.services.LichSuHoaDonService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,6 +49,9 @@ public class HoaDonController {
     @Autowired
     private LichSuHoaDonService lichSuHoaDonService;
 
+    @Autowired
+    private HinhThucThanhToanSevice hinhThucThanhToanSevice;
+
     @GetMapping("view-all")
     public Page<HoaDon> viewAll(@RequestParam(defaultValue = "0") Integer page,
                                 @RequestParam(defaultValue = "15") Integer size,
@@ -69,7 +74,7 @@ public class HoaDonController {
         return hoaDons;
     }
 
-        @GetMapping("view-all-online-invoice")
+    @GetMapping("view-all-online-invoice")
     public Page<HoaDon> viewAllOnlineInvoice(@RequestParam(defaultValue = "0") Integer page,
                                              @RequestParam(defaultValue = "15") Integer size,
                                              @RequestParam("p") Optional<Integer> p) {
@@ -181,6 +186,15 @@ public class HoaDonController {
         return newHD1;
     }
 
+    @PutMapping("update-tong-tien/{id}")
+    public HoaDon updateTongTien(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+            hoaDon.setTongTien(newHD.getTongTien());
+            return hoadonSevice.add(hoaDon);
+        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+        return newHD1;
+    }
+
 
     @PostMapping("submitOrder")
     public String submidOrder(@RequestParam("amount") BigDecimal orderTotal,
@@ -197,18 +211,47 @@ public class HoaDonController {
             String orderInfo = request.getParameter("vnp_OrderInfo");
             String totalPrice = request.getParameter("vnp_Amount");
             BigDecimal realPrice = new BigDecimal(totalPrice).divide(new BigDecimal(100));
+            Integer idHd= Integer.valueOf(orderInfo);
 
+            //Detail HD by IdHd
+            Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
+            BigDecimal getTongTien = getOne.get().getTongTien();
+
+            BigDecimal tienMat = getTongTien.subtract(realPrice);
+            //Add to updatePaymentOnline
             HoaDon hoaDonDTO1 = new HoaDon();
             hoaDonDTO1.setNgayThanhToan(LocalDate.now());
             hoaDonDTO1.setTienDua(realPrice);
             hoaDonDTO1.setTrangThai(9);
 
-            Integer idHd= Integer.valueOf(orderInfo);
 
             HoaDon hoaDon = hoadonSevice.updatePaymentOnline(idHd, hoaDonDTO1);
+
+            // Add to payments
+            HinhThucThanhToan hinhThucThanhToan1 = new HinhThucThanhToan();
+            hinhThucThanhToan1.setIdHd(hoaDon);
+            hinhThucThanhToan1.setHinhThuc("Thanh Toán Online");
+            hinhThucThanhToan1.setSoTien(realPrice);
+            hinhThucThanhToan1.setMoTa("Thanh Toán Online");
+            hinhThucThanhToan1.setTrangThai(0);
+
+            HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
+            hinhThucThanhToan2.setIdHd(hoaDon);
+            hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
+            hinhThucThanhToan2.setSoTien(tienMat);
+            hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
+            hinhThucThanhToan2.setTrangThai(0);
+
+            if (tienMat.compareTo(BigDecimal.ZERO) <= 0) {
+                hinhThucThanhToanSevice.add(hinhThucThanhToan1);
+            }else{
+                hinhThucThanhToanSevice.add(hinhThucThanhToan1);
+                hinhThucThanhToanSevice.add(hinhThucThanhToan2);
+            }
+
             //Add to history bill
 
-            // Lấy ngày giờ hiện tại
+            // get datetimenow
             java.util.Date currentDate = new java.util.Date();
             // Chuyển đổi thành Timestamp
             Timestamp currentTimestamp = new Timestamp(currentDate.getTime());

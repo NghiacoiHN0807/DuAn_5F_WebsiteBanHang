@@ -15,6 +15,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,6 +35,9 @@ public class HinhThucThanhToan {
 
     @Column(name = "hinh_thuc")
     private String hinhThuc;
+
+    @Column(name = "so_tien")
+    private BigDecimal soTien;
 
     @Column(name = "mo_ta")
     private String moTa;

@@ -19,13 +19,10 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanSevice {
 
     @Override
     public List<HinhThucThanhToan> getAll() {
-        return null;
+        return HinhThucThanhToanRepository.findAll();
     }
 
-    @Override
-    public Page<HinhThucThanhToan> htttPages(Integer pageNo, Integer size) {
-        return null;
-    }
+
 
 
     @Override
@@ -36,11 +33,6 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanSevice {
     @Override
     public void delete(Integer id) {
         HinhThucThanhToanRepository.deleteById(id);
-    }
-
-    @Override
-    public Boolean checkExists(Integer id) {
-        return HinhThucThanhToanRepository.existsById(id);
     }
 
     @Override

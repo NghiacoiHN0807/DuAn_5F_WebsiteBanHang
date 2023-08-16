@@ -11,7 +11,6 @@ import {
 import ModalAddProduct from "../forms/Modals-AddProduct";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
-import Null from "../forms/Null";
 import {
   Button,
   FormControl,
@@ -44,11 +43,11 @@ import ModalUpdateProductOnCart from "../forms/Modals-Update-Product-Cart";
 import ModalDeleteProductOnCart from "../forms/Modal-Delete-Product";
 import ModalDeleteAllProductOnCart from "../forms/Modal-Delete-All-Product";
 import ModalAddKhachHang from "../forms/Modals-AddKhachHang";
-import SendIcon from "@mui/icons-material/Send";
 import { toast } from "react-toastify";
 import {
   updatePayment,
   updatePaymentShip,
+  updateTongTien,
 } from "../services/OrderManagementTimeLine";
 import { format } from "date-fns";
 import { Image } from "react-bootstrap";
@@ -383,16 +382,17 @@ const CartBillADM = (props) => {
   const [thanhTien, setThanhTien] = useState();
 
   useEffect(() => {
-    const calculateTotalPrice = () => {
+    const calculateTotalPrice = async () => {
       let total = 0;
       for (const item of DataCart) {
         total += item[7];
       }
       setThanhTien(total);
+      await updateTongTien(thanhTien);
     };
 
     calculateTotalPrice();
-  }, [DataCart]);
+  }, [DataCart, thanhTien]);
 
   //Add Khach Hang
   const [selectedCustomerName, setSelectedCustomerName] = useState("");
@@ -406,22 +406,7 @@ const CartBillADM = (props) => {
   const handleCloseAddKH = () => {
     setShowModalKH(false);
   };
-  //Payment
-  const [cashGiven, setCashGiven] = useState("");
-  const [changeAmount, setChangeAmount] = useState(0);
-  const handleCalculateChange = () => {
-    const cashGivenValue = parseFloat(cashGiven);
-    if (!isNaN(cashGivenValue)) {
-      const change = cashGivenValue - thanhTien;
-      if (change < 0) {
-        toast.warning("Tiền Khách Đưa Chưa Đủ");
-      } else {
-        setChangeAmount(change);
-      }
-    } else {
-      setChangeAmount(0);
-    }
-  };
+
   //Handle Save
   const navigate = useNavigate();
 
@@ -837,27 +822,6 @@ const CartBillADM = (props) => {
                         sx={{ marginTop: 2 }}
                         onChange={(e) => getSdtKHTT(e.target.value)}
                       />
-                      <TextField
-                        id="standard-multiline-flexible"
-                        label="Số Tiền Khách Gửi"
-                        type="number"
-                        multiline
-                        maxRows={4}
-                        variant="outlined"
-                        size="small"
-                        fullWidth
-                        sx={{ marginTop: 2, marginBottom: 2 }}
-                        onChange={(e) => setCashGiven(e.target.value)}
-                      />
-                      <Button
-                        sx={{ marginBottom: 2 }}
-                        variant="contained"
-                        endIcon={<SendIcon />}
-                        onClick={handleCalculateChange}
-                      >
-                        Tính Tiền
-                      </Button>
-                      <p>Số Tiền Thừa Của Khách: {changeAmount}</p>
                     </div>
                   )}
                 </div>

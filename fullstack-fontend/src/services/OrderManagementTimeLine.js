@@ -22,6 +22,12 @@ const updatePayment = (
     trangThai,
   });
 };
+const updateTongTien = (idHd, tongTien) => {
+  return custom.put(`/hoa-don/update-tong-tien/${idHd}`, {
+    idHd,
+    tongTien,
+  });
+};
 const updatePaymentShip = (
   idHd,
   tenKh,
@@ -58,6 +64,7 @@ const listHTTTByID = (idHd) => {
   return custom.get(`/hoa-don-chi-tiet/detail-get-one/${idHd}`);
 };
 export {
+  updateTongTien,
   listHTTTByID,
   updateStatusBill,
   getDetailHDCT,

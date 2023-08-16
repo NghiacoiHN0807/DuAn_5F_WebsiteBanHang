@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import "../scss/Car-Bill-ADM.scss";
-import { Dialog, TextField } from "@mui/material";
+import { Dialog, FormControlLabel, Switch, TextField } from "@mui/material";
 import { useState } from "react";
 import { addPayment, updatePayment } from "../services/OrderManagementTimeLine";
 import { toast } from "react-toastify";
@@ -13,6 +13,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import { forwardRef } from "react";
 import { paymentOnline } from "../services/BillSevice";
+import SendIcon from "@mui/icons-material/Send";
 
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -29,6 +30,13 @@ const ModalPaymentComfirm = (props) => {
   const formattedDate = format(currentDate, "yyyy-MM-dd");
 
   const navigate = useNavigate();
+
+  //Show  payment online
+  const [isDeliveryChecked, setIsDeliveryChecked] = useState(false);
+
+  const handleDeliveryChange = (event) => {
+    setIsDeliveryChecked(event.target.checked);
+  };
 
   const handlePaymentOnCash = async () => {
     try {
@@ -52,6 +60,22 @@ const ModalPaymentComfirm = (props) => {
       console.error("Error updating", e);
     }
   };
+  //Payment
+  const [cashGiven, setCashGiven] = useState("");
+  const [changeAmount, setChangeAmount] = useState(0);
+  const handleCalculateChange = () => {
+    const cashGivenValue = parseFloat(cashGiven);
+    if (!isNaN(cashGivenValue)) {
+      const change = cashGivenValue - thanhTien;
+      if (change < 0) {
+        toast.warning("Tiền Khách Đưa Chưa Đủ");
+      } else {
+        setChangeAmount(change);
+      }
+    } else {
+      setChangeAmount(0);
+    }
+  };
 
   return (
     <>
@@ -67,17 +91,6 @@ const ModalPaymentComfirm = (props) => {
           <DialogTitle>{"THANH TOÁN HÓA ĐƠN"}</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-slide-description">
-              {/* <input defaultValue={listHD.maHd} /> */}
-              {/* <TextField
-                fullWidth
-                sx={{ m: 1 }}
-                required
-                id="outlined-required"
-                label="Mã Hóa Đơn"
-                value={listHD.maHd}
-                // disabled={true}
-                size="small"
-              /> */}
               <div>
                 <TextField
                   id="standard-multiline-flexible"
@@ -113,6 +126,60 @@ const ModalPaymentComfirm = (props) => {
                   multiline
                   rows={4}
                 />
+                <FormControlLabel
+                  control={<Switch />}
+                  onChange={handleDeliveryChange}
+                  label="Thanh Toán Online"
+                />
+                {isDeliveryChecked ? (
+                  <>
+                    <TextField
+                      id="standard-multiline-flexible"
+                      label="Số Tiền Mặt Gửi"
+                      type="number"
+                      multiline
+                      maxRows={4}
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      sx={{ marginTop: 2, marginBottom: 2 }}
+                      onChange={(e) => setCashGiven(e.target.value)}
+                    />
+                    <Button
+                      sx={{ marginBottom: 2 }}
+                      variant="contained"
+                      endIcon={<SendIcon />}
+                      onClick={handleCalculateChange}
+                    >
+                      Tính Tiền
+                    </Button>
+                    <p>Số Tiền Thừa Của Khách: {changeAmount}</p>
+                  </>
+                ) : (
+                  <>
+                    <TextField
+                      id="standard-multiline-flexible"
+                      label="Số Tiền Khách Gửi"
+                      type="number"
+                      multiline
+                      maxRows={4}
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      sx={{ marginTop: 2, marginBottom: 2 }}
+                      onChange={(e) => setCashGiven(e.target.value)}
+                    />
+                    <Button
+                      sx={{ marginBottom: 2 }}
+                      variant="contained"
+                      endIcon={<SendIcon />}
+                      onClick={handleCalculateChange}
+                    >
+                      Tính Tiền
+                    </Button>
+                    <p>Số Tiền Thừa Của Khách: {changeAmount}</p>
+                  </>
+                )}
               </div>
             </DialogContentText>
           </DialogContent>
