@@ -1,23 +1,14 @@
 import { useEffect, useState } from "react";
 
-import { fetchAllSP } from "../../services/SanPhamService";
+import { fetchSpWithImg, deleteSanPham } from "../../services/SanPhamService";
 
-import {
-  Badge,
-  Button,
-  Container,
-  Form,
-  Nav,
-  NavDropdown,
-  Navbar,
-} from "react-bootstrap";
+import { Badge, Button, Form, Image } from "react-bootstrap";
 import { fetchXX } from "../../services/XuatXuService";
 import { fetchCL } from "../../services/ChatLieuService";
 import { fetchCoAo } from "../../services/LoaiCoAoService";
 import { fetchLSP } from "../../services/LoaiSPService";
 import { fetchMS } from "../../services/MauSacService";
 import { fetchTayAo } from "../../services/OngTayAoService";
-import { fetchSP, deleteSanPham } from "../../services/SanPhamService";
 import { fetchSize } from "../../services/SizeService";
 import { DataGrid } from "@mui/x-data-grid";
 import { useNavigate } from "react-router-dom";
@@ -30,11 +21,13 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  TableCell,
 } from "@mui/material";
 import { toast } from "react-toastify";
 import { pink } from "@mui/material/colors";
 import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const TableSanPham = (props) => {
   //Set value for table
@@ -46,11 +39,20 @@ const TableSanPham = (props) => {
   const [listCL, setListCL] = useState([]);
   const [listMS, setListMS] = useState([]);
   const [listSize, setListSize] = useState([]);
-  const [listSP, setListSP] = useState([]);
   const [listLSP, setListLSP] = useState([]);
   const [listXX, setListXX] = useState([]);
   const [listTayAo, setListTayAo] = useState([]);
   const [listCoAo, setListCoAo] = useState([]);
+
+  const [chatLieu, setChatLieu] = useState("");
+  const [mauSac, setMauSac] = useState("");
+  const [coAo, setCoAo] = useState("");
+  const [loaiSp, setLoaiSp] = useState("");
+  const [tayAo, setTayAo] = useState("");
+  const [xuatXu, setXuatXu] = useState("");
+  const [size, setSize] = useState("");
+  const [trangThai, setTrangThai] = useState("");
+  const [originalListData, setOriginalListData] = useState([]);
 
   //Set value for Model Add New is defalut
   // Show Data On Tables
@@ -60,11 +62,12 @@ const TableSanPham = (props) => {
   }, []);
 
   const getSanPham = async (page) => {
-    let res = await fetchAllSP(page);
+    let res = await fetchSpWithImg(page);
     console.log("Data", res);
     if (res && res.content) {
       setListSanPham(res.content);
       setNumberPages(Math.ceil(res.totalPages));
+      setOriginalListData(res.content);
     }
   };
 
@@ -77,9 +80,6 @@ const TableSanPham = (props) => {
 
     let resSize = await fetchSize();
     setListSize(resSize);
-
-    let resSP = await fetchSP();
-    setListSP(resSP);
 
     let resLSP = await fetchLSP();
     setListLSP(resLSP);
@@ -144,49 +144,183 @@ const TableSanPham = (props) => {
     return formatter.format(price);
   }
 
+  // fillter
+  useEffect(() => {
+    const filteredData =
+      chatLieu === ""
+        ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
+        : originalListData.filter((item) => item.idCl === Number(chatLieu));
+    setListSanPham(filteredData);
+    // setChatLieu("");
+    setMauSac("");
+    setCoAo("");
+    setLoaiSp("");
+    setTayAo("");
+    setSize("");
+    setXuatXu("");
+    setTrangThai("");
+  }, [chatLieu, originalListData]);
+
+  useEffect(() => {
+    const filteredData =
+      mauSac === ""
+        ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
+        : originalListData.filter((item) => item.idMs === Number(mauSac));
+    setListSanPham(filteredData);
+    setChatLieu("");
+    // setMauSac("");
+    setCoAo("");
+    setLoaiSp("");
+    setTayAo("");
+    setSize("");
+    setXuatXu("");
+    setTrangThai("");
+  }, [mauSac, originalListData]);
+
+  useEffect(() => {
+    const filteredData =
+      coAo === ""
+        ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
+        : originalListData.filter((item) => item.idCoAo === Number(coAo));
+    setListSanPham(filteredData);
+    setChatLieu("");
+    setMauSac("");
+    // setCoAo("");
+    setLoaiSp("");
+    setTayAo("");
+    setSize("");
+    setXuatXu("");
+    setTrangThai("");
+  }, [coAo, originalListData]);
+
+  useEffect(() => {
+    const filteredData =
+      loaiSp === ""
+        ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
+        : originalListData.filter((item) => item.idLoaiSp === Number(loaiSp));
+    setListSanPham(filteredData);
+    setChatLieu("");
+    setMauSac("");
+    setCoAo("");
+    // setLoaiSp("");
+    setTayAo("");
+    setSize("");
+    setXuatXu("");
+    setTrangThai("");
+  }, [loaiSp, originalListData]);
+
+  useEffect(() => {
+    const filteredData =
+      tayAo === ""
+        ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
+        : originalListData.filter((item) => item.idTayAo === Number(tayAo));
+    setListSanPham(filteredData);
+    setChatLieu("");
+    setMauSac("");
+    setCoAo("");
+    setLoaiSp("");
+    // setTayAo("");
+    setSize("");
+    setXuatXu("");
+    setTrangThai("");
+  }, [tayAo, originalListData]);
+
+  // useEffect(() => {
+  //   const filteredData =
+  //     size === ""
+  //       ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
+  //       : originalListData.filter((item) => item.idSize === Number(size));
+  //   setListSanPham(filteredData);
+  //   setChatLieu("");
+  //   setMauSac("");
+  //   setCoAo("");
+  //   setLoaiSp("");
+  //   setTayAo("");
+  //   // setSize("");
+  //   setXuatXu("");
+  //   setTrangThai("");
+  // }, [size, originalListData]);
+
+  useEffect(() => {
+    const filteredData =
+      xuatXu === ""
+        ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
+        : originalListData.filter((item) => item.idXx === Number(xuatXu));
+    setListSanPham(filteredData);
+    setChatLieu("");
+    setMauSac("");
+    setCoAo("");
+    setLoaiSp("");
+    setTayAo("");
+    setSize("");
+    // setXuatXu("");
+    setTrangThai("");
+  }, [xuatXu, originalListData]);
+
+  useEffect(() => {
+    const filteredData =
+      trangThai === ""
+        ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
+        : originalListData.filter(
+            (item) => item.trangThai === Number(trangThai)
+          );
+    setListSanPham(filteredData);
+    setChatLieu("");
+    setMauSac("");
+    setCoAo("");
+    setLoaiSp("");
+    setTayAo("");
+    setSize("");
+    setXuatXu("");
+    // setTrangThai("");
+  }, [trangThai, originalListData]);
+
+  // table
   const columns = [
     { field: "index", headerName: "#", width: 50 },
-    { field: "tenSp", headerName: "Tên sản phẩm", width: 150 },
-    { field: "idCl", headerName: "Chất liệu", width: 100 },
-    { field: "idMs", headerName: "Màu sắc", width: 100 },
-
     {
-      field: "idLoaisp",
-      headerName: "Loại",
-      width: 100,
+      field: "anh",
+      headerName: "Ảnh",
+      width: 200,
+      headerAlign: "center",
+      renderCell: (params) => {
+        const { row } = params;
+        const url = row.anh;
+        return (
+          <TableCell
+            style={{ height: 240 }}
+            className="d-flex align-items-center"
+          >
+            <div className="d-flex align-items-center box">
+              <Image
+                rounded
+                className="mr-2"
+                style={{ width: "150px", height: "auto" }}
+                src={url}
+              />
+            </div>
+          </TableCell>
+        );
+      },
     },
-    {
-      field: "idXx",
-      headerName: "Xuất xứ",
-      width: 100,
-    },
-    {
-      field: "idCoAo",
-      headerName: "Cổ áo",
-      width: 100,
-    },
-    {
-      field: "idTayAo",
-      headerName: "Tay áo",
-      width: 100,
-    },
+    { field: "maSp", headerName: "Mã", width: 150 },
+    { field: "tenSp", headerName: "Tên sản phẩm", width: 200 },
 
     {
       field: "giaBan",
-      headerName: "Giá",
-      width: 100,
+      headerName: "Giá bán",
+      width: 150,
     },
-
     {
       field: "moTa",
       headerName: "Mô tả",
-      width: 100,
+      width: 150,
     },
 
     {
       field: "trangThai",
       headerName: "Trạng Thái",
-      width: 100,
+      width: 150,
       renderCell: (params) => {
         const { value: trangThai } = params;
         let badgeVariant, statusText;
@@ -254,12 +388,8 @@ const TableSanPham = (props) => {
       id: index + 1,
       index: index + 1,
       tenSp: item.tenSp,
-      idCl: item.idCl.tenCl,
-      idMs: item.idMs.tenMs,
-      idLoaisp: item.idLsp.tenLsp,
-      idXx: item.idXx.tenNuoc,
-      idCoAo: item.idCoAo.loaiCoAo,
-      idTayAo: item.idTayAo.loaiTayAo,
+      maSp: item.maSp,
+      anh: item.url,
       giaBan: formatCurrency(item.giaBan),
       moTa: item.moTa,
       trangThai: item.trangThai,
@@ -286,100 +416,145 @@ const TableSanPham = (props) => {
           </Form>
         </div>
         <div className="filter-and-search">
-          <Navbar expand="lg" className="bg-body-tertiary">
-            <Container fluid>
-              <Navbar.Toggle aria-controls="navbarScroll" />
-              <Navbar.Collapse id="navbarScroll">
-                <Nav
-                  className="me-auto my-2 my-lg-0"
-                  style={{ maxHeight: "100px" }}
-                  navbarScroll
-                >
-                  <NavDropdown title="Chất liệu" id="navbarScrollingDropdown">
-                    <NavDropdown.Item eventKey={"All"}>All</NavDropdown.Item>
-                    {listCL.map((option) => (
-                      <NavDropdown.Item eventKey={option.idCl}>
-                        {option.tenCl}
-                      </NavDropdown.Item>
-                    ))}
-                  </NavDropdown>
-                  <NavDropdown title="Màu sắc" id="navbarScrollingDropdown">
-                    <NavDropdown.Item eventKey={"All"}>All</NavDropdown.Item>
-                    {listMS.map((option) => (
-                      <NavDropdown.Item eventKey={option.idMs}>
-                        {option.tenMs}
-                      </NavDropdown.Item>
-                    ))}
-                  </NavDropdown>
-                  <NavDropdown title="Loại cổ áo" id="navbarScrollingDropdown">
-                    <NavDropdown.Item eventKey={"All"}>All</NavDropdown.Item>
-                    {listCoAo.map((option) => (
-                      <NavDropdown.Item eventKey={option.idCoAo}>
-                        {option.loaiCoAo}
-                      </NavDropdown.Item>
-                    ))}
-                  </NavDropdown>
-                  <NavDropdown
-                    title="Loại sản phẩm"
-                    id="navbarScrollingDropdown"
-                  >
-                    <NavDropdown.Item eventKey={"All"}>All</NavDropdown.Item>
-                    {listLSP.map((option) => (
-                      <NavDropdown.Item eventKey={option.idLoaisp}>
-                        {option.tenLsp}
-                      </NavDropdown.Item>
-                    ))}
-                  </NavDropdown>
-                  <NavDropdown title="Ống tay áo" id="navbarScrollingDropdown">
-                    <NavDropdown.Item eventKey={"All"}>All</NavDropdown.Item>
-                    {listTayAo.map((option) => (
-                      <NavDropdown.Item eventKey={option.idTayAo}>
-                        {option.loaiTayAo}
-                      </NavDropdown.Item>
-                    ))}
-                  </NavDropdown>
-                  <NavDropdown title="Sản phẩm" id="navbarScrollingDropdown">
-                    <NavDropdown.Item eventKey={"All"}>All</NavDropdown.Item>
-                    {listSP.map((option) => (
-                      <NavDropdown.Item eventKey={option.idSp}>
-                        {option.tenSp}
-                      </NavDropdown.Item>
-                    ))}
-                  </NavDropdown>
-                  <NavDropdown title="Size" id="navbarScrollingDropdown">
-                    <NavDropdown.Item eventKey={"All"}>All</NavDropdown.Item>
-                    {listSize.map((option) => (
-                      <NavDropdown.Item eventKey={option.idSize}>
-                        {option.tenSize}
-                      </NavDropdown.Item>
-                    ))}
-                  </NavDropdown>
-                  <NavDropdown
-                    title="Xuất xứ"
-                    id="navbarScrollingDropdown"
-                    onSelect={"All"}
-                  >
-                    <NavDropdown.Item>All</NavDropdown.Item>
-                    {listXX.map((option) => (
-                      <NavDropdown.Item eventKey={option.idXx}>
-                        {option.tenNuoc}
-                      </NavDropdown.Item>
-                    ))}
-                  </NavDropdown>
-                </Nav>
-                <Form className="d-flex">
-                  <Button variant="success" onClick={() => handAdd()}>
-                    Thêm sản phẩm
-                  </Button>
-                </Form>
-              </Navbar.Collapse>
-            </Container>
-          </Navbar>
+          <div
+            className="row"
+            style={{
+              textAlign: "center",
+              marginLeft: "20px",
+            }}
+          >
+            <div className="col-2">
+              <label htmlFor="status-select">Chất liệu: </label>
+              <select
+                id="status-select"
+                className="select-green"
+                value={chatLieu}
+                onChange={(e) => setChatLieu(e.target.value)}
+              >
+                <option value="">Tất cả</option>
+                {listCL.map((item) => (
+                  <option value={item.idCl}>{item.tenCl}</option>
+                ))}
+              </select>
+            </div>
+            <div className="col-2">
+              <label htmlFor="status-select">Màu sắc: </label>
+              <select
+                id="status-select"
+                className="select-green"
+                value={mauSac}
+                onChange={(e) => setMauSac(e.target.value)}
+              >
+                <option value="">Tất cả</option>
+                {listMS.map((item) => (
+                  <option value={item.idMs}>{item.tenMs}</option>
+                ))}
+              </select>
+            </div>
+            <div className="col-2">
+              <label htmlFor="status-select">Loại cổ áo: </label>
+              <select
+                id="status-select"
+                className="select-green"
+                value={coAo}
+                onChange={(e) => setCoAo(e.target.value)}
+              >
+                <option value="">Tất cả</option>
+                {listCoAo.map((item) => (
+                  <option value={item.idCoAo}>{item.loaiCoAo}</option>
+                ))}
+              </select>
+            </div>
+            <div className="col-2">
+              <label htmlFor="status-select">Loại sản phẩm: </label>
+              <select
+                id="status-select"
+                className="select-green"
+                value={loaiSp}
+                onChange={(e) => setLoaiSp(e.target.value)}
+              >
+                <option value="">Tất cả</option>
+                {listLSP.map((item) => (
+                  <option value={item.idLoaiSp}>{item.tenLsp}</option>
+                ))}
+              </select>
+            </div>
+            <div className="col-2">
+              <label htmlFor="status-select">Ống tay áo: </label>
+              <select
+                id="status-select"
+                className="select-green"
+                value={tayAo}
+                onChange={(e) => setTayAo(e.target.value)}
+              >
+                <option value="">Tất cả</option>
+                {listTayAo.map((item) => (
+                  <option value={item.idTayAo}>{item.loaiTayAo}</option>
+                ))}
+              </select>
+            </div>
+            <div className="col-2">
+              <label htmlFor="status-select">Size: </label>
+              <select
+                id="status-select"
+                className="select-green"
+                value={size}
+                onChange={(e) => setSize(e.target.value)}
+              >
+                <option value="">Tất cả</option>
+                {listSize.map((item) => (
+                  <option value={item.idSize}>{item.tenSize}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div
+            className="row"
+            style={{
+              textAlign: "center",
+              marginLeft: "300px",
+            }}
+          >
+            <div className="col-2">
+              <label htmlFor="status-select">Xuất xứ: </label>
+              <select
+                id="status-select"
+                className="select-green"
+                value={xuatXu}
+                onChange={(e) => setXuatXu(e.target.value)}
+              >
+                <option value="">Tất cả</option>
+                {listXX.map((item) => (
+                  <option value={item.idXx}>{item.tenNuoc}</option>
+                ))}
+              </select>
+            </div>
+            <div className="col-3">
+              <label htmlFor="status-select">Trạng thái: </label>
+              <select
+                id="status-select"
+                className="select-green"
+                value={trangThai}
+                onChange={(e) => setTrangThai(e.target.value)}
+              >
+                <option value="">Tất cả</option>
+                <option value="0">Còn bán</option>
+                <option value="10">Ngừng kinh doanh</option>
+              </select>
+            </div>
+          </div>
+
+          <div style={{ textAlign: "right", margin: "20px 0" }}>
+            <Button variant="success" onClick={() => handAdd()}>
+              <AddCircleIcon /> Thêm sản phẩm
+            </Button>
+          </div>
         </div>
 
-        <div style={{ height: 400, width: "100%" }}>
+        <div style={{ height: 800, width: "100%" }}>
           <DataGrid
             rows={rows}
+            getRowHeight={(params) => 220}
             columns={columns}
             initialState={{
               pagination: {
@@ -387,6 +562,7 @@ const TableSanPham = (props) => {
               },
             }}
             pageSizeOptions={[5, 10, 15]}
+            // onRowClick={(params) => handlClickRow(params.row)}
           />
         </div>
         <Stack

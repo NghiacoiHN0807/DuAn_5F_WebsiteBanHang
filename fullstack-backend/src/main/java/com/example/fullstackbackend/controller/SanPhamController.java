@@ -1,11 +1,13 @@
 package com.example.fullstackbackend.controller;
 
+import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.SanPhamService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -63,5 +65,13 @@ public class SanPhamController {
     @PutMapping("update")
     public SanPham update(@RequestBody SanPham sanPham) {
         return sanPhamService.update(sanPham);
+    }
+
+    @GetMapping("getSpWithImg")
+    public ResponseEntity<Page<SanPhamCustom>> getSanPhamDetails(@RequestParam(defaultValue = "0") Integer page,
+                                                                 @RequestParam(defaultValue = "15") Integer size,
+                                                                 @RequestParam("p") Optional<Integer> p) {
+        Page<SanPhamCustom> pageSp = sanPhamService.sanPhamCustom(p.orElse(page), size);
+        return ResponseEntity.ok(pageSp);
     }
 }

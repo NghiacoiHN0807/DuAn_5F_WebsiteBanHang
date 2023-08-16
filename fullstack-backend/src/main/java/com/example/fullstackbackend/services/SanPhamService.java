@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.services;
 
+import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.entity.SanPham;
 import org.springframework.data.domain.Page;
 
@@ -11,6 +12,8 @@ public interface SanPhamService {
     List<SanPham> getAll();
 
     Page<SanPham> sanPhamPage(Integer pageNo, Integer size);
+
+    Page<SanPhamCustom> sanPhamCustom(Integer pageNo, Integer size);
 
     SanPham add(SanPham add);
 

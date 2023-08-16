@@ -47,13 +47,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useCallback } from "react";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
-import { Badge, CardGroup, Form } from "react-bootstrap";
-import { RiImageAddLine } from "react-icons/ri";
-import { FaFileImage } from "react-icons/fa";
+import { Badge, CardGroup } from "react-bootstrap";
+import { FaFileUpload } from "react-icons/fa";
 import { useDropzone } from "react-dropzone";
 import "../../scss/ImgSanPham.scss";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { pink } from "@mui/material/colors";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 const QuantityInput = ({ value, onChange }) => {
   const handleDecrease = () => {
@@ -304,24 +304,41 @@ const ModelUpdate = (props) => {
   const [selectedImages, setSelectedImages] = useState([]);
 
   const uploadImage = async () => {
-    const formData = new FormData();
-    selectedImages.forEach((image) => {
-      formData.append("images", image);
-      formData.append("idSp", idSpHttp);
-    });
-    let res = await postAddCloud(formData);
-    getAnhData();
-    console.log("Check res: ", res);
-    setSelectedImages([]);
-    const input = document.querySelector('input[type="file"]');
-    if (input) {
-      input.value = "";
+    if (selectedImages.length !== 0) {
+      const formData = new FormData();
+      selectedImages.forEach((image) => {
+        formData.append("images", image);
+        formData.append("idSp", idSpHttp);
+      });
+      let res = await postAddCloud(formData);
+      getAnhData();
+      console.log("Check res: ", res);
+      setSelectedImages([]);
+      const input = document.querySelector('input[type="file"]');
+      if (input) {
+        input.value = "";
+      }
     }
   };
 
-  const handleImageChange = (event) => {
-    setSelectedImages([...selectedImages, ...event.target.files]);
-  };
+  useEffect(() => {
+    if (selectedImages.length > 0) {
+      uploadImage();
+    }
+  }, [selectedImages]);
+
+  const onDrop = useCallback((acceptedFiles) => {
+    const imageFiles = acceptedFiles.filter((file) =>
+      file.type.startsWith("image/")
+    );
+    setSelectedImages(imageFiles);
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: "image/*",
+    multiple: true,
+  });
 
   const handlDeleteImg = async (idImg, url) => {
     const parts = url.split("/");
@@ -664,34 +681,13 @@ const ModelUpdate = (props) => {
         >
           <h4>THÊM ẢNH</h4>
         </div>
-        <div>
-          <Form.Group
-            className="position-relative mb-3"
-            style={{ display: "flex", alignItems: "center" }}
-          >
-            <Form.Control
-              type="file"
-              required
-              name="file"
-              multiple
-              onChange={handleImageChange}
-              style={{ flex: 1 }}
-            />
-            <Button
-              variant="contained"
-              onClick={() => uploadImage()}
-              style={{ marginLeft: "10px" }}
-            >
-              Upload ảnh
-            </Button>
-          </Form.Group>
-        </div>
+
         <div className="image-container">
           <CardGroup>
             {listImg &&
               listImg.length > 0 &&
               listImg.map((item, index) => (
-                <Card sx={{ width: 200, marginRight: 5, marginTop: 5 }}>
+                <Card sx={{ width: 200, marginRight: 5, marginBottom: 5 }}>
                   <CardActionArea>
                     <Box position="relative">
                       <CardMedia
@@ -712,6 +708,23 @@ const ModelUpdate = (props) => {
                   </CardActionArea>
                 </Card>
               ))}
+            {listImg.length < 10 && (
+              <Card
+                sx={{ width: 200, marginRight: 5, marginBottom: 5, padding: 2 }}
+              >
+                <div {...getRootProps()} className="dropzone">
+                  <input {...getInputProps()} />
+                  <p>
+                    <AddPhotoAlternateIcon sx={{ fontSize: 40 }} /> Kéo hoặc thả
+                    ảnh vô đây, hoặc click để chọn ảnh
+                  </p>
+                  <p>
+                    (Ảnh tải lên có thể mất khoảng 10-15s để load ảnh, xin hãy
+                    đợi 1 chút)
+                  </p>
+                </div>
+              </Card>
+            )}
           </CardGroup>
         </div>
       </div>
