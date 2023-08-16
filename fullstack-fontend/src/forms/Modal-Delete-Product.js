@@ -16,7 +16,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 export default function ModalDeleteProductOnCart(props) {
   // Get Props
-  const { open, handleClose, itemDelete, selectDataCart } = props;
+  const { open, handleClose, itemDelete, selectDataCart, currentPage } = props;
 
   // Set maHd using useState
   const [maSp, setMaSp] = useState("");
@@ -32,7 +32,7 @@ export default function ModalDeleteProductOnCart(props) {
   // Handle Delete
   const handleDelete = async () => {
     await deleteProductOnCart(itemDelete[1]);
-    selectDataCart();
+    selectDataCart(currentPage);
     toast.success("Xóa Sản Phẩm Thành Công");
     handleClose();
   };

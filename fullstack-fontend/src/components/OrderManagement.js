@@ -232,7 +232,7 @@ const OrderManagement = () => {
   const formattedDate = format(currentDate, "yyyy-MM-dd");
   const handleAdd = async () => {
     const newCode = generateNewCode();
-    let res = await postAddBill(newCode, formattedDate, 8);
+    let res = await postAddBill(newCode, formattedDate, 1, 8);
     toast.success("A shopping cart is created successfully");
     getIdHttp = res.idHd;
     // await getDataCart(getIdHttp);

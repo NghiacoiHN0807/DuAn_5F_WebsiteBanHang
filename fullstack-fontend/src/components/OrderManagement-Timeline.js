@@ -25,6 +25,7 @@ import {
   FaRegFileAlt,
   FaMoneyBillWave,
   FaBug,
+  FaQuestionCircle,
 } from "react-icons/fa";
 import Grid from "@material-ui/core/Grid";
 import Timeline from "../MappingTimeLine/Timeline";
@@ -77,6 +78,60 @@ const OrderManagementTimeline = ({ classes }) => {
     setActiveIndex((prevIndex) => Math.min(prevIndex + 1, 5));
   };
 
+  function getColorForTrangThai(trangThai) {
+    if (trangThai === 10) {
+      return "#ff0000"; // Màu đỏ
+    } else if (trangThai === 6) {
+      return "#ffff00"; // Màu vàng
+    } else if (trangThai >= 0) {
+      return "#64a338"; // Màu xanh
+    } else {
+      return "#E3E3E3"; // Màu mặc định
+    }
+  }
+  function getTextForTrangThai(trangThai) {
+    if (trangThai === 0 || trangThai === 8) {
+      return "Tạo Đơn Hàng";
+    } else if (trangThai === 1) {
+      return "Đã Xác Nhận Đơn ";
+    } else if (trangThai === 2) {
+      return "Đã Xác Nhận Người Mua";
+    } else if (trangThai === 3) {
+      return "Đã Chuyển Cho Đơn Vị";
+    } else if (trangThai === 4 || trangThai === 9) {
+      return "Đã Xác Nhận Thanh Toán";
+    } else if (trangThai === 5) {
+      return "Nhận Hàng Thành Công";
+    } else if (trangThai === 6) {
+      return "Đổi/Trả Hàng";
+    } else if (trangThai === 10) {
+      return "Đơn Hàng Đã Bị Hủy";
+    } else {
+      return "Trạng Thái Trống";
+    }
+  }
+  function getIconForTrangThai(trangThai) {
+    if (trangThai === 0 || trangThai === 8) {
+      return FaRegFileAlt;
+    } else if (trangThai === 1) {
+      return FaRegFileAlt;
+    } else if (trangThai === 2) {
+      return FaRegCalendarCheck;
+    } else if (trangThai === 3) {
+      return FaPaperPlane;
+    } else if (trangThai === 4 || trangThai === 9) {
+      return FaMoneyBillWave;
+    } else if (trangThai === 5) {
+      return FaRegCheckCircle;
+    } else if (trangThai === 6) {
+      return FaCogs;
+    } else if (trangThai === 10) {
+      return FaBug;
+    } else {
+      return FaQuestionCircle;
+    }
+  }
+
   //Handle click Confirm
   const handleConfirm = async () => {
     try {
@@ -104,48 +159,15 @@ const OrderManagementTimeline = ({ classes }) => {
         <Grid container alignItems="center" className={classes.container}>
           <Grid item xs={12}>
             <Timeline minEvents={7} placeholder>
-              <TimelineEvent
-                color={activeIndex >= 1 ? "#64a338" : "#E3E3E3"}
-                icon={FaRegFileAlt}
-                title="Đang chờ xác nhận"
-                subtitle={listData.ngayTao}
-              />
-              <TimelineEvent
-                color={activeIndex >= 2 ? "#87a2c7" : "#E3E3E3"}
-                icon={FaRegCalendarCheck}
-                title="Xác nhận thông tin"
-                subtitle={listData.ngayDuTinhNhan}
-              />
-              <TimelineEvent
-                color={activeIndex >= 3 ? "#ffcc00" : "#E3E3E3"}
-                icon={FaPaperPlane}
-                title="Đã chuyển cho đơn vị"
-                subtitle={listData.ngayBatDauGiao}
-              />
-              <TimelineEvent
-                color={activeIndex >= 4 ? "#9c2919" : "#E3E3E3"}
-                icon={FaMoneyBillWave}
-                title="Xác nhận thanh toán"
-                subtitle={listData.ngayGiaoThanhCong}
-              />
-              <TimelineEvent
-                color={activeIndex >= 5 ? "#3865a3" : "#E3E3E3"}
-                icon={FaRegCheckCircle}
-                title="Đã giao thành công"
-                subtitle={listData.ngayGiaoThanhCong}
-              />
-              <TimelineEvent
-                color={activeIndex >= 6 ? "#64a338" : "#E3E3E3"}
-                icon={FaCogs}
-                title="Đổi trả hàng"
-                subtitle="26/03/2019 09:51"
-              />
-              <TimelineEvent
-                color={activeIndex === 10 ? "#9c2919" : "#E3E3E3"}
-                icon={FaBug}
-                title="Hủy đơn hàng"
-                subtitle={listData.ngayGiaoThanhCong}
-              />
+              {listData.map((item, index) => (
+                <TimelineEvent
+                  key={index}
+                  color={getColorForTrangThai(item.trangThai)}
+                  icon={getIconForTrangThai(item.trangThai)}
+                  title={getTextForTrangThai(item.trangThai)} // Thay "title" bằng tên thuộc tính chứa tiêu đề trong item của listData
+                  subtitle={item.ngayThayDoi} // Thay "subtitle" bằng tên thuộc tính chứa ngày trong item của listData
+                />
+              ))}
             </Timeline>
           </Grid>
         </Grid>
@@ -304,12 +326,12 @@ const OrderManagementTimeline = ({ classes }) => {
               </TableBody>
             </Table>
           </TableContainer>
-          <ModalPaymentComfirm
+          {/* <ModalPaymentComfirm
             show={showModalsAdd}
             showModalsAdd={showModalsAdd}
             handleClose={handleClose}
             listData={listData}
-          />
+          /> */}
         </div>
       </div>
     </>

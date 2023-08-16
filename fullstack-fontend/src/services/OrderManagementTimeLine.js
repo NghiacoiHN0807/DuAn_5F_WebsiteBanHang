@@ -32,7 +32,7 @@ const updatePaymentShip = (
   kieuHoaDon,
   trangThai
 ) => {
-  return custom.put(`/hoa-don/update-payment-online/${idHd}`, {
+  return custom.put(`/hoa-don/update-ship-online/${idHd}`, {
     tenKh,
     sdtKh,
     ngayThanhToan,

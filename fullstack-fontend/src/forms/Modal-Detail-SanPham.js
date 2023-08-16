@@ -30,6 +30,7 @@ const ModalDetailProduct = (props) => {
     selectDataCart,
     DataCart,
     listImages,
+    currentPage1,
   } = props;
 
   //Insert product
@@ -88,7 +89,7 @@ const ModalDetailProduct = (props) => {
       handleCloseDetai();
       setQuantity(1);
       //Load new data on cart
-      selectDataCart();
+      selectDataCart(currentPage1);
       toast.warn(
         "Sản phẩm đã có trong giỏ hàng. Chúng tôi đã cộng thêm số lượng vào sản phẩm"
       );
@@ -102,7 +103,7 @@ const ModalDetailProduct = (props) => {
       handleCloseDetai();
       setQuantity(1);
       //Load new data on cart
-      selectDataCart();
+      selectDataCart(currentPage1);
       toast.success("Thêm sản phẩm thành công");
     }
   };
