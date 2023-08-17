@@ -1,8 +1,6 @@
 package com.example.fullstackbackend.entity;
 
 
-<<<<<<< HEAD
-
 import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.Size;
 
