@@ -14,7 +14,6 @@ import { useNavigate } from "react-router-dom";
 import { chucVu } from "../services/chucVuService";
 import QrReader from "react-qr-scanner";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import QRCode from "@zxing/library/esm/core/qrcode/encoder/QRCode";
 
 const AddTKNV = () => {
   const [maTaiKhoan, setMaTaiKhoan] = useState(null);
@@ -23,7 +22,6 @@ const AddTKNV = () => {
   const [chucVuId, setChucVuId] = useState(""); // Store the selected ChucVu id
   const [sdt, setSdt] = useState("");
   const [email, setEmail] = useState("");
-  const [matKhau, setMatKhau] = useState(null);
   const [soCanCuoc, setSoCanCuoc] = useState("");
   const [trangThai, setTrangThai] = useState("0");
 
@@ -71,8 +69,6 @@ const AddTKNV = () => {
   const [result, setResult] = useState("No result");
   const [scanning, setScanning] = useState(false);
   // const [scannedData, setScannedData] = useState([]);
-  const [scannedSoCanCuoc, setScannedSoCanCuoc] = useState("");
-  const [scannedTen, setScannedTen] = useState("");
 
   const handleScan = (data) => {
     if (data) {

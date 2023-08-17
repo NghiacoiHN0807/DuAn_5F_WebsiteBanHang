@@ -208,8 +208,7 @@ function AppADM(props) {
             {[
               { text: "Nhân Viên", link: "/table-taiKhoan" },
               { text: "Khách Hàng", link: "/table-taiKhoanKH" },
-              {text: "Địa Chỉ", link: "/dia-chi"},
-
+              { text: "Địa Chỉ", link: "/dia-chi" },
             ].map((item, index) => (
               <ListItem key={item.text} disablePadding>
                 <ListItemButton
@@ -315,7 +314,7 @@ function AppADM(props) {
             <Route
               path="/quan-ly-san-pham/chat-lieu"
               element={<ChatLieuMain />}
-              />
+            />
             <Route
               path="/quan-ly-san-pham/chi-tiet-san-pham"
               element={<CTSPMain />}
@@ -354,7 +353,10 @@ function AppADM(props) {
             <Route path="/quan-ly-giam-gia" element={<TableGiamGia />} />
             <Route path="/direct-sale" element={<DireactSale />} />
             <Route path="/create-bill/:id" element={<CartBillADM />} />
-            <Route path="/update/giam-gia/:id" element={<ModelUpdateNewGiamGia />} />
+            <Route
+              path="/update/giam-gia/:id"
+              element={<ModelUpdateNewGiamGia />}
+            />
             <Route path="/order-management" element={<OrderManagement />} />
             <Route path="/add/giam-gia" element={<ModelAddNewGiamGia />} />
             <Route
@@ -365,13 +367,13 @@ function AppADM(props) {
               path="/payment-online/vnpay-payment"
               element={<TableSucces />}
             />
-            <Route path="/dia-chi" element={<TableAllDiaChi/>}/>
-            <Route path="/dia-chi/add/:id" element={<AddDiaChi/>}/>
-            <Route path="/dia-chi/detail/:id" element={<UpdateDiaChi/>}/>
-            <Route path="/dia-chi/:id" element={<TableDiaChiByTK/>}/>
-            <Route path="/tai-khoan-KH/them-tai-khoan" element={<AddTkKH/>}/>
-            <Route path="/tai-khoan-KH/detail/:id" element={<UpdateTkKH/>}/>
-            <Route path="/tai-Khoan-KH" element={<TableTaiKhoanKH/>}/>
+            <Route path="/dia-chi" element={<TableAllDiaChi />} />
+            <Route path="/dia-chi/add/:id" element={<AddDiaChi />} />
+            <Route path="/dia-chi/detail/:id" element={<UpdateDiaChi />} />
+            <Route path="/dia-chi/:id" element={<TableDiaChiByTK />} />
+            <Route path="/tai-khoan-KH/them-tai-khoan" element={<AddTkKH />} />
+            <Route path="/tai-khoan-KH/detail/:id" element={<UpdateTkKH />} />
+            <Route path="/tai-Khoan-KH" element={<TableTaiKhoanKH />} />
           </Routes>
         </Box>
       </Box>
