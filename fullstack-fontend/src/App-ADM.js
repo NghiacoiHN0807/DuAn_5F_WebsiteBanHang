@@ -13,7 +13,7 @@ import UpdateSanPham from "./components/SanPham/ModelUpdate";
 import SizeMain from "./components/Size/SizeMain";
 import TableGiamGia from "./components/TableGiamGia";
 import { Routes, Route, Link } from "react-router-dom";
-import Home from "./components/Home";
+import Home from "./components/web-online/Home";
 import { ToastContainer } from "react-toastify";
 import HeaderADM from "./layout/Header-ADM";
 import "./scss/App-ADM.scss";

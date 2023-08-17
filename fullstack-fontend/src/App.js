@@ -4,7 +4,7 @@ import Header from "./layout/Header";
 import TableXuatXu from "./components/TableXuatXu";
 import Container from "react-bootstrap/Container";
 import { Routes, Route } from "react-router-dom";
-import Home from "./components/Home";
+import Home from "./components/web-online/Home";
 import { ToastContainer } from "react-toastify";
 import Footer from "./layout/Footer";
 import TableTaiKhoanKH from "./components/TaiKhoanKhachHang/TableTKKhachHang";

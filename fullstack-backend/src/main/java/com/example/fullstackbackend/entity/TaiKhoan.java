@@ -1,16 +1,7 @@
 package com.example.fullstackbackend.entity;
 
-
-<<<<<<< HEAD
-
 import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.Size;
-
-=======
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
-import jakarta.validation.constraints.Size;
->>>>>>> origin/main
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,15 +12,10 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/main
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.security.SecureRandom;
 import java.util.UUID;
 
