@@ -20,10 +20,12 @@ public interface GiamGiaChiTietService {
 
     GiamGiaChiTiet add(GiamGiaChiTiet giamGiaChiTiet);
 
-    Object update(GiamGiaChiTiet giamGiaChiTiet);
+    Object update(GiamGiaChiTiet giamGiaChiTiet, Integer id);
 
     Boolean existsById(Integer id);
 
     void remove(Integer id);
+
+    Integer findByIdGiamGia_IdGiamGia(Integer id);
 
 }

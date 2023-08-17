@@ -3,6 +3,10 @@ const fetchAllSP = (page) => {
   return custom.get(`/san-pham/view-all?p=${page}`); // Call API
 };
 
+const fetchSpWithImg = (page) => {
+  return custom.get(`/san-pham/getSpWithImg?p=${page}`); // Call API
+};
+
 const fetchSP = () => {
   return custom.get(`/san-pham/listSP`); // Call API
 };
@@ -79,4 +83,5 @@ export {
   postAddSanPham,
   deleteSanPham,
   putUpdateSanPham,
+  fetchSpWithImg,
 };

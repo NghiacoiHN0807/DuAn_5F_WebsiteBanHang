@@ -45,11 +45,20 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import FiberManualRecordOutlinedIcon from "@mui/icons-material/FiberManualRecordOutlined";
 import LoyaltyOutlinedIcon from "@mui/icons-material/LoyaltyOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
+import AddTKNV from "./forms/Models-AddTKNV";
+import UpdateTkNV from "./forms/ModelUpdateTKNV";
 import { Image } from "react-bootstrap";
 import logo5F from "./assets/logo_5F.png";
 import ModelAddNewGiamGia from "./components/ModalsAddNewGiamGia";
+import ModelUpdateNewGiamGia from "./components/ModalsUpdateNewGiamGia";
 import TableSucces from "./components/Payment-Succes";
 // import paymentOnSuccess from "./components/Payment-Succes";
+import AddTkKH from "./components/TaiKhoanKhachHang/AddTkKH";
+import UpdateTkKH from "./components/TaiKhoanKhachHang/UpdateTkKH";
+import TableAllDiaChi from "./components/DiaChi/TableAllDiaChi";
+import TableDiaChiByTK from "./components/DiaChi/TableDiaChiByTK";
+import AddDiaChi from "./components/DiaChi/AddDiaChi";
+import UpdateDiaChi from "./components/DiaChi/UpdateDiaChi";
 
 const drawerWidth = 240;
 
@@ -199,6 +208,8 @@ function AppADM(props) {
             {[
               { text: "Nhân Viên", link: "/table-taiKhoan" },
               { text: "Khách Hàng", link: "/table-taiKhoanKH" },
+              {text: "Địa Chỉ", link: "/dia-chi"},
+
             ].map((item, index) => (
               <ListItem key={item.text} disablePadding>
                 <ListItemButton
@@ -304,7 +315,7 @@ function AppADM(props) {
             <Route
               path="/quan-ly-san-pham/chat-lieu"
               element={<ChatLieuMain />}
-            />
+              />
             <Route
               path="/quan-ly-san-pham/chi-tiet-san-pham"
               element={<CTSPMain />}
@@ -338,10 +349,12 @@ function AppADM(props) {
             <Route path="/quan-ly-san-pham/xuat-xu" element={<XuatXuMain />} />
             <Route path="/table-chucVu" element={<ViewChucVu />} />
             <Route path="/table-taiKhoan" element={<TableTKNhanVien />} />
-            <Route path="/table-taiKhoanKH" element={<TableTaiKhoanKH />} />
+            <Route path="/tai-khoan/them-tai-khoan" element={<AddTKNV />} />
+            <Route path="/tai-khoan/detail/:id" element={<UpdateTkNV />} />
             <Route path="/quan-ly-giam-gia" element={<TableGiamGia />} />
             <Route path="/direct-sale" element={<DireactSale />} />
             <Route path="/create-bill/:id" element={<CartBillADM />} />
+            <Route path="/update/giam-gia/:id" element={<ModelUpdateNewGiamGia />} />
             <Route path="/order-management" element={<OrderManagement />} />
             <Route path="/add/giam-gia" element={<ModelAddNewGiamGia />} />
             <Route
@@ -352,6 +365,13 @@ function AppADM(props) {
               path="/payment-online/vnpay-payment"
               element={<TableSucces />}
             />
+            <Route path="/dia-chi" element={<TableAllDiaChi/>}/>
+            <Route path="/dia-chi/add/:id" element={<AddDiaChi/>}/>
+            <Route path="/dia-chi/detail/:id" element={<UpdateDiaChi/>}/>
+            <Route path="/dia-chi/:id" element={<TableDiaChiByTK/>}/>
+            <Route path="/tai-khoan-KH/them-tai-khoan" element={<AddTkKH/>}/>
+            <Route path="/tai-khoan-KH/detail/:id" element={<UpdateTkKH/>}/>
+            <Route path="/tai-Khoan-KH" element={<TableTaiKhoanKH/>}/>
           </Routes>
         </Box>
       </Box>

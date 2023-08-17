@@ -1,11 +1,15 @@
 import custom from "./custom-axios";
 
-const fetchAnh = () => {
-  return custom.get(`/anh/listAnh`); // Call API
+const fetchAnh = (idSp) => {
+  return custom.get(`/anh/listAnh/${idSp}`); // Call API
 };
 
 const postAddAnh = (idSp, url, trangThai) => {
   return custom.post("/anh/add", { idSp, url, trangThai });
 };
 
-export { fetchAnh, postAddAnh };
+const deleteAnh = (id) => {
+  return custom.delete(`/anh/delete/${id}`);
+};
+
+export { fetchAnh, postAddAnh, deleteAnh };

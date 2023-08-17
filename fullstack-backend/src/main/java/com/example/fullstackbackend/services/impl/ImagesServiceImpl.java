@@ -60,4 +60,9 @@ public class ImagesServiceImpl implements ImagesSevice {
         Optional<Images> images = imagesRepository.findById(id);
         return images;
     }
+
+    @Override
+    public List<Images> findByIdCtsp_IdSp(Integer idSp) {
+        return imagesRepository.findByIdCtsp_IdSp(idSp);
+    }
 }

@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import ModelConfirmGiamGia from "./ModelConfirmGiamGia";
 import Stack from "@mui/material/Stack";
-import { getAll, getAllByTrangThai } from "../services/giamGiaService";
-import { Badge, Form, Nav } from "react-bootstrap";
+import { getAllByTrangThai, getSanPhamDetails } from "../services/giamGiaService";
+import { Badge, Form, Image, Nav } from "react-bootstrap";
 import "../scss/TableGiamGiaScss.scss";
 import Pagination from "@mui/material/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { Button, IconButton } from "@mui/material";
+import { Button, IconButton, TableCell } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
 import { pink } from "@mui/material/colors";
 import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import ModelConfirm from "./ModelConfirmGiamGia";
 
 const TableGiamGia = (props) => {
   //Set value for table
@@ -20,6 +20,10 @@ const TableGiamGia = (props) => {
   const [numberPages, setNumberPages] = useState(0);
   const [searchKeyword, setSearchKeyword] = useState("");
   const navigate = useNavigate();
+
+  const handleUpdate = (id) => {
+    navigate(`/update/giam-gia/${id.idGgct}`);
+  };
 
   //Set value for Model Add New is defalut
   const handleClose = () => {
@@ -43,9 +47,9 @@ const TableGiamGia = (props) => {
   };
 
   const getGiamGia = async (page, size) => {
-    let res = await getAll(page, size);
+    let res = await getSanPhamDetails(page, size);
     if (res && res.content) {
-      console.log(res)
+      console.log(res.content)
       setListGiamGia(res.content);
       setNumberPages(Math.ceil(res.totalPages));
     }
@@ -54,7 +58,7 @@ const TableGiamGia = (props) => {
   const hi = async (e) => {
     const value = e.target.value;
     if (value === "1") {
-      let res = await getAll(0, 5);
+      let res = await getSanPhamDetails(0, 5);
       setListGiamGia(res.content);
     } else if (value === "2") {
       let res = await getAllByTrangThai(0, 5, 0);
@@ -79,15 +83,19 @@ const TableGiamGia = (props) => {
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
-
-    const [year, month, day] = dateString.split("-");
-    return `${day}/${month}/${year}`;
+  
+    const dateTime = new Date(dateString);
+    const hours = dateTime.getUTCHours().toString().padStart(2, '0');
+    const minutes = dateTime.getUTCMinutes().toString().padStart(2, '0');
+    const [year, month, day] = dateTime.toISOString().split('T')[0].split('-');
+  
+    return `${hours}:${minutes} ${day}/${month}/${year}`;
   };
 
   const handAdd = () => {
     navigate(`/add/giam-gia`);
   };
-  
+
   const rows = listGiamGia
     .filter((item) =>
       Object.values(item).some((value) =>
@@ -95,17 +103,17 @@ const TableGiamGia = (props) => {
       )
     )
     .map((item, index) => ({
-      idHd: item.idGiamGia,
+      idHd: item,
       id: index + 1,
       index: index + 1,
-      tenChuongTrinh: item.idGiamGia.tenChuongTrinh,
-      tenSp: item.idCtsp.idSp.tenSp,
-      mucGiam: item.idGiamGia.mucGiamTienMat === null
-        ? item.idGiamGia.mucGiamPhanTram + "%"
-        : formatCurrency(item.idGiamGia.mucGiamTienMat),
-      thoiGian: formatDate(item.idGiamGia.ngayBatDau) +
-        " - " +
-        formatDate(item.idGiamGia.ngayKetThuc),
+      tenChuongTrinh: item.tenChuongTrinh,
+      url_img: item.url_image,
+      tenSp: item.tenSp,
+      mucGiam: item.mucGiamTienMat === null
+        ? item.mucGiamPhanTram + "%"
+        : formatCurrency(item.mucGiamTienMat),
+      thoiGian: formatDate(item.ngayBatDau) +
+        " - " + formatDate(item.ngayKetThuc),
       donGia: formatCurrency(item.donGia),
       sauGiam: formatCurrency(item.soTienConLai),
       trangThai: item.trangThai
@@ -113,13 +121,36 @@ const TableGiamGia = (props) => {
 
   const columns = [
     { field: "index", headerName: "#", width: 50 },
+    {
+      field: "url_img",
+      headerName: "Ảnh",
+      width: 200,
+      renderCell: function (params) {
+        const { value: url_img } = params;
+        console.log(params.row.idHd)
+        return (
+          <TableCell style={{ height: 240 }} className="d-flex align-items-center position-relative">
+            <div className="image-container">
+              <Image
+                rounded
+                className="mr-2"
+                style={{ width: "150px", height: "auto" }}
+                src={url_img}
+                alt={`Ảnh sản phẩm ${url_img}`}
+              />
+              {params.row.idHd.mucGiamPhanTram === null ? <div className="sale-tag">Sale</div> : <div className="sale-tag">Sale {params.row.idHd.mucGiamPhanTram}%</div>}
+            </div>
+          </TableCell>
+        );
+      }
+    },
     { field: "tenChuongTrinh", headerName: "Tên chương trình", width: 150 },
-    { field: "tenSp", headerName: "Tên sản phẩm", width: 150  },
+    { field: "tenSp", headerName: "Tên sản phẩm", width: 150 },
     { field: "mucGiam", headerName: "Mức giảm", width: 100 },
     {
       field: "thoiGian",
       headerName: "Thời gian",
-      width: 200,
+      width: 300,
     },
     {
       field: "donGia",
@@ -129,12 +160,12 @@ const TableGiamGia = (props) => {
     {
       field: "sauGiam",
       headerName: "Số tiền còn lại",
-      width: 150
+      width: 100
     },
     {
       field: "trangThai",
       headerName: "Trạng Thái",
-      width: 200,
+      width: 150,
       renderCell: (params) => {
         const { value: trangThai } = params;
         let badgeVariant, statusText;
@@ -163,14 +194,14 @@ const TableGiamGia = (props) => {
     {
       field: "thaoTac",
       headerName: "Thao Tác",
-      width: 150,
+      width: 100,
       renderCell: (params) => {
         return (
           <>
             <IconButton
               aria-label="edit"
               size="large"
-              // onClick={() => handleEdit(params.row.idHd)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
+              onClick={() => handleUpdate(params.row.idHd)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
             >
               <EditOutlinedIcon color="primary" />
             </IconButton>
@@ -251,9 +282,10 @@ const TableGiamGia = (props) => {
           </Button>
         </div>
 
-        <div style={{ height: 400, width: "100%" }}>
+        <div style={{ height: 500, width: "100%" }}>
           <DataGrid
             rows={rows}
+            getRowHeight={(params) => 240}
             columns={columns}
             initialState={{
               pagination: {
@@ -277,6 +309,13 @@ const TableGiamGia = (props) => {
           />
         </Stack>
       </div>
+      <ModelConfirm
+        show={isShowModalDelete}
+        handleClose={handleClose}
+        isDataGiamGia={isDataGiamGia}
+        getGiamGia={getGiamGia}
+      />
+      {/* <ModelAddNewGiamGia dataSanPham={listGiamGia} /> */}
     </>
   );
 };
