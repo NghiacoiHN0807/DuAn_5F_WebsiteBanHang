@@ -1,6 +1,6 @@
 package com.example.fullstackbackend.services.impl;
 
-import com.example.fullstackbackend.entity.TaiKhoanNhanVien;
+import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.repository.TaiKhoanNhanVienRepository;
 import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,50 +13,67 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TaiKhoanNhanVienNhanVienServiceImpl implements TaiKhoanNhanVienService {
+class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
     @Autowired
-    private TaiKhoanNhanVienRepository taiKhoanNhanVienRepository;
+    private TaiKhoanNhanVienRepository taiKhoanRepository;
 
     @Override
-    public List<TaiKhoanNhanVien> getAll() {
-        return taiKhoanNhanVienRepository.findAll();
+    public List<TaiKhoan> getAll() {
+        return taiKhoanRepository.findAll();
     }
 
     @Override
-    public Page<TaiKhoanNhanVien> phanTrang(Integer pageNo, Integer size) {
+    public Page<TaiKhoan> phanTrang(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
-        return taiKhoanNhanVienRepository.findAll(pageable);
+        return taiKhoanRepository.findAll(pageable);
     }
 
     @Override
-    public Page<TaiKhoanNhanVien> phanTrang(Integer pageNo, Integer size, Integer trangThai) {
+    public Page<TaiKhoan> phanTrang(Integer pageNo, Integer size, Integer trangThai) {
         Pageable pageable = PageRequest.of(pageNo, size);
-        return taiKhoanNhanVienRepository.findAllByTrangThai(trangThai, pageable);
+        return taiKhoanRepository.findAllByTrangThai(trangThai, pageable);
     }
 
     @Override
-    public TaiKhoanNhanVien add(TaiKhoanNhanVien taiKhoanNhanVien) {
-       return taiKhoanNhanVienRepository.save(taiKhoanNhanVien);
+    public TaiKhoan add(TaiKhoan taiKhoan) {
+        return taiKhoanRepository.save(taiKhoan);
+    }
+
+
+
+    @Override
+    public Optional<TaiKhoan> getOne(Integer id) {
+        return taiKhoanRepository.findById(id);
     }
 
     @Override
-    public void delete(Integer id) {
-         taiKhoanNhanVienRepository.deleteById(id);
+    public TaiKhoan delete(Integer id) {
+        TaiKhoan taiKhoan = getOne(id).orElseThrow();
+        taiKhoan.setTrangThai(10);
+        taiKhoanRepository.save(taiKhoan);
+        return taiKhoan;
     }
 
     @Override
-    public TaiKhoanNhanVien update(TaiKhoanNhanVien taiKhoanNhanVien) {
-       return taiKhoanNhanVienRepository.save(taiKhoanNhanVien);
+    public TaiKhoan update(TaiKhoan taiKhoan, Integer id) {
+        taiKhoan.setIdTaiKhoan(id);
+        return taiKhoanRepository.save(taiKhoan);
     }
 
     @Override
     public Boolean existsById(Integer id) {
-        return taiKhoanNhanVienRepository.existsById(id);
+        return taiKhoanRepository.existsById(id);
     }
 
     @Override
-    public Optional<TaiKhoanNhanVien> detail(Integer id) {
-        Optional<TaiKhoanNhanVien> taiKhoan = taiKhoanNhanVienRepository.findById(id);
+    public Optional<TaiKhoan> detail(Integer id) {
+        Optional<TaiKhoan> taiKhoan = taiKhoanRepository.findById(id);
         return taiKhoan;
+    }
+
+    @Override
+    public Page<TaiKhoan> chucVu(Integer pageNo, Integer size) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        return taiKhoanRepository.chucVu(pageable);
     }
 }

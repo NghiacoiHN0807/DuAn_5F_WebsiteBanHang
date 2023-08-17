@@ -1,112 +1,105 @@
-import { useEffect, useState } from "react";
-import { taiKhoan, taiKhoan2 } from "../services/taiKhoanService";
-import ModelAddNewTKNV from "./ModelAddNewTKNV";
-import ModelConfirmTKNV from "./ModelConfirmTKNV";
-import ModalUpdate from "./ModelUpdateTKNV";
-import { Badge, Button, Form, Nav } from "react-bootstrap";
+import Nav from "react-bootstrap/Nav";
+
+import Form from "react-bootstrap/Form";
+
+import { useState } from "react";
+import { useEffect } from "react";
+import { deleteTaiKhoan, taiKhoan } from "../services/taiKhoanService";
+import Badge from "react-bootstrap/Badge";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import { useNavigate } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
-import { Navigate } from "react-router-dom";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+} from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteSweepOutlinedIcon from "@mui/icons-material/DeleteSweepOutlined";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import SearchIcon from "@mui/icons-material/Search";
+import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
+import { DeleteSweepOutlined, EditOutlined } from "@material-ui/icons";
+import { pink } from "@mui/material/colors";
+import ModelConfirm from "./ModelConfirmGiamGia";
+import ModelConfirmTKNV from "../forms/ModelConfirmTKNV";
+import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faDeleteLeft } from "@fortawesome/free-solid-svg-icons";
 
-const TableTaiKhoanKH = (props) => {
-  //Set value for table
-  const [listTaiKhoanNV, setlistTaiKhoanNV] = useState([]);
-  const [totalPages, setTotalPages] = useState(0);
+import QrReader from "react-qr-scanner";
+
+const TableTKNhanVien = () => {
+  const [listData, setListData] = useState([]);
   const [numberPages, setNumberPages] = useState(0);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("Tất cả");
+  const [originalListData, setOriginalListData] = useState([]);
+  const navigate = useNavigate();
 
-  //   const [selectedStatus, setSelectedStatus] = useState("Tất cả");
+  const getListData = async (page) => {
+    try {
+      let res = await taiKhoan(page);
+      console.log("Check res: ", res);
+      setListData(res.content);
+      setNumberPages(Math.ceil(res.totalPages));
+      // Lưu trữ danh sách dữ liệu gốc
+      setOriginalListData(res.content);
 
-  //Set value for Model Add New is defalut
-  const [isShowModalAddNew, setIsShowModalAddNew] = useState(false);
-  const handleClose = () => {
-    setIsShowModalAddNew(false);
-    setIsShowModalDelete(false);
-    setIsShowModalUpdate(false);
+      // Đồng thời cập nhật danh sách dữ liệu hiện tại
+      setListData(res.content);
+      setNumberPages(Math.ceil(res.totalPages));
+    } catch (error) {
+      console.error(error);
+    }
   };
-  // Show Data On Tables
   useEffect(() => {
-    getTaiKhoanKH(0);
+    getListData(0);
   }, []);
 
-  const getTaiKhoanKH = async (page) => {
-    let res = await taiKhoan(page);
-    // console.log("Data", res);
-    if (res && res.content) {
-      setlistTaiKhoanNV(res.content);
-      // console.log("Data", res);
-      setNumberPages(Math.ceil(res.totalPages));
-    }
-  };
-  //Next Page
-  const handlePageClick = (page) => {
-    getTaiKhoanKH(page);
-  };
   //Delete
-  const [isShowModalDelete, setIsShowModalDelete] = useState(false);
-  const [isDataTaiKhoanKH, setDataTaiKhoanKH] = useState({});
-  const handleDelete = (maTKKH) => {
-    // console.log("Check delete: ", maTKKH);
-    setIsShowModalDelete(true);
-    setDataTaiKhoanKH(maTKKH);
-  };
-
-  const [isShowModalUpdate, setIsShowModalUpdate] = useState(false);
-
-  const handleUpdateTable = (taiKhoanKH) => {
-    setlistTaiKhoanNV([taiKhoanKH, ...listTaiKhoanNV]);
-    getTaiKhoanKH(0);
-  };
-
-  const handleUpdate = (taiKhoanKH) => {
-    setDataTaiKhoanKH(taiKhoanKH);
-    setIsShowModalUpdate(true);
-  };
-
-  const [searchKeyword, setSearchKeyword] = useState("");
-
-  const [total, setTrangThai] = useState(0);
-
-  const hi = async (e) => {
-    const value = e.target.value;
-    setTrangThai(value);
-    if (value === "1") {
-      let res = await taiKhoan(0);
-      setlistTaiKhoanNV(res.content);
-      setTotalPages(res.totalPages);
-    } else if (value === "2") {
-      let res = await taiKhoan2(0, 0);
-      setlistTaiKhoanNV(res.content);
-      setTotalPages(res.totalPages);
-    } else if (value === "3") {
-      let res = await taiKhoan2(0, 1);
-      setlistTaiKhoanNV(res.content);
-      setTotalPages(res.totalPages);
+  const handleDelete = async (idTK) => {
+    let res = await deleteTaiKhoan(idTK);
+    console.log("Check res: ", res);
+    if (res && res.idTaiKhoan) {
+      toast.success("Xóa thành công!");
+      getListData(0);
+      handleClose();
+    } else {
+      toast.error("Xóa thất bại!");
+      handleClose();
     }
+  };
+
+  const [open, setOpen] = useState(false);
+  const [idDelete, setIdDelete] = useState("");
+
+  const handleClickOpenDelete = (idTK) => {
+    setOpen(true);
+    setIdDelete(idTK);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   const columns = [
     { field: "index", headerName: "#", width: 50 },
-    { field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 100 },
-    { field: "ho" , headerName: "Họ Và Tên", width: 150 },
-    // { field: "ten", headerName: "Tên", width: 150 },
-    {
-      field: "sdt",
-      headerName: "Số Điện Thoại",
-      width: 150,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      width: 230,
-    },
-
+    { field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 120 },
+    { field: "idChucVu", headerName: "Chức Vụ", width: 100 },
+    { field: "ten", headerName: "Tên Nhân Viên", width: 120 },
+    { field: "sdt", headerName: "Số Điện Thoại", width: 120 },
+    { field: "email", headerName: "Email", width: 190 },
+    { field: "soCanCuoc", headerName: "Số Căn Cước", width: 120 },
     {
       field: "trangThai",
       headerName: "Trạng Thái",
-      width: 200,
+      width: 150,
       renderCell: (params) => {
         const { value: trangThai } = params;
         let badgeVariant, statusText;
@@ -115,7 +108,7 @@ const TableTaiKhoanKH = (props) => {
             badgeVariant = "primary";
             statusText = "Đang Hoạt Động";
             break;
-          case 1:
+          case 10:
             badgeVariant = "warning";
             statusText = "Dừng Hoạt Động";
             break;
@@ -132,8 +125,35 @@ const TableTaiKhoanKH = (props) => {
         );
       },
     },
+    {
+      field: "thaoTac",
+      headerName: "Thao Tác",
+      width: 150,
+      renderCell: (params) => {
+        const { row } = params;
+        return (
+          <>
+            <IconButton
+              aria-label="edit"
+              size="large"
+              onClick={() => handlClickRow(row)} // Thay thế handleEdit bằng hàm xử lý chỉnh sửa thích hợp của bạn
+            >
+              <EditOutlined color="primary" />
+            </IconButton>
+            <IconButton
+              aria-label="delete"
+              size="large"
+              onClick={() => handleClickOpenDelete(row.thaoTac)}
+            >
+              <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
+            </IconButton>
+          </>
+        );
+      },
+    },
   ];
-  const rows = listTaiKhoanNV
+  // Xử lý dữ liệu của bảng vào mảng rows
+  const rows = listData
     .filter((item) =>
       Object.values(item).some((value) =>
         String(value).toLowerCase().includes(searchKeyword.toLowerCase())
@@ -141,26 +161,55 @@ const TableTaiKhoanKH = (props) => {
     )
     .map((item, index) => ({
       idTaiKhoan: item.idTaiKhoan,
-      id: index + 1,
+      id: item.idTaiKhoan,
       index: index + 1,
       maTaiKhoan: item.maTaiKhoan,
-      ho: item.ho + " " + item.ten,
-    //   ten: item.ten,
+      idChucVu: item.idChucVu.tenCv,
+      ten: item.ho + " " + item.ten,
       sdt: item.sdt,
       email: item.email,
+      soCanCuoc: item.soCanCuoc,
       trangThai: item.trangThai,
+      thaoTac: item.idTaiKhoan,
     }));
 
-  const handlClickRow = (item) => {
-    console.log("Check click: ", item);
-    Navigate(`/order-management-timeline/${item.idHd}`);
+  //Next Page
+  const handlePageClick = (page) => {
+    getListData(page);
   };
-  // console.log(listTaiKhoanNV);
+  //filter status
+  useEffect(() => {
+    const filteredData =
+      selectedStatus === "Tất cả"
+        ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
+        : originalListData.filter(
+            (item) => item.trangThai === parseInt(selectedStatus)
+          );
+    setListData(filteredData);
+  }, [selectedStatus, originalListData]);
+
+  //Click on the table
+
+  const handAdd = () => {
+    navigate("/tai-khoan/them-tai-khoan");
+  };
+  const handAddDiaChi = (item) => {
+    navigate(`/dia-chi/${item.maTaiKhoan}`);
+  };
+
+  const handlClickRow = (item) => {
+    // console.log("Check click: ", item);
+    navigate(`/tai-khoan/detail/${item.idTaiKhoan}`);
+  };
+
+  
+
   return (
     <>
       <div className="row row-order-management">
+        <h2 className="text-center">Tài Khoản Nhân Viên</h2>
         <div className="row">
-          <div className="col-4">
+          <div className="col-5">
             <Nav>
               <Form className="d-flex search-form">
                 <Form.Control
@@ -171,12 +220,31 @@ const TableTaiKhoanKH = (props) => {
                   size="sm"
                   onChange={(e) => setSearchKeyword(e.target.value)}
                 />
-                <Button variant="outline-success" className="search-button">
-                  <FontAwesomeIcon icon={faMagnifyingGlass} size="xs" />
-                </Button>
+                <Button
+                  variant="outline-success"
+                  startIcon={<SearchIcon />}
+                  className="search-button"
+                ></Button>
               </Form>
             </Nav>
           </div>
+
+          
+
+          {/* <div className="col-5">
+            <div id="reader"></div>
+             {scanResult && (
+               <div>
+                    canned Result:
+                    <a 
+                    href={scanResult}  
+                    target="_blank"
+                    rel="noopener noreferrer">
+                      {scanResult}
+                    </a>
+                </div>
+              )};
+          </div> */}
         </div>
 
         <div className="row">
@@ -185,29 +253,27 @@ const TableTaiKhoanKH = (props) => {
             <select
               id="status-select"
               className="select-green"
-              //   value={selectedStatus}
-              onChange={(e) => hi(e)}
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
             >
-              <option value="1">Tất cả</option>
-              <option value="2">Hoạt động</option>
-              <option value="3">Ngưng hoạt động</option>
+              <option value="Tất cả">Tất cả</option>
+              <option value="0">Đang Hoạt Động</option>
+              <option value="10">Dừng Hoạt Động</option>
             </select>
           </div>
-          <div className="col-5"></div>
-          <div className="col-2">
+          <div className="col-5">
             <Button
               variant="contained"
               color="success"
-              className="btn btn-success"
-              onClick={() => setIsShowModalAddNew(true)}
+              startIcon={<PersonAddAlt1Icon />}
+              onClick={() => handAdd()}
             >
-              Thêm TK NV
-              {/* <FontAwesomeIcon icon={faCartPlus} size="lg" />{" "} */}
+              Tạo Tài Khoản Mới
             </Button>
           </div>
         </div>
 
-        <div style={{ height: 400, width: "100%" }}>
+        <div style={{ height: 500, width: "100%" }}>
           <DataGrid
             rows={rows}
             columns={columns}
@@ -217,7 +283,7 @@ const TableTaiKhoanKH = (props) => {
               },
             }}
             pageSizeOptions={[5, 10, 15]}
-            onRowClick={(params) => handlClickRow(params.row)}
+            // onRowClick={(params) => handlClickRow(params.row)}
           />
         </div>
         <Stack
@@ -232,43 +298,28 @@ const TableTaiKhoanKH = (props) => {
             variant="outlined"
           />
         </Stack>
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{"Xác nhận xóa?"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Bạn có chắc chắn muốn xóa Tài Khoản này không?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Canel</Button>
+            <Button onClick={() => handleDelete(idDelete)} autoFocus>
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
-
-      {/* <ReactPaginate
-        breakLabel="..."
-        nextLabel="next >"
-        onPageChange={handlePageClick}
-        pageRangeDisplayed={5}
-        pageCount={totalPages}
-        previousLabel="< previous"
-        renderOnZeroPageCount={null}
-        //Class form
-        pageClassName="page-item"
-        pageLinkClassName="page-link"
-        previousClassName="page-item"
-        previousLinkClassName="page-link"
-        nextClassName="page-item"
-        nextLinkClassName="page-link"
-        breakClassName="page-item"
-        breakLinkClassName="page-link"
-        containerClassName="pagination"
-        activeClassName="active"
-      /> */}
-      {/* Add Model */}
-      <ModelAddNewTKNV show={isShowModalAddNew} handleClose={handleClose} />
-      <ModelConfirmTKNV
-        show={isShowModalDelete}
-        handleClose={handleClose}
-        isDataTaiKhoanKH={isDataTaiKhoanKH}
-        getTaiKhoanKH={getTaiKhoanKH}
-      />
-      <ModalUpdate
-        show={isShowModalUpdate}
-        handleClose={handleClose}
-        isDataTaiKhoanKH={isDataTaiKhoanKH}
-        handleUpdateTable={handleUpdateTable}
-      />
     </>
   );
 };
-export default TableTaiKhoanKH;
+
+export default TableTKNhanVien;

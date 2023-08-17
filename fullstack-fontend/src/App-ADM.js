@@ -46,6 +46,11 @@ import FiberManualRecordOutlinedIcon from "@mui/icons-material/FiberManualRecord
 import LoyaltyOutlinedIcon from "@mui/icons-material/LoyaltyOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+import AddTKNV from "./forms/Models-AddTKNV";
+import UpdateTkNV from "./forms/ModelUpdateTKNV";
+>>>>>>> origin/duyvd
 import { Image } from "react-bootstrap";
 import logo5F from "./assets/logo_5F.png";
 import ModelAddNewGiamGia from "./components/ModalsAddNewGiamGia";
@@ -519,6 +524,8 @@ function AppADM(props) {
             <Route path="/quan-ly-san-pham/xuat-xu" element={<XuatXuMain />} />
             <Route path="/table-chucVu" element={<ViewChucVu />} />
             <Route path="/table-taiKhoan" element={<TableTKNhanVien />} />
+            <Route path="/tai-khoan/them-tai-khoan" element={<AddTKNV />} />
+            <Route path="/tai-khoan/detail/:id" element={<UpdateTkNV />} />
             <Route path="/table-taiKhoanKH" element={<TableTaiKhoanKH />} />
             <Route path="/quan-ly-giam-gia" element={<TableGiamGia />} />
             <Route path="/direct-sale" element={<DireactSale />} />
