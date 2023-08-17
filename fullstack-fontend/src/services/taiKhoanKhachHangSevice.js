@@ -22,8 +22,10 @@ const getDetailOneTK = (idTaiKhoan) => {
     return custom.get(`/tai-khoan-khach-hang/detail/${idTaiKhoan}`);
 };
 
-const deleteTaiKhoan = (id) => {
+
+
+const deleteTaiKhoanKH = (id) => {
     return custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
 };
 
-export {fetchAllTKKH,postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoan,getDetailOneTK};
+export {fetchAllTKKH,postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoanKH,getDetailOneTK};

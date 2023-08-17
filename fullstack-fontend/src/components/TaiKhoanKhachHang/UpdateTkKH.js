@@ -1,8 +1,20 @@
 import {useCallback, useEffect, useState} from "react";
 import {getDetailOneTK, postUpdateTaiKhoanKhachHang} from "../../services/taiKhoanKhachHangSevice";
 import {toast} from "react-toastify";
-import {Box, Button, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup, TextField} from "@mui/material";
+import {
+    Box,
+    Button,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
+    InputAdornment,
+    Radio,
+    RadioGroup,
+    TextField
+} from "@mui/material";
 import {useNavigate, useParams} from "react-router-dom";
+import IconButton from "@mui/material/IconButton";
+import {Visibility, VisibilityOff} from "@material-ui/icons";
 
 const UpdateTkKH = (props) => {
     const param = useParams();
@@ -14,6 +26,7 @@ const UpdateTkKH = (props) => {
     const [email, setEmail] = useState("");
     const [matKhau, setMatKhau] = useState("");
     const [trangThai, setTrangThai] = useState("0");
+    const [showPassword, setShowPassword] = useState(false);
 
     // chuyen trang
     const navigate = useNavigate();
@@ -36,12 +49,12 @@ const UpdateTkKH = (props) => {
         getListData();
     }, [getListData]);
 
+    const [validationErrors, setValidationErrors] = useState("");
 
     const handleSave = async () => {
-        if (!ho || !ten || !email || !sdt|| !matKhau || !trangThai) {
-            toast.warning("Một Số Trường Đang Trống!");
-        } else {
-            let res = await postUpdateTaiKhoanKhachHang(
+        let res;
+        try {
+             res = await postUpdateTaiKhoanKhachHang(
                 Data.idTaiKhoan,
                 Data.maTaiKhoan,
                 ho,
@@ -52,13 +65,22 @@ const UpdateTkKH = (props) => {
                 trangThai
             );
             console.log("Check res: ", res);
+        }catch (error){
+            if (error.response && error.response.data) {
+                console.log(error.response.data);
+                setValidationErrors(error.response.data);
+            } else {
+                console.error("Error:", error);
+            }
+            return;
+        }
             if (res && res.idTaiKhoan) {
                 toast.success("Cập Nhập Tài Khoản Thành Công!");
                 navigate("/tai-Khoan-KH");
             } else {
                 toast.error("Cập Nhập Tài Khoản Thất Bại");
             }
-        }
+
     };
     return (
         <>
@@ -72,46 +94,68 @@ const UpdateTkKH = (props) => {
                 <Box
                     component="form"
                     sx={{
-                        "& .MuiTextField-root": {m: 1, width: "151ch"},
+                        "& .MuiTextField-root": {m: 1, width: "120"},
                     }}
                     noValidate
                     autoComplete="off"
                     alignItems={"center"}
                 >
                     <TextField
+                        error={!!validationErrors.ho}
+                        helperText={validationErrors.ho}
                         fullWidth
                         label="Họ"
-                        id="fullWidth"
+                        id="firtName"
                         value={ho}
                         onChange={(event) => setHo(event.target.value)}
                     />
                     <TextField
+                        error={!!validationErrors.ten}
+                        helperText={validationErrors.ten}
                         fullWidth
                         label="Tên"
-                        id="fullWidth"
+                        id="LastName"
                         value={ten}
                         onChange={(event) => setTen(event.target.value)}
                     />
                     <TextField
+                        error={!!validationErrors.email}
+                        helperText={validationErrors.email}
                         fullWidth
                         label="Email"
-                        id="fullWidth"
+                        id="Email"
                         value={email}
                         onChange={(event) => setEmail(event.target.value)}
                     />
                     <TextField
+                        error={!!validationErrors.sdt}
+                        helperText={validationErrors.sdt}
                         fullWidth
                         label="Số Điện Thoại"
-                        id="fullWidth"
+                        id="phone"
                         value={sdt}
                         onChange={(event) => setSdt(event.target.value)}
                     />
                     <TextField
-                        id="outlined-basic"
+                        autoComplete="current-password"
+                        fullWidth
+                        type={showPassword ? "text" : "password"}
+                        id="password"
                         label="Mật Khẩu"
-                        variant="outlined"
                         value={matKhau}
                         onChange={(event) => setMatKhau(event.target.value)}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={() => setShowPassword(!showPassword)} // Khi nhấn vào nút, đảo ngược trạng thái
+                                        onMouseDown={(event) => event.preventDefault()}
+                                    >
+                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                     />
 
                     <FormControl style={{ marginLeft: "10px" }}>
