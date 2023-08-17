@@ -1,11 +1,7 @@
 package com.example.fullstackbackend.services.impl;
 
-<<<<<<< HEAD
-import com.example.fullstackbackend.DTO.SanPhamDTO;
-=======
 import com.example.fullstackbackend.DTO.SanPhamCustom;
-import com.example.fullstackbackend.entity.ChiTietSanPham;
->>>>>>> origin/vinhlt
+import com.example.fullstackbackend.DTO.SanPhamDTO;;
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.repository.SanphamRepository;
 import com.example.fullstackbackend.services.SanPhamService;
@@ -17,12 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-<<<<<<< HEAD
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-=======
->>>>>>> origin/vinhlt
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
