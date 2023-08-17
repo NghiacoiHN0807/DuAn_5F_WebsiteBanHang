@@ -1,6 +1,5 @@
 package com.example.fullstackbackend.services;
 
-import com.example.fullstackbackend.DTO.GiamGiaWithChiTietDTO;
 import com.example.fullstackbackend.entity.GiamGia;
 import org.springframework.data.domain.Page;
 

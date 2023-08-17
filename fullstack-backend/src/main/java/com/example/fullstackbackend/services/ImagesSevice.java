@@ -23,4 +23,6 @@ public interface ImagesSevice {
     Images update(Images update);
 
     Optional<Images> detail(Integer id);
+
+    List<Images> findByIdCtsp_IdSp(Integer idSp);
 }

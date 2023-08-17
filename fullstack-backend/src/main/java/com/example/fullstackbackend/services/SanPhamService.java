@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.services;
 
+import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.entity.SanPham;
 import org.springframework.data.domain.Page;
 
@@ -21,4 +22,8 @@ public interface SanPhamService {
     Optional<SanPham> detail(Integer id);
 
     Boolean checkExists(Integer id);
+
+    List<Object[]> getSanPhamWithMinImageUrl();
+
+    Page<SanPhamDTO> getSanPhamDetails(Integer pageNo, Integer size);
 }

@@ -53,7 +53,8 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     }
 
     @Override
-    public Object update(GiamGiaChiTiet giamGiaChiTiet) {
+    public Object update(GiamGiaChiTiet giamGiaChiTiet, Integer id) {
+        giamGiaChiTiet.setIdGgct(id);
         return giamGiaChiTietRepository.save(giamGiaChiTiet);
     }
 
@@ -67,5 +68,10 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
         GiamGiaChiTiet giamGiaChiTiet = getOne(id).orElseThrow();
         giamGiaChiTiet.setTrangThai(10);
         giamGiaChiTietRepository.save(giamGiaChiTiet);
+    }
+
+    @Override
+    public Integer findByIdGiamGia_IdGiamGia(Integer id) {
+        return giamGiaChiTietRepository.findByIdGiamGia_IdGiamGia(id);
     }
 }

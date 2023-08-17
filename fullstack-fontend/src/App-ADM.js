@@ -48,6 +48,7 @@ import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import { Image } from "react-bootstrap";
 import logo5F from "./assets/logo_5F.png";
 import ModelAddNewGiamGia from "./components/ModalsAddNewGiamGia";
+import ModelUpdateNewGiamGia from "./components/ModalsUpdateNewGiamGia";
 
 const drawerWidth = 240;
 
@@ -340,6 +341,7 @@ function AppADM(props) {
             <Route path="/quan-ly-giam-gia" element={<TableGiamGia />} />
             <Route path="/direct-sale" element={<DireactSale />} />
             <Route path="/create-bill/:id" element={<CartBillADM />} />
+            <Route path="/update/giam-gia/:id" element={<ModelUpdateNewGiamGia />} />
             <Route path="/order-management" element={<OrderManagement />} />
             <Route path="/add/giam-gia" element={<ModelAddNewGiamGia />} />
 
