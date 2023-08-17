@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
-import { add, addGiamGia, getAllSanPham, getCtspByIdSp, getImgByIdSp } from "../services/giamGiaService";
+import { add, addGiamGia, getAllSanPham, getCtspByIdSp, getImgByIdSp, updateSanPhamBytrangThai } from "../services/giamGiaService";
 import "../scss/GiamGiaAdd.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Checkbox, Chip, Grid, Paper, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
@@ -43,7 +43,7 @@ const ModelAddNewGiamGia = (props) => {
 
   const getAllSp = async () => {
     try {
-      let res = await getAllSanPham();
+      let res = await getAllSanPham(0);
       console.log("data: ", res);
       setLeft(res);
 
@@ -262,6 +262,7 @@ const ModelAddNewGiamGia = (props) => {
       // console.log(chiTietList.length);
       for (let index = 0; index < chiTietList.length; index++) {
         const chiTietSanPham = await getCtspByIdSp(chiTietList[index].sanPham.idSp);
+        await updateSanPhamBytrangThai(chiTietList[index].sanPham.idSp, 1);
         for (let i = 0; i < chiTietSanPham.length; i++) {
           let soTienConLai = 0;
 

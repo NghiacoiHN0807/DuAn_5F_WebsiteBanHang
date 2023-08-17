@@ -1,13 +1,14 @@
 package com.example.fullstackbackend.controller;
 
+import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.DTO.SanPhamWithMinImageDTO;
-import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.services.SanPhamService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -45,8 +46,8 @@ public class SanPhamController {
     }
 
     @GetMapping("minimage")
-    public ResponseEntity<List<SanPhamWithMinImageDTO>> getSanPhamWithMinImage() {
-        List<Object[]> result = sanPhamService.getSanPhamWithMinImageUrl();
+    public ResponseEntity<List<SanPhamWithMinImageDTO>> getSanPhamWithMinImage(@RequestParam("trangThai") Integer trangThai) {
+        List<Object[]> result = sanPhamService.getSanPhamWithMinImageUrl(trangThai);
 
         List<SanPhamWithMinImageDTO> dtoList = new ArrayList<>();
         for (Object[] row : result) {
@@ -60,8 +61,16 @@ public class SanPhamController {
 
     @GetMapping("dto")
     public ResponseEntity<Page<SanPhamDTO>> getSanPhamDetails(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
-                                                         @RequestParam(value = "size", defaultValue = "5") Integer size) {
+                                                              @RequestParam(value = "size", defaultValue = "5") Integer size) {
         Page<SanPhamDTO> page = sanPhamService.getSanPhamDetails(pageNo, size);
+        return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("get-san-pham-by-trangThai")
+    public ResponseEntity<Page<SanPhamDTO>> getSanPhamDetailsByTrangThai(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
+                                                                         @RequestParam(value = "size", defaultValue = "5") Integer size,
+                                                                         @RequestParam(value = "trangThai", defaultValue = "0") Integer trangThai) {
+        Page<SanPhamDTO> page = sanPhamService.getSanPhamDetailsByTrangThai(pageNo, size, trangThai);
         return ResponseEntity.ok(page);
     }
 
@@ -97,4 +106,18 @@ public class SanPhamController {
         Page<SanPhamCustom> pageSp = sanPhamService.sanPhamCustom(p.orElse(page), size);
         return ResponseEntity.ok(pageSp);
     }
+
+    @PutMapping("updateTrangThai_SanPham")
+    public ResponseEntity<String> updateTrangThai_SanPham(@RequestParam("id") Integer id, @RequestParam("trangThai") Integer trangThai) {
+
+        Optional<SanPham> sanPham = sanPhamService.detail(id);
+
+        if(sanPham.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy id!");
+        } else {
+            sanPhamService.updateTrangThai_SanPham(id, trangThai);
+            return ResponseEntity.status(HttpStatus.OK).body("Cập nhật thành công id: "+ id);
+        }
+    }
+
 }

@@ -17,7 +17,7 @@ const getCtspByIdSp = (id) => {
 }
 
 const getAllByTrangThai = (pageNo, size, trangThai) => {
-    return custom.get(`/giam-gia-chi-tiet/api/views?page=${pageNo}&size=${size}&trangThai=${trangThai}`);
+    return custom.get(`/san-pham/get-san-pham-by-trangThai?page=${pageNo}&size=${size}&trangThai=${trangThai}`);
 } 
 
 const search = (pageNo, size, value) => {
@@ -28,8 +28,8 @@ const filerDate = (pageNo, size, first, last) => {
     return custom.get(`/giam-gia-chi-tiet/api/filter-date?page=${pageNo}&size=${size}&first=${first}&last=${last}`);
 }
 
-const getAllSanPham = () => {
-    return custom.get(`/san-pham/minimage`);
+const getAllSanPham = (trangThai) => {
+    return custom.get(`/san-pham/minimage?trangThai=${trangThai}`);
 }
 
 const getSanPhamDetails = (pageNo, size) => {
@@ -73,4 +73,8 @@ const getIdGiamGia = (id) => {
     return custom.get(`/giam-gia-chi-tiet/api/getidGiamGiaByIdggct/${id}`);
 }
 
-export {getSanPhamDetails, getIdGiamGia, updateGiamGia, getImgByIdSp, getAll, detail, remove, add, update, addGiamGia, addLichSuGiamGia, getAllByTrangThai, search, filerDate, getAllSanPham, detailGiamGia, detailChiTietSanPham, getCtspByIdSp};
+const updateSanPhamBytrangThai = (id, trangThai) => {
+    return custom.put(`/san-pham/updateTrangThai_SanPham?id=${id}&trangThai=${trangThai}`);
+}
+
+export {updateSanPhamBytrangThai, getSanPhamDetails, getIdGiamGia, updateGiamGia, getImgByIdSp, getAll, detail, remove, add, update, addGiamGia, addLichSuGiamGia, getAllByTrangThai, search, filerDate, getAllSanPham, detailGiamGia, detailChiTietSanPham, getCtspByIdSp};

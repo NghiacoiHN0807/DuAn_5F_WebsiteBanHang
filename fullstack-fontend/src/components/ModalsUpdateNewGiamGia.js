@@ -47,7 +47,7 @@ const ModelUpdateNewGiamGia = (props) => {
 
   const getAllSp = async () => {
     try {
-      let res = await getAllSanPham();
+      let res = await getAllSanPham(0);
       setLeft(res);
 
       // Tạo một danh sách tạm thời để lưu hình ảnh

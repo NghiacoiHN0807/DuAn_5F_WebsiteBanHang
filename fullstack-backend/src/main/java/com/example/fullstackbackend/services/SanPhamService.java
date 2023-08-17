@@ -25,7 +25,12 @@ public interface SanPhamService {
 
     Boolean checkExists(Integer id);
 
-    List<Object[]> getSanPhamWithMinImageUrl();
+    List<Object[]> getSanPhamWithMinImageUrl(Integer trangThai);
 
     Page<SanPhamDTO> getSanPhamDetails(Integer pageNo, Integer size);
+
+    Page<SanPhamDTO> getSanPhamDetailsByTrangThai(Integer pageNo, Integer size, Integer trangThai);
+
+    void updateTrangThai_SanPham(Integer id, Integer trangThai);
+
 }
