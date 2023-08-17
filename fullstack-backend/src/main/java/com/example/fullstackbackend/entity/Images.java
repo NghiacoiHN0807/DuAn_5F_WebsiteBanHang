@@ -28,8 +28,8 @@ public class Images {
     private Integer idImages;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_ctsp", referencedColumnName = "id_ctsp")
-    private ChiTietSanPham idCtsp;
+    @JoinColumn(name = "id_sp", referencedColumnName = "id_sp")
+    private SanPham idSp;
 
     @Column(name = "images")
     private String images;

@@ -2,11 +2,15 @@ import * as React from 'react';
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
-import { add, addGiamGia, getAllSanPham, getCtspByIdSp } from "../services/giamGiaService";
+import { add, addGiamGia, getAllSanPham, getCtspByIdSp, getImgByIdSp } from "../services/giamGiaService";
 import "../scss/GiamGiaAdd.scss";
-import { useNavigate } from "react-router-dom";
-import { Button, Checkbox, Chip, Grid, Paper, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
-import { Table } from 'react-bootstrap';
+import { useNavigate, useParams } from "react-router-dom";
+import { Button, Checkbox, Chip, Grid, Paper, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
+import { Col, Image, Table } from 'react-bootstrap';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -21,6 +25,10 @@ function union(a, b) {
 }
 
 const ModelAddNewGiamGia = (props) => {
+
+  const { id } = useParams();
+
+  // const { show, handleClose, isDataGiamGia, getGiamGia } = props;
   // console.log(dataSanPham)
   let navigate = useNavigate();
   const [checked, setChecked] = React.useState([]);
@@ -31,11 +39,33 @@ const ModelAddNewGiamGia = (props) => {
   const [rightPage, setRightPage] = React.useState(0);
   const [rightRowsPerPage, setRightRowsPerPage] = React.useState(5);
   const [chiTietList, setchiTietList] = React.useState([]);
+  const [image, setImage] = useState([]);
 
   const getAllSp = async () => {
-    let res = await getAllSanPham();
-    setLeft(res);
+    try {
+      let res = await getAllSanPham();
+      console.log("data: ", res);
+      setLeft(res);
+
+      // Tạo một danh sách tạm thời để lưu hình ảnh
+      const tempImages = [];
+
+      // Tải hình ảnh cho từng sản phẩm và lưu vào danh sách tạm thời
+      for (let index = 0; index < res.length; index++) {
+        let resImg = await getImgByIdSp(res[index].idSp);
+        if (resImg && resImg.length > 0) {
+          tempImages.push(resImg[0].images);
+        }
+      }
+
+      // Cập nhật danh sách hình ảnh sau khi đã tải xong
+      setImage(tempImages);
+    } catch (error) {
+      console.error('Error loading images:', error);
+    }
   }
+
+  console.log("Img: ", image)
 
   React.useEffect(() => {
     getAllSp();
@@ -95,7 +125,6 @@ const ModelAddNewGiamGia = (props) => {
     setchiTietList([...chiTietList, ...leftChecked]);
     console.log([...chiTietList, ...leftChecked])
   };
-  console.log(chiTietList)
 
 
   const handleCheckedLeft = () => {
@@ -146,7 +175,6 @@ const ModelAddNewGiamGia = (props) => {
     return formatter.format(price);
   }
 
-
   const [giamGia, setGiamGia] = useState({
     maGiamGia: '',
     tenChuongTrinh: '',
@@ -157,13 +185,15 @@ const ModelAddNewGiamGia = (props) => {
     trangThai: 0,
   });
 
-  
+  console.log(chiTietList)
 
-  const { maGiamGia, tenChuongTrinh, ngayBatDau, ngayKetThuc, mucGiamPhanTram, mucGiamTienMat } = giamGia;
+  const { maGiamGia, tenChuongTrinh, mucGiamPhanTram, mucGiamTienMat } = giamGia;
 
   const onInputChange = (e) => {
     setGiamGia({ ...giamGia, [e.target.name]: e.target.value });
   };
+
+  console.log(giamGia);
 
   const [selected, setSelected] = useState("");
   const changeHandler = e => {
@@ -172,66 +202,110 @@ const ModelAddNewGiamGia = (props) => {
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (
-      giamGia.tenChuongTrinh.trim().length < 1 ||
-      giamGia.ngayBatDau.trim().length < 1 ||
-      giamGia.ngayKetThuc.trim().length < 1 ||
-      chiTietList.length === 0 // Kiểm tra danh sách sản phẩm
-    ) {
-      toast.warning('Data is null!');
-    } else {
-      try {
-        // Gọi hàm thêm giảm giá với danh sách sản phẩm
-        const response = await addGiamGia(giamGia);
-
-        // console.log(chiTietList.length);
-        for (let index = 0; index < chiTietList.length; index++) {
-          const chiTietSanPham = await getCtspByIdSp(chiTietList[index].idSp);
-          for (let i = 0; i < chiTietSanPham.length; i++) {
-            let soTienConLai = 0;
-          
-            if (giamGia.mucGiamPhanTram !== null) {
-              // Nếu mucGiamPhanTram không null, tính số tiền còn lại dựa trên phần trăm giảm
-              const mucGiam = giamGia.mucGiamPhanTram / 100;
-              soTienConLai = chiTietList[index].giaBan * (1 - mucGiam);
-            } else {
-              // Nếu mucGiamPhanTram là null, số tiền còn lại bằng giá tiền mặt giảm
-              soTienConLai = chiTietList[index].giaBan - giamGia.mucGiamTienMat;
-            }
-            const giamGiaChiTietOk = {
-              idCtsp: chiTietSanPham[i], 
-              idGiamGia: response.data, 
-              donGia: chiTietList[index].giaBan, 
-              soTienConLai: soTienConLai, 
-              trangThai: 0
-            }
-            await add(giamGiaChiTietOk);
-          }
-        }
-
-        console.log(response);
-        if (response.status === 'Ok!') {
-          navigate('/quan-ly-giam-gia');
-          toast.success('Thêm thành công!');
-        } else {
-          toast.error('Thêm không thành công!');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        if (error.response) {
-          console.error('Response data:', error.response.data);
-          console.error('Response status:', error.response.status);
-        }
-        toast.error('Đã xảy ra lỗi khi thêm giảm giá.');
-      }
+    if (!maGiamGia.trim() || !tenChuongTrinh.trim() || !ngayBatDau || !ngayKetThuc) {
+      toast.warning('Vui lòng nhập đầy đủ thông tin chương trình giảm giá.');
+      return;
     }
+
+    if (!selected) {
+      toast.warning('Vui lòng chọn loại giảm giá.');
+      return;
+    }
+
+    if (selected === 'phanTram' && (!mucGiamPhanTram || isNaN(mucGiamPhanTram) || mucGiamPhanTram < 1 || mucGiamPhanTram > 50)) {
+      toast.warning('Vui lòng nhập mức giảm phần trăm hợp lệ (1-50).');
+      return;
+    }
+
+    if (selected === 'mucGiam' && (!mucGiamTienMat || isNaN(mucGiamTienMat))) {
+      toast.warning('Vui lòng nhập mức giảm tiền mặt hợp lệ.');
+      return;
+    }
+
+    if (chiTietList.length === 0) {
+      toast.warning('Vui lòng chọn ít nhất một sản phẩm để áp dụng giảm giá.');
+      return;
+    }
+
+    const checkDateValidity = () => {
+      if (ngayKetThuc.isBefore(ngayBatDau)) {
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    if (!checkDateValidity()) {
+      toast.warning('Ngày kết thúc phải sau ngày bắt đầu.');
+      return;
+    }
+
+    try {
+      const selectedDate = dayjs(ngayBatDau);
+      const ngay = selectedDate.format('YYYY-MM-DDTHH:mm:ss');
+      const selectedDatekt = dayjs(ngayKetThuc);
+      const ngaykt = selectedDatekt.format('YYYY-MM-DDTHH:mm:ss');
+
+      const giaGiaAa = {
+        maGiamGia: giamGia.maGiamGia,
+        tenChuongTrinh: giamGia.tenChuongTrinh,
+        ngayBatDau: ngay,
+        ngayKetThuc: ngaykt,
+        mucGiamPhanTram: giamGia.mucGiamPhanTram,
+        mucGiamTienMat: giamGia.mucGiamTienMat,
+        trangThai: 0,
+      }
+
+      // Gọi hàm thêm giảm giá với danh sách sản phẩm)
+      const response = await addGiamGia(giaGiaAa);
+
+      // console.log(chiTietList.length);
+      for (let index = 0; index < chiTietList.length; index++) {
+        const chiTietSanPham = await getCtspByIdSp(chiTietList[index].sanPham.idSp);
+        for (let i = 0; i < chiTietSanPham.length; i++) {
+          let soTienConLai = 0;
+
+          if (giamGia.mucGiamPhanTram !== null) {
+            // Nếu mucGiamPhanTram không null, tính số tiền còn lại dựa trên phần trăm giảm
+            const mucGiam = giamGia.mucGiamPhanTram / 100;
+            soTienConLai = chiTietList[index].sanPham.giaBan * (1 - mucGiam);
+          } else {
+            // Nếu mucGiamPhanTram là null, số tiền còn lại bằng giá tiền mặt giảm
+            soTienConLai = chiTietList[index].sanPham.giaBan - giamGia.mucGiamTienMat;
+          }
+          const giamGiaChiTietOk = {
+            idCtsp: chiTietSanPham[i],
+            idGiamGia: response.data,
+            donGia: chiTietList[index].sanPham.giaBan,
+            soTienConLai: soTienConLai,
+            trangThai: 0
+          }
+          await add(giamGiaChiTietOk);
+        }
+      }
+
+      if (response.status === 'Ok!') {
+        navigate('/quan-ly-giam-gia');
+        toast.success('Thêm thành công!');
+      } else {
+        toast.error('Thêm không thành công!');
+      }
+    } catch (error) {
+      toast.error('Đã xảy ra lỗi khi thêm giảm giá.');
+    }
+
   };
-
-
+  // if (!giamGiaData) {
+  //   return <div>Loading...</div>;
+  // }
+  const todayAtNoon = dayjs().set('hour', 12).startOf('hour');
+  const todayAt9AM = dayjs().set('hour', 9).startOf('hour');
+  const [ngayBatDau, setNgayBatDau] = useState(dayjs().set('hour', 12).startOf('hour'));
+  const [ngayKetThuc, setNgayKetThuc] = useState(dayjs().set('hour', 12).startOf('hour'));
   return (
     <>
       <Modal.Header>
-        <Modal.Title className='text-center m-25 w-100'>ADD NEW GIAM GIA</Modal.Title>
+        <Modal.Title className='text-center m-25 w-100 text-uppercase'>Tạo chương trình giảm giá</Modal.Title>
       </Modal.Header>
       <div className="d-flex justify-content-around">
         <div className="content-left">
@@ -239,13 +313,33 @@ const ModelAddNewGiamGia = (props) => {
             <div className="body-add-new">
               <form>
                 <div className="mb-3">
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Mã chương trình</label>
-                  <input type={'text'} name='maGiamGia' className="form-control" value={maGiamGia} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" placeholder="Mã chương trình" />
+                  <TextField
+                    multiline
+                    maxRows={4}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                    name='maGiamGia'
+                    label="Mã chương trình"
+                    value={maGiamGia}
+                    onChange={(e) => onInputChange(e)}
+                  />
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Tên chương trình</label>
-                  <input type={'text'} name='tenChuongTrinh' className="form-control" value={tenChuongTrinh} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" placeholder="Tên chương trình" />
+                  <TextField
+                    multiline
+                    maxRows={4}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                    label="Tên chương trình"
+                    name='tenChuongTrinh'
+                    value={tenChuongTrinh}
+                    onChange={(e) => onInputChange(e)}
+                  />
                 </div>
 
                 <div className="mb-3">
@@ -267,24 +361,80 @@ const ModelAddNewGiamGia = (props) => {
                 </div>
 
                 <div className="mb-3" aria-hidden={selected !== "phanTram"}>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Mức giảm %</label>
-                  <input type="number" min={0} max={100} name='mucGiamPhanTram' value={mucGiamPhanTram} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Mức giảm %" />
+                  <TextField
+                    multiline
+                    maxRows={4}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                    label="Mức giảm %"
+                    name='mucGiamPhanTram'
+                    value={mucGiamPhanTram}
+                    onChange={(e) => onInputChange(e)}
+                  />
                 </div>
 
                 <div className="mb-3" aria-hidden={selected !== "mucGiam"}>
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Mức giảm tiền mặt</label>
-                  <input type="number" name='mucGiamTienMat' value={mucGiamTienMat} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Mức giảm tiền mặt" />
+                  <TextField
+                    multiline
+                    maxRows={4}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                    label="Mức giảm tiền mặt"
+                    name='mucGiamTienMat'
+                    value={mucGiamTienMat}
+                    onChange={(e) => onInputChange(e)}
+                  />
                 </div>
 
                 <div className="mb-3">
                   <label htmlFor="exampleFormControlInput1" className="form-label">Ngày bắt đầu</label>
-                  <input type="date" name='ngayBatDau' value={ngayBatDau} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Ngày bắt đầu" />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DateTimePicker']}>
+                      <DemoItem>
+                        <DateTimePicker
+                          defaultValue={todayAtNoon}
+                          minDateTime={todayAt9AM}
+                          name='ngayBatDau'
+                          value={ngayBatDau}
+                          onChange={(newDate) => setNgayBatDau(newDate)}
+                        />
+                      </DemoItem>
+                    </DemoContainer>
+                  </LocalizationProvider>
                 </div>
 
                 <div className="mb-3">
                   <label htmlFor="exampleFormControlInput1" className="form-label">Ngày kết thúc</label>
-                  <input type="date" name='ngayKetThuc' value={ngayKetThuc} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Ngày kết thúc" />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DateTimePicker']}>
+                      <DemoItem>
+                        <DateTimePicker
+                          defaultValue={todayAtNoon}
+                          minDateTime={todayAt9AM}
+                          name='ngayKetThuc'
+                          value={ngayKetThuc}
+                          onChange={(newDate) => setNgayKetThuc(newDate)}
+                        />
+                      </DemoItem>
+                    </DemoContainer>
+                  </LocalizationProvider>
                 </div>
+
+                {/* <div className="mb-3">
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Ngày kết thúc</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DateTimePicker
+                      renderInput={(props) => <TextField {...props} />}
+                      name='ngayKetThuc'
+                      value={ngayKetThuc}
+                      onChange={(newDate) => onInputChange(newDate)}
+                    />
+                  </LocalizationProvider>
+                </div> */}
 
                 <button onClick={(e) => handleSave(e)} className="btn bg-primary text-light d-flex align-items-end">Thêm</button>
               </form>
@@ -318,19 +468,20 @@ const ModelAddNewGiamGia = (props) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {left.slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage).map((value, index) => (
-                        <TableRow key={`left_${value.idSp}`}>
+                      {left.slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage).map((value, index) =>
+                      (
+                        <TableRow key={`left_${value.sanPham.idSp}`} onClick={handleToggle(value, true)}>
                           <TableCell padding="checkbox">
                             <Checkbox
-                              value={value.idSp}
+                              value={value.sanPham.idSp}
                               checked={checked.indexOf(value) !== -1}
-                              onClick={handleToggle(value, true)}
+
                             />
                           </TableCell>
                           <TableCell>{index + 1}</TableCell>
-                          <TableCell>{value.maSp}</TableCell>
-                          <TableCell>{value.tenSp}</TableCell>
-                          <TableCell>{value.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
+                          <TableCell>{value.sanPham.maSp}</TableCell>
+                          <TableCell>{value.sanPham.tenSp}</TableCell>
+                          <TableCell>{value.sanPham.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -376,15 +527,6 @@ const ModelAddNewGiamGia = (props) => {
                     <TableHead>
                       <TableRow>
                         <TableCell padding="checkbox">
-                          {/* <Checkbox
-                                            onClick={handleToggleAll(right)}
-                                            checked={numberOfChecked(right) === right.length && right.length !== 0}
-                                            indeterminate={numberOfChecked(right) !== right.length && numberOfChecked(right) !== 0}
-                                            disabled={right.length === 0}
-                                            inputProps={{
-                                                'aria-label': 'all items selected',
-                                            }}
-                                        /> */}
                         </TableCell>
                         <TableCell>STT</TableCell>
                         <TableCell>Ảnh sản phẩm</TableCell>
@@ -396,21 +538,30 @@ const ModelAddNewGiamGia = (props) => {
                     </TableHead>
                     <TableBody>
                       {right.slice(rightPage * rightRowsPerPage, rightPage * rightRowsPerPage + rightRowsPerPage).map((value, index) => (
-                        <TableRow key={`right_${value.idSp}`}>
+                        <TableRow key={`right_${value.sanPham.idSp}`}>
                           <TableCell padding="checkbox">
                             <Checkbox
-                              value={value.idSp}
+                              value={value.sanPham.idSp}
                               checked={chiTietList.indexOf(value) !== -1} // Sử dụng chiTietList thay vì checked
                               onClick={handleToggle(value, false)} // Đặt isLeft là false để xác định là bảng phải
                             // onChange={handleChange}
                             />
                           </TableCell>
                           <TableCell>{index + 1}</TableCell>
-                          <TableCell>{`Ảnh sản phẩm ${value.maSp}`}</TableCell>
-                          <TableCell>{value.maSp}</TableCell>
-                          <TableCell>{value.tenSp}</TableCell>
-                          <TableCell>{formatCurrency(value.giaBan)}</TableCell>
-                          <TableCell>{value.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
+                          <TableCell>
+                            <Col xs={6} md={4}>
+                              <Image
+                                rounded
+                                style={{ width: "150px", height: "auto" }}
+                                src={value.url_image}
+                                alt={`Ảnh sản phẩm ${value.maSp}`}
+                              />
+                            </Col>
+                          </TableCell>
+                          <TableCell>{value.sanPham.maSp}</TableCell>
+                          <TableCell>{value.sanPham.tenSp}</TableCell>
+                          <TableCell>{formatCurrency(value.sanPham.giaBan)}</TableCell>
+                          <TableCell>{value.sanPham.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

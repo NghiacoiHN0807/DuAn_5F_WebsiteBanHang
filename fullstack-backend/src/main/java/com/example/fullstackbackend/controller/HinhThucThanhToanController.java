@@ -26,10 +26,8 @@ public class HinhThucThanhToanController {
     private HinhThucThanhToanSevice HinhThucThanhToanSevice;
 
     @GetMapping("view-all-pages")
-    public Page<HinhThucThanhToan> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                           @RequestParam(defaultValue = "5") Integer size,
-                                           @RequestParam("p") Optional<Integer> p) {
-        Page<HinhThucThanhToan> HinhThucThanhToans = HinhThucThanhToanSevice.htttPages(p.orElse(page), size);
+    public List<HinhThucThanhToan> viewAll() {
+        List<HinhThucThanhToan> HinhThucThanhToans = HinhThucThanhToanSevice.getAll();
         return HinhThucThanhToans;
     }
 

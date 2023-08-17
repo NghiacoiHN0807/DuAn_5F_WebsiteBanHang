@@ -45,11 +45,13 @@ public class HoaDonChiTietController {
             return hoadonchitietSevice.add(newHD);
         }
     }
-//    @GetMapping("detail/{id}")
-//    public Optional<HoaDonChiTiet> detail(@PathVariable("id") Integer id) {
-//        Optional<HoaDonChiTiet> findHDCT = hoadonchitietSevice.detail(id);
-//        return findHDCT;
-//    }
+    @GetMapping("view-all-prduct/{idHd}")
+    public Page<Object[]> getSanPhamsWithSizes(@RequestParam(defaultValue = "0") Integer page,
+                                               @RequestParam(defaultValue = "15") Integer size,
+                                               @RequestParam("p") Optional<Integer> p, @PathVariable("idHd") Integer idHd) {
+        Page<Object[]> chiTietSP = hoadonchitietSevice.getListProductOncart(p.orElse(page), size, idHd);
+        return chiTietSP;
+    }
 
     @GetMapping("detail-get-one/{id}")
     public List<HoaDonChiTiet> detailCTSP(@PathVariable("id") Integer id) {

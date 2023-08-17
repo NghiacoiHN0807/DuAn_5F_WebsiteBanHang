@@ -16,7 +16,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 
 export default function ModalDeleteProductOnCart(props) {
   // Get Props
-  const { open, handleClose, itemDelete, selectDataCart } = props;
+  const { open, handleClose, itemDelete, selectDataCart, currentPage } = props;
 
   // Set maHd using useState
   const [maSp, setMaSp] = useState("");
@@ -24,15 +24,15 @@ export default function ModalDeleteProductOnCart(props) {
   // Update maHd when information changes
   useEffect(() => {
     if (itemDelete != null) {
-      setMaSp(itemDelete.idCtsp.idSp.maSp);
+      setMaSp(itemDelete[4]);
     } else {
       setMaSp("");
     }
   }, [itemDelete]);
   // Handle Delete
   const handleDelete = async () => {
-    await deleteProductOnCart(itemDelete.idHdct);
-    selectDataCart();
+    await deleteProductOnCart(itemDelete[1]);
+    selectDataCart(currentPage);
     toast.success("Xóa Sản Phẩm Thành Công");
     handleClose();
   };

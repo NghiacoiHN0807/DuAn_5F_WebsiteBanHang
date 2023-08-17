@@ -1,21 +1,25 @@
 import Nav from "react-bootstrap/Nav";
-// import Button from "react-bootstrap/Button";
+
 import Form from "react-bootstrap/Form";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {
-    faCartPlus,
-    faMagnifyingGlass,
-} from "@fortawesome/free-solid-svg-icons";
-// import "../scss/OderManagement.scss";
-import {useState} from "react";
+
+
+
+import React, {useState} from "react";
 import {useEffect} from "react";
-import {fetchAllTKKH} from "../../services/taiKhoanKhachHangSevice";
+import {deleteTaiKhoanKH, fetchAllTKKH} from "../../services/taiKhoanKhachHangSevice";
 import Badge from "react-bootstrap/Badge";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import {useNavigate} from "react-router-dom";
 import {DataGrid} from "@mui/x-data-grid";
-import {Button} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit';
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import SearchIcon from "@mui/icons-material/Search";
+import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
+
+import {toast} from "react-toastify";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const TableTKKhachHang = () => {
     const [listData, setListData] = useState([]);
@@ -44,12 +48,16 @@ const TableTKKhachHang = () => {
         getListData(0);
     }, []);
 
+
+
+
+
     const columns = [
-        {field: "index", headerName: "#####", width: 80},
-        {field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 200},
-        {field: "tenKh", headerName: "Tên Khách Hàng", width: 200},
-        {field: "sdtKh", headerName: "Số Điện Thoại", width: 200,},
-        {field: "email", headerName: "Email", width: 200,},
+        {field: "index", headerName: "#####", width: 50 },
+        {field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 120},
+        {field: "tenKh", headerName: "Tên Khách Hàng", width: 120},
+        {field: "sdtKh", headerName: "Số Điện Thoại", width: 120,},
+        {field: "email", headerName: "Email", width: 150,},
         {
             field: "trangThai",
             headerName: "Trạng Thái",
@@ -62,7 +70,7 @@ const TableTKKhachHang = () => {
                         badgeVariant = "primary";
                         statusText = "Đã kích hoạt";
                         break;
-                    case 2:
+                    case 4:
                         badgeVariant = "info";
                         statusText = "Đã Ngưng hoạt động";
                         break;
@@ -79,8 +87,47 @@ const TableTKKhachHang = () => {
                 );
             },
         },
+        // {field: "diaChi" , headerName: "Địa Chỉ",width: 100}
+        {
+            field: "actions",
+            headerName: "Hành Động",
+            width: 300,
+            renderCell: (params) => {
+                const {row} = params;
+                return (
+                    <div>
+                        <Button
+                            size={"small"}
+                            variant="contained"
+                            color="primary"
+                            onClick={() => handlClickRow(row)}
+                            startIcon={<EditIcon/>}
+                        >
+                            Chi Tiết
+                        </Button>
+                        <Button
+                            size={"small"}
+                            variant="contained"
+                            color="secondary"
+                            startIcon={<AddLocationAltIcon/>}
+                            onClick={() => handAddDiaChi(row)}
+                        >
+                            Địa Chỉ
+                        </Button>
+                        <Button
+                            size={"small"}
+                            variant="contained"
+                            color="secondary"
+                            startIcon={<DeleteIcon/>}
+                            onClick={() => handleClickOpenDelete(row)}
+                        >
+                            Xóa
+                        </Button>
+                    </div>
+                );
+            },
+        },
     ];
-
     // Xử lý dữ liệu của bảng vào mảng rows
     const rows = listData
         .filter((item) =>
@@ -90,7 +137,7 @@ const TableTKKhachHang = () => {
         )
         .map((item, index) => ({
             idTaiKhoan: item.idTaiKhoan,
-            id: index + 1,
+            id: item.idTaiKhoan,
             index: index + 1,
             maTaiKhoan: item.maTaiKhoan,
             tenKh: item.ho +' '+ item.ten ,
@@ -98,6 +145,7 @@ const TableTKKhachHang = () => {
             email: item.email,
             trangThai: item.trangThai,
         }));
+
     //Next Page
     const handlePageClick = (page) => {
         getListData(page);
@@ -119,10 +167,43 @@ const TableTKKhachHang = () => {
     const handAdd = () => {
         navigate("/tai-khoan-KH/them-tai-khoan");
     };
+    const handAddDiaChi = (item) =>{
+        navigate(`/dia-chi/${item.maTaiKhoan}`);
+    };
+
     const handlClickRow = (item) => {
         // console.log("Check click: ", item);
         navigate(`/tai-khoan-KH/detail/${item.idTaiKhoan}`);
     };
+
+
+    const handleDelete = async (item) => {
+        let res = await deleteTaiKhoanKH(item.id);
+        console.log("Check res: ", res);
+        if (res) {
+            toast.success("Xóa thành công!");
+            handleClose();
+            handlePageClick(0);
+        } else {
+            toast.error("Xóa thất bại!");
+            handleClose();
+        }
+    };
+
+    const [open, setOpen] = useState(false);
+    const [idDelete, setIdDelete] = useState("");
+
+    const handleClickOpenDelete = (id) => {
+        setOpen(true);
+        setIdDelete(id);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+
+
     return (
         <>
             <div className="row row-order-management">
@@ -138,8 +219,8 @@ const TableTKKhachHang = () => {
                                     size="sm"
                                     onChange={(e) => setSearchKeyword(e.target.value)}
                                 />
-                                <Button variant="outline-success" className="search-button">
-                                    <FontAwesomeIcon icon={faMagnifyingGlass} size="xs"/>
+                                <Button variant="outline-success"  startIcon={< SearchIcon />} className="search-button">
+
                                 </Button>
                             </Form>
                         </Nav>
@@ -162,9 +243,8 @@ const TableTKKhachHang = () => {
                         </select>
                     </div>
                     <div className="col-5">
-                        <Button variant="contained" color="success"  onClick={() => handAdd()} >
+                        <Button variant="contained" color="success" startIcon={<PersonAddAlt1Icon/>}  onClick={() => handAdd()} >
                             Tạo Tài Khoản Mới
-                            <FontAwesomeIcon icon={faCartPlus} size="lg"/>{" "}
                         </Button>
                     </div>
                 </div>
@@ -179,7 +259,7 @@ const TableTKKhachHang = () => {
                             },
                         }}
                         pageSizeOptions={[5, 10, 15]}
-                        onRowClick={(params) => handlClickRow(params.row)}
+                        // onRowClick={(params) => handlClickRow(params.row)}
                     />
                 </div>
                 <Stack
@@ -194,6 +274,25 @@ const TableTKKhachHang = () => {
                         variant="outlined"
                     />
                 </Stack>
+                <Dialog
+                    open={open}
+                    onClose={handleClose}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">{"Xác nhận xóa?"}</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            Bạn có chắc chắn muốn xóa Tài Khoản này không?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>Hủy</Button>
+                        <Button onClick={() => handleDelete(idDelete)} autoFocus>
+                            Xóa
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         </>
     );

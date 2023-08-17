@@ -1,7 +1,7 @@
 import custom from './custom-axios';
 
-const getAll = (pageNo, size) => {
-    return custom.get(`/giam-gia-chi-tiet/api/view-all?page=${pageNo}&size=${size}`);
+const getAll = () => {
+    return custom.get(`/giam-gia-chi-tiet/api/view-all`);
 }
 
 const detailGiamGia = (id) => {
@@ -29,12 +29,12 @@ const filerDate = (pageNo, size, first, last) => {
 }
 
 const getAllSanPham = () => {
-    return custom.get(`/san-pham/listSP`);
+    return custom.get(`/san-pham/minimage`);
 }
 
-// const getAllLoaiSp = () => {
-//     return custom.get(`/loai-sp/api/views`);
-// }
+const getSanPhamDetails = (pageNo, size) => {
+    return custom.get(`/san-pham/dto?page=${pageNo}&size=${size}`);
+}
 
 const detail = (id) => {
     return custom.get(`/giam-gia-chi-tiet/api/detail/${id}`);
@@ -60,4 +60,17 @@ const update = (giamGiaChiTiet, id) => {
     return custom.put(`/giam-gia-chi-tiet/api/update/${id}`, giamGiaChiTiet);
 }
 
-export {getAll, detail, remove, add, update, addGiamGia, addLichSuGiamGia, getAllByTrangThai, search, filerDate, getAllSanPham, detailGiamGia, detailChiTietSanPham, getCtspByIdSp};
+const updateGiamGia = (giamGia, id) => {
+    return custom.put(`/giam-gia/api/update/${id}`, giamGia);
+}
+
+const getImgByIdSp = (idSp) => {
+    return custom.get(`/images/select-byidSP?id=${idSp}`);
+}
+
+
+const getIdGiamGia = (id) => {
+    return custom.get(`/giam-gia-chi-tiet/api/getidGiamGiaByIdggct/${id}`);
+}
+
+export {getSanPhamDetails, getIdGiamGia, updateGiamGia, getImgByIdSp, getAll, detail, remove, add, update, addGiamGia, addLichSuGiamGia, getAllByTrangThai, search, filerDate, getAllSanPham, detailGiamGia, detailChiTietSanPham, getCtspByIdSp};

@@ -2,8 +2,8 @@ import custom from "./custom-axios";
 const selectAllBill = (page) => {
   return custom.get(`/hoa-don/view-all-offline-invoice?p=${page}`);
 };
-const postAddBill = (maHd, ngayTao, trangThai) => {
-  return custom.post("/hoa-don/add", { maHd, ngayTao, trangThai });
+const postAddBill = (maHd, ngayTao, kieuHoaDon, trangThai) => {
+  return custom.post("/hoa-don/add", { maHd, ngayTao, kieuHoaDon, trangThai });
 };
 const detailBill = (id_hd) => {
   return custom.get(`/hoa-don/detail/${id_hd}`);
@@ -29,6 +29,23 @@ const findByProductNameAndSize = (name, size) => {
 const findById = (idSp) => {
   return custom.get(`/chi-tiet-san-pham/select-ctsp-byId/${idSp}`); // Call API
 };
+const finByProductOnCart = (page, idHd) => {
+  return custom.get(`/hoa-don-chi-tiet/view-all-prduct/${idHd}?p=${page}`);
+};
+const getAllDataTaiKhoan = (page) => {
+  return custom.get(`/tai-khoan-khach-hang/view-all-kh?p=${page}`); // Call API
+};
+const selectAllInvoiceWaiting = () => {
+  return custom.get(`/hoa-don/view-all-invoice-waiting`);
+};
+const paymentOnline = (amount, orderInfo) => {
+  return custom.post(
+    `/hoa-don/submitOrder?amount=${amount}&orderInfo=${orderInfo}`
+  );
+};
+const paymentOnlineSuccess = () => {
+  return custom.get(`/hoa-don/vnpay-payment`);
+};
 export {
   selectAllBill,
   postAddBill,
@@ -40,4 +57,9 @@ export {
   fetchAllCTSPBySize,
   findByProductNameAndSize,
   findById,
+  finByProductOnCart,
+  getAllDataTaiKhoan,
+  selectAllInvoiceWaiting,
+  paymentOnline,
+  paymentOnlineSuccess,
 };

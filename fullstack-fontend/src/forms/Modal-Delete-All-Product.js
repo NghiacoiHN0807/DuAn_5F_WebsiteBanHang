@@ -23,12 +23,12 @@ export default function ModalDeleteAllProductOnCart(props) {
       console.log("Check DataCart: ", DataCart);
 
       try {
-        await deleteProductOnCart(DataCart[i].idHdct);
+        await deleteProductOnCart(DataCart[i][1]);
       } catch (error) {
         console.error(error);
       }
     }
-    selectDataCart();
+    selectDataCart(0);
     toast.success("Đã Xóa Tất Cả Sản Phẩm Ra Khỏi Giỏ Hàng");
     handleClose();
   };

@@ -1,6 +1,5 @@
 package com.example.fullstackbackend.controller;
 
-import com.example.fullstackbackend.DTO.GiamGiaWithChiTietDTO;
 import com.example.fullstackbackend.entity.GiamGia;
 import com.example.fullstackbackend.services.GiamGiaService;
 import org.springframework.beans.factory.annotation.Autowired;

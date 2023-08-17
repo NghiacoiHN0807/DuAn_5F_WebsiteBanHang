@@ -25,6 +25,11 @@ public class ImagesServiceImpl implements ImagesSevice {
     }
 
     @Override
+    public List<Images> findImagesByIdSp(Integer idSp) {
+        return imagesRepository.findImagesByIdSp(idSp);
+    }
+
+    @Override
     public Page<Images> imagesPage(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return imagesRepository.findAll(pageable);
@@ -54,5 +59,10 @@ public class ImagesServiceImpl implements ImagesSevice {
     public Optional<Images> detail(Integer id) {
         Optional<Images> images = imagesRepository.findById(id);
         return images;
+    }
+
+    @Override
+    public List<Images> findByIdCtsp_IdSp(Integer idSp) {
+        return imagesRepository.findByIdCtsp_IdSp(idSp);
     }
 }

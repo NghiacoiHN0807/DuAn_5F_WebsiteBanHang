@@ -1,10 +1,7 @@
 package com.example.fullstackbackend.services.impl;
 
-import com.example.fullstackbackend.entity.ChatLieu;
 import com.example.fullstackbackend.entity.ChucVu;
-import com.example.fullstackbackend.entity.TaiKhoanNhanVien;
 import com.example.fullstackbackend.repository.ChucvuRepository;
-import com.example.fullstackbackend.repository.TaiKhoanNhanVienRepository;
 import com.example.fullstackbackend.services.ChucvuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

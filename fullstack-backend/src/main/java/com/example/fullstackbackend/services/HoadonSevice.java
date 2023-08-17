@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.services;
 
+import com.example.fullstackbackend.DTO.HoaDonDTO;
 import com.example.fullstackbackend.entity.HoaDon;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.Modifying;
@@ -13,12 +14,15 @@ public interface HoadonSevice {
     Page<HoaDon> hoaDonPage(Integer pageNo, Integer size);
 
     Page<HoaDon> hoaDonOffline(Integer pageNo, Integer size);
+
+    List<HoaDon> selectAllInvoiceWaiting();
+
     Page<HoaDon> hoaDonOnline(Integer pageNo, Integer size);
 
     HoaDon add(HoaDon add);
 
 
-    void delete(Integer id);
+    HoaDon delete(Integer id);
 
     Boolean checkExists(Integer id);
 
@@ -28,5 +32,5 @@ public interface HoadonSevice {
 
     HoaDon finByMaHD(Integer maHD);
 
-
+    HoaDon updatePaymentOnline(Integer idHd, HoaDon hoaDonDTO);
 }

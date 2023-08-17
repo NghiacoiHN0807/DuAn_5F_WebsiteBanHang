@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -29,10 +30,16 @@ public class ChucVuController {
 
     @GetMapping("view-all")
     public Page<ChucVu> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                @RequestParam(defaultValue = "5") Integer size,
+                                @RequestParam(defaultValue = "15") Integer size,
                                 @RequestParam("p") Optional<Integer> p) {
 
         return chucvuService.phanTrang(p.orElse(page), size);
+    }
+
+    @GetMapping("list-chuc-vu")
+    public List<ChucVu> viewAll() {
+
+        return chucvuService.getAll();
     }
 
     @PostMapping("add")

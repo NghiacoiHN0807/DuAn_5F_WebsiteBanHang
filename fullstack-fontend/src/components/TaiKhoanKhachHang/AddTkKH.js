@@ -4,47 +4,50 @@ import {toast} from "react-toastify";
 import {Box, Button, TextField} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 
-const AddTkKH = (props) => {
-    const [maTaiKhoan, setMaTaiKhoan] = useState(null);
+const AddTkKH = () => {
+    const [maTaiKhoan] = useState(null);
     const [ho, setHo] = useState("");
     const [ten, setTen] = useState("");
     const [sdt, setSdt] = useState("");
     const [email, setEmail] = useState("");
-    const [matKhau, setMatKhau] = useState(null);
-    const [trangThai, setTrangThai] = useState("0");
+    const [matKhau] = useState("");
+    const [trangThai] = useState("0");
 
     // chuyen trang
     const navigate = useNavigate();
 
+    const [validationErrors, setValidationErrors] = useState("");
     const handleSave = async () => {
-        if (
-            setMaTaiKhoan(null) &&
-            setHo("") &&
-            setTen("") &&
-            setEmail("") &&
-            setSdt("") &&
-            setMatKhau(null) &&
-            setTrangThai(0)
-        ) {
-            toast.warning("Some field is empty!");
-        } else {
-            let res = await postAddTaiKhoanKhachHang(
-                maTaiKhoan,
-                ho,
-                ten,
-                sdt,
-                email,
-                matKhau,
-                trangThai
-            );
-            console.log("Check res: ", res);
+
+            let res;
+            try {
+                res = await postAddTaiKhoanKhachHang(
+                    maTaiKhoan,
+                    ho,
+                    ten,
+                    sdt,
+                    email,
+                    matKhau,
+                    trangThai
+                );
+                console.log("Check res: ", res);
+            }catch (error){
+                if (error.response && error.response.data) {
+                    console.log(error.response.data);
+                    setValidationErrors(error.response.data);
+                } else {
+                    console.error("Error:", error);
+                }
+                return;
+            }
+
             if (res && res.idTaiKhoan) {
                 toast.success("Thêm Thành Công");
-                navigate("/tai-khoan-KH/detail/:id" + res.idTaiKhoan);
+                navigate("/tai-khoan-KH");
             } else {
-                toast.error("Add ctsp failed!");
+                toast.error("Thêm Thất Bại!");
             }
-        }
+
     };
     return (
         <>
@@ -58,54 +61,65 @@ const AddTkKH = (props) => {
                 <Box
                     component="form"
                     sx={{
-                        "& .MuiTextField-root": {m: 1, width: "151ch"},
+                        display: "flex",         // Center horizontally
+                        justifyContent: "center", // Center horizontally
+                        flexDirection: "column", // Align items vertically
+                        alignItems: "center",    // Align items horizontally
                     }}
                     noValidate
                     autoComplete="off"
-                    alignItems={"center"}
+
                 >
                     <TextField
+                        error={!!validationErrors.ho}
+                        helperText={validationErrors.ho}
                         fullWidth
+                        margin={"dense"}
                         label="Họ"
                         id="fullWidth"
                         onChange={(event) => setHo(event.target.value)}
                     />
                     <TextField
+                        error={!!validationErrors.ten}
+                        helperText={validationErrors.ten}
                         fullWidth
+                        margin={"dense"}
                         label="Tên"
                         id="fullWidth"
                         onChange={(event) => setTen(event.target.value)}
                     />
                     <TextField
+                        error={!!validationErrors.email}
+                        helperText={validationErrors.email}
                         fullWidth
+                        margin={"dense"}
                         label="Email"
                         id="fullWidth"
                         onChange={(event) => setEmail(event.target.value)}
                     />
                     <TextField
+                        error={!!validationErrors.sdt}
+                        helperText={validationErrors.sdt}
                         fullWidth
+                        margin={"dense"}
                         label="Số Điện Thoại"
                         id="fullWidth"
                         onChange={(event) => setSdt(event.target.value)}
                     />
-                    {/*<TextField*/}
-                    {/*    id="outlined-basic"*/}
-                    {/*    label="Mật Khẩu"*/}
-                    {/*    variant="outlined"*/}
-                    {/*    onChange={(event) => setMatKhau(event.target.value)}*/}
-                    {/*/>*/}
-                </Box>
 
-
-                <div style={{textAlign: "right", margin: "20px 0"}}>
                     <Button
+                        size={"large"}
                         variant="contained"
                         color="success"
                         onClick={() => handleSave()}
+                        style={{ marginTop: "20px" }} // Make button wider
                     >
-                        Thêm
+                        Thêm Tài Khoản Khách Hàng Mới
                     </Button>
-                </div>
+                </Box>
+
+
+
             </div>
         </>
     );
