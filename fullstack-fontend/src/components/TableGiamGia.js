@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import Stack from "@mui/material/Stack";
-import { getAll, getAllByTrangThai, getAllSanPham, getSanPhamDetails } from "../services/giamGiaService";
-import { Badge, Col, Form, Image, Nav } from "react-bootstrap";
-import "../scss/saletag.scss";
+import { getAllByTrangThai, getSanPhamDetails } from "../services/giamGiaService";
+import { Badge, Form, Image, Nav } from "react-bootstrap";
 import "../scss/TableGiamGiaScss.scss";
 import Pagination from "@mui/material/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -84,9 +83,13 @@ const TableGiamGia = (props) => {
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
-
-    const [year, month, day] = dateString.split("-");
-    return `${day}/${month}/${year}`;
+  
+    const dateTime = new Date(dateString);
+    const hours = dateTime.getUTCHours().toString().padStart(2, '0');
+    const minutes = dateTime.getUTCMinutes().toString().padStart(2, '0');
+    const [year, month, day] = dateTime.toISOString().split('T')[0].split('-');
+  
+    return `${hours}:${minutes} ${day}/${month}/${year}`;
   };
 
   const handAdd = () => {
@@ -110,8 +113,7 @@ const TableGiamGia = (props) => {
         ? item.mucGiamPhanTram + "%"
         : formatCurrency(item.mucGiamTienMat),
       thoiGian: formatDate(item.ngayBatDau) +
-        " - " +
-        formatDate(item.ngayKetThuc),
+        " - " + formatDate(item.ngayKetThuc),
       donGia: formatCurrency(item.donGia),
       sauGiam: formatCurrency(item.soTienConLai),
       trangThai: item.trangThai
@@ -125,9 +127,10 @@ const TableGiamGia = (props) => {
       width: 200,
       renderCell: function (params) {
         const { value: url_img } = params;
+        console.log(params.row.idHd)
         return (
-          <TableCell style={{ height: 240 }} className="d-flex align-items-center">
-            <div className="d-flex align-items-center box">
+          <TableCell style={{ height: 240 }} className="d-flex align-items-center position-relative">
+            <div className="image-container">
               <Image
                 rounded
                 className="mr-2"
@@ -135,7 +138,7 @@ const TableGiamGia = (props) => {
                 src={url_img}
                 alt={`Ảnh sản phẩm ${url_img}`}
               />
-              <div class="ribbon ribbon-top-right"><span>sale</span></div>
+              {params.row.idHd.mucGiamPhanTram === null ? <div className="sale-tag">Sale</div> : <div className="sale-tag">Sale {params.row.idHd.mucGiamPhanTram}%</div>}
             </div>
           </TableCell>
         );
@@ -147,7 +150,7 @@ const TableGiamGia = (props) => {
     {
       field: "thoiGian",
       headerName: "Thời gian",
-      width: 200,
+      width: 300,
     },
     {
       field: "donGia",
@@ -157,12 +160,12 @@ const TableGiamGia = (props) => {
     {
       field: "sauGiam",
       headerName: "Số tiền còn lại",
-      width: 150
+      width: 100
     },
     {
       field: "trangThai",
       headerName: "Trạng Thái",
-      width: 200,
+      width: 150,
       renderCell: (params) => {
         const { value: trangThai } = params;
         let badgeVariant, statusText;
@@ -191,7 +194,7 @@ const TableGiamGia = (props) => {
     {
       field: "thaoTac",
       headerName: "Thao Tác",
-      width: 150,
+      width: 100,
       renderCell: (params) => {
         return (
           <>
@@ -279,7 +282,7 @@ const TableGiamGia = (props) => {
           </Button>
         </div>
 
-        <div style={{ height: 800, width: "100%" }}>
+        <div style={{ height: 500, width: "100%" }}>
           <DataGrid
             rows={rows}
             getRowHeight={(params) => 240}

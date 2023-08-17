@@ -7,6 +7,10 @@ import "../scss/GiamGiaAdd.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Checkbox, Chip, Grid, Paper, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
 import { Col, Image, Table } from 'react-bootstrap';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -171,7 +175,6 @@ const ModelAddNewGiamGia = (props) => {
     return formatter.format(price);
   }
 
-
   const [giamGia, setGiamGia] = useState({
     maGiamGia: '',
     tenChuongTrinh: '',
@@ -184,11 +187,13 @@ const ModelAddNewGiamGia = (props) => {
 
   console.log(chiTietList)
 
-  const { maGiamGia, tenChuongTrinh, ngayBatDau, ngayKetThuc, mucGiamPhanTram, mucGiamTienMat } = giamGia;
+  const { maGiamGia, tenChuongTrinh, mucGiamPhanTram, mucGiamTienMat } = giamGia;
 
   const onInputChange = (e) => {
     setGiamGia({ ...giamGia, [e.target.name]: e.target.value });
   };
+
+  console.log(giamGia);
 
   const [selected, setSelected] = useState("");
   const changeHandler = e => {
@@ -222,9 +227,37 @@ const ModelAddNewGiamGia = (props) => {
       return;
     }
 
+    const checkDateValidity = () => {
+      if (ngayKetThuc.isBefore(ngayBatDau)) {
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    if (!checkDateValidity()) {
+      toast.warning('Ngày kết thúc phải sau ngày bắt đầu.');
+      return;
+    }
+
     try {
-      // Gọi hàm thêm giảm giá với danh sách sản phẩm
-      const response = await addGiamGia(giamGia);
+      const selectedDate = dayjs(ngayBatDau);
+      const ngay = selectedDate.format('YYYY-MM-DDTHH:mm:ss');
+      const selectedDatekt = dayjs(ngayKetThuc);
+      const ngaykt = selectedDatekt.format('YYYY-MM-DDTHH:mm:ss');
+
+      const giaGiaAa = {
+        maGiamGia: giamGia.maGiamGia,
+        tenChuongTrinh: giamGia.tenChuongTrinh,
+        ngayBatDau: ngay,
+        ngayKetThuc: ngaykt,
+        mucGiamPhanTram: giamGia.mucGiamPhanTram,
+        mucGiamTienMat: giamGia.mucGiamTienMat,
+        trangThai: 0,
+      }
+
+      // Gọi hàm thêm giảm giá với danh sách sản phẩm)
+      const response = await addGiamGia(giaGiaAa);
 
       // console.log(chiTietList.length);
       for (let index = 0; index < chiTietList.length; index++) {
@@ -265,7 +298,10 @@ const ModelAddNewGiamGia = (props) => {
   // if (!giamGiaData) {
   //   return <div>Loading...</div>;
   // }
-
+  const todayAtNoon = dayjs().set('hour', 12).startOf('hour');
+  const todayAt9AM = dayjs().set('hour', 9).startOf('hour');
+  const [ngayBatDau, setNgayBatDau] = useState(dayjs().set('hour', 12).startOf('hour'));
+  const [ngayKetThuc, setNgayKetThuc] = useState(dayjs().set('hour', 12).startOf('hour'));
   return (
     <>
       <Modal.Header>
@@ -356,13 +392,49 @@ const ModelAddNewGiamGia = (props) => {
 
                 <div className="mb-3">
                   <label htmlFor="exampleFormControlInput1" className="form-label">Ngày bắt đầu</label>
-                  <input type="date" name='ngayBatDau' value={ngayBatDau} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Ngày bắt đầu" />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DateTimePicker']}>
+                      <DemoItem>
+                        <DateTimePicker
+                          defaultValue={todayAtNoon}
+                          minDateTime={todayAt9AM}
+                          name='ngayBatDau'
+                          value={ngayBatDau}
+                          onChange={(newDate) => setNgayBatDau(newDate)}
+                        />
+                      </DemoItem>
+                    </DemoContainer>
+                  </LocalizationProvider>
                 </div>
 
                 <div className="mb-3">
                   <label htmlFor="exampleFormControlInput1" className="form-label">Ngày kết thúc</label>
-                  <input type="date" name='ngayKetThuc' value={ngayKetThuc} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Ngày kết thúc" />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DateTimePicker']}>
+                      <DemoItem>
+                        <DateTimePicker
+                          defaultValue={todayAtNoon}
+                          minDateTime={todayAt9AM}
+                          name='ngayKetThuc'
+                          value={ngayKetThuc}
+                          onChange={(newDate) => setNgayKetThuc(newDate)}
+                        />
+                      </DemoItem>
+                    </DemoContainer>
+                  </LocalizationProvider>
                 </div>
+
+                {/* <div className="mb-3">
+                  <label htmlFor="exampleFormControlInput1" className="form-label">Ngày kết thúc</label>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DateTimePicker
+                      renderInput={(props) => <TextField {...props} />}
+                      name='ngayKetThuc'
+                      value={ngayKetThuc}
+                      onChange={(newDate) => onInputChange(newDate)}
+                    />
+                  </LocalizationProvider>
+                </div> */}
 
                 <button onClick={(e) => handleSave(e)} className="btn bg-primary text-light d-flex align-items-end">Thêm</button>
               </form>

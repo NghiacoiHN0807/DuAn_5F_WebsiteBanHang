@@ -7,6 +7,10 @@ import "../scss/GiamGiaAdd.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Checkbox, Chip, Grid, Paper, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
 import { Col, Image, Table } from 'react-bootstrap';
+import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
+import dayjs from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -188,7 +192,7 @@ const ModelUpdateNewGiamGia = (props) => {
 
 
 
-  const { maGiamGia, tenChuongTrinh, ngayBatDau, ngayKetThuc, mucGiamPhanTram, mucGiamTienMat } = giamGia;
+  const { maGiamGia, tenChuongTrinh, mucGiamPhanTram, mucGiamTienMat } = giamGia;
 
   const onInputChange = (e) => {
     setGiamGia({ ...giamGia, [e.target.name]: e.target.value });
@@ -225,7 +229,36 @@ const ModelUpdateNewGiamGia = (props) => {
       toast.warning('Vui lòng chọn ít nhất một sản phẩm để áp dụng giảm giá.');
       return;
     }
+
+    const checkDateValidity = () => {
+      if (ngayKetThuc.isBefore(ngayBatDau)) {
+        return false;
+      } else {
+        return true;
+      }
+    };
+
+    if (!checkDateValidity()) {
+      toast.warning('Ngày kết thúc phải sau ngày bắt đầu.');
+      return;
+    }
+    
     try {
+      const selectedDate = dayjs(ngayBatDau);
+      const ngay = selectedDate.format('YYYY-MM-DDTHH:mm:ss');
+      const selectedDatekt = dayjs(ngayKetThuc);
+      const ngaykt = selectedDatekt.format('YYYY-MM-DDTHH:mm:ss');
+      
+      const giaGiaAa = {
+        maGiamGia: giamGia.maGiamGia,
+        tenChuongTrinh: giamGia.tenChuongTrinh,
+        ngayBatDau: ngay,
+        ngayKetThuc: ngaykt,
+        mucGiamPhanTram: giamGia.mucGiamPhanTram,
+        mucGiamTienMat: giamGia.mucGiamTienMat,
+        trangThai: 0,
+      }
+      
 
       const idGg = await getIdGiamGia(id);
       // Gọi hàm thêm giảm giá với danh sách sản phẩm
@@ -270,6 +303,10 @@ const ModelUpdateNewGiamGia = (props) => {
   // if (!giamGiaData) {
   //   return <div>Loading...</div>;
   // }
+  const todayAtNoon = dayjs().set('hour', 12).startOf('hour');
+  const todayAt9AM = dayjs().set('hour', 9).startOf('hour');
+  const [ngayBatDau, setNgayBatDau] = useState(dayjs().set('hour', 12).startOf('hour'));
+  const [ngayKetThuc, setNgayKetThuc] = useState(dayjs().set('hour', 12).startOf('hour'));
 
   return (
     <>
@@ -361,12 +398,36 @@ const ModelUpdateNewGiamGia = (props) => {
 
                 <div className="mb-3">
                   <label htmlFor="exampleFormControlInput1" className="form-label">Ngày bắt đầu</label>
-                  <input type="date" name='ngayBatDau' value={ngayBatDau} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Ngày bắt đầu" />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DateTimePicker']}>
+                      <DemoItem>
+                        <DateTimePicker
+                          defaultValue={todayAtNoon}
+                          minDateTime={todayAt9AM}
+                          name='ngayBatDau'
+                          value={ngayBatDau}
+                          onChange={(newDate) => setNgayBatDau(newDate)}
+                        />
+                      </DemoItem>
+                    </DemoContainer>
+                  </LocalizationProvider>
                 </div>
 
                 <div className="mb-3">
                   <label htmlFor="exampleFormControlInput1" className="form-label">Ngày kết thúc</label>
-                  <input type="date" name='ngayKetThuc' value={ngayKetThuc} onChange={(e) => onInputChange(e)} id="exampleFormControlInput1" className="form-control" placeholder="Ngày kết thúc" />
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DemoContainer components={['DateTimePicker']}>
+                      <DemoItem>
+                        <DateTimePicker
+                          defaultValue={todayAtNoon}
+                          minDateTime={todayAt9AM}
+                          name='ngayKetThuc'
+                          value={ngayKetThuc}
+                          onChange={(newDate) => setNgayKetThuc(newDate)}
+                        />
+                      </DemoItem>
+                    </DemoContainer>
+                  </LocalizationProvider>
                 </div>
 
                 <button onClick={(e) => handleSave(e)} className="btn bg-primary text-light d-flex align-items-end">Chỉnh sửa</button>

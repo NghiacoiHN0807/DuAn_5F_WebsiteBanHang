@@ -44,5 +44,4 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             nativeQuery = true)
     Page<Object[]> getSanPhamDetails(Pageable pageable);
 
-
 }

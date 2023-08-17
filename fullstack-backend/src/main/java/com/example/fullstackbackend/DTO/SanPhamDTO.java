@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -41,7 +41,7 @@ public class SanPhamDTO {
 
     Integer trangThai;
 
-    Date ngayBatDau;
+    Timestamp ngayBatDau;
 
-    Date ngayKetThuc;
+    Timestamp ngayKetThuc;
 }

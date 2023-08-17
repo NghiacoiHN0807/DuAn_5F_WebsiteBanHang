@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,8 +93,8 @@ public class SanphamServiceImpl implements SanPhamService {
             sanPhamDTO.setDonGia((BigDecimal) row[11]);
             sanPhamDTO.setSoTienConLai((BigDecimal) row[12]);
             sanPhamDTO.setTrangThai((Integer) row[13]);
-            sanPhamDTO.setNgayBatDau((Date) row[14]);
-            sanPhamDTO.setNgayKetThuc((Date) row[15]);
+            sanPhamDTO.setNgayBatDau((Timestamp) row[14]);
+            sanPhamDTO.setNgayKetThuc((Timestamp) row[15]);
 
             dtos.add(sanPhamDTO);
         }
