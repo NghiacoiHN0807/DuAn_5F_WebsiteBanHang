@@ -1,9 +1,6 @@
 package com.example.fullstackbackend.services.impl;
 
 
-
-import com.example.fullstackbackend.entity.TaiKhoanKhachHang;
-import com.example.fullstackbackend.entity.TaiKhoanNhanVien;
 import com.example.fullstackbackend.entity.ChucVu;
 import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.repository.TaiKhoanKhachHangRepository;
