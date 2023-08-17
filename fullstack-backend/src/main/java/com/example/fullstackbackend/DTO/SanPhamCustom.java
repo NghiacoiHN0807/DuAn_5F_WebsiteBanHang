@@ -43,4 +43,6 @@ public class SanPhamCustom {
     private Integer trangThai;
 
     private String url;
+
+    private String size;
 }

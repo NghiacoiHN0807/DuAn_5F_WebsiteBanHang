@@ -55,6 +55,7 @@ public class SanphamServiceImpl implements SanPhamService {
             spCustom.setGiaBan((BigDecimal) row[10]);
             spCustom.setTrangThai((Integer) row[11]);
             spCustom.setUrl((String) row[12]);
+            spCustom.setSize((String) row[13]);
             dtos.add(spCustom);
         }
 

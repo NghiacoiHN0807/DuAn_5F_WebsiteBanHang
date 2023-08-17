@@ -225,21 +225,23 @@ const TableSanPham = (props) => {
     setTrangThai("");
   }, [tayAo, originalListData]);
 
-  // useEffect(() => {
-  //   const filteredData =
-  //     size === ""
-  //       ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
-  //       : originalListData.filter((item) => item.idSize === Number(size));
-  //   setListSanPham(filteredData);
-  //   setChatLieu("");
-  //   setMauSac("");
-  //   setCoAo("");
-  //   setLoaiSp("");
-  //   setTayAo("");
-  //   // setSize("");
-  //   setXuatXu("");
-  //   setTrangThai("");
-  // }, [size, originalListData]);
+  useEffect(() => {
+    const filteredData =
+      size === ""
+        ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
+        : originalListData.filter(
+            (item) => item.size && item.size.includes(size.toString())
+          );
+    setListSanPham(filteredData);
+    setChatLieu("");
+    setMauSac("");
+    setCoAo("");
+    setLoaiSp("");
+    setTayAo("");
+    // setSize("");
+    setXuatXu("");
+    setTrangThai("");
+  }, [size, originalListData]);
 
   useEffect(() => {
     const filteredData =
