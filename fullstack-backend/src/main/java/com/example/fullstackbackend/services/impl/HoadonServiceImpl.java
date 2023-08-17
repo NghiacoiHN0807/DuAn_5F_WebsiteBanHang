@@ -55,8 +55,8 @@ public class HoadonServiceImpl implements HoadonSevice {
     }
 
     @Override
-    public void delete(Integer id) {
-        hoadonRepository.delete(id);
+    public HoaDon delete(Integer id) {
+       return hoadonRepository.delete(id);
     }
 
     @Override

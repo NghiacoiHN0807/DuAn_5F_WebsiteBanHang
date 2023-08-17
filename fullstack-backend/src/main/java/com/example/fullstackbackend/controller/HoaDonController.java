@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -147,11 +148,27 @@ public class HoaDonController {
         return newHD1;
     }
     @PutMapping("update-status/{id}")
-    public HoaDon updateStatus(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+    public HoaDon updateStatus(@RequestBody HoaDon newHD, @PathVariable("id") Integer id,
+                               @RequestParam("moTa") String moTa) {
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTrangThai(newHD.getTrangThai());
             return hoadonSevice.add(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+        //Add to history bill
+
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+
+        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+        lichSuHoaDon.setIdHd(newHD1);
+        lichSuHoaDon.setIdTk(newHD1.getIdTK());
+        lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+        lichSuHoaDon.setMoTa(moTa);
+        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+        lichSuHoaDonService.add(lichSuHoaDon);
         return newHD1;
     }
 
@@ -168,6 +185,32 @@ public class HoaDonController {
             hoaDon.setTrangThai(newHD.getTrangThai());
             return hoadonSevice.add(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+        //Add to payments
+        HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
+        hinhThucThanhToan2.setIdHd(newHD1);
+        hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
+        hinhThucThanhToan2.setSoTien(newHD1.getThanhTien());
+        hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
+        hinhThucThanhToan2.setTrangThai(0);
+        hinhThucThanhToanSevice.add(hinhThucThanhToan2);
+
+        //Add to history bill
+
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+
+        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+        lichSuHoaDon.setIdHd(newHD1);
+        lichSuHoaDon.setIdTk(newHD1.getIdTK());
+        lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+        lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
+        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+        lichSuHoaDonService.add(lichSuHoaDon);
+
+
         return newHD1;
     }
 
@@ -183,6 +226,21 @@ public class HoaDonController {
             hoaDon.setTrangThai(newHD.getTrangThai());
             return hoadonSevice.add(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+        //Add to history bill
+
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+
+        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+        lichSuHoaDon.setIdHd(newHD1);
+        lichSuHoaDon.setIdTk(newHD1.getIdTK());
+        lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+        lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
+        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+        lichSuHoaDonService.add(lichSuHoaDon);
         return newHD1;
     }
 
@@ -222,9 +280,13 @@ public class HoaDonController {
             HoaDon hoaDonDTO1 = new HoaDon();
             hoaDonDTO1.setNgayThanhToan(LocalDate.now());
             hoaDonDTO1.setTienDua(realPrice);
-            hoaDonDTO1.setTrangThai(9);
-
-
+            int setTrangThai;
+            if (getOne.get().getTrangThai() == 3) {
+                setTrangThai = 4;
+            }else{
+                setTrangThai = 9;
+            }
+            hoaDonDTO1.setTrangThai(setTrangThai);
             HoaDon hoaDon = hoadonSevice.updatePaymentOnline(idHd, hoaDonDTO1);
 
             // Add to payments
@@ -275,7 +337,21 @@ public class HoaDonController {
         if (!hoadonSevice.checkExists(id)) {
             throw new xuatXuNotFoundException(id);
         } else {
-            hoadonSevice.delete(id);
+            HoaDon hoaDon = hoadonSevice.delete(id);
+            //Add to history bill
+
+            // get datetimenow
+            java.util.Date currentDate = new java.util.Date();
+            // Chuyển đổi thành Timestamp
+            Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setIdHd(hoaDon);
+            lichSuHoaDon.setIdTk(hoaDon.getIdTK());
+            lichSuHoaDon.setTrangThai(hoaDon.getTrangThai());
+            lichSuHoaDon.setMoTa("Đơn Hàng Đã Bị Xóa");
+            lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+            lichSuHoaDonService.add(lichSuHoaDon);
         }
     }
 

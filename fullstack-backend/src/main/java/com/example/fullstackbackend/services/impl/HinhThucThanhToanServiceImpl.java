@@ -43,6 +43,6 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanSevice {
     @Override
     public List<HinhThucThanhToan> detail(Integer id) {
 
-        return HinhThucThanhToanRepository.findAllById(Collections.singleton(id));
+        return HinhThucThanhToanRepository.findByIdHd(id);
     }
 }

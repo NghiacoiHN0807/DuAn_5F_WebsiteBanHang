@@ -1,6 +1,6 @@
 import custom from "./custom-axios";
-const updateStatusBill = (idHd, trangThai) => {
-  return custom.put(`/hoa-don/update-status/${idHd}`, { trangThai });
+const updateStatusBill = (idHd, moTa, trangThai) => {
+  return custom.put(`/hoa-don/update-status/${idHd}`, { moTa, trangThai });
 };
 const updatePayment = (
   idHd,
@@ -24,7 +24,6 @@ const updatePayment = (
 };
 const updateTongTien = (idHd, tongTien) => {
   return custom.put(`/hoa-don/update-tong-tien/${idHd}`, {
-    idHd,
     tongTien,
   });
 };
@@ -52,6 +51,9 @@ const updatePaymentShip = (
 const getDetailHDCT = (idHd) => {
   return custom.get(`/hoa-don-chi-tiet/detail-get-one/${idHd}`);
 };
+const viewAllHTTT = (idHd) => {
+  return custom.get(`/hinh-thuc-thanh-toan/view-all-list/${idHd}`);
+};
 const addPayment = (idHd, hinhThuc, moTa, trangThai) => {
   return custom.post("/hinh-thuc-thanh-toan/add", {
     idHd,
@@ -71,4 +73,5 @@ export {
   addPayment,
   updatePayment,
   updatePaymentShip,
+  viewAllHTTT,
 };

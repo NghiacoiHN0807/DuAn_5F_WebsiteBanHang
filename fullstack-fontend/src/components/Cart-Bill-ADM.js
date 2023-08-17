@@ -44,11 +44,7 @@ import ModalDeleteProductOnCart from "../forms/Modal-Delete-Product";
 import ModalDeleteAllProductOnCart from "../forms/Modal-Delete-All-Product";
 import ModalAddKhachHang from "../forms/Modals-AddKhachHang";
 import { toast } from "react-toastify";
-import {
-  updatePayment,
-  updatePaymentShip,
-  updateTongTien,
-} from "../services/OrderManagementTimeLine";
+import { updateTongTien } from "../services/OrderManagementTimeLine";
 import { format } from "date-fns";
 import { Image } from "react-bootstrap";
 import { styled } from "@mui/material/styles";
@@ -59,6 +55,7 @@ import Box from "@mui/material/Box";
 import CloseIcon from "@mui/icons-material/Close";
 import ModalDeleteDirectSale from "../forms/Modal-Delete-DirectSale";
 import ModalPaymentComfirm from "../forms/Modal-Payment-Confirm";
+import ModalCreateBillOnline from "../forms/Modal-Create-Online";
 
 //Dislay invoice waiting
 const AntTabs = styled(Tabs)({
@@ -229,7 +226,7 @@ const CartBillADM = (props) => {
       try {
         let res = await finByProductOnCart(page, idHdParam);
         if (res && res.content) {
-          console.log("Check res: ", res);
+          console.log("Check DataCart: ", res);
           setDataCart(res.content);
           setNumberPages(res.totalPages);
         }
@@ -241,7 +238,6 @@ const CartBillADM = (props) => {
   );
   useEffect(() => {
     selectDataCart(currentPage);
-    console.log("currentPage: ", currentPage);
   }, [currentPage, selectDataCart]);
 
   const handlePageClick = (page) => {
@@ -308,6 +304,7 @@ const CartBillADM = (props) => {
   };
 
   // Fetch list of provinces on component mount
+  const [diachiCuThe, setDiachiCuThe] = useState("");
   useEffect(() => {
     fetchProvinces();
   }, []);
@@ -354,9 +351,6 @@ const CartBillADM = (props) => {
       console.error("Error fetching wards:", error);
     }
   };
-  //   const [selectedProvinceName, setSelectedProvinceName] = useState("");
-  // const [selectedDistrictName, setSelectedDistrictName] = useState("");
-  // const [selectedWardName, setSelectedWardName] = useState("");
 
   useEffect(() => {
     if (selectedProvince) {
@@ -372,11 +366,30 @@ const CartBillADM = (props) => {
 
   useEffect(() => {
     if (selectedDistrict && selectedProvince && selectedWard) {
+      const selectedProvinceName =
+        provinces.find((province) => province.code === selectedProvince)
+          ?.name || "";
+
+      const selectedDistrictName =
+        districts.find((district) => district.code === selectedDistrict)
+          ?.name || "";
+
+      const selectedWardName =
+        wards.find((ward) => ward.code === selectedWard)?.name || "";
+
       setResult(
-        `${selectedProvince.name} | ${selectedDistrict.name} | ${selectedWard.name}`
+        `${selectedProvinceName}, ${selectedDistrictName}, ${selectedWardName}, ${diachiCuThe}`
       );
     }
-  }, [selectedProvince, selectedDistrict, selectedWard]);
+  }, [
+    selectedDistrict,
+    selectedProvince,
+    selectedWard,
+    districts,
+    provinces,
+    wards,
+    diachiCuThe,
+  ]);
 
   //Show thanhTien
   const [thanhTien, setThanhTien] = useState();
@@ -385,14 +398,14 @@ const CartBillADM = (props) => {
     const calculateTotalPrice = async () => {
       let total = 0;
       for (const item of DataCart) {
-        total += item[7];
+        total += item[9];
       }
       setThanhTien(total);
-      await updateTongTien(thanhTien);
+      await updateTongTien(idHdParam, thanhTien);
     };
 
     calculateTotalPrice();
-  }, [DataCart, thanhTien]);
+  }, [DataCart, idHdParam, thanhTien]);
 
   //Add Khach Hang
   const [selectedCustomerName, setSelectedCustomerName] = useState("");
@@ -413,49 +426,30 @@ const CartBillADM = (props) => {
   const [loading, setLoading] = useState(false);
   const [tenKhTT, getTenKHTT] = useState("");
   const [sdtKHTT, getSdtKHTT] = useState("");
+  const [tenKhShip, getTenKHShip] = useState("");
+  const [sdtKHShip, getSdtKHShip] = useState("");
+
   const [openPayment, setOpenPayment] = useState(false);
+  const [openCreateOnline, setCreateOnline] = useState(false);
   // const [information, setInformation] = useState();
   const handleClick = async () => {
     const currentDate = new Date();
     const formattedDate = format(currentDate, "yyyy-MM-dd");
     if (isDeliveryChecked === false) {
       setOpenPayment(true);
-      // const cashGivenValue = parseFloat(cashGiven);
-      // const change = cashGivenValue - thanhTien;
-
-      // if (change < 0) {
-      //   toast.warning("Tiền Khách Đưa Chưa Đủ");
-      // } else {
-      //   await updatePayment(
-      //     idHdParam,
-      //     tenKhTT,
-      //     sdtKHTT,
-      //     formattedDate,
-      //     thanhTien,
-      //     cashGiven,
-      //     change,
-      //     1,
-      //     9
-      //   );
-      //   toast.success("Thanh Toán Tại Quầy Thành Công!!!");
-      //   navigate(`/direct-sale`);
-      // }
     } else {
-      await updatePaymentShip(
-        idHdParam,
-        tenKhTT,
-        sdtKHTT,
-        formattedDate,
-        thanhTien,
-        2,
-        1
-      );
-      navigate(`/order-management-timeline/${idHdParam}`);
-      toast.success("Đặt Hàng Online Thành Công!!!");
+      if (!tenKhShip.trim() || !sdtKHShip.trim()) {
+        toast.warning("Hãy Thông Tin Người Nhận Hàng");
+      } else {
+        setCreateOnline(true);
+      }
     }
   };
   const handlePaymentClose = () => {
     setOpenPayment(false);
+  };
+  const handleCloseCreateOnline = () => {
+    setCreateOnline(false);
   };
 
   return (
@@ -685,6 +679,7 @@ const CartBillADM = (props) => {
                         variant="outlined"
                         size="small"
                         fullWidth
+                        onChange={(e) => getTenKHShip(e.target.value)}
                         sx={{ marginTop: 2 }}
                       />
                       <TextField
@@ -696,11 +691,12 @@ const CartBillADM = (props) => {
                         size="small"
                         fullWidth
                         sx={{ marginTop: 2 }}
+                        onChange={(e) => getSdtKHShip(e.target.value)}
                       />
                       <div className="address">
                         <FormControl
                           size="small"
-                          sx={{ m: 0, minWidth: 200, marginRight: 5 }}
+                          sx={{ m: 0, minWidth: 190, marginRight: 5 }}
                         >
                           <InputLabel id="province-label">
                             Tỉnh/Thành Phố
@@ -729,7 +725,7 @@ const CartBillADM = (props) => {
                         </FormControl>
                         <FormControl
                           size="small"
-                          sx={{ m: 0, minWidth: 200, marginRight: 5 }}
+                          sx={{ m: 0, minWidth: 190, marginRight: 5 }}
                         >
                           <InputLabel id="district-label">
                             Quận/Huyện
@@ -756,7 +752,7 @@ const CartBillADM = (props) => {
                             ))}
                           </Select>
                         </FormControl>
-                        <FormControl size="small" sx={{ m: 0, minWidth: 200 }}>
+                        <FormControl size="small" sx={{ m: 0, minWidth: 190 }}>
                           <InputLabel id="ward-label">Phường/Xã</InputLabel>
                           <Select
                             labelId="ward-label"
@@ -788,6 +784,8 @@ const CartBillADM = (props) => {
                           size="small"
                           fullWidth
                           sx={{ marginTop: 2 }}
+                          value={diachiCuThe}
+                          onChange={(e) => setDiachiCuThe(e.target.value)}
                         />
                       </div>
                     </div>
@@ -904,17 +902,30 @@ const CartBillADM = (props) => {
               setSelectedMaTk={setSelectedMaTk}
               setSelectedCustomerEmail={setSelectedCustomerEmail}
             />
+            {/* ModalDeleteDirectSale */}
             <ModalDeleteDirectSale
               open={open}
               handleClose={handleCloseDeleteInvoice}
               information={information}
             />
+            {/* ModalPaymentComfirm */}
             <ModalPaymentComfirm
               show={openPayment}
               handleClose={handlePaymentClose}
               thanhTien={thanhTien}
               listHD={listHD}
-              // information={information}
+              tenKhTT={tenKhTT}
+              sdtKHTT={sdtKHTT}
+            />
+            {/* ModelShipOnline */}
+            <ModalCreateBillOnline
+              open={openCreateOnline}
+              handleClose={handleCloseCreateOnline}
+              thanhTien={thanhTien}
+              listHD={listHD}
+              tenKhShip={tenKhShip}
+              sdtKHShip={sdtKHShip}
+              result={result}
             />
           </Box>
         </Box>

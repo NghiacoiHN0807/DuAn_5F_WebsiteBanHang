@@ -20,7 +20,7 @@ const Transition = forwardRef(function Transition(props, ref) {
 });
 
 const ModalPaymentComfirm = (props) => {
-  const { show, handleClose, listHD, thanhTien } = props;
+  const { show, handleClose, listHD, thanhTien, tenKhTT, sdtKHTT } = props;
 
   //Insert product
   const param = useParams();
@@ -36,26 +36,51 @@ const ModalPaymentComfirm = (props) => {
 
   const handleDeliveryChange = (event) => {
     setIsDeliveryChecked(event.target.checked);
+    setChangeAmount(0);
   };
 
   const handlePaymentOnCash = async () => {
     try {
-      console.log("Check listHD: ", listHD);
-      let paymentOn = await paymentOnline(900000, listHD.idHd);
-      console.log("Check paymentOn: ", paymentOn);
+      if (isDeliveryChecked === true) {
+        const cashGivenValue = parseFloat(cashGiven);
+        if (!isNaN(cashGivenValue)) {
+          const change = thanhTien - cashGivenValue;
+          if (change < 0) {
+            toast.warning("Tiền Mặt Khách Đưa Đã Dư");
+          } else if (change < 10000) {
+            toast.warning("Tiền Chuyển Khoản Phải Trên 10000");
+          } else {
+            console.log("Check listHD: ", listHD);
+            let paymentOn = await paymentOnline(changeAmount, listHD.idHd);
+            console.log("Check paymentOn: ", paymentOn);
+            // Mở tab mới với đường dẫn URL
+            window.location.href = paymentOn;
+          }
+        } else {
+          setChangeAmount(0);
+        }
+      } else {
+        const cashGivenValue = parseFloat(cashGiven);
+        const change = cashGivenValue - thanhTien;
 
-      // const paymentUrl = paymentOn[Symbol.for("[[PromiseResult]]")];
-      // console.log("Extracted URL: ", paymentUrl);
-
-      // Mở tab mới với đường dẫn URL
-      window.location.href = paymentOn;
-
-      // console.log("Check paymentOn: ", paymentOn);
-      // let hinhThuc = "Payment by cash";
-      // let tienDua = listData.tongTien;
-      // await addPayment(idHdParam, hinhThuc, moTa, 0);
-      // await updatePayment(idHdParam, formattedDate, tienDua, 4);
-      // toast.success("Payment successfully");
+        if (change < 0) {
+          toast.warning("Tiền Khách Đưa Chưa Đủ");
+        } else {
+          await updatePayment(
+            idHdParam,
+            tenKhTT,
+            sdtKHTT,
+            formattedDate,
+            thanhTien,
+            cashGiven,
+            change,
+            1,
+            9
+          );
+          toast.success("Thanh Toán Tại Quầy Thành Công!!!");
+          navigate(`/order-management-timeline/${idHdParam}`);
+        }
+      }
     } catch (e) {
       console.error("Error updating", e);
     }
@@ -65,15 +90,28 @@ const ModalPaymentComfirm = (props) => {
   const [changeAmount, setChangeAmount] = useState(0);
   const handleCalculateChange = () => {
     const cashGivenValue = parseFloat(cashGiven);
-    if (!isNaN(cashGivenValue)) {
-      const change = cashGivenValue - thanhTien;
-      if (change < 0) {
-        toast.warning("Tiền Khách Đưa Chưa Đủ");
+    if (isDeliveryChecked === true) {
+      if (!isNaN(cashGivenValue)) {
+        const change = thanhTien - cashGivenValue;
+        if (change < 0) {
+          toast.warning("Tiền Mặt Khách Đưa Đã Dư");
+        } else {
+          setChangeAmount(change);
+        }
       } else {
-        setChangeAmount(change);
+        setChangeAmount(0);
       }
     } else {
-      setChangeAmount(0);
+      if (!isNaN(cashGivenValue)) {
+        const change = cashGivenValue - thanhTien;
+        if (change < 0) {
+          toast.warning("Tiền Khách Đưa Chưa Đủ");
+        } else {
+          setChangeAmount(change);
+        }
+      } else {
+        setChangeAmount(0);
+      }
     }
   };
 
@@ -142,6 +180,7 @@ const ModalPaymentComfirm = (props) => {
                       variant="outlined"
                       size="small"
                       fullWidth
+                      defaultValue={0}
                       sx={{ marginTop: 2, marginBottom: 2 }}
                       onChange={(e) => setCashGiven(e.target.value)}
                     />
@@ -153,7 +192,7 @@ const ModalPaymentComfirm = (props) => {
                     >
                       Tính Tiền
                     </Button>
-                    <p>Số Tiền Thừa Của Khách: {changeAmount}</p>
+                    <p>Số Tiền Chuyển Khoản: {changeAmount}</p>
                   </>
                 ) : (
                   <>

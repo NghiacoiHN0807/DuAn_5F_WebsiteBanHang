@@ -25,11 +25,11 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
     List<HoaDon> selectAllInvoiceWaiting();
 
     @Query(value = "SELECT x from HoaDon x where x.trangThai = 1 or x.trangThai = 2 or x.trangThai = 3 or x.trangThai = 4 " +
-            "or x.trangThai = 5 or x.trangThai = 8 or x.trangThai = 9 or x.trangThai = 10")
+            "or x.trangThai = 5 or x.trangThai = 8 or x.trangThai = 9 or x.trangThai = 10 or x.trangThai = 0 ORDER BY x.ngayTao DESC")
     Page<HoaDon> pageOnlineInvoice(Pageable pageable);
 
     @Modifying
     @Transactional
     @Query(value = "UPDATE HoaDon hd SET hd.trangThai= 10 WHERE hd.idHd=?1")
-    void delete(Integer idHD);
+    HoaDon delete(Integer idHD);
 }
