@@ -1,11 +1,9 @@
 package com.example.fullstackbackend.entity;
 
 
-<<<<<<< HEAD
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.Size;
-=======
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,7 +14,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
->>>>>>> origin/duyvd
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -81,27 +78,18 @@ public class TaiKhoan {
             maTaiKhoan = generateMaTaiKhoan();
         }
 
-<<<<<<< HEAD
         // Tạo mật khẩu ngẫu nhiên nếu trường matKhau là null hoặc trống
-=======
-        // Tạo mật khẩu ngẫu nhiên nếu trường matKhau là null
->>>>>>> origin/duyvd
         if (matKhau == null) {
             matKhau = generateRandomPassword();
         }
     }
 
-<<<<<<< HEAD
     public static String generateRandomPassword() {
-=======
-    private String generateRandomPassword() {
->>>>>>> origin/duyvd
         String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lower = "abcdefghijklmnopqrstuvwxyz";
         String digits = "0123456789";
         String specialChars = "@";
 
-<<<<<<< HEAD
         SecureRandom random = new SecureRandom();
         StringBuilder password = new StringBuilder();
         int length = 8;  // Độ dài mật khẩu mong muốn
@@ -116,14 +104,6 @@ public class TaiKhoan {
         String allCharacters = upper + lower + digits + specialChars;
 
         for (int i = 0; i < remainingLength; i++) {
-=======
-        String allCharacters = upper + lower + digits + specialChars;
-
-        SecureRandom random = new SecureRandom();
-        StringBuilder password = new StringBuilder();
-        Integer length = 12;
-        for (int i = 0; i < length; i++) {
->>>>>>> origin/duyvd
             int index = random.nextInt(allCharacters.length());
             password.append(allCharacters.charAt(index));
         }
@@ -139,11 +119,7 @@ public class TaiKhoan {
         String uuidString = uuid.toString().replace("-", "");
 
         // Lấy 6 ký tự đầu của chuỗi UUID
-<<<<<<< HEAD
         return "TK" + uuidString.toUpperCase().substring(0, 9);
-=======
-        return "TK" + uuidString.substring(0, 9);
->>>>>>> origin/duyvd
     }
 }
 

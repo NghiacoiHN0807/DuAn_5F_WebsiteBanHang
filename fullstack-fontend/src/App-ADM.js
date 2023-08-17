@@ -45,26 +45,20 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import FiberManualRecordOutlinedIcon from "@mui/icons-material/FiberManualRecordOutlined";
 import LoyaltyOutlinedIcon from "@mui/icons-material/LoyaltyOutlined";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 import AddTKNV from "./forms/Models-AddTKNV";
 import UpdateTkNV from "./forms/ModelUpdateTKNV";
->>>>>>> origin/duyvd
 import { Image } from "react-bootstrap";
 import logo5F from "./assets/logo_5F.png";
 import ModelAddNewGiamGia from "./components/ModalsAddNewGiamGia";
 import ModelUpdateNewGiamGia from "./components/ModalsUpdateNewGiamGia";
 import TableSucces from "./components/Payment-Succes";
 // import paymentOnSuccess from "./components/Payment-Succes";
-=======
 import AddTkKH from "./components/TaiKhoanKhachHang/AddTkKH";
 import UpdateTkKH from "./components/TaiKhoanKhachHang/UpdateTkKH";
 import TableAllDiaChi from "./components/DiaChi/TableAllDiaChi";
 import TableDiaChiByTK from "./components/DiaChi/TableDiaChiByTK";
 import AddDiaChi from "./components/DiaChi/AddDiaChi";
 import UpdateDiaChi from "./components/DiaChi/UpdateDiaChi";
->>>>>>> origin/phuclt
 
 const drawerWidth = 240;
 
@@ -214,6 +208,8 @@ function AppADM(props) {
             {[
               { text: "Nhân Viên", link: "/table-taiKhoan" },
               { text: "Khách Hàng", link: "/table-taiKhoanKH" },
+              {text: "Địa Chỉ", link: "/dia-chi"},
+
             ].map((item, index) => (
               <ListItem key={item.text} disablePadding>
                 <ListItemButton
@@ -242,7 +238,6 @@ function AppADM(props) {
                     </Typography>
                   </ListItemText>
                 </ListItemButton>
-<<<<<<< HEAD
               </ListItem>
             ))}
           </List>
@@ -250,54 +245,10 @@ function AppADM(props) {
       </List>
     </div>
   );
-=======
-                <Collapse in={open1} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        {[
-                            {text: "Nhân Viên", link: "/table-taiKhoan"},
-                            {text: "Khách Hàng", link: "/tai-Khoan-KH"},
-                            {text: "Địa Chỉ", link: "/dia-chi"},
-                        ].map((item, index) => (
-                            <ListItem key={item.text} disablePadding>
-                                <ListItemButton
-                                    component={Link}
-                                    to={item.link}
-                                    onClick={() => handleLinkClick(item.text)}
-                                    sx={{
-                                        pl: 4,
-                                        borderRadius: "15px",
-                                        backgroundColor:
-                                            activeLink === item.text
-                                                ? "rgb(240, 240, 240)"
-                                                : "inherit",
-                                        "&:hover": {
-                                            backgroundColor: "rgb(240, 240, 240)",
-                                            borderRadius: "15px",
-                                        },
-                                    }}
-                                >
-                                    <ListItemIcon>
-                                        <FiberManualRecordOutlinedIcon fontSize="small"/>
-                                    </ListItemIcon>
-                                    <ListItemText>
-                                        <Typography variant="body1" sx={{fontSize: "14px"}}>
-                                            {item.text}
-                                        </Typography>
-                                    </ListItemText>
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
-                    </List>
-                </Collapse>
-            </List>
-        </div>
-    );
->>>>>>> origin/phuclt
 
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
-<<<<<<< HEAD
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -364,133 +315,7 @@ function AppADM(props) {
             <Route
               path="/quan-ly-san-pham/chat-lieu"
               element={<ChatLieuMain />}
-=======
-    return (
-        <>
-            <Box sx={{display: "flex"}}>
-                <CssBaseline/>
-                <AppBar
-                    position="fixed"
-                    sx={{
-                        width: {sm: `calc(100% - ${drawerWidth}px)`},
-                        ml: {sm: `${drawerWidth}px`},
-                        backgroundColor: "rgba(255, 255, 255, 0.7)",
-                    }}
-                >
-                    <HeaderADM/>
-                </AppBar>
-                <Box
-                    component="nav"
-                    sx={{width: {sm: drawerWidth}, flexShrink: {sm: 0}}}
-                    aria-label="mailbox folders"
-                >
-                    {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
-                    <Drawer
-                        container={container}
-                        variant="temporary"
-                        open={mobileOpen}
-                        onClose={handleDrawerToggle}
-                        ModalProps={{
-                            keepMounted: true, // Better open performance on mobile.
-                        }}
-                        sx={{
-                            display: {xs: "block", sm: "none"},
-                            "& .MuiDrawer-paper": {
-                                boxSizing: "border-box",
-                                width: drawerWidth,
-                            },
-                        }}
-                    >
-                        {drawer}
-                    </Drawer>
-                    <Drawer
-                        variant="permanent"
-                        sx={{
-                            display: {xs: "none", sm: "block"},
-                            "& .MuiDrawer-paper": {
-                                boxSizing: "border-box",
-                                width: drawerWidth,
-                            },
-                        }}
-                        open
-                    >
-                        {drawer}
-                    </Drawer>
-                </Box>
-                <Box
-                    component="main"
-                    sx={{
-                        flexGrow: 1,
-                        p: 3,
-                        width: {sm: `calc(100% - ${drawerWidth}px)`},
-                    }}
-                >
-                    <Toolbar/>
-                    <Routes>
-                        <Route path="/home" element={<Home/>}/>
-                        <Route
-                            path="/quan-ly-san-pham/chat-lieu"
-                            element={<ChatLieuMain/>}
-                        />
-                        <Route
-                            path="/quan-ly-san-pham/chi-tiet-san-pham"
-                            element={<CTSPMain/>}
-                        />
-                        <Route
-                            path="/quan-ly-san-pham/loai-co-ao"
-                            element={<LoaiCoAoMain/>}
-                        />
-                        <Route
-                            path="/quan-ly-san-pham/loai-san-pham"
-                            element={<LoaiSPMain/>}
-                        />
-                        <Route path="/quan-ly-san-pham/mau-sac" element={<MauSacMain/>}/>
-                        <Route
-                            path="/quan-ly-san-pham/ong-tay-ao"
-                            element={<OngTayAoMain/>}
-                        />
-                        <Route
-                            path="/quan-ly-san-pham/san-pham"
-                            element={<SanPhamMain/>}
-                        />
-                        <Route path="/quan-ly-san-pham/size" element={<SizeMain/>}/>
-                        <Route path="/quan-ly-san-pham/xuat-xu" element={<XuatXuMain/>}/>
-                        <Route path="/table-chucVu" element={<ViewChucVu/>}/>
-                        <Route path="/table-taiKhoan" element={<TableTKNhanVien/>}/>
-                        <Route path="/tai-Khoan-KH" element={<TableTaiKhoanKH/>}/>
-                        <Route path="/dia-chi" element={<TableAllDiaChi/>}/>
-                        <Route path="/dia-chi/add/:id" element={<AddDiaChi/>}/>
-                        <Route path="/dia-chi/detail/:id" element={<UpdateDiaChi/>}/>
-                        <Route path="/dia-chi/:id" element={<TableDiaChiByTK/>}/>
-                        <Route path="/tai-khoan-KH/them-tai-khoan" element={<AddTkKH/>}/>
-                        <Route path="/tai-khoan-KH/detail/:id" element={<UpdateTkKH/>}/>
-                        <Route path="/quan-ly-giam-gia" element={<TableGiamGia/>}/>
-                        <Route path="/direct-sale" element={<DireactSale/>}/>
-                        <Route path="/create-bill/:id" element={<CartBillADM/>}/>
-                        <Route path="/order-management" element={<OrderManagement/>}/>
-                        <Route
-                            path="/order-management-timeline/:id"
-                            element={<OrderManagementTimeline/>}
-                        />
-                    </Routes>
-
-
-                </Box>
-            </Box>
-
-            <ToastContainer
-                position="top-right"
-                autoClose={2000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                theme="light"
->>>>>>> origin/phuclt
-            />
+              />
             <Route
               path="/quan-ly-san-pham/chi-tiet-san-pham"
               element={<CTSPMain />}
@@ -526,7 +351,6 @@ function AppADM(props) {
             <Route path="/table-taiKhoan" element={<TableTKNhanVien />} />
             <Route path="/tai-khoan/them-tai-khoan" element={<AddTKNV />} />
             <Route path="/tai-khoan/detail/:id" element={<UpdateTkNV />} />
-            <Route path="/table-taiKhoanKH" element={<TableTaiKhoanKH />} />
             <Route path="/quan-ly-giam-gia" element={<TableGiamGia />} />
             <Route path="/direct-sale" element={<DireactSale />} />
             <Route path="/create-bill/:id" element={<CartBillADM />} />
@@ -541,6 +365,13 @@ function AppADM(props) {
               path="/payment-online/vnpay-payment"
               element={<TableSucces />}
             />
+            <Route path="/dia-chi" element={<TableAllDiaChi/>}/>
+            <Route path="/dia-chi/add/:id" element={<AddDiaChi/>}/>
+            <Route path="/dia-chi/detail/:id" element={<UpdateDiaChi/>}/>
+            <Route path="/dia-chi/:id" element={<TableDiaChiByTK/>}/>
+            <Route path="/tai-khoan-KH/them-tai-khoan" element={<AddTkKH/>}/>
+            <Route path="/tai-khoan-KH/detail/:id" element={<UpdateTkKH/>}/>
+            <Route path="/tai-Khoan-KH" element={<TableTaiKhoanKH/>}/>
           </Routes>
         </Box>
       </Box>

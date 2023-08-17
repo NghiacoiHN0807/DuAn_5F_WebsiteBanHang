@@ -1,11 +1,5 @@
 package com.example.fullstackbackend.repository;
 
-import com.example.fullstackbackend.entity.TaiKhoanKhachHang;
-import com.example.fullstackbackend.entity.TaiKhoanNhanVien;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import com.example.fullstackbackend.entity.TaiKhoan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +15,7 @@ public interface TaiKhoanKhachHangRepository extends JpaRepository<TaiKhoan, Int
     @Override
     Page<TaiKhoan> findAll(Pageable pageable);
 
-    @Query("SELECT g FROM TaiKhoanNhanVien g WHERE g.idChucVu.idCv = 9")
+    @Query("SELECT g FROM TaiKhoan g WHERE g.idChucVu.idCv = 9")
     Page<TaiKhoan> findAllKhachHang(Pageable pageable);
 
     @Query("select t from TaiKhoan t where  t.maTaiKhoan = ?1 order by t.idTaiKhoan DESC")
