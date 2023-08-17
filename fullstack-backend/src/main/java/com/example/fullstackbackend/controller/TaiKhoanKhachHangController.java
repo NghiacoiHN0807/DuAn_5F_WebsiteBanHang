@@ -33,15 +33,16 @@ public class TaiKhoanKhachHangController {
 
     @GetMapping("view-all")
     public Page<TaiKhoan> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                           @RequestParam(defaultValue = "15") Integer size,
-                                           @RequestParam("p") Optional<Integer> p) {
+                                  @RequestParam(defaultValue = "15") Integer size,
+                                  @RequestParam("p") Optional<Integer> p) {
 
         return TaiKhoanKhachHangKHSevice.Page(p.orElse(page), size);
     }
+
     @GetMapping("view-all-kh")
     public Page<TaiKhoan> viewAllKH(@RequestParam(defaultValue = "0") Integer page,
-                                            @RequestParam(defaultValue = "15") Integer size,
-                                            @RequestParam("p") Optional<Integer> p) {
+                                    @RequestParam(defaultValue = "15") Integer size,
+                                    @RequestParam("p") Optional<Integer> p) {
 
         return TaiKhoanKhachHangKHSevice.PageKhachHang(p.orElse(page), size);
     }
@@ -83,7 +84,7 @@ public class TaiKhoanKhachHangController {
 
     @PostMapping("update")
     public ResponseEntity<?> update(@Valid @RequestBody TaiKhoan taiKhoankh,
-                                 BindingResult bindingResult) {
+                                    BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
@@ -94,7 +95,7 @@ public class TaiKhoanKhachHangController {
 
             return ResponseEntity.badRequest().body(errorMap);
         } else {
-            if(taiKhoankh.getMatKhau().isBlank()){
+            if (taiKhoankh.getMatKhau().isBlank()) {
                 taiKhoankh.setMatKhau(taiKhoankh.generateRandomPassword());
             }
 
@@ -102,8 +103,6 @@ public class TaiKhoanKhachHangController {
             return ResponseEntity.ok(updateTK);
         }
     }
-
-
 
 
 }
