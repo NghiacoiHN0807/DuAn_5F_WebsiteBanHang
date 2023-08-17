@@ -1,17 +1,11 @@
 package com.example.fullstackbackend.repository;
 
-<<<<<<< HEAD
 import com.example.fullstackbackend.entity.TaiKhoanKhachHang;
 import com.example.fullstackbackend.entity.TaiKhoanNhanVien;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-public interface TaiKhoanKhachHangRepository extends JpaRepository<TaiKhoanKhachHang, Integer> {
-    @Query("SELECT g FROM TaiKhoanNhanVien g WHERE g.idChucVu.idCv = 9")
-    Page<TaiKhoanNhanVien> findAllKhachHang(Pageable pageable);
-=======
 import com.example.fullstackbackend.entity.TaiKhoan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +21,8 @@ public interface TaiKhoanKhachHangRepository extends JpaRepository<TaiKhoan, Int
     @Override
     Page<TaiKhoan> findAll(Pageable pageable);
 
+    @Query("SELECT g FROM TaiKhoanNhanVien g WHERE g.idChucVu.idCv = 9")
+    Page<TaiKhoan> findAllKhachHang(Pageable pageable);
 
     @Query("select t from TaiKhoan t where  t.maTaiKhoan = ?1 order by t.idTaiKhoan DESC")
     Optional<TaiKhoan> findByMaTaiKhoanOrderByIdTaiKhoanDesc(String maTaiKhoan);
@@ -35,12 +31,4 @@ public interface TaiKhoanKhachHangRepository extends JpaRepository<TaiKhoan, Int
     @Modifying
     @Query("update TaiKhoan t set t.trangThai = 10 where t.idTaiKhoan = ?1")
     void XoaMem(Integer idTaiKhoan);
-
-
-
-
-
-
-
->>>>>>> origin/phuclt
 }

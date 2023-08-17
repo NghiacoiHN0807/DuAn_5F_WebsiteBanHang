@@ -2,13 +2,10 @@ package com.example.fullstackbackend.services.impl;
 
 
 
-<<<<<<< HEAD
 import com.example.fullstackbackend.entity.TaiKhoanKhachHang;
 import com.example.fullstackbackend.entity.TaiKhoanNhanVien;
-=======
 import com.example.fullstackbackend.entity.ChucVu;
 import com.example.fullstackbackend.entity.TaiKhoan;
->>>>>>> origin/phuclt
 import com.example.fullstackbackend.repository.TaiKhoanKhachHangRepository;
 import com.example.fullstackbackend.services.TaiKhoanKhachHangSevice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,19 +37,15 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
     }
 
     @Override
-<<<<<<< HEAD
-    public Page<TaiKhoanNhanVien> PageKhachHang(Integer pageNo, Integer size) {
+    public Page<TaiKhoan> PageKhachHang(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return TaiKhoanKhachHangRepository.findAllKhachHang(pageable);
     }
 
     @Override
-    public TaiKhoanKhachHang add(TaiKhoanKhachHang add) {
-=======
     public TaiKhoan add(TaiKhoan add) {
         ChucVu vc = new ChucVu(9,"CV03","Khách Hàng", Date.valueOf("2023-07-23"),0);
         add.setIdChucVu(vc);
->>>>>>> origin/phuclt
         return TaiKhoanKhachHangRepository.save(add);
     }
 

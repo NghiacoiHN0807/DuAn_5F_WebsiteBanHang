@@ -1,12 +1,9 @@
 package com.example.fullstackbackend.controller;
 
-<<<<<<< HEAD
 import com.example.fullstackbackend.entity.TaiKhoanKhachHang;
 import com.example.fullstackbackend.entity.TaiKhoanNhanVien;
-=======
 import com.example.fullstackbackend.entity.DiaChi;
 import com.example.fullstackbackend.entity.TaiKhoan;
->>>>>>> origin/phuclt
 import com.example.fullstackbackend.exception.TaiKhoanKHNotFoundException;
 import com.example.fullstackbackend.services.TaiKhoanKhachHangSevice;
 import jakarta.validation.Valid;
@@ -38,7 +35,7 @@ public class TaiKhoanKhachHangController {
         return TaiKhoanKhachHangKHSevice.Page(p.orElse(page), size);
     }
     @GetMapping("view-all-kh")
-    public Page<TaiKhoanNhanVien> viewAllKH(@RequestParam(defaultValue = "0") Integer page,
+    public Page<TaiKhoan> viewAllKH(@RequestParam(defaultValue = "0") Integer page,
                                             @RequestParam(defaultValue = "15") Integer size,
                                             @RequestParam("p") Optional<Integer> p) {
 
