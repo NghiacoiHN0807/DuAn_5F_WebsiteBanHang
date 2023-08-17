@@ -7,7 +7,8 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./components/web-online/Home";
 import { ToastContainer } from "react-toastify";
 import Footer from "./layout/Footer";
-import TableTaiKhoanKH from "./components/TaiKhoanKhachHang/TableTKKhachHang";
+import TableTKKhachHang from "./components/TaiKhoanKhachHang/TableTKKhachHang";
+
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/table-xuatXu" element={<TableXuatXu />} />
-              <Route path="/table-taiKhoanKH" element={<TableTaiKhoanKH />} />
+              <Route path="/tai-Khoan-KH" element={<TableTKKhachHang />} />
             </Routes>
           </div>
         </Container>
