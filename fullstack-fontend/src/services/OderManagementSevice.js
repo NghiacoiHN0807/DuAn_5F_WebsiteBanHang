@@ -5,6 +5,6 @@ const getAllOrderManagement = (page, keyword) => {
   );
 };
 const getDetailOneHD = (idHd) => {
-  return custom.get(`/hoa-don/detail/${idHd}`);
+  return custom.get(`/lich-su-hoa-don/view-all/${idHd}`);
 };
 export { getAllOrderManagement, getDetailOneHD };

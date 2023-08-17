@@ -24,14 +24,13 @@ const ModalAddKhachHang = (props) => {
   } = props;
   //open Data on Table
   const [listData, setListData] = useState([]);
-  const [numberPages, setNumberPages] = useState([]);
+  const [numberPages, setNumberPages] = useState(0);
 
   const getAllData = useCallback(async (page) => {
     try {
       let getData = await getAllDataTaiKhoan(page);
       if (getData && getData.content) {
         setListData(getData.content);
-
         setNumberPages(getData.totalPages);
       }
     } catch (error) {

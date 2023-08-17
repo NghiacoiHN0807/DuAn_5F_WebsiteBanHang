@@ -5,11 +5,12 @@ import {
   detailBill,
   finByProductOnCart,
   findById,
+  postAddBill,
+  selectAllInvoiceWaiting,
 } from "../services/BillSevice";
 import ModalAddProduct from "../forms/Modals-AddProduct";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
-import Null from "../forms/Null";
 import {
   Button,
   FormControl,
@@ -17,8 +18,10 @@ import {
   IconButton,
   InputLabel,
   MenuItem,
+  Pagination,
   Paper,
   Select,
+  Stack,
   Switch,
   Table,
   TableBody,
@@ -40,14 +43,63 @@ import ModalUpdateProductOnCart from "../forms/Modals-Update-Product-Cart";
 import ModalDeleteProductOnCart from "../forms/Modal-Delete-Product";
 import ModalDeleteAllProductOnCart from "../forms/Modal-Delete-All-Product";
 import ModalAddKhachHang from "../forms/Modals-AddKhachHang";
-import SendIcon from "@mui/icons-material/Send";
 import { toast } from "react-toastify";
-import {
-  updatePayment,
-  updatePaymentShip,
-} from "../services/OrderManagementTimeLine";
+import { updateTongTien } from "../services/OrderManagementTimeLine";
 import { format } from "date-fns";
 import { Image } from "react-bootstrap";
+import { styled } from "@mui/material/styles";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
+// import Button from '@mui/material/Button';
+import CloseIcon from "@mui/icons-material/Close";
+import ModalDeleteDirectSale from "../forms/Modal-Delete-DirectSale";
+import ModalPaymentComfirm from "../forms/Modal-Payment-Confirm";
+import ModalCreateBillOnline from "../forms/Modal-Create-Online";
+
+//Dislay invoice waiting
+const AntTabs = styled(Tabs)({
+  borderBottom: "1px solid #e8e8e8",
+  "& .MuiTabs-indicator": {
+    backgroundColor: "#1890ff",
+  },
+});
+
+const AntTab = styled((props) => <Tab disableRipple {...props} />)(
+  ({ theme }) => ({
+    textTransform: "none",
+    minWidth: 0,
+    [theme.breakpoints.up("sm")]: {
+      minWidth: 0,
+    },
+    fontWeight: theme.typography.fontWeightRegular,
+    marginRight: theme.spacing(1),
+    color: "rgba(0, 0, 0, 0.85)",
+    fontFamily: [
+      "-apple-system",
+      "BlinkMacSystemFont",
+      '"Segoe UI"',
+      "Roboto",
+      '"Helvetica Neue"',
+      "Arial",
+      "sans-serif",
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"',
+    ].join(","),
+    "&:hover": {
+      color: "#40a9ff",
+      opacity: 1,
+    },
+    "&.Mui-selected": {
+      color: "#1890ff",
+      fontWeight: theme.typography.fontWeightMedium,
+    },
+    "&.Mui-focusVisible": {
+      backgroundColor: "#d1eaff",
+    },
+  })
+);
 
 const CartBillADM = (props) => {
   //Get IdHd on http
@@ -70,22 +122,128 @@ const CartBillADM = (props) => {
   useEffect(() => {
     getDetailHD();
   }, [getDetailHD]);
+  //Select invoice waiting.
+  const [tabs, setTabs] = useState([]);
+
+  const getListData = async () => {
+    try {
+      let res = await selectAllInvoiceWaiting();
+      setTabs(res);
+    } catch (error) {
+      console.error("Error in list bill: ", error);
+    }
+  };
+
+  useEffect(() => {
+    getListData();
+  }, []);
+
+  const [value, setValue] = useState(0);
+
+  const handleChange = (event, newValue) => {
+    console.log("Check newValue: ", newValue);
+    setValue(newValue);
+  };
+
+  const handleChange1 = (tabLabel) => {
+    navigate(`/create-bill/${tabLabel.idHd}`);
+  };
+
+  //Create a new Detail Direct
+  const [lastGeneratedNumber, setLastGeneratedNumber] = useState(0);
+
+  useEffect(() => {
+    // Đọc số lớn nhất từ cơ sở dữ liệu (localStorage) khi ứng dụng khởi động
+    const savedNumber = localStorage.getItem("lastGeneratedNumber");
+    if (savedNumber) {
+      setLastGeneratedNumber(Number(savedNumber));
+    }
+  }, []);
+  const generateNewCode = () => {
+    const newNumber = lastGeneratedNumber + 1;
+    setLastGeneratedNumber(newNumber);
+
+    // Lưu số mới vào cơ sở dữ liệu (localStorage)
+    localStorage.setItem("lastGeneratedNumber", newNumber.toString());
+
+    return `HD${newNumber.toString().padStart(5, "0")}`;
+  };
+
+  const handleAddTab = async () => {
+    if (tabs.length >= 5) {
+      toast.warn("Đã Tồn Tại 5 Hóa Đơn Chờ. Vui Lòng Thanh Toán!!!");
+    } else {
+      const currentDate = new Date();
+      const formattedDate = format(currentDate, "yyyy-MM-dd");
+
+      const newCode = generateNewCode();
+      let res = await postAddBill(newCode, formattedDate, 1, 8);
+      getListData();
+
+      toast.success("Tạo thành công hóa đơn");
+
+      // Update the tabs state to include the new tab
+      const nextTabNumber = tabs.length + 1;
+      const newTab = { maHd: `Tab ${nextTabNumber}` };
+      console.log("Check newTab: ", newTab);
+      const newTabs = [...tabs, newTab];
+      console.log("Check newTabs: ", newTabs);
+      setTabs(newTabs);
+
+      // Set the value state to the index of the newly added tab
+      setValue(newTabs.length - 1);
+
+      let getIdHttp = res.idHd;
+      navigate(`/create-bill/${getIdHttp}`);
+    }
+  };
+
+  const [open, setOpen] = useState(false);
+  const [information, setInformation] = useState();
+  const handleCloseTab = (index) => {
+    setOpen(true);
+    setInformation(index);
+  };
+  const handleCloseDeleteInvoice = () => {
+    setOpen(false);
+    getListData();
+    setValue(0);
+    const newTab = { maHd: `Tab ${1}` };
+    console.log("Check newTab: ", newTab);
+    const newTabs = [...tabs, newTab];
+    console.log("Check newTabs: ", newTabs);
+    setTabs(newTabs);
+    navigate(`/create-bill/${newTabs[0].idHd}`);
+  };
+
   //Select Product On Cart
   const [DataCart, setDataCart] = useState([]);
+  const [numberPages, setNumberPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
 
-  const selectDataCart = useCallback(async () => {
-    try {
-      let res = await finByProductOnCart(idHdParam);
-      console.log("Check res: ", res);
-      setDataCart(res.content);
-    } catch (error) {
-      console.error(error);
-    }
-  }, [idHdParam]);
+  const selectDataCart = useCallback(
+    async (page) => {
+      try {
+        let res = await finByProductOnCart(page, idHdParam);
+        if (res && res.content) {
+          console.log("Check DataCart: ", res);
+          setDataCart(res.content);
+          setNumberPages(res.totalPages);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [idHdParam]
+  );
   useEffect(() => {
-    selectDataCart();
-  }, [selectDataCart]);
+    selectDataCart(currentPage);
+  }, [currentPage, selectDataCart]);
 
+  const handlePageClick = (page) => {
+    selectDataCart(page);
+    setCurrentPage(page);
+  };
   //Add Product
   const [showModalsAdd, setShowModalAdd] = useState(false);
   const handleAddProduct = () => {
@@ -120,12 +278,14 @@ const CartBillADM = (props) => {
   const [itemUpdate, setItemUpdate] = useState({});
   const handleUpdateClassify = async (item) => {
     setShowModalsUpdate(true);
-    console.log("Check item: ", item);
+    console.log("Check itemitem: ", item);
     if (item.length < 0) {
       return null;
     } else {
       try {
-        let getOneSP = await findById(item.idCtsp.idSp.idSp);
+        let getOneSP = await findById(item[3]);
+        console.log("Check getOneSP: ", getOneSP);
+
         setItemUpdateClassify(getOneSP);
         setItemUpdate(item);
       } catch (error) {
@@ -144,6 +304,7 @@ const CartBillADM = (props) => {
   };
 
   // Fetch list of provinces on component mount
+  const [diachiCuThe, setDiachiCuThe] = useState("");
   useEffect(() => {
     fetchProvinces();
   }, []);
@@ -190,9 +351,6 @@ const CartBillADM = (props) => {
       console.error("Error fetching wards:", error);
     }
   };
-  //   const [selectedProvinceName, setSelectedProvinceName] = useState("");
-  // const [selectedDistrictName, setSelectedDistrictName] = useState("");
-  // const [selectedWardName, setSelectedWardName] = useState("");
 
   useEffect(() => {
     if (selectedProvince) {
@@ -208,34 +366,47 @@ const CartBillADM = (props) => {
 
   useEffect(() => {
     if (selectedDistrict && selectedProvince && selectedWard) {
+      const selectedProvinceName =
+        provinces.find((province) => province.code === selectedProvince)
+          ?.name || "";
+
+      const selectedDistrictName =
+        districts.find((district) => district.code === selectedDistrict)
+          ?.name || "";
+
+      const selectedWardName =
+        wards.find((ward) => ward.code === selectedWard)?.name || "";
+
       setResult(
-        `${selectedProvince.name} | ${selectedDistrict.name} | ${selectedWard.name}`
+        `${selectedProvinceName}, ${selectedDistrictName}, ${selectedWardName}, ${diachiCuThe}`
       );
     }
-  }, [selectedProvince, selectedDistrict, selectedWard]);
+  }, [
+    selectedDistrict,
+    selectedProvince,
+    selectedWard,
+    districts,
+    provinces,
+    wards,
+    diachiCuThe,
+  ]);
 
   //Show thanhTien
   const [thanhTien, setThanhTien] = useState();
-  // const [discount, setDiscount] = useState(0);
-  // const [thanhTienData, setThanhTienData] = useState();
 
   useEffect(() => {
-    const calculateTotalPrice = () => {
+    const calculateTotalPrice = async () => {
       let total = 0;
       for (const item of DataCart) {
-        total += item.donGia;
+        total += item[9];
       }
       setThanhTien(total);
+      await updateTongTien(idHdParam, thanhTien);
     };
 
     calculateTotalPrice();
-  }, [DataCart]);
-  // const inputGiaGia = (event) => {
-  //   const newDiscount = parseFloat(event.target.value);
-  //   setDiscount(newDiscount);
-  //   let giaTri = thanhTien - discount;
-  //   setThanhTienData(giaTri);
-  // };
+  }, [DataCart, idHdParam, thanhTien]);
+
   //Add Khach Hang
   const [selectedCustomerName, setSelectedCustomerName] = useState("");
   const [selectedMaTK, setSelectedMaTk] = useState("");
@@ -248,472 +419,517 @@ const CartBillADM = (props) => {
   const handleCloseAddKH = () => {
     setShowModalKH(false);
   };
-  //Payment
-  const [cashGiven, setCashGiven] = useState("");
-  const [changeAmount, setChangeAmount] = useState(0);
-  const handleCalculateChange = () => {
-    const cashGivenValue = parseFloat(cashGiven);
-    if (!isNaN(cashGivenValue)) {
-      const change = cashGivenValue - thanhTien;
-      if (change < 0) {
-        toast.warning("Tiền Khách Đưa Chưa Đủ");
-      } else {
-        setChangeAmount(change);
-      }
-    } else {
-      setChangeAmount(0);
-    }
-  };
-  // const handleTinhTien = () => {
-  //   setCashGiven("");
-  //   setChangeAmount(0);
-  // };
+
   //Handle Save
-  const [addressInfo, setAddressInfo] = useState({
-    province: "",
-    district: "",
-    ward: "",
-  });
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [tenKhTT, getTenKHTT] = useState("");
   const [sdtKHTT, getSdtKHTT] = useState("");
+  const [tenKhShip, getTenKHShip] = useState("");
+  const [sdtKHShip, getSdtKHShip] = useState("");
+
+  const [openPayment, setOpenPayment] = useState(false);
+  const [openCreateOnline, setCreateOnline] = useState(false);
+  // const [information, setInformation] = useState();
   const handleClick = async () => {
     const currentDate = new Date();
     const formattedDate = format(currentDate, "yyyy-MM-dd");
     if (isDeliveryChecked === false) {
-      const cashGivenValue = parseFloat(cashGiven);
-      const change = cashGivenValue - thanhTien;
-
-      if (change < 0) {
-        toast.warning("Tiền Khách Đưa Chưa Đủ");
-      } else {
-        await updatePayment(
-          idHdParam,
-          tenKhTT,
-          sdtKHTT,
-          formattedDate,
-          thanhTien,
-          cashGiven,
-          change,
-          1,
-          9
-        );
-        toast.success("Thanh Toán Tại Quầy Thành Công!!!");
-        navigate(`/direct-sale`);
-      }
+      setOpenPayment(true);
     } else {
-      await updatePaymentShip(
-        idHdParam,
-        tenKhTT,
-        sdtKHTT,
-        formattedDate,
-        thanhTien,
-        2,
-        1
-      );
-      toast.success("Thanh Toán Tại Quầy Thành Công!!!");
-      navigate(`/order-management-timeline/${idHdParam}`);
-      toast.success("Đặt Hàng Online Thành Công!!!");
+      if (!tenKhShip.trim() || !sdtKHShip.trim()) {
+        toast.warning("Hãy Thông Tin Người Nhận Hàng");
+      } else {
+        setCreateOnline(true);
+      }
     }
+  };
+  const handlePaymentClose = () => {
+    setOpenPayment(false);
+  };
+  const handleCloseCreateOnline = () => {
+    setCreateOnline(false);
   };
 
   return (
     <>
-      <div>
-        <p>Bill Code: {listHD.maHd}</p>
-        <div className="class-add-product">
-          <Button onClick={() => handleAddProduct()} variant="outlined">
-            <FontAwesomeIcon icon={faCartPlus} size="lg" />
-            Thêm Sản Phẩm
-          </Button>{" "}
-        </div>
-      </div>
-
-      <div className="row cart-information">
-        <div className="row">
-          <h6>Giỏ Hàng</h6>
-        </div>
-        <TableContainer
-          sx={{ marginTop: 2, marginBottom: 2 }}
-          component={Paper}
-        >
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Ảnh</TableCell>
-                <TableCell>Mã Sản Phẩm</TableCell>
-                {/* <TableCell align="right"></TableCell> */}
-                <TableCell align="right">Sản Phẩm</TableCell>
-                <TableCell align="right">Thuộc tính</TableCell>
-                <TableCell align="right">Giá</TableCell>
-                <TableCell align="right">Số Lượng</TableCell>
-                <TableCell align="right">Tổng</TableCell>
-                <TableCell align="right">Thao Tác</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {DataCart && DataCart.length > 0 ? (
-                DataCart.map((item, index) => (
-                  <TableRow
-                    key={index}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      <Image
-                        rounded
-                        style={{ width: "150px", height: "auto" }}
-                        src={item[2]}
-                      />
-                    </TableCell>
-                    <TableCell component="th" scope="row">
-                      {item[4]}
-                    </TableCell>
-                    <TableCell align="right">{item[5]}</TableCell>
-                    <TableCell align="right">
-                      <Button
-                        onClick={() => handleUpdateClassify(item)}
-                        size="small"
-                        variant="outlined"
-                      >
-                        Size: {item[6]}
-                      </Button>
-                    </TableCell>
-                    <TableCell align="right">{item[7]}</TableCell>
-                    <TableCell align="right">{item[8]}</TableCell>
-                    <TableCell align="right">{item[9]}</TableCell>
-                    <TableCell align="right">
-                      <IconButton
-                        aria-label="delete"
-                        size="large"
-                        onClick={() => handleDelete(item)}
-                      >
-                        <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableCell align="right">
-                  <Null />
-                </TableCell>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <div className="col-2">
-          <Button
-            onClick={handDeleteAll}
-            variant="outlined"
-            startIcon={<DeleteIcon />}
+      <Box sx={{ width: "100%" }}>
+        <Box sx={{ bgcolor: "#fff" }}>
+          <Box sx={{ p: 3 }}>
+            <Button variant="contained" onClick={handleAddTab}>
+              Thêm Hóa Đơn Chờ
+            </Button>
+          </Box>
+          <AntTabs
+            value={value}
+            onChange={handleChange}
+            aria-label="ant example"
           >
-            Delete
-          </Button>
-        </div>
-      </div>
-      <div className="row customer-information">
-        <div className="row">
-          <div className="col-6">
-            <h6>Thông Tin Khách Hàng</h6>
-          </div>
-          <div className="col-6 button-list-personal">
-            <Button onClick={handleAddKH} size="small" variant="outlined">
-              Khách Hàng
-            </Button>
-          </div>
-        </div>
+            {tabs.map((tabLabel, index) => (
+              <AntTab
+                key={index}
+                onClick={() => handleChange1(tabLabel)}
+                label={
+                  <span>
+                    {tabLabel.maHd}
+                    <CloseIcon
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCloseTab(tabLabel);
+                      }}
+                    />
+                  </span>
+                }
+              />
+            ))}
+          </AntTabs>
 
-        <div className="text-information">
-          <TextField
-            id="standard-multiline-flexible"
-            label="Mã Tài Khoản "
-            multiline
-            maxRows={4}
-            variant="outlined"
-            size="small"
-            value={selectedMaTK}
-            fullWidth
-            sx={{ marginTop: 2 }}
-          />
-          <TextField
-            id="standard-multiline-flexible"
-            label="Tên Khách Hàng"
-            multiline
-            maxRows={4}
-            variant="outlined"
-            size="small"
-            value={selectedCustomerName}
-            fullWidth
-            sx={{ marginTop: 2 }}
-          />
-
-          <TextField
-            id="standard-multiline-flexible"
-            label="Email"
-            multiline
-            maxRows={4}
-            variant="outlined"
-            size="small"
-            fullWidth
-            value={selectedCustomerEmail}
-            sx={{ marginTop: 2 }}
-          />
-        </div>
-      </div>
-      <div className="row information-payment">
-        <div className="row header-information">
-          <div className="col-6">
-            <h6>Thông Tin Thanh Toán</h6>
-          </div>
-          <div className="col-6 button-list">
-            <Button size="small" variant="outlined">
-              Primary
-            </Button>
-          </div>
-        </div>
-        <div className="row section-information">
-          <div className="col-7">
-            {isDeliveryChecked ? (
-              <div className="text-information">
-                <div>
-                  <h5>
-                    {" "}
-                    <AccountBoxIcon />
-                    Thông Tin Người Nhận
-                  </h5>
-                </div>
-                <TextField
-                  id="standard-multiline-flexible"
-                  label="Tên Người Nhận"
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  sx={{ marginTop: 2 }}
-                />
-                <TextField
-                  id="standard-multiline-flexible"
-                  label="Số Điện Thoại"
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  sx={{ marginTop: 2 }}
-                />
-                <div className="address">
-                  <FormControl
-                    size="small"
-                    sx={{ m: 0, minWidth: 200, marginRight: 5 }}
-                  >
-                    <InputLabel id="province-label">Tỉnh/Thành Phố</InputLabel>
-                    <Select
-                      labelId="province-label"
-                      id="province-select"
-                      value={selectedProvince}
-                      onChange={(e) => setSelectedProvince(e.target.value)}
-                      label="Tỉnh/Thành Phố"
-                    >
-                      <MenuItem value="">
-                        <em>Chọn Tỉnh/Thành Phố</em>
-                      </MenuItem>
-                      {provinces.map((province) => (
-                        <MenuItem key={province.code} value={province.code}>
-                          {province.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl
-                    size="small"
-                    sx={{ m: 0, minWidth: 200, marginRight: 5 }}
-                  >
-                    <InputLabel id="district-label">Quận/Huyện</InputLabel>
-                    <Select
-                      labelId="district-label"
-                      id="district-select"
-                      value={selectedDistrict}
-                      onChange={(e) => setSelectedDistrict(e.target.value)}
-                      label="Quận/Huyện"
-                    >
-                      <MenuItem value="">
-                        <em>Chọn Quận/Huyện</em>
-                      </MenuItem>
-                      {districts.map((district) => (
-                        <MenuItem key={district.code} value={district.code}>
-                          {district.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl size="small" sx={{ m: 0, minWidth: 200 }}>
-                    <InputLabel id="ward-label">Phường/Xã</InputLabel>
-                    <Select
-                      labelId="ward-label"
-                      id="ward-select"
-                      value={selectedWard}
-                      onChange={(e) => setSelectedWard(e.target.value)}
-                      label="Phường/Xã"
-                    >
-                      <MenuItem value="">
-                        <em>Chọn Phường/Xã</em>
-                      </MenuItem>
-                      {wards.map((ward) => (
-                        <MenuItem key={ward.code} value={ward.code}>
-                          {ward.name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <div id="result">{result}</div>
-                </div>
-
-                <div>
-                  <TextField
-                    id="standard-multiline-flexible"
-                    label="Địa Chỉ Cụ Thể"
-                    multiline
-                    maxRows={4}
-                    variant="outlined"
-                    size="small"
-                    fullWidth
-                    sx={{ marginTop: 2 }}
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="text-information">
-                <div>
-                  <h5>
-                    {" "}
-                    <AccountBoxIcon />
-                    Thông Tin Thanh Toán
-                  </h5>
-                </div>
-                <TextField
-                  id="standard-multiline-flexible"
-                  label="Người Thanh Toán"
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  sx={{ marginTop: 2 }}
-                  onChange={(e) => getTenKHTT(e.target.value)}
-                />
-                <TextField
-                  id="standard-multiline-flexible"
-                  label="Số Điện Thoại"
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  sx={{ marginTop: 2 }}
-                  onChange={(e) => getSdtKHTT(e.target.value)}
-                />
-                <TextField
-                  id="standard-multiline-flexible"
-                  label="Số Tiền Khách Gửi"
-                  type="number"
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  sx={{ marginTop: 2, marginBottom: 2 }}
-                  onChange={(e) => setCashGiven(e.target.value)}
-                />
-                <Button
-                  sx={{ marginBottom: 2 }}
-                  variant="contained"
-                  endIcon={<SendIcon />}
-                  onClick={handleCalculateChange}
-                >
-                  Tính Tiền
-                </Button>
-                <p>Số Tiền Thừa Của Khách: {changeAmount}</p>
-              </div>
-            )}
-          </div>
-          <div className="col-5">
-            <h5>
-              <AccountBalanceWalletIcon />
-              THÔNG TIN THANH TOÁN
-            </h5>
-            <FormControlLabel
-              control={<Switch />}
-              onChange={handleDeliveryChange}
-              label="Giao Hàng"
-            />
-            <br />
-            <div className="row">
-              <div className="col-6">
-                <p>Tiền Hàng</p>
-                <p>Giảm Giá</p>
-                <p>TỔNG: </p>
-              </div>
-              <div className="col-6">
-                <p>{thanhTien}</p>
-                <p>GIAM GIA</p>
-                <p>{thanhTien}</p>
+          <Box sx={{ p: 3 }}>
+            {/* <p>Content: {tabContent[value]}</p> */}
+            <div>
+              <p>Bill Code: {listHD.maHd}</p>
+              <div className="class-add-product">
+                <Button onClick={() => handleAddProduct()} variant="outlined">
+                  <FontAwesomeIcon icon={faCartPlus} size="lg" />
+                  Thêm Sản Phẩm
+                </Button>{" "}
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-      <div className="class-checkout">
-        <LoadingButton
-          size="small"
-          color="secondary"
-          onClick={handleClick}
-          loading={loading}
-          loadingPosition="start"
-          startIcon={<SaveIcon />}
-          variant="contained"
-        >
-          <span>Save</span>
-        </LoadingButton>
-      </div>
-      {/* Add Modals */}
-      <ModalAddProduct
-        show={showModalsAdd}
-        selectDataCart={selectDataCart}
-        handleClose={handleClose}
-        DataCart={DataCart}
-      />
-      {/* Modal Update Product */}
-      <ModalUpdateProductOnCart
-        show={showModalsUpdate}
-        handleClose={handleCloseUpdateClassify}
-        itemUpdateClassify={itemUpdateClassify}
-        selectDataCart={selectDataCart}
-        itemUpdate={itemUpdate}
-      />
-      {/* Modal Delete Product  */}
-      <ModalDeleteProductOnCart
-        open={showModalsDelete}
-        handleClose={handleCloseModalDelelte}
-        itemDelete={itemDelete}
-        selectDataCart={selectDataCart}
-      />
-      {/* Modal Delete Product  */}
-      <ModalDeleteAllProductOnCart
-        open={showModalsDeleteAll}
-        handleClose={handCloseDeleteAll}
-        selectDataCart={selectDataCart}
-        DataCart={DataCart}
-      />
-      {/* Modal Add Customer */}
-      <ModalAddKhachHang
-        open={showModalsKH}
-        handleClose={handleCloseAddKH}
-        setSelectedCustomerName={setSelectedCustomerName}
-        setSelectedMaTk={setSelectedMaTk}
-        setSelectedCustomerEmail={setSelectedCustomerEmail}
-      />
+
+            <div className="row cart-information">
+              <div className="row">
+                <h6>Giỏ Hàng</h6>
+              </div>
+              <TableContainer
+                sx={{ marginTop: 2, marginBottom: 2 }}
+                component={Paper}
+              >
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Ảnh</TableCell>
+                      <TableCell>Mã Sản Phẩm</TableCell>
+                      <TableCell align="right">Sản Phẩm</TableCell>
+                      <TableCell align="right">Thuộc tính</TableCell>
+                      <TableCell align="right">Giá</TableCell>
+                      <TableCell align="right">Số Lượng</TableCell>
+                      <TableCell align="right">Tổng</TableCell>
+                      <TableCell align="right">Thao Tác</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {DataCart && DataCart.length > 0 ? (
+                      DataCart.map((item, index) => {
+                        const imagesArray = item[2].split(","); // Tách chuỗi thành mảng
+                        const firstImage = imagesArray[0];
+                        return (
+                          <TableRow
+                            key={index}
+                            sx={{
+                              "&:last-child td, &:last-child th": { border: 0 },
+                            }}
+                          >
+                            <TableCell>
+                              <Image
+                                rounded
+                                style={{ width: "150px", height: "auto" }}
+                                src={firstImage}
+                              />
+                            </TableCell>
+                            <TableCell>{item[4]}</TableCell>
+                            <TableCell align="right">{item[5]}</TableCell>
+                            <TableCell align="right">
+                              <Button
+                                onClick={() => handleUpdateClassify(item)}
+                                size="small"
+                                variant="outlined"
+                              >
+                                Size: {item[6]}
+                              </Button>
+                            </TableCell>
+                            <TableCell align="right">{item[7]}</TableCell>
+                            <TableCell align="right">{item[8]}</TableCell>
+                            <TableCell align="right">{item[9]}</TableCell>
+                            <TableCell align="right">
+                              <IconButton
+                                aria-label="delete"
+                                size="large"
+                                onClick={() => handleDelete(item)}
+                              >
+                                <DeleteSweepOutlinedIcon
+                                  sx={{ color: pink[500] }}
+                                />
+                              </IconButton>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                    ) : (
+                      <TableRow>
+                        <TableCell align="right" colSpan={8}>
+                          KHÔNG CÓ DỮ LIỆU
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+
+              <div className="col-2">
+                <Button
+                  onClick={handDeleteAll}
+                  variant="outlined"
+                  startIcon={<DeleteIcon />}
+                >
+                  Delete
+                </Button>
+              </div>
+              <div className="col-2">
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  justify="center"
+                  alignItems="center"
+                >
+                  <Pagination
+                    onChange={(event, page) => handlePageClick(page - 1)}
+                    count={numberPages}
+                    variant="outlined"
+                  />
+                </Stack>
+              </div>
+            </div>
+            <div className="row customer-information">
+              <div className="row">
+                <div className="col-6">
+                  <h6>Thông Tin Khách Hàng</h6>
+                </div>
+                <div className="col-6 button-list-personal">
+                  <Button onClick={handleAddKH} size="small" variant="outlined">
+                    Khách Hàng
+                  </Button>
+                </div>
+              </div>
+
+              <div className="text-information">
+                <TextField
+                  id="standard-multiline-flexible"
+                  label="Mã Tài Khoản "
+                  multiline
+                  maxRows={4}
+                  variant="outlined"
+                  size="small"
+                  value={selectedMaTK}
+                  fullWidth
+                  sx={{ marginTop: 2 }}
+                />
+                <TextField
+                  id="standard-multiline-flexible"
+                  label="Tên Khách Hàng"
+                  multiline
+                  maxRows={4}
+                  variant="outlined"
+                  size="small"
+                  value={selectedCustomerName}
+                  fullWidth
+                  sx={{ marginTop: 2 }}
+                />
+
+                <TextField
+                  id="standard-multiline-flexible"
+                  label="Email"
+                  multiline
+                  maxRows={4}
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                  value={selectedCustomerEmail}
+                  sx={{ marginTop: 2 }}
+                />
+              </div>
+            </div>
+            <div className="row information-payment">
+              <div className="row header-information">
+                <div className="col-6">
+                  <h6>Thông Tin Thanh Toán</h6>
+                </div>
+                <div className="col-6 button-list">
+                  <Button size="small" variant="outlined">
+                    Primary
+                  </Button>
+                </div>
+              </div>
+              <div className="row section-information">
+                <div className="col-7">
+                  {isDeliveryChecked ? (
+                    <div className="text-information">
+                      <div>
+                        <h5>
+                          {" "}
+                          <AccountBoxIcon />
+                          Thông Tin Người Nhận
+                        </h5>
+                      </div>
+                      <TextField
+                        id="standard-multiline-flexible"
+                        label="Tên Người Nhận"
+                        multiline
+                        maxRows={4}
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        onChange={(e) => getTenKHShip(e.target.value)}
+                        sx={{ marginTop: 2 }}
+                      />
+                      <TextField
+                        id="standard-multiline-flexible"
+                        label="Số Điện Thoại"
+                        multiline
+                        maxRows={4}
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        sx={{ marginTop: 2 }}
+                        onChange={(e) => getSdtKHShip(e.target.value)}
+                      />
+                      <div className="address">
+                        <FormControl
+                          size="small"
+                          sx={{ m: 0, minWidth: 190, marginRight: 5 }}
+                        >
+                          <InputLabel id="province-label">
+                            Tỉnh/Thành Phố
+                          </InputLabel>
+                          <Select
+                            labelId="province-label"
+                            id="province-select"
+                            value={selectedProvince}
+                            onChange={(e) =>
+                              setSelectedProvince(e.target.value)
+                            }
+                            label="Tỉnh/Thành Phố"
+                          >
+                            <MenuItem value="">
+                              <em>Chọn Tỉnh/Thành Phố</em>
+                            </MenuItem>
+                            {provinces.map((province) => (
+                              <MenuItem
+                                key={province.code}
+                                value={province.code}
+                              >
+                                {province.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                        <FormControl
+                          size="small"
+                          sx={{ m: 0, minWidth: 190, marginRight: 5 }}
+                        >
+                          <InputLabel id="district-label">
+                            Quận/Huyện
+                          </InputLabel>
+                          <Select
+                            labelId="district-label"
+                            id="district-select"
+                            value={selectedDistrict}
+                            onChange={(e) =>
+                              setSelectedDistrict(e.target.value)
+                            }
+                            label="Quận/Huyện"
+                          >
+                            <MenuItem value="">
+                              <em>Chọn Quận/Huyện</em>
+                            </MenuItem>
+                            {districts.map((district) => (
+                              <MenuItem
+                                key={district.code}
+                                value={district.code}
+                              >
+                                {district.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                        <FormControl size="small" sx={{ m: 0, minWidth: 190 }}>
+                          <InputLabel id="ward-label">Phường/Xã</InputLabel>
+                          <Select
+                            labelId="ward-label"
+                            id="ward-select"
+                            value={selectedWard}
+                            onChange={(e) => setSelectedWard(e.target.value)}
+                            label="Phường/Xã"
+                          >
+                            <MenuItem value="">
+                              <em>Chọn Phường/Xã</em>
+                            </MenuItem>
+                            {wards.map((ward) => (
+                              <MenuItem key={ward.code} value={ward.code}>
+                                {ward.name}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
+                        <div id="result">{result}</div>
+                      </div>
+
+                      <div>
+                        <TextField
+                          id="standard-multiline-flexible"
+                          label="Địa Chỉ Cụ Thể"
+                          multiline
+                          maxRows={4}
+                          variant="outlined"
+                          size="small"
+                          fullWidth
+                          sx={{ marginTop: 2 }}
+                          value={diachiCuThe}
+                          onChange={(e) => setDiachiCuThe(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-information">
+                      <div>
+                        <h5>
+                          {" "}
+                          <AccountBoxIcon />
+                          Thông Tin Thanh Toán
+                        </h5>
+                      </div>
+                      <TextField
+                        id="standard-multiline-flexible"
+                        label="Người Thanh Toán"
+                        multiline
+                        maxRows={4}
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        sx={{ marginTop: 2 }}
+                        onChange={(e) => getTenKHTT(e.target.value)}
+                      />
+                      <TextField
+                        id="standard-multiline-flexible"
+                        label="Số Điện Thoại"
+                        multiline
+                        maxRows={4}
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        sx={{ marginTop: 2 }}
+                        onChange={(e) => getSdtKHTT(e.target.value)}
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="col-5">
+                  <h5>
+                    <AccountBalanceWalletIcon />
+                    THÔNG TIN THANH TOÁN
+                  </h5>
+                  <FormControlLabel
+                    control={<Switch />}
+                    onChange={handleDeliveryChange}
+                    label="Giao Hàng"
+                  />
+                  <br />
+                  <div className="row">
+                    <div className="col-6">
+                      <p>Tiền Hàng</p>
+                      <p>Giảm Giá</p>
+                      <p>TỔNG: </p>
+                    </div>
+                    <div className="col-6">
+                      <p>{thanhTien}</p>
+                      <p>GIAM GIA</p>
+                      <p>{thanhTien}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="class-checkout">
+              <LoadingButton
+                size="small"
+                color="secondary"
+                onClick={handleClick}
+                loading={loading}
+                loadingPosition="start"
+                startIcon={<SaveIcon />}
+                variant="contained"
+              >
+                <span>Save</span>
+              </LoadingButton>
+            </div>
+            {/* Add Modals */}
+            <ModalAddProduct
+              show={showModalsAdd}
+              selectDataCart={selectDataCart}
+              handleClose={handleClose}
+              DataCart={DataCart}
+              currentPage1={currentPage}
+            />
+            {/* Modal Update Product */}
+            <ModalUpdateProductOnCart
+              show={showModalsUpdate}
+              handleClose={handleCloseUpdateClassify}
+              itemUpdateClassify={itemUpdateClassify}
+              selectDataCart={selectDataCart}
+              itemUpdate={itemUpdate}
+              currentPage={currentPage}
+            />
+            {/* Modal Delete Product  */}
+            <ModalDeleteProductOnCart
+              open={showModalsDelete}
+              handleClose={handleCloseModalDelelte}
+              itemDelete={itemDelete}
+              selectDataCart={selectDataCart}
+              currentPage={currentPage}
+            />
+            {/* Modal Delete Product  */}
+            <ModalDeleteAllProductOnCart
+              open={showModalsDeleteAll}
+              handleClose={handCloseDeleteAll}
+              selectDataCart={selectDataCart}
+              DataCart={DataCart}
+            />
+            {/* Modal Add Customer */}
+            <ModalAddKhachHang
+              open={showModalsKH}
+              handleClose={handleCloseAddKH}
+              setSelectedCustomerName={setSelectedCustomerName}
+              setSelectedMaTk={setSelectedMaTk}
+              setSelectedCustomerEmail={setSelectedCustomerEmail}
+            />
+            {/* ModalDeleteDirectSale */}
+            <ModalDeleteDirectSale
+              open={open}
+              handleClose={handleCloseDeleteInvoice}
+              information={information}
+            />
+            {/* ModalPaymentComfirm */}
+            <ModalPaymentComfirm
+              show={openPayment}
+              handleClose={handlePaymentClose}
+              thanhTien={thanhTien}
+              listHD={listHD}
+              tenKhTT={tenKhTT}
+              sdtKHTT={sdtKHTT}
+            />
+            {/* ModelShipOnline */}
+            <ModalCreateBillOnline
+              open={openCreateOnline}
+              handleClose={handleCloseCreateOnline}
+              thanhTien={thanhTien}
+              listHD={listHD}
+              tenKhShip={tenKhShip}
+              sdtKHShip={sdtKHShip}
+              result={result}
+            />
+          </Box>
+        </Box>
+      </Box>
     </>
   );
 };

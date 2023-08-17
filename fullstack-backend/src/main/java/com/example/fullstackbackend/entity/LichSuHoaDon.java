@@ -1,6 +1,5 @@
 package com.example.fullstackbackend.entity;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,34 +14,33 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "hinh_thuc_thanh_toan")
-public class HinhThucThanhToan {
+@Table(name = "lich_su_hoa_don")
+public class LichSuHoaDon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_httt")
-    private Integer idHttt;
+    @Column(name = "id_lshd")
+    private Integer idLshd;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch =  FetchType.EAGER)
     @JoinColumn(name = "id_hd", referencedColumnName = "id_hd")
     private HoaDon idHd;
 
-    @Column(name = "hinh_thuc")
-    private String hinhThuc;
-
-    @Column(name = "so_tien")
-    private BigDecimal soTien;
-
-    @Column(name = "mo_ta")
-    private String moTa;
+    @ManyToOne(fetch =  FetchType.EAGER)
+    @JoinColumn(name = "id_tk", referencedColumnName = "id_tai_khoan")
+    private TaiKhoan idTk;
 
     @Column(name = "trang_thai")
     private Integer trangThai;
 
+    @Column(name = "mo_ta")
+    private String moTa;
+
+    @Column(name = "ngay_thay_doi")
+    private java.sql.Timestamp ngayThayDoi;
 }

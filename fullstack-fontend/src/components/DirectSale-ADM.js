@@ -161,7 +161,7 @@ const DireactSale = (props) => {
   const formattedDate = format(currentDate, "yyyy-MM-dd");
   const handleAdd = async () => {
     const newCode = generateNewCode();
-    let res = await postAddBill(newCode, formattedDate, 8);
+    let res = await postAddBill(newCode, formattedDate, 1, 8);
     toast.success("Tạo thành công hóa đơn");
     getIdHttp = res.idHd;
     navigate(`/create-bill/${getIdHttp}`);

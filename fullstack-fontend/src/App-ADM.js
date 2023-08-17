@@ -48,7 +48,12 @@ import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import { Image } from "react-bootstrap";
 import logo5F from "./assets/logo_5F.png";
 import ModelAddNewGiamGia from "./components/ModalsAddNewGiamGia";
+<<<<<<< HEAD
 import ModelUpdateNewGiamGia from "./components/ModalsUpdateNewGiamGia";
+=======
+import TableSucces from "./components/Payment-Succes";
+// import paymentOnSuccess from "./components/Payment-Succes";
+>>>>>>> nghiant0807
 
 const drawerWidth = 240;
 
@@ -344,10 +349,13 @@ function AppADM(props) {
             <Route path="/update/giam-gia/:id" element={<ModelUpdateNewGiamGia />} />
             <Route path="/order-management" element={<OrderManagement />} />
             <Route path="/add/giam-gia" element={<ModelAddNewGiamGia />} />
-
             <Route
               path="/order-management-timeline/:id"
               element={<OrderManagementTimeline />}
+            />
+            <Route
+              path="/payment-online/vnpay-payment"
+              element={<TableSucces />}
             />
           </Routes>
         </Box>

@@ -19,13 +19,10 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanSevice {
 
     @Override
     public List<HinhThucThanhToan> getAll() {
-        return null;
+        return HinhThucThanhToanRepository.findAll();
     }
 
-    @Override
-    public Page<HinhThucThanhToan> htttPages(Integer pageNo, Integer size) {
-        return null;
-    }
+
 
 
     @Override
@@ -39,11 +36,6 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanSevice {
     }
 
     @Override
-    public Boolean checkExists(Integer id) {
-        return HinhThucThanhToanRepository.existsById(id);
-    }
-
-    @Override
     public HinhThucThanhToan update(HinhThucThanhToan update) {
         return null;
     }
@@ -51,6 +43,6 @@ public class HinhThucThanhToanServiceImpl implements HinhThucThanhToanSevice {
     @Override
     public List<HinhThucThanhToan> detail(Integer id) {
 
-        return HinhThucThanhToanRepository.findAllById(Collections.singleton(id));
+        return HinhThucThanhToanRepository.findByIdHd(id);
     }
 }

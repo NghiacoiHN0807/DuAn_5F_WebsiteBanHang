@@ -34,7 +34,7 @@ export default function ModalDeleteDirectSale(props) {
   const handleDelete = async () => {
     if (information.trangThai === 8) {
       await deleteHD(information.idHd);
-      toast.success("Đã xóa hóa đơn thành công ");
+      toast.success("Đã xóa hóa đơn chờ thành công ");
     } else if (information.trangThai === 9) {
       toast.warn("Hóa đơn đã được thanh toán. Không thể xóa!!!");
     } else {

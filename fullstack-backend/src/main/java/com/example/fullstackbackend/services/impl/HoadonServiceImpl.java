@@ -1,8 +1,10 @@
 package com.example.fullstackbackend.services.impl;
 
+import com.example.fullstackbackend.DTO.HoaDonDTO;
 import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.repository.HoadonRepository;
 import com.example.fullstackbackend.services.HoadonSevice;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,6 +39,11 @@ public class HoadonServiceImpl implements HoadonSevice {
     }
 
     @Override
+    public List<HoaDon> selectAllInvoiceWaiting() {
+        return hoadonRepository.selectAllInvoiceWaiting();
+    }
+
+    @Override
     public Page<HoaDon> hoaDonOnline(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return hoadonRepository.pageOnlineInvoice(pageable);
@@ -48,8 +55,8 @@ public class HoadonServiceImpl implements HoadonSevice {
     }
 
     @Override
-    public void delete(Integer id) {
-        hoadonRepository.delete(id);
+    public HoaDon delete(Integer id) {
+       return hoadonRepository.delete(id);
     }
 
     @Override
@@ -72,5 +79,16 @@ public class HoadonServiceImpl implements HoadonSevice {
     public HoaDon finByMaHD(Integer maHD) {
         HoaDon find = hoadonRepository.findByMaHd(maHD);
         return find;
+    }
+
+    @Override
+    public HoaDon updatePaymentOnline(Integer idHd, HoaDon hoaDonDTO) {
+        HoaDon hoaDon = hoadonRepository.findById(idHd).orElseThrow(()->new EntityNotFoundException("HoaDonNotFound"));
+
+        hoaDon.setNgayThanhToan(hoaDonDTO.getNgayThanhToan());
+        hoaDon.setTienDua(hoaDonDTO.getTienDua());
+        hoaDon.setTrangThai(hoaDonDTO.getTrangThai());
+
+        return hoadonRepository.save(hoaDon);
     }
 }

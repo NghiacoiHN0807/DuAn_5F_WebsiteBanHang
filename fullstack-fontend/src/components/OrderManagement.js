@@ -106,35 +106,31 @@ const OrderManagement = () => {
         switch (trangThai) {
           case 0:
             badgeVariant = "danger";
-            statusText = "Hóa đơn treo";
+            statusText = "Đang Chờ Xác Nhận Đơn Hàng";
             break;
           case 1:
             badgeVariant = "warning";
-            statusText = "Đang chờ xác nhận";
+            statusText = "Đang Chờ Xác Nhận Thông Tin";
             break;
           case 2:
             badgeVariant = "primary";
-            statusText = "Xác nhận thông tin";
+            statusText = "Đã Chuyển Cho Đơn Vị";
             break;
           case 3:
             badgeVariant = "info";
-            statusText = "Đã chuyển cho đơn vị";
+            statusText = "Xác Nhận Thanh Toán";
             break;
           case 4:
-            badgeVariant = "primary";
-            statusText = "Xác nhận thanh toán";
-            break;
-          case 5:
             badgeVariant = "success";
-            statusText = "Đã giao thành công";
+            statusText = "Đã Giao Thành Công";
             break;
           case 8:
             badgeVariant = "warning";
-            statusText = "Đơn hàng bán tại quầy";
+            statusText = "Đơn Hàng Bán Tại Quầy";
             break;
           case 9:
             badgeVariant = "success";
-            statusText = "Đã thanh toán tại quầy";
+            statusText = "Đã Thanh Toán Tại Quầy";
             break;
           case 10:
             badgeVariant = "danger";
@@ -232,7 +228,7 @@ const OrderManagement = () => {
   const formattedDate = format(currentDate, "yyyy-MM-dd");
   const handleAdd = async () => {
     const newCode = generateNewCode();
-    let res = await postAddBill(newCode, formattedDate, 8);
+    let res = await postAddBill(newCode, formattedDate, 1, 8);
     toast.success("A shopping cart is created successfully");
     getIdHttp = res.idHd;
     // await getDataCart(getIdHttp);
