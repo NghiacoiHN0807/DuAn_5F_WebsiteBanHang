@@ -30,9 +30,9 @@ public class CloudinaryServiceImpl implements CloudinaryService {
             param.put("folder", "j5-7f");
 
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(), param);
-            String publicId = uploadResult.get("public_id").toString();
-            logger.info("The user successfully uploaded the file: " + publicId);
-            return publicId;
+            String url = uploadResult.get("secure_url").toString();
+            logger.info("The user successfully uploaded the file: " + url);
+            return url;
         } catch (Exception ex) {
             logger.error("The userfailed to load to Cloudinary the image file: " + file.getName());
             logger.error(ex.getMessage());

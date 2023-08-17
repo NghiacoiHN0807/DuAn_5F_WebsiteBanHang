@@ -1,7 +1,11 @@
 package com.example.fullstackbackend.controller;
 
+<<<<<<< HEAD
 import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.DTO.SanPhamWithMinImageDTO;
+=======
+import com.example.fullstackbackend.DTO.SanPhamCustom;
+>>>>>>> origin/vinhlt
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.services.SanPhamService;
 import jakarta.validation.Valid;
@@ -87,5 +91,13 @@ public class SanPhamController {
     @PutMapping("update")
     public SanPham update(@RequestBody SanPham sanPham) {
         return sanPhamService.update(sanPham);
+    }
+
+    @GetMapping("getSpWithImg")
+    public ResponseEntity<Page<SanPhamCustom>> getSanPhamDetails(@RequestParam(defaultValue = "0") Integer page,
+                                                                 @RequestParam(defaultValue = "15") Integer size,
+                                                                 @RequestParam("p") Optional<Integer> p) {
+        Page<SanPhamCustom> pageSp = sanPhamService.sanPhamCustom(p.orElse(page), size);
+        return ResponseEntity.ok(pageSp);
     }
 }

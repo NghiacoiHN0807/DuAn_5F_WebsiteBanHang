@@ -15,8 +15,8 @@ public class AnhServiceImpl implements AnhService {
     private AnhRepository anhRepository;
 
     @Override
-    public List<Anh> getAll() {
-        return anhRepository.findAll();
+    public List<Anh> getAnhById(Integer idSp) {
+        return anhRepository.findByIdSp(idSp);
     }
 
     @Override
@@ -31,6 +31,20 @@ public class AnhServiceImpl implements AnhService {
 
     @Override
     public Anh delete(Integer id) {
-        return null;
+        Anh checkAnh = anhRepository.findById(id).orElse(null);
+        Long count = anhRepository.count();
+        System.out.println("check: "+ count);
+        if(checkAnh != null){
+            anhRepository.deleteById(id);
+        }
+        return checkAnh;
+    }
+
+    @Override
+    public Boolean checkSL() {
+        if(anhRepository.count() >= 10){
+            return false;
+        }
+        return true;
     }
 }

@@ -1,6 +1,11 @@
 package com.example.fullstackbackend.services.impl;
 
+<<<<<<< HEAD
 import com.example.fullstackbackend.DTO.SanPhamDTO;
+=======
+import com.example.fullstackbackend.DTO.SanPhamCustom;
+import com.example.fullstackbackend.entity.ChiTietSanPham;
+>>>>>>> origin/vinhlt
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.repository.SanphamRepository;
 import com.example.fullstackbackend.services.SanPhamService;
@@ -12,9 +17,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+<<<<<<< HEAD
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+=======
+>>>>>>> origin/vinhlt
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +42,34 @@ public class SanphamServiceImpl implements SanPhamService {
     public Page<SanPham> sanPhamPage(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return sanphamRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<SanPhamCustom> sanPhamCustom(Integer pageNo, Integer size) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        Page<Object[]> result = sanphamRepository.getSpWithImg(pageable);
+
+        List<SanPhamCustom> dtos = new ArrayList<>();
+        for (Object[] row : result.getContent()) {
+            SanPhamCustom spCustom = new SanPhamCustom();
+            spCustom.setIdSp((Integer) row[0]);
+            spCustom.setMaSp((String) row[1]);
+            spCustom.setTenSp((String) row[2]);
+            spCustom.setIdCl((Integer) row[3]);
+            spCustom.setIdMs((Integer) row[4]);
+            spCustom.setIdLsp((Integer) row[5]);
+            spCustom.setIdXx((Integer) row[6]);
+            spCustom.setIdTayAo((Integer) row[7]);
+            spCustom.setIdCoAo((Integer) row[8]);
+            spCustom.setMoTa((String) row[9]);
+            spCustom.setGiaBan((BigDecimal) row[10]);
+            spCustom.setTrangThai((Integer) row[11]);
+            spCustom.setUrl((String) row[12]);
+            spCustom.setSize((String) row[13]);
+            dtos.add(spCustom);
+        }
+
+        return new PageImpl<>(dtos, pageable, result.getTotalElements());
     }
 
     @Override
