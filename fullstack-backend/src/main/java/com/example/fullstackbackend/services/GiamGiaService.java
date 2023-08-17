@@ -22,4 +22,6 @@ public interface GiamGiaService {
 
     void remove(Integer id);
 
+//    void addGiamGiaWithChiTiet(GiamGiaWithChiTietDTO request);
+
 }

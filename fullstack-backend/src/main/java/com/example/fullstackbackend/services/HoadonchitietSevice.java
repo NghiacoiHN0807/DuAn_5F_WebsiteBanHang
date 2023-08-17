@@ -13,6 +13,9 @@ public interface HoadonchitietSevice {
 
     Page<HoaDonChiTiet> chatlieuPage(Integer pageNo, Integer size);
 
+    Page<Object[]> getListProductOncart(Integer pageNo, Integer size, Integer idHd);
+
+
     HoaDonChiTiet add(HoaDonChiTiet add);
 
     void delete(Integer id);

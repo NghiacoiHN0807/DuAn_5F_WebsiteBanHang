@@ -11,7 +11,11 @@ import java.util.Optional;
 public interface ChitietsanphamService {
     Page<ChiTietSanPham> chiTietSP(Integer pageNo, Integer size);
 
+    Page<Object[]> getSanPhamsWithSizes(Integer pageNo, Integer size);
+
     List<ChiTietSanPham> findByProductName(String name);
+
+    Optional<ChiTietSanPham> findByProductNameAndSize(String name, String Size);
 
     List<ChiTietSanPham> findByIdSp(Integer id);
 
@@ -19,11 +23,14 @@ public interface ChitietsanphamService {
 
     ChiTietSanPham add(ChiTietSanPham add);
 
-    void delete(Integer id);
+    ChiTietSanPham addAndUpdateSize(ChiTietSanPham ctsp, Integer soLuong);
+
+    ChiTietSanPham delete(Integer id);
 
     ChiTietSanPham update(ChiTietSanPham update);
 
     Optional<ChiTietSanPham> detail(Integer id);
 
     Boolean checkExists(Integer id);
+
 }

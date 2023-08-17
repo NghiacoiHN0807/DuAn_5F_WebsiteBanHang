@@ -3,6 +3,10 @@ const fetchAllSP = (page) => {
   return custom.get(`/san-pham/view-all?p=${page}`); // Call API
 };
 
+const fetchSpWithImg = (page) => {
+  return custom.get(`/san-pham/getSpWithImg?p=${page}`); // Call API
+};
+
 const fetchSP = () => {
   return custom.get(`/san-pham/listSP`); // Call API
 };
@@ -42,8 +46,34 @@ const deleteSanPham = (id) => {
   return custom.delete(`/san-pham/delete/${id}`);
 };
 
-const putUpdateSanPham = (idSp, maSp, tenSp, trangThai) => {
-  return custom.put(`/san-pham/update`, { idSp, maSp, tenSp, trangThai });
+const putUpdateSanPham = (
+  idSp,
+  maSp,
+  tenSp,
+  idCl,
+  idMs,
+  idLsp,
+  idXx,
+  idCoAo,
+  idTayAo,
+  moTa,
+  giaBan,
+  trangThai
+) => {
+  return custom.put(`/san-pham/update`, {
+    idSp,
+    maSp,
+    tenSp,
+    idCl,
+    idMs,
+    idLsp,
+    idXx,
+    idCoAo,
+    idTayAo,
+    moTa,
+    giaBan,
+    trangThai,
+  });
 };
 
 export {
@@ -53,4 +83,5 @@ export {
   postAddSanPham,
   deleteSanPham,
   putUpdateSanPham,
+  fetchSpWithImg,
 };

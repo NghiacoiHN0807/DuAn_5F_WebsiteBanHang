@@ -38,9 +38,19 @@ public class ChitietsanphamController {
         return chiTietSP;
     }
 
+    @GetMapping("view-all-ctsp")
+    public Page<Object[]> getSanPhamsWithSizes(@RequestParam(defaultValue = "0") Integer page,
+                                                     @RequestParam(defaultValue = "15") Integer size,
+                                                     @RequestParam("p") Optional<Integer> p) {
+        Page<Object[]> chiTietSP = chitietsanphamSevice.getSanPhamsWithSizes(p.orElse(page), size);
+        return chiTietSP;
+    }
+
     @GetMapping("select-ctsp-byId/{id}")
     public List<ChiTietSanPham> listCTSP(@PathVariable("id") Integer id) {
-        return chitietsanphamSevice.findByIdSp(id);}
+        return chitietsanphamSevice.findByIdSp(id);
+    }
+
     @GetMapping("detail/{id}")
     public ChiTietSanPham detail(@PathVariable("id") Integer id) {
         return chitietsanphamSevice.detail(id).orElse(null);
@@ -53,34 +63,39 @@ public class ChitietsanphamController {
     }
 
 
+    @GetMapping("get-one-ctsp/{name}/{size}")
+    public Optional<ChiTietSanPham> findByProductNameAndSize(@PathVariable("name") String name,
+                                                             @PathVariable("size") String size) {
+        Optional<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductNameAndSize(name, size);
+        return chiTietSanPham;
+    }
+
+
     @GetMapping("select-ctsp-byid/{id}")
     public List<ChiTietSanPham> findByProductId(@PathVariable("id") Integer id) {
         List<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductId(id);
         return chiTietSanPham;
     }
 
-    @PostMapping("add")
+    @PostMapping("add/{soLuong}")
     public ChiTietSanPham add(@Valid @RequestBody ChiTietSanPham chiTietSanPham,
-                              BindingResult bindingResult) {
+                              BindingResult bindingResult,
+                              @PathVariable("soLuong") Integer soLuong) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
-            return chitietsanphamSevice.add(chiTietSanPham);
+            return chitietsanphamSevice.addAndUpdateSize(chiTietSanPham, soLuong);
         }
     }
 
-    @DeleteMapping("delete/{id}")
-    public String delete(@PathVariable("id") Integer id) {
-        if (!chitietsanphamSevice.checkExists(id)) {
-            throw new xuatXuNotFoundException(id);
-        } else {
-            chitietsanphamSevice.delete(id);
-            return "";
-        }
+    @PutMapping("delete/{id}")
+    public ChiTietSanPham delete(@PathVariable("id") Integer id) {
+        return chitietsanphamSevice.delete(id);
     }
 
     @PutMapping("update")
     public ChiTietSanPham update(@RequestBody ChiTietSanPham chiTietSanPham) {
         return chitietsanphamSevice.update(chiTietSanPham);
     }
+
 }

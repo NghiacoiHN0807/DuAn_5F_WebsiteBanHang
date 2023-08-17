@@ -1,16 +1,21 @@
-// import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { postAddSanPham } from "../../services/SanPhamService";
+import { putUpdateSanPham } from "../../services/SanPhamService";
 import { toast } from "react-toastify";
 import {
   Box,
   Button,
+  Card,
+  CardActionArea,
+  CardMedia,
   Dialog,
   DialogActions,
   DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormControlLabel,
   FormLabel,
+  IconButton,
   MenuItem,
   Paper,
   Radio,
@@ -31,12 +36,24 @@ import { fetchMS, detailMS } from "../../services/MauSacService";
 import { detailSize, fetchSize } from "../../services/SizeService";
 import { fetchTayAo, detailTayAo } from "../../services/OngTayAoService";
 import { detailSP } from "../../services/SanPhamService";
-import { findSizeById, postAddCTSP } from "../../services/ChiTietSPService";
+import { deleteAnh, fetchAnh } from "../../services/AnhService";
+import { postAddCloud, deleteCloud } from "../../services/CloudinaryService";
+import {
+  findSizeById,
+  postAddCTSP,
+  deleteCTSP,
+} from "../../services/ChiTietSPService";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCallback } from "react";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import ToggleButton from "react-bootstrap/ToggleButton";
-import { Badge } from "react-bootstrap";
+import { Badge, CardGroup } from "react-bootstrap";
+import { FaFileUpload } from "react-icons/fa";
+import { useDropzone } from "react-dropzone";
+import "../../scss/ImgSanPham.scss";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { pink } from "@mui/material/colors";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 const QuantityInput = ({ value, onChange }) => {
   const handleDecrease = () => {
@@ -75,6 +92,7 @@ const QuantityInput = ({ value, onChange }) => {
 };
 
 const ModelUpdate = (props) => {
+  // const [idCtsp, setIdCtsp] = useState("");
   const [maSp, setMaSp] = useState("");
   const [tenSp, setTenSp] = useState("");
   const [moTa, setMoTa] = useState("");
@@ -95,8 +113,8 @@ const ModelUpdate = (props) => {
   const [listTayAo, setListTayAo] = useState([]);
   const [listCoAo, setListCoAo] = useState([]);
   const [listSize, setListSize] = useState([]);
-
   const [listCTSP, setListCTSP] = useState([]);
+  const [listImg, setListImg] = useState([]);
 
   const [radioValue, setRadioValue] = useState("1");
 
@@ -175,7 +193,7 @@ const ModelUpdate = (props) => {
   // chuyen trang
   const navigate = useNavigate();
 
-  const handleSave = async () => {
+  const handleUpdate = async () => {
     // get object all\
     const getObjChatLieu = await detailCL(chatLieu);
     const getObjMauSac = await detailMS(mauSac);
@@ -199,7 +217,8 @@ const ModelUpdate = (props) => {
     ) {
       toast.warning("Some field is empty!");
     } else {
-      let res = await postAddSanPham(
+      let res = await putUpdateSanPham(
+        idSpHttp,
         maSp,
         tenSp,
         getObjChatLieu,
@@ -216,7 +235,7 @@ const ModelUpdate = (props) => {
       console.log("Check res: ", res);
       if (res && res.idSp) {
         toast.success("Cập nhật thành công!");
-        navigate("/quan-ly-san-pham/san-pham/sua-san-pham/" + res.idSp);
+        navigate("/quan-ly-san-pham/san-pham");
       } else {
         toast.error("Cập nhật thất bại!");
       }
@@ -224,28 +243,42 @@ const ModelUpdate = (props) => {
   };
 
   // show form add size
-  const [open, setOpen] = useState(false);
+  const [openAddSize, setOpenAddSize] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
+  const handleClickAddSize = () => {
+    setOpenAddSize(true);
+  };
+
+  const handleClickUpdate = () => {
+    setOpenUpdate(true);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setOpenAddSize(false);
+    setOpenUpdate(false);
   };
 
   const hanldeAgree = async () => {
     let getObjSp = await detailSP(idSpHttp);
     let getObjSize = await detailSize(radioValue);
 
-    let res = await postAddCTSP(getObjSp, getObjSize, quantity, 0);
+    let res = await postAddCTSP(getObjSp, getObjSize, quantity, 0, quantity);
     console.log("Check res: ", res);
     if (res && res.idCtsp) {
       toast.success("Thêm thành công!");
     } else {
       toast.error("Thêm thất bại!");
     }
-    setOpen(false);
+    setOpenAddSize(false);
+    getSizeData();
+    setQuantity(1);
+    setRadioValue("");
+  };
+
+  const hanldeDelete = async (idCtsp) => {
+    let res = await deleteCTSP(idCtsp);
+    console.log("Check res: ", res);
     getSizeData();
   };
   // size
@@ -253,6 +286,73 @@ const ModelUpdate = (props) => {
     setQuantity(newQuantity);
   };
   const [quantity, setQuantity] = useState(1);
+
+  // image
+
+  const getAnhData = useCallback(async () => {
+    try {
+      let res = await fetchAnh(idSpHttp);
+      setListImg(res);
+    } catch (error) {
+      console.log("error: ", error);
+    }
+  }, [idSpHttp]);
+  useEffect(() => {
+    getAnhData();
+  }, [getAnhData]);
+
+  const [selectedImages, setSelectedImages] = useState([]);
+
+  const uploadImage = async () => {
+    if (selectedImages.length !== 0) {
+      const formData = new FormData();
+      selectedImages.forEach((image) => {
+        formData.append("images", image);
+        formData.append("idSp", idSpHttp);
+      });
+      let res = await postAddCloud(formData);
+      getAnhData();
+      console.log("Check res: ", res);
+      setSelectedImages([]);
+      const input = document.querySelector('input[type="file"]');
+      if (input) {
+        input.value = "";
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (selectedImages.length > 0) {
+      uploadImage();
+    }
+  }, [selectedImages]);
+
+  const onDrop = useCallback((acceptedFiles) => {
+    const imageFiles = acceptedFiles.filter((file) =>
+      file.type.startsWith("image/")
+    );
+    setSelectedImages(imageFiles);
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: "image/*",
+    multiple: true,
+  });
+
+  const handlDeleteImg = async (idImg, url) => {
+    const parts = url.split("/");
+    const publicId =
+      parts[parts.length - 2] + "/" + parts[parts.length - 1].split(".")[0];
+
+    let ces = await deleteCloud(publicId);
+    let res = await deleteAnh(idImg);
+    getAnhData();
+    console.log("Check ces: ", ces);
+    console.log("Check res: ", res);
+  };
+
+  // icon add image
 
   return (
     <>
@@ -419,13 +519,15 @@ const ModelUpdate = (props) => {
                 value="0"
                 control={<Radio />}
                 label="Kinh doanh"
-                checked={trangThai === 0 ? true : ""}
+                checked={Number(trangThai) === 0 ? "true" : ""}
+                onChange={(event) => setTrangThai(event.target.value)}
               />
               <FormControlLabel
                 value="10"
                 control={<Radio />}
                 label="Ngừng kinh doanh"
-                checked={trangThai === 10 ? true : ""}
+                checked={Number(trangThai) === 10 ? "true" : ""}
+                onChange={(event) => setTrangThai(event.target.value)}
               />
             </RadioGroup>
           </FormControl>
@@ -434,7 +536,7 @@ const ModelUpdate = (props) => {
           <Button
             variant="contained"
             color="success"
-            onClick={() => handleSave()}
+            onClick={() => handleClickUpdate()}
           >
             Cập nhật
           </Button>
@@ -486,7 +588,11 @@ const ModelUpdate = (props) => {
                         )}
                       </TableCell>
                       <TableCell>
-                        <Button variant="contained" color="warning">
+                        <Button
+                          variant="contained"
+                          color="warning"
+                          onClick={() => hanldeDelete(item.idCtsp)}
+                        >
                           Đổi trạng thái
                         </Button>
                       </TableCell>
@@ -497,12 +603,12 @@ const ModelUpdate = (props) => {
           </TableContainer>
         </div>
         <div style={{ textAlign: "center", margin: "20px 0" }}>
-          <Button variant="outlined" onClick={handleClickOpen}>
+          <Button variant="outlined" onClick={handleClickAddSize}>
             Thêm kích thước
           </Button>
 
           <Dialog
-            open={open}
+            open={openAddSize}
             onClose={handleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
@@ -513,8 +619,8 @@ const ModelUpdate = (props) => {
               <div>
                 {" "}
                 <p>Chọn size: </p>
-                <ButtonGroup>
-                  {listSize.map((radio, idx) => (
+                {listSize.map((radio, idx) => (
+                  <span style={{ marginLeft: "15px" }}>
                     <ToggleButton
                       key={idx}
                       id={`radio-${idx}`}
@@ -522,13 +628,13 @@ const ModelUpdate = (props) => {
                       variant={"outline-success"}
                       name="radio"
                       value={radio.idSize}
-                      checked={radioValue === radio.idSize} // Sửa thành radioValue === radio.idSize
+                      checked={Number(radioValue) === radio.idSize} // Sửa thành radioValue === radio.idSize
                       onChange={(e) => setRadioValue(e.currentTarget.value)}
                     >
                       {radio.tenSize}
                     </ToggleButton>
-                  ))}
-                </ButtonGroup>
+                  </span>
+                ))}
               </div>
               <div style={{ marginTop: "15px" }}>
                 <p>Số lượng: </p>
@@ -539,12 +645,87 @@ const ModelUpdate = (props) => {
               </div>
             </DialogContent>
             <DialogActions>
-              <Button onClick={handleClose}>Disagree</Button>
+              <Button onClick={handleClose}>Canel</Button>
               <Button onClick={() => hanldeAgree()} autoFocus>
-                Agree
+                Ok
               </Button>
             </DialogActions>
           </Dialog>
+          <Dialog
+            open={openUpdate}
+            onClose={handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Xác nhận cập nhật?"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Bạn có chắc chắn muốn cập nhật sản phẩm này không?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Canel</Button>
+              <Button onClick={() => handleUpdate()} autoFocus>
+                Ok
+              </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+      </div>
+      <div className="row row-order-management">
+        <div
+          className="title"
+          style={{ textAlign: "center", margin: "20px 0" }}
+        >
+          <h4>THÊM ẢNH</h4>
+        </div>
+
+        <div className="image-container">
+          <CardGroup>
+            {listImg &&
+              listImg.length > 0 &&
+              listImg.map((item, index) => (
+                <Card sx={{ width: 200, marginRight: 5, marginBottom: 5 }}>
+                  <CardActionArea>
+                    <Box position="relative">
+                      <CardMedia
+                        component="img"
+                        height="200"
+                        image={item.url}
+                        alt="green iguana"
+                      />
+                      <IconButton
+                        sx={{ position: "absolute", top: 0, right: 0 }}
+                        size="small"
+                        color="primary"
+                        onClick={() => handlDeleteImg(item.idImage, item.url)}
+                      >
+                        <DeleteIcon sx={{ color: pink[500], fontSize: 40 }} />
+                      </IconButton>
+                    </Box>
+                  </CardActionArea>
+                </Card>
+              ))}
+            {listImg.length < 10 && (
+              <Card
+                sx={{ width: 200, marginRight: 5, marginBottom: 5, padding: 2 }}
+              >
+                <div {...getRootProps()} className="dropzone">
+                  <input {...getInputProps()} />
+                  <p>
+                    <AddPhotoAlternateIcon sx={{ fontSize: 40 }} /> Kéo hoặc thả
+                    ảnh vô đây, hoặc click để chọn ảnh
+                  </p>
+                  <p>
+                    (Ảnh tải lên có thể mất khoảng 10-15s để load ảnh, xin hãy
+                    đợi 1 chút)
+                  </p>
+                </div>
+              </Card>
+            )}
+          </CardGroup>
         </div>
       </div>
     </>

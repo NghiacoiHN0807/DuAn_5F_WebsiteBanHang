@@ -69,11 +69,4 @@ public class SanPham {
     @Column(name = "trang_thai")
     private Integer trangThai;
 
-    public Integer getIdSp() {
-        return idSp;
-    }
-
-    public void setIdSp(Integer idSp) {
-        this.idSp = idSp;
-    }
 }

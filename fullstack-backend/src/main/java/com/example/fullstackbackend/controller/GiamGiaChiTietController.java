@@ -82,10 +82,8 @@ public class GiamGiaChiTietController {
     }
 
     @PostMapping("insert")
-    ResponseEntity<ReponObject> add(@RequestBody GiamGiaChiTiet giamGiaChiTiet) {
-        return ResponseEntity.status(HttpStatus.OK).body(
-                new ReponObject("Ok!", "Add success!", giamGiaChiTietService.add(giamGiaChiTiet))
-        );
+    GiamGiaChiTiet add(@RequestBody GiamGiaChiTiet giamGiaChiTiet) {
+        return giamGiaChiTietService.add(giamGiaChiTiet);
     }
 
     @PutMapping("update/{id}")
@@ -93,11 +91,16 @@ public class GiamGiaChiTietController {
         Optional<GiamGiaChiTiet> giamGiaChiTiet1 = giamGiaChiTietService.getOne(id);
         if (giamGiaChiTiet1.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ReponObject("Ok!", "Update success id: " + id, giamGiaChiTietService.update(giamGiaChiTiet))
+                    new ReponObject("Ok!", "Update success id: " + id, giamGiaChiTietService.update(giamGiaChiTiet, id))
             );
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ReponObject("Failed!", "Not found id: " + id, "")
         );
+    }
+
+    @GetMapping("getidGiamGiaByIdggct/{id}")
+    Integer findByIdGiamGia_IdGiamGia(@PathVariable("id") Integer id) {
+        return giamGiaChiTietService.findByIdGiamGia_IdGiamGia(id);
     }
 }

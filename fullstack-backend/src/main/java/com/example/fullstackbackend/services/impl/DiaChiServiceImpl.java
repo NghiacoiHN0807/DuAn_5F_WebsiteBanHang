@@ -20,20 +20,30 @@ public class DiaChiServiceImpl implements DiaChiSevice {
 
 
     @Override
-    public Page<DiaChi> getAll(String maTaiKhoan,Integer pageNo, Integer size) {
+    public Page<DiaChi> getAllByTK(String maTaiKhoan,Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return DiaChiRepository.findByMaTaiKhoan_MaTaiKhoan(maTaiKhoan ,pageable);
+    }
+
+    @Override
+    public Page<DiaChi> getAll(Integer pageNo, Integer size) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        return DiaChiRepository.findAll(pageable);
     }
 
 
     @Override
     public DiaChi add(DiaChi add) {
-        return DiaChiRepository.save(add);
+        if(DiaChiRepository.CountTaiKhoan(add.getTaiKhoan().getMaTaiKhoan()) >= 5){
+            return null;
+        }else {
+            return DiaChiRepository.save(add);
+        }
     }
 
     @Override
     public void delete(Integer id) {
-        DiaChiRepository.deleteById(id);
+        DiaChiRepository.XoaMem(id);
     }
 
     @Override
