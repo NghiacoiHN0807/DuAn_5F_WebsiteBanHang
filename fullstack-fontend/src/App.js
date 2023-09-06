@@ -8,6 +8,8 @@ import Home from "./components/web-online/Home";
 import { ToastContainer } from "react-toastify";
 import Footer from "./layout/Footer";
 import TableTKKhachHang from "./components/TaiKhoanKhachHang/TableTKKhachHang";
+import Login from "./components/web-online/Login";
+import SignUp from "./components/web-online/SignUp";
 
 
 function App() {
@@ -19,6 +21,8 @@ function App() {
           <div className="my-3">
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signUp" element={<SignUp />} />
               <Route path="/table-xuatXu" element={<TableXuatXu />} />
               <Route path="/tai-Khoan-KH" element={<TableTKKhachHang />} />
             </Routes>
