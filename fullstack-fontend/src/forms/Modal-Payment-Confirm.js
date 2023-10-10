@@ -137,6 +137,9 @@ const ModalPaymentComfirm = (props) => {
                   maxRows={4}
                   variant="outlined"
                   size="small"
+                  InputProps={{
+                    readOnly: true,
+                  }}
                   defaultValue={listHD.maHd}
                   fullWidth
                   sx={{ marginTop: 2 }}
@@ -148,6 +151,9 @@ const ModalPaymentComfirm = (props) => {
                   maxRows={4}
                   variant="outlined"
                   size="small"
+                  InputProps={{
+                    readOnly: true,
+                  }}
                   defaultValue={thanhTien}
                   fullWidth
                   sx={{ marginTop: 2 }}

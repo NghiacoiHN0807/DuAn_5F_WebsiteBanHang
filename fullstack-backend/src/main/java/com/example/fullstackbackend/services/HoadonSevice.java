@@ -22,7 +22,7 @@ public interface HoadonSevice {
     HoaDon add(HoaDon add);
 
 
-    HoaDon delete(Integer id);
+    void delete(Integer id);
 
     Boolean checkExists(Integer id);
 
