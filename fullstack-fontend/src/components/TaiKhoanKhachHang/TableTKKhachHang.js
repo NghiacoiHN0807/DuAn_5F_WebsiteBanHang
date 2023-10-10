@@ -1,9 +1,5 @@
 import Nav from "react-bootstrap/Nav";
-
 import Form from "react-bootstrap/Form";
-
-
-
 import React, {useState} from "react";
 import {useEffect} from "react";
 import {deleteTaiKhoanKH, fetchAllTKKH} from "../../services/taiKhoanKhachHangSevice";
