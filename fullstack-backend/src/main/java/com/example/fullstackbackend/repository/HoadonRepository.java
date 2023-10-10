@@ -31,5 +31,5 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
     @Modifying
     @Transactional
     @Query(value = "UPDATE HoaDon hd SET hd.trangThai= 10 WHERE hd.idHd=?1")
-    HoaDon delete(Integer idHD);
+    void delete(Integer idHD);
 }

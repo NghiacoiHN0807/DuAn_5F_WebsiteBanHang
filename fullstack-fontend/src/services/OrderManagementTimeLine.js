@@ -1,6 +1,9 @@
 import custom from "./custom-axios";
 const updateStatusBill = (idHd, moTa, trangThai) => {
-  return custom.put(`/hoa-don/update-status/${idHd}`, { moTa, trangThai });
+  return custom.put(`/hoa-don/update-status/${idHd}?moTa=${moTa}`, {
+    moTa,
+    trangThai,
+  });
 };
 const updatePayment = (
   idHd,

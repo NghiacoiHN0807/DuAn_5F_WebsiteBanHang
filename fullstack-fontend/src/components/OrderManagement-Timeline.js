@@ -216,7 +216,7 @@ const OrderManagementTimeline = ({ classes }) => {
             color="success"
             onClick={() => handleConfirm()}
             disabled={
-              activeIndex === 10 || activeIndex === 3 || activeIndex > 4
+              activeIndex === 10 || activeIndex === 3 || activeIndex >= 5
             }
           >
             {activeIndex === 0
@@ -229,13 +229,13 @@ const OrderManagementTimeline = ({ classes }) => {
               ? "Xác Nhận Thanh Toán"
               : activeIndex === 4
               ? "Đã giao thành công"
-              : "Default text"}
+              : "Đơn Đã Hoàn Thành"}
           </Button>{" "}
           <Button
             variant="outlined"
             color="error"
             onClick={handleNextClick}
-            disabled={activeIndex <= 2}
+            disabled={activeIndex <= 1}
           >
             Hủy Đơn Hàng
           </Button>
