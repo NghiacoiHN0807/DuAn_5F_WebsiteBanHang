@@ -207,7 +207,7 @@ function AppADM(props) {
           <List component="div" disablePadding>
             {[
               { text: "Nhân Viên", link: "/table-taiKhoan" },
-              { text: "Khách Hàng", link: "/table-taiKhoanKH" },
+              { text: "Khách Hàng", link: "/tai-Khoan-KH" },
               { text: "Địa Chỉ", link: "/dia-chi" },
             ].map((item, index) => (
               <ListItem key={item.text} disablePadding>

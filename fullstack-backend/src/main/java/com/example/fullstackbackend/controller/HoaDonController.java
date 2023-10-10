@@ -149,7 +149,7 @@ public class HoaDonController {
     }
     @PutMapping("update-status/{id}")
     public HoaDon updateStatus(@RequestBody HoaDon newHD, @PathVariable("id") Integer id,
-                               @RequestParam("moTa") String moTa) {
+                               @RequestParam String moTa) {
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTrangThai(newHD.getTrangThai());
             return hoadonSevice.add(hoaDon);
@@ -333,11 +333,11 @@ public class HoaDonController {
         }
 
     @PutMapping("delete/{id}")
-    public void delete(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
         if (!hoadonSevice.checkExists(id)) {
             throw new xuatXuNotFoundException(id);
         } else {
-            HoaDon hoaDon = hoadonSevice.delete(id);
+            Optional<HoaDon> hoaDon = hoadonSevice.detail(id);
             //Add to history bill
 
             // get datetimenow
@@ -346,12 +346,15 @@ public class HoaDonController {
             Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
 
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-            lichSuHoaDon.setIdHd(hoaDon);
-            lichSuHoaDon.setIdTk(hoaDon.getIdTK());
-            lichSuHoaDon.setTrangThai(hoaDon.getTrangThai());
+            lichSuHoaDon.setIdHd(hoaDon.get());
+            lichSuHoaDon.setIdTk(hoaDon.get().getIdTK());
+            lichSuHoaDon.setTrangThai(hoaDon.get().getTrangThai());
             lichSuHoaDon.setMoTa("Đơn Hàng Đã Bị Xóa");
             lichSuHoaDon.setNgayThayDoi(currentTimestamp);
             lichSuHoaDonService.add(lichSuHoaDon);
+
+            hoadonSevice.delete(id);
+            return ResponseEntity.ok("Đã Xóa Thành Công!!!");
         }
     }
 
