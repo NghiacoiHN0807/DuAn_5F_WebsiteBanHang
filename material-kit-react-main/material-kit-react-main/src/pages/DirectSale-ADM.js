@@ -29,7 +29,7 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
-import USERLIST from '../_mock/user';
+// import USERLIST from '../_mock/user';
 // import { useEffect } from 'react';
 import { selectAllBill } from '../service/BillSevice';
 
@@ -37,10 +37,10 @@ import { selectAllBill } from '../service/BillSevice';
 
 const TABLE_HEAD = [
   { id: 'maHd', label: 'Mã Hóa Đơn', alignRight: false },
-  // { id: 'company', label: 'Company', alignRight: false },
-  // { id: 'role', label: 'Role', alignRight: false },
-  // { id: 'isVerified', label: 'Verified', alignRight: false },
-  // { id: 'status', label: 'Status', alignRight: false },
+  { id: 'tenKh', label: 'Tên Khách Hàng', alignRight: false },
+  { id: 'role', label: 'Role', alignRight: false },
+  { id: 'isVerified', label: 'Verified', alignRight: false },
+  { id: 'status', label: 'Status', alignRight: false },
   { id: '' },
 ];
 
@@ -92,22 +92,22 @@ export default function UserPage() {
 
   const [listBill, setListBill] = useState([]);
   // Show Data On Tables
-  const [numberPages, setNumberPages] = useState(0);
-  const getListData = async (page) => {
+  // const [numberPages, setNumberPages] = useState(0);
+  const getListData = async () => {
     try {
-      const res = await selectAllBill(page);
+      const res = await selectAllBill();
       console.log('Check res: ', res);
       setListBill(res);
 
-      setNumberPages(Math.ceil(res.totalPages));
+      // setNumberPages(Math.ceil(res.totalPages));
     } catch (error) {
       console.error('Error in list bill: ', error);
     }
   };
-  const [currentPage, setCurrentPage] = useState(0);
+  // const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
-    getListData(currentPage);
-  }, [currentPage]);
+    getListData();
+  }, []);
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -146,7 +146,7 @@ export default function UserPage() {
     }
     setSelected(newSelected);
   };
-
+  // Next Page
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -164,22 +164,22 @@ export default function UserPage() {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listBill.length) : 0;
 
   const filteredUsers =
-    listBill && listBill.content ? applySortFilter(listBill.content, getComparator(order, orderBy), filterName) : [];
+    listBill && listBill ? applySortFilter(listBill, getComparator(order, orderBy), filterName) : [];
   const isNotFound = !filteredUsers.length && !!filterName;
 
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Sales | Minimal UI </title>
       </Helmet>
 
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            User
+            Hóa Đơn
           </Typography>
           <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            New User
+            Thêm Hóa Đơn
           </Button>
         </Stack>
 
@@ -200,7 +200,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { idHd, maHd } = row;
+                    const { idHd, maHd, tenKh } = row;
                     const selectedUser = selected.indexOf(idHd) !== -1;
 
                     return (
@@ -209,9 +209,14 @@ export default function UserPage() {
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, idHd)} />
                         </TableCell>
 
-                        <TableCell align="left">{idHd}</TableCell>
-
                         <TableCell align="left">{maHd}</TableCell>
+
+                        <TableCell align="left">{tenKh}</TableCell>
+                        <TableCell align="right">
+                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                            <Iconify icon={'eva:more-vertical-fill'} />
+                          </IconButton>
+                        </TableCell>
                       </TableRow>
                     );
                   })}
@@ -252,7 +257,7 @@ export default function UserPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={listBill && listBill.length ? listBill.length : 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

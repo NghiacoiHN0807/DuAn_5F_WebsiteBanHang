@@ -62,10 +62,8 @@ public class HoaDonController {
     }
 
     @GetMapping("view-all-offline-invoice")
-    public Page<HoaDon> viewOffline(@RequestParam(defaultValue = "0") Integer page, 
-                                @RequestParam(defaultValue = "10") Integer size,
-                                @RequestParam("p") Optional<Integer> p) {
-        Page<HoaDon> hoaDons = hoadonSevice.hoaDonOffline(p.orElse(page), size);
+    public List<HoaDon> viewOffline() {
+        List<HoaDon> hoaDons = hoadonSevice.hoaDonOffline();
         return hoaDons;
     }
 

@@ -1,6 +1,6 @@
 import custom from './custom-axios';
 
-const selectAllBill = (page) => custom.get(`/hoa-don/view-all-offline-invoice?p=${page}`);
+const selectAllBill = () => custom.get(`/hoa-don/view-all-offline-invoice`);
 const postAddBill = (maHd, ngayTao, kieuHoaDon, trangThai) =>
   custom.post('/hoa-don/add', { maHd, ngayTao, kieuHoaDon, trangThai });
 // const detailBill = (id_hd) => custom.get(`/hoa-don/detail/${id_hd}`);

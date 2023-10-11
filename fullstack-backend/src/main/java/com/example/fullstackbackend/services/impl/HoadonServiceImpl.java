@@ -33,9 +33,9 @@ public class HoadonServiceImpl implements HoadonSevice {
     }
 
     @Override
-    public Page<HoaDon> hoaDonOffline(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return hoadonRepository.pageOfflineInvoice(pageable);
+    public List<HoaDon> hoaDonOffline() {
+//        Pageable pageable = PageRequest.of(pageNo, size);
+        return hoadonRepository.pageOfflineInvoice();
     }
 
     @Override
