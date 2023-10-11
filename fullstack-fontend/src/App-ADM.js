@@ -5,6 +5,7 @@ import CTSPMain from "./components/ChiTietSP/CTSPMain";
 import ChatLieuMain from "./components/ChatLieu/ChatLieuMain";
 import LoaiCoAoMain from "./components/LoaiCoAo/LoaiCoAoMain";
 import LoaiSPMain from "./components/LoaiSP/LoaiSPMain";
+import VeChungToi from "./components/web-online/VeChungToi";
 import MauSacMain from "./components/MauSac/MauSacMain";
 import OngTayAoMain from "./components/OngTayAo/OngTayAoMain";
 import SanPhamMain from "./components/SanPham/SanPhamMain";
@@ -207,7 +208,7 @@ function AppADM(props) {
           <List component="div" disablePadding>
             {[
               { text: "Nhân Viên", link: "/table-taiKhoan" },
-              { text: "Khách Hàng", link: "/table-taiKhoanKH" },
+              { text: "Khách Hàng", link: "/tai-Khoan-KH" },
               { text: "Địa Chỉ", link: "/dia-chi" },
             ].map((item, index) => (
               <ListItem key={item.text} disablePadding>
@@ -353,6 +354,7 @@ function AppADM(props) {
             <Route path="/quan-ly-giam-gia" element={<TableGiamGia />} />
             <Route path="/direct-sale" element={<DireactSale />} />
             <Route path="/create-bill/:id" element={<CartBillADM />} />
+            <Route path="/ve-chung-toi" element={<VeChungToi />} />
             <Route
               path="/update/giam-gia/:id"
               element={<ModelUpdateNewGiamGia />}
