@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import Nav from "react-bootstrap/Nav";
 import logo5F from "../assets/logo_5F.png";
 import NavDropdown from "react-bootstrap/NavDropdown";
@@ -49,7 +48,6 @@ const Footer = (props) => {
   );
 };
 export default Footer;
-=======
 // import React from "react";
 // import { Nav, NavDropdown } from "react-bootstrap";
 // import logo5F from "../assets/logo_5F.png";
@@ -114,4 +112,3 @@ export default Footer;
 //     </footer>
 
 // export default Footer;
->>>>>>> main

@@ -9,13 +9,8 @@ const ModelConfirm = (props) => {
   const { show, handleClose, isDataGiamGia, getGiamGia } = props;
 
   const confirmDelte = async () => {
-<<<<<<< HEAD
-    let res = await remove(isDataGiamGia.idGgct);
-    console.log(isDataGiamGia.idGgct);
-=======
     console.log(isDataGiamGia);
     let res = await remove(isDataGiamGia.idGgct);
->>>>>>> main
     if (res.status === "Ok!") {
       toast.success("This data has been deleted");
       handleClose();
@@ -33,23 +28,6 @@ const ModelConfirm = (props) => {
         onHide={handleClose}
         backdrop="static"
         keyboard={false}
-<<<<<<< HEAD
-      >
-        <Modal.Header closeButton>
-          <Modal.Title>DELETE</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div>Are you sure want delete this data?</div>
-          <br />
-          <b>Ma: {isDataGiamGia.idGgct}</b>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={() => confirmDelte()}>
-            Confirm Delete
-=======
         style={{ zIndex: 9999 }} // Thêm thuộc tính style với z-index mong muốn
       >
         <Modal.Header closeButton>
@@ -66,7 +44,6 @@ const ModelConfirm = (props) => {
           </Button>
           <Button variant="primary" onClick={() => confirmDelte()}>
             Đồng ý
->>>>>>> main
           </Button>
         </Modal.Footer>
       </Modal>

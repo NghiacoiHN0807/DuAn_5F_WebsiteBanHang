@@ -1,13 +1,7 @@
 .modal {
-<<<<<<< HEAD
-    --bs-modal-width: 800px !important
-}
-  
-=======
   --bs-modal-width: 800px !important;
 }
 
->>>>>>> main
 $font-family: sans-serif;
 
 .App {
@@ -16,11 +10,6 @@ $font-family: sans-serif;
 }
 
 // Lựa chọn phần tử có thuộc tính aria-hidden="true"
-<<<<<<< HEAD
-[aria-hidden="true"] {
-  display: none !important;
-}
-=======
 div.mb-3[aria-hidden="true"] {
   display: none !important;
 }
@@ -32,4 +21,3 @@ div.mb-3[aria-hidden="true"] {
 // [aria-hidden="true"] {
 //   display: none !important;
 // }
->>>>>>> main
