@@ -1,14 +1,14 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
 // @mui
 import {
   Card,
   Table,
   Stack,
   Paper,
-  Avatar,
   Button,
   Popover,
   Checkbox,
@@ -21,9 +21,10 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 // components
-import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
@@ -31,16 +32,18 @@ import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 // import USERLIST from '../_mock/user';
 // import { useEffect } from 'react';
-import { selectAllBill } from '../service/BillSevice';
+import { postAddBill, selectAllBill } from '../service/BillSevice';
+import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { id: 'maHd', label: 'Mã Hóa Đơn', alignRight: false },
+  { id: 'thanhTien', label: 'Thành Tiền', alignRight: false },
   { id: 'tenKh', label: 'Tên Khách Hàng', alignRight: false },
-  { id: 'role', label: 'Role', alignRight: false },
-  { id: 'isVerified', label: 'Verified', alignRight: false },
-  { id: 'status', label: 'Status', alignRight: false },
+  { id: 'sdtKh', label: 'Số Điện Thoại', alignRight: false },
+  { id: 'ngayTao', label: 'Ngày Tạo', alignRight: false },
+  { id: 'trangThai', label: 'Trạng Thái', alignRight: false },
   { id: '' },
 ];
 
@@ -109,7 +112,13 @@ export default function UserPage() {
     getListData();
   }, []);
 
-  const handleOpenMenu = (event) => {
+  // Open and Close menu
+  const [object, getObject] = useState([]);
+  const handleOpenMenu = (event, row) => {
+    console.log('Check event: ', event);
+    console.log('Check event: ', row);
+    getObject(row);
+
     setOpen(event.currentTarget);
   };
 
@@ -167,6 +176,73 @@ export default function UserPage() {
     listBill && listBill ? applySortFilter(listBill, getComparator(order, orderBy), filterName) : [];
   const isNotFound = !filteredUsers.length && !!filterName;
 
+  // Set status of trangThai
+  function mapTrangThaiToStatus(trangThai) {
+    return trangThai === 8 ? 'Hóa Đơn Treo' : trangThai === 9 ? 'Đã thanh toán' : 'Unknown status';
+  }
+  const navigate = useNavigate();
+
+  // Create a new Detail Direct
+  const [alertContent, setAlertContent] = useState(null);
+  const [lastGeneratedNumber, setLastGeneratedNumber] = useState(0);
+
+  useEffect(() => {
+    // Đọc số lớn nhất từ cơ sở dữ liệu (localStorage) khi ứng dụng khởi động
+    const savedNumber = localStorage.getItem('lastGeneratedNumber');
+    if (savedNumber) {
+      setLastGeneratedNumber(Number(savedNumber));
+    }
+  }, []);
+  const generateNewCode = () => {
+    const newNumber = lastGeneratedNumber + 1;
+    setLastGeneratedNumber(newNumber);
+
+    // Lưu số mới vào cơ sở dữ liệu (localStorage)
+    localStorage.setItem('lastGeneratedNumber', newNumber.toString());
+
+    return `HD${newNumber.toString().padStart(5, '0')}`;
+  };
+
+  let getIdHttp;
+
+  const currentDate = new Date();
+  const formattedDate = format(currentDate, 'yyyy-MM-dd');
+  const handleAdd = async () => {
+    const newCode = generateNewCode();
+    const res = await postAddBill(newCode, formattedDate, 1, 8);
+    setAlertContent({
+      type: 'success',
+      message: 'Tạo thành công hóa đơn',
+    });
+    // toast.success('Tạo thành công hóa đơn');
+    getIdHttp = res.idHd;
+    navigate(`/create-bill/${getIdHttp}`);
+  };
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setAlertContent(null);
+  };
+
+  // Handle delete
+  const [openDelete, setOpenDelete] = useState(false);
+  const [information, setInformation] = useState();
+  const handleDelete = () => {
+    setInformation(object);
+    setOpenDelete(true);
+  };
+  const handleClose = () => {
+    setOpenDelete(false);
+    getListData();
+  };
+
+  // Handle edit
+  const handleEdit = () => {
+    navigate(`/create-bill/${object.idHd}`);
+    console.log('handleEdit');
+  };
+
   return (
     <>
       <Helmet>
@@ -178,7 +254,7 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Hóa Đơn
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button onClick={() => handleAdd()} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Thêm Hóa Đơn
           </Button>
         </Stack>
@@ -200,7 +276,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { idHd, maHd, tenKh } = row;
+                    const { idHd, maHd, thanhTien, tenKh, sdtKh, ngayTao, trangThai } = row;
                     const selectedUser = selected.indexOf(idHd) !== -1;
 
                     return (
@@ -208,12 +284,14 @@ export default function UserPage() {
                         <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, idHd)} />
                         </TableCell>
-
                         <TableCell align="left">{maHd}</TableCell>
-
+                        <TableCell align="left">{thanhTien}</TableCell>
                         <TableCell align="left">{tenKh}</TableCell>
+                        <TableCell align="left">{sdtKh}</TableCell>
+                        <TableCell align="left">{ngayTao}</TableCell>
+                        <TableCell align="left">{mapTrangThaiToStatus(trangThai)}</TableCell>
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -285,15 +363,29 @@ export default function UserPage() {
         }}
       >
         <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+          <Iconify onClick={() => handleEdit()} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}>
+        <MenuItem onClick={() => handleDelete()} sx={{ color: 'error.main' }}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
       </Popover>
+      {/* Dialog xác nhận xóa */}
+      <ModalDeleteDirectSale open={openDelete} handleClose={handleClose} information={information} />
+      {alertContent && (
+        <Snackbar
+          open
+          autoHideDuration={3000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+            {alertContent.message}
+          </Alert>
+        </Snackbar>
+      )}
     </>
   );
 }

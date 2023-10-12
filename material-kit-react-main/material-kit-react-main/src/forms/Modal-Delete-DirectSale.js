@@ -1,46 +1,55 @@
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Slide from "@mui/material/Slide";
-import { useState, useEffect } from "react";
-import { forwardRef } from "react";
-import { toast } from "react-toastify";
-import { deleteHD } from "../services/BillSevice";
+import { Alert, Snackbar } from '@mui/material';
+import Button from '@mui/material/Button';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+import Slide from '@mui/material/Slide';
+import { useState, useEffect, forwardRef } from 'react';
+import { deleteHD } from '../service/BillSevice';
 
-const Transition = forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
 export default function ModalDeleteDirectSale(props) {
-  // Get Props
   const { open, handleClose, information } = props;
+  const [maHd, setMaHd] = useState('');
+  const [alertContent, setAlertContent] = useState(null);
 
-  // Set maHd using useState
-  const [maHd, setMaHd] = useState("");
-
-  // Update maHd when information changes
   useEffect(() => {
     if (information != null) {
       setMaHd(information.maHd);
     } else {
-      setMaHd("");
+      setMaHd('');
     }
   }, [information]);
 
-  // Handle Delete
   const handleDelete = async () => {
     if (information.trangThai === 8) {
       await deleteHD(information.idHd);
-      toast.success("Đã xóa hóa đơn chờ thành công ");
+      setAlertContent({
+        type: 'success',
+        message: 'Đã xóa hóa đơn chờ thành công',
+      });
     } else if (information.trangThai === 9) {
-      toast.warn("Hóa đơn đã được thanh toán. Không thể xóa!!!");
+      setAlertContent({
+        type: 'warning',
+        message: 'Hóa đơn đã được thanh toán. Không thể xóa!!!',
+      });
     } else {
-      toast.error("Xóa không thành công ");
+      setAlertContent({
+        type: 'error',
+        message: 'Xóa không thành công',
+      });
     }
     handleClose();
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setAlertContent(null);
   };
 
   return (
@@ -52,17 +61,28 @@ export default function ModalDeleteDirectSale(props) {
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{"Xóa Hóa Đơn"}</DialogTitle>
+        <DialogTitle>{'Xóa Hóa Đơn'}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">
-            Xóa Hóa Đơn Có Mã Là: {maHd}
-          </DialogContentText>
+          <DialogContentText id="alert-dialog-slide-description">Xóa Hóa Đơn Có Mã Là: {maHd}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Hủy</Button>
           <Button onClick={handleDelete}>Đồng Ý</Button>
         </DialogActions>
       </Dialog>
+
+      {alertContent && (
+        <Snackbar
+          open
+          autoHideDuration={3000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+            {alertContent.message}
+          </Alert>
+        </Snackbar>
+      )}
     </div>
   );
 }
