@@ -7,8 +7,9 @@ import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
-import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
+
+import SanPham from './pages/SanPham/SanPhamMain';
 
 // ----------------------------------------------------------------------
 
@@ -24,7 +25,7 @@ export default function Router() {
         { path: 'sales', element: <DashboardAppPage /> },
         { path: 'clients', element: <UserPage /> },
         { path: 'staff', element: <UserPage /> },
-        { path: 'products', element: <ProductsPage /> },
+        { path: 'products', element: <SanPham /> },
         { path: 'discounts', element: <BlogPage /> },
       ],
     },
