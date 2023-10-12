@@ -1,10 +1,6 @@
 package com.example.fullstackbackend.repository;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
-<<<<<<< HEAD
-import com.example.fullstackbackend.entity.GiamGiaChiTiet;
-=======
->>>>>>> main
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,22 +8,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-<<<<<<< HEAD
-=======
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
->>>>>>> main
 
 @Repository
 
 public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, Integer> {
-<<<<<<< HEAD
-
-    @Query("SELECT g FROM ChiTietSanPham g WHERE g.trangThai = :trangThai")
-    Page<ChiTietSanPham> findAllByTrangThai(@Param("trangThai") Integer trangThai, Pageable pageable);
-=======
     @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.tenSp = :tenSp")
     List<ChiTietSanPham> findByProductName(@Param("tenSp") String tenSp);
 
@@ -54,6 +42,5 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
 
     @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.idSp = ?1 and x.idSize.idSize = ?2")
     ChiTietSanPham checkExistSPandSize(Integer idSp, Integer idSize);
->>>>>>> main
 
 }

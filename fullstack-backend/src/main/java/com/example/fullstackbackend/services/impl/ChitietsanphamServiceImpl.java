@@ -2,40 +2,23 @@ package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.repository.ChitietsanphamRepository;
-<<<<<<< HEAD
-import com.example.fullstackbackend.services.ChitietsanphamSevice;
-=======
 import com.example.fullstackbackend.services.ChitietsanphamService;
->>>>>>> main
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-<<<<<<< HEAD
-import java.util.Optional;
-
-@Service
-public class ChitietsanphamServiceImpl implements ChitietsanphamSevice {
-=======
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ChitietsanphamServiceImpl implements ChitietsanphamService {
->>>>>>> main
 
     @Autowired
     private ChitietsanphamRepository chitietsanphamRepository;
 
     @Override
-<<<<<<< HEAD
-    public Page<ChiTietSanPham> chatlieuPage(Integer pageNo, Integer size, Integer trangThai) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return chitietsanphamRepository.findAllByTrangThai(trangThai, pageable);
-    }
-=======
     public Page<ChiTietSanPham> chiTietSP(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return chitietsanphamRepository.findAll(pageable);
@@ -115,5 +98,4 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
 //    }
 
 
->>>>>>> main
 }

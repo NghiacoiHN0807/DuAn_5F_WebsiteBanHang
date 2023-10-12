@@ -1,13 +1,6 @@
 package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.LoaiSp;
-<<<<<<< HEAD
-import com.example.fullstackbackend.services.LoaispSevice;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-=======
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.LoaispService;
 import jakarta.validation.Valid;
@@ -21,23 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
->>>>>>> main
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-<<<<<<< HEAD
-@RestController
-@RequestMapping("/loai-sp/api/")
-@CrossOrigin("http://localhost:3000/")
-public class LoaiSpController {
-    @Autowired
-    private LoaispSevice loaispSevice;
-
-    @GetMapping("views")
-    Page<LoaiSp> getAll(@RequestParam(value = "page", defaultValue = "0") Integer pageNo, @RequestParam(value = "size", defaultValue = "5") Integer size, @RequestParam(value = "trangThai", defaultValue = "0") Integer trangThai) {
-        return loaispSevice.chatlieuPage(pageNo, size, trangThai);
-=======
 import java.util.List;
 import java.util.Optional;
 
@@ -50,8 +30,8 @@ public class LoaiSpController {
 
     @GetMapping("view-all")
     public Page<LoaiSp> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                  @RequestParam(defaultValue = "5") Integer size,
-                                  @RequestParam("p") Optional<Integer> p) {
+                                @RequestParam(defaultValue = "5") Integer size,
+                                @RequestParam("p") Optional<Integer> p) {
         return loaispService.loaiSpPage(p.orElse(page), size);
     }
 
@@ -62,7 +42,7 @@ public class LoaiSpController {
 
     @PostMapping("add")
     public LoaiSp add(@Valid @RequestBody LoaiSp loaiSp,
-                        BindingResult bindingResult) {
+                      BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
@@ -88,6 +68,5 @@ public class LoaiSpController {
     @PutMapping("update")
     public LoaiSp update(@RequestBody LoaiSp loaiSp) {
         return loaispService.update(loaiSp);
->>>>>>> main
     }
 }

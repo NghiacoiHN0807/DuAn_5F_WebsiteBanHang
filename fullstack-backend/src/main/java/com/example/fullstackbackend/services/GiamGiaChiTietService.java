@@ -18,23 +18,14 @@ public interface GiamGiaChiTietService {
 
     Optional<GiamGiaChiTiet> getOne(Integer id);
 
-<<<<<<< HEAD
-    Object add(GiamGiaChiTiet giamGiaChiTiet);
-
-    Object update(GiamGiaChiTiet giamGiaChiTiet);
-=======
     GiamGiaChiTiet add(GiamGiaChiTiet giamGiaChiTiet);
 
     Object update(GiamGiaChiTiet giamGiaChiTiet, Integer id);
->>>>>>> main
 
     Boolean existsById(Integer id);
 
     void remove(Integer id);
 
-<<<<<<< HEAD
-=======
     Integer findByIdGiamGia_IdGiamGia(Integer id);
 
->>>>>>> main
 }

@@ -1,8 +1,5 @@
 package com.example.fullstackbackend.services;
 
-<<<<<<< HEAD
-public interface HoadonchitietSevice {
-=======
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
 import org.springframework.data.domain.Page;
@@ -32,5 +29,4 @@ public interface HoadonchitietSevice {
     List<HoaDonChiTiet> getOne(Integer idHd);
 
     HoaDonChiTiet updateCart(ChiTietSanPham idCTSP, Integer soLuong, BigDecimal donGia, Integer idHD);
->>>>>>> main
 }

@@ -1,11 +1,5 @@
 package com.example.fullstackbackend.repository;
 
-<<<<<<< HEAD
-import com.example.fullstackbackend.entity.HoaDonChiTiet;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-=======
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
 import org.springframework.data.domain.Page;
@@ -16,14 +10,11 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
->>>>>>> main
 
 
 @Repository
 
 public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, Integer> {
-<<<<<<< HEAD
-=======
     @Query(value = "SELECT id_hdct, id_ctsp, id_hd, so_luong, don_gia, ly_do_huy, trang_thai FROM duan_5f.hoa_don_chi_tiet where id_hd = ?1", nativeQuery = true)
     List<HoaDonChiTiet> detailHDCT(Integer id);
 
@@ -42,6 +33,5 @@ public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, In
             "ORDER BY sp.ma_sp DESC", nativeQuery = true)
     Page<Object[]> getListProductOncart(Pageable pageable, Integer idHd);
 
->>>>>>> main
 
 }

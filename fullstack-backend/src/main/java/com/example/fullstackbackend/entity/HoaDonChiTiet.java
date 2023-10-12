@@ -26,15 +26,6 @@ import java.math.BigDecimal;
 public class HoaDonChiTiet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-<<<<<<< HEAD
-    private Integer idHdct;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_hd", referencedColumnName = "id_hd")
-    private HoaDon idHd;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-=======
     @Column(name = "id_hdct")
     private Integer idHdct;
 
@@ -43,7 +34,6 @@ public class HoaDonChiTiet {
     private HoaDon idHd;
 
     @ManyToOne(fetch = FetchType.EAGER)
->>>>>>> main
     @JoinColumn(name = "id_ctsp", referencedColumnName = "id_ctsp")
     private ChiTietSanPham idCtsp;
 
@@ -58,8 +48,5 @@ public class HoaDonChiTiet {
 
     @Column(name = "trang_thai")
     private Integer trangThai;
-<<<<<<< HEAD
-=======
 
->>>>>>> main
 }

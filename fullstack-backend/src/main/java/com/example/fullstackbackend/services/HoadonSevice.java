@@ -1,8 +1,5 @@
 package com.example.fullstackbackend.services;
 
-<<<<<<< HEAD
-public interface HoadonSevice {
-=======
 import com.example.fullstackbackend.DTO.HoaDonDTO;
 import com.example.fullstackbackend.entity.HoaDon;
 import org.springframework.data.domain.Page;
@@ -36,5 +33,4 @@ public interface HoadonSevice {
     HoaDon finByMaHD(Integer maHD);
 
     HoaDon updatePaymentOnline(Integer idHd, HoaDon hoaDonDTO);
->>>>>>> main
 }

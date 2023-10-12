@@ -29,7 +29,6 @@ public class ChiTietSanPham {
     @Column(name = "id_ctsp")
     private Integer idCtsp;
 
-<<<<<<< HEAD
     @Column(name = "ma_ctsp")
     private String maCtsp;
 
@@ -41,8 +40,6 @@ public class ChiTietSanPham {
     @JoinColumn(name = "id_ms", referencedColumnName = "id_ms")
     private MauSac idMs;
 
-=======
->>>>>>> main
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_size", referencedColumnName = "id_size")
     private Size idSize;
@@ -51,7 +48,6 @@ public class ChiTietSanPham {
     @JoinColumn(name = "id_sp", referencedColumnName = "id_sp")
     private SanPham idSp;
 
-<<<<<<< HEAD
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_loaisp", referencedColumnName = "id_loaisp")
     private LoaiSp isLsp;
@@ -76,11 +72,6 @@ public class ChiTietSanPham {
     @Column(name = "gia_ban")
     private BigDecimal giaBan;
 
-=======
-    @Column(name = "so_luong_ton")
-    private Integer soLuongTon;
-
->>>>>>> main
     @Column(name = "trang_thai")
     private Integer trangThai;
 

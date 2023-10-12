@@ -1,13 +1,5 @@
 package com.example.fullstackbackend.services.impl;
 
-<<<<<<< HEAD
-import com.example.fullstackbackend.repository.HoadonchitietRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-@Service
-public class HoadonchitietServiceImpl {
-=======
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
 import com.example.fullstackbackend.repository.HoadonchitietRepository;
@@ -24,13 +16,10 @@ import java.util.Optional;
 
 @Service
 public class HoadonchitietServiceImpl implements HoadonchitietSevice {
->>>>>>> main
 
     @Autowired
     private HoadonchitietRepository hoadonchitietRepository;
 
-<<<<<<< HEAD
-=======
     @Override
     public List<HoaDonChiTiet> getAll() {
         return null;
@@ -83,5 +72,4 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     public HoaDonChiTiet updateCart(ChiTietSanPham idCTSP, Integer soLuong, BigDecimal donGia, Integer idHD) {
         return hoadonchitietRepository.updateCart(idCTSP, soLuong, donGia, idHD);
     }
->>>>>>> main
 }

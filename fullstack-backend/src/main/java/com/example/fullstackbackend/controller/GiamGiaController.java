@@ -60,11 +60,7 @@ public class GiamGiaController {
         );
     }
 
-<<<<<<< HEAD
     @PostMapping("insert")
-=======
-        @PostMapping("insert")
->>>>>>> main
     ResponseEntity<ReponObject> insert(@RequestBody GiamGia giamGia) {
         List<GiamGia> giamGias = giamGiaService.getByMa(giamGia.getMaGiamGia().trim());
         if (giamGias.size() > 0) {
@@ -91,8 +87,6 @@ public class GiamGiaController {
         );
     }
 
-<<<<<<< HEAD
-=======
 //    @PostMapping("addGiamGiaWithChiTiet")
 //    public ResponseEntity<String> addGiamGiaWithChiTiet(@RequestBody GiamGiaWithChiTietDTO request) {
 //        try {
@@ -102,6 +96,4 @@ public class GiamGiaController {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi thêm giảm giá và chi tiết");
 //        }
 //    }
-
->>>>>>> main
 }

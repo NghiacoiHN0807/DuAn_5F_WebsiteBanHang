@@ -44,9 +44,5 @@ public class GiamGiaChiTiet {
     private BigDecimal soTienConLai;
 
     @Column(name = "trang_thai")
-<<<<<<< HEAD
-    private Integer trangThai = 0;
-=======
     private Integer trangThai;
->>>>>>> main
 }

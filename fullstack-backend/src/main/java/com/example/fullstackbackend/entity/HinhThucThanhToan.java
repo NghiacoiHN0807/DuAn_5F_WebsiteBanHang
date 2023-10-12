@@ -3,29 +3,20 @@ package com.example.fullstackbackend.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-<<<<<<< HEAD
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-=======
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
->>>>>>> main
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-<<<<<<< HEAD
-=======
 import java.math.BigDecimal;
 
->>>>>>> main
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,11 +29,6 @@ public class HinhThucThanhToan {
     @Column(name = "id_httt")
     private Integer idHttt;
 
-<<<<<<< HEAD
-    @Column(name = "hinh_thuc")
-    private String hinhThuc;
-
-=======
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_hd", referencedColumnName = "id_hd")
     private HoaDon idHd;
@@ -53,7 +39,6 @@ public class HinhThucThanhToan {
     @Column(name = "so_tien")
     private BigDecimal soTien;
 
->>>>>>> main
     @Column(name = "mo_ta")
     private String moTa;
 

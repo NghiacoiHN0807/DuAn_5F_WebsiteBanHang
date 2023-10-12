@@ -1,13 +1,5 @@
 package com.example.fullstackbackend.services.impl;
 
-<<<<<<< HEAD
-import com.example.fullstackbackend.repository.HoadonRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-@Service
-public class HoadonServiceImpl {
-=======
 import com.example.fullstackbackend.DTO.HoaDonDTO;
 import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.repository.HoadonRepository;
@@ -24,14 +16,11 @@ import java.util.Optional;
 
 @Service
 public class HoadonServiceImpl implements HoadonSevice {
->>>>>>> main
 
     @Autowired
     private HoadonRepository hoadonRepository;
 
 
-<<<<<<< HEAD
-=======
     @Override
     public List<HoaDon> getAll() {
         return null;
@@ -101,5 +90,4 @@ public class HoadonServiceImpl implements HoadonSevice {
 
         return hoadonRepository.save(hoaDon);
     }
->>>>>>> main
 }

@@ -1,12 +1,9 @@
 package com.example.fullstackbackend.entity;
 
 
-<<<<<<< HEAD
-=======
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.Size;
->>>>>>> main
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,22 +12,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-<<<<<<< HEAD
-=======
 import jakarta.persistence.PrePersist;
->>>>>>> main
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-<<<<<<< HEAD
-=======
 import java.security.SecureRandom;
 import java.util.UUID;
 
->>>>>>> main
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -43,41 +34,13 @@ public class TaiKhoan {
     @Column(name = "id_tai_khoan")
     private Integer idTaiKhoan;
 
-<<<<<<< HEAD
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_dia_chi", referencedColumnName = "id_dia_chi")
-    private DiaChi idDiaChi;
-=======
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_chuc_vu", referencedColumnName = "id_cv")
     private ChucVu idChucVu;
->>>>>>> main
 
     @Column(name = "ma_tai_khoan")
     private String maTaiKhoan;
 
-<<<<<<< HEAD
-    @Column(name = "ho")
-    private String ho;
-
-    @Column(name = "ten")
-    private String ten;
-
-    @Column(name = "sdt")
-    private String sdt;
-
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "mat_khau")
-    private String matKhau;
-
-    @Column(name = "chuc_vu")
-    private Integer chucVu;
-
-    @Column(name = "quyen_vu")
-    private Integer quyenVu;
-=======
     @NotEmpty(message = "Không Được Để Trống Họ")
     @Column(name = "ho")
     private String ho;
@@ -104,13 +67,10 @@ public class TaiKhoan {
 
     @Column(name = "so_can_cuoc")
     private String soCanCuoc;
->>>>>>> main
 
     @Column(name = "trang_thai")
     private Integer trangThai;
 
-<<<<<<< HEAD
-=======
     @PrePersist
     public void prePersist() {
         // Tạo mã tài khoản ngẫu nhiên không trùng nhau
@@ -161,6 +121,4 @@ public class TaiKhoan {
         // Lấy 6 ký tự đầu của chuỗi UUID
         return "TK" + uuidString.toUpperCase().substring(0, 9);
     }
->>>>>>> main
 }
-

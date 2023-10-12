@@ -48,21 +48,13 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     }
 
     @Override
-<<<<<<< HEAD
-    public Object add(GiamGiaChiTiet giamGiaChiTiet) {
-=======
     public GiamGiaChiTiet add(GiamGiaChiTiet giamGiaChiTiet) {
->>>>>>> main
         return giamGiaChiTietRepository.save(giamGiaChiTiet);
     }
 
     @Override
-<<<<<<< HEAD
-    public Object update(GiamGiaChiTiet giamGiaChiTiet) {
-=======
     public Object update(GiamGiaChiTiet giamGiaChiTiet, Integer id) {
         giamGiaChiTiet.setIdGgct(id);
->>>>>>> main
         return giamGiaChiTietRepository.save(giamGiaChiTiet);
     }
 
@@ -77,12 +69,9 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
         giamGiaChiTiet.setTrangThai(10);
         giamGiaChiTietRepository.save(giamGiaChiTiet);
     }
-<<<<<<< HEAD
-=======
 
     @Override
     public Integer findByIdGiamGia_IdGiamGia(Integer id) {
         return giamGiaChiTietRepository.findByIdGiamGia_IdGiamGia(id);
     }
->>>>>>> main
 }

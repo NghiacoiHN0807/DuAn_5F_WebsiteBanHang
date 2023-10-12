@@ -1,25 +1,17 @@
 package com.example.fullstackbackend.services.impl;
 
-<<<<<<< HEAD
-=======
 import com.example.fullstackbackend.DTO.SanPhamCustom;
-import com.example.fullstackbackend.DTO.SanPhamDTO;;
->>>>>>> main
+import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.repository.SanphamRepository;
 import com.example.fullstackbackend.services.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-<<<<<<< HEAD
-=======
 import org.springframework.data.domain.PageImpl;
->>>>>>> main
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-<<<<<<< HEAD
-=======
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -28,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
->>>>>>> main
 @Service
 public class SanphamServiceImpl implements SanPhamService {
 
@@ -36,12 +27,10 @@ public class SanphamServiceImpl implements SanPhamService {
     private SanphamRepository sanphamRepository;
 
     @Override
-<<<<<<< HEAD
     public Page<SanPham> getAll(Integer pageNo, Integer limit, Integer tinhTrang) {
         Pageable pageable = PageRequest.of(pageNo, limit);
         return sanphamRepository.findAllByTinhTrang(tinhTrang, pageable);
     }
-=======
     public List<SanPham> getAll() {
         return sanphamRepository.findAll();
     }
@@ -146,5 +135,4 @@ public class SanphamServiceImpl implements SanPhamService {
         return new PageImpl<>(dtos, pageable, result.getTotalElements());
     }
 
->>>>>>> main
 }

@@ -2,11 +2,7 @@ package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.entity.ChatLieu;
 import com.example.fullstackbackend.repository.ChatlieuRepository;
-<<<<<<< HEAD
-import com.example.fullstackbackend.services.ChatlieuSevice;
-=======
 import com.example.fullstackbackend.services.ChatlieuService;
->>>>>>> main
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,11 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-<<<<<<< HEAD
-public class ChatlieuServiceImpl implements ChatlieuSevice {
-=======
 public class ChatlieuServiceImpl implements ChatlieuService {
->>>>>>> main
 
     @Autowired
     private ChatlieuRepository chatlieuRepository;
@@ -38,13 +30,8 @@ public class ChatlieuServiceImpl implements ChatlieuService {
     }
 
     @Override
-<<<<<<< HEAD
-    public void add(ChatLieu chatlieu) {
-        chatlieuRepository.save(chatlieu);
-=======
     public ChatLieu add(ChatLieu chatlieu) {
         return chatlieuRepository.save(chatlieu);
->>>>>>> main
     }
 
     @Override
@@ -53,13 +40,8 @@ public class ChatlieuServiceImpl implements ChatlieuService {
     }
 
     @Override
-<<<<<<< HEAD
-    public void update(ChatLieu update) {
-        chatlieuRepository.save(update);
-=======
     public ChatLieu update(ChatLieu update) {
         return chatlieuRepository.save(update);
->>>>>>> main
     }
 
     @Override
@@ -67,13 +49,10 @@ public class ChatlieuServiceImpl implements ChatlieuService {
         Optional<ChatLieu> chatlieu = chatlieuRepository.findById(id);
         return chatlieu;
     }
-<<<<<<< HEAD
-=======
 
     @Override
     public Boolean checkExists(Integer id) {
         return chatlieuRepository.existsById(id);
     }
 
->>>>>>> main
 }
