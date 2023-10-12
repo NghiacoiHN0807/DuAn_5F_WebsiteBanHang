@@ -19,7 +19,7 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
     HoaDon findByMaHd(Integer maHD);
 
     @Query(value = "SELECT x from HoaDon x where x.trangThai = 8 or x.trangThai = 9")
-    Page<HoaDon> pageOfflineInvoice(Pageable pageable);
+    List<HoaDon> pageOfflineInvoice();
 
     @Query(value = "SELECT x from HoaDon x where x.trangThai = 8")
     List<HoaDon> selectAllInvoiceWaiting();

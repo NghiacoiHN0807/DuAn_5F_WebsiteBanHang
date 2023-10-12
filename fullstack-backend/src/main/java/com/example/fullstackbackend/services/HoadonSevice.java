@@ -13,7 +13,7 @@ public interface HoadonSevice {
 
     Page<HoaDon> hoaDonPage(Integer pageNo, Integer size);
 
-    Page<HoaDon> hoaDonOffline(Integer pageNo, Integer size);
+    List<HoaDon> hoaDonOffline();
 
     List<HoaDon> selectAllInvoiceWaiting();
 
