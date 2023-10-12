@@ -1,7 +1,6 @@
-import '../scss/Car-Bill-ADM.scss';
+// import '../scss/Car-Bill-ADM.scss';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartPlus } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -14,6 +13,7 @@ import {
   Pagination,
   Paper,
   Select,
+  Snackbar,
   Stack,
   Switch,
   Table,
@@ -33,13 +33,12 @@ import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
 import { pink } from '@mui/material/colors';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { format } from 'date-fns';
-import { Image } from 'react-bootstrap';
+import { Alert, Image } from 'react-bootstrap';
 import { styled } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-// import Button from '@mui/material/Button';
 import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 import ModalPaymentComfirm from '../forms/Modal-Payment-Confirm';
 import ModalCreateBillOnline from '../forms/Modal-Create-Online';
@@ -52,7 +51,6 @@ import ModalAddProduct from '../forms/Modals-AddProduct';
 import { detailBill, finByProductOnCart, findById, postAddBill, selectAllInvoiceWaiting } from '../service/BillSevice';
 
 // Dislay invoice waiting
-
 const AntTabs = styled(Tabs)({
   borderBottom: '1px solid #e8e8e8',
   '& .MuiTabs-indicator': {
@@ -161,10 +159,15 @@ const CartBillADM = (props) => {
 
     return `HD${newNumber.toString().padStart(5, '0')}`;
   };
+  const [alertContent, setAlertContent] = useState(null);
 
   const handleAddTab = async () => {
     if (tabs.length >= 5) {
-      toast.warn('Đã Tồn Tại 5 Hóa Đơn Chờ. Vui Lòng Thanh Toán!!!');
+      setAlertContent({
+        type: 'warning',
+        message: 'Đã Tồn Tại 5 Hóa Đơn Chờ. Vui Lòng Thanh Toán!!!',
+      });
+      // toast.warn('Đã Tồn Tại 5 Hóa Đơn Chờ. Vui Lòng Thanh Toán!!!');
     } else {
       const currentDate = new Date();
       const formattedDate = format(currentDate, 'yyyy-MM-dd');
@@ -172,8 +175,12 @@ const CartBillADM = (props) => {
       const newCode = generateNewCode();
       const res = await postAddBill(newCode, formattedDate, 1, 8);
       getListData();
+      setAlertContent({
+        type: 'success',
+        message: 'Tạo thành công hóa đơn',
+      });
 
-      toast.success('Tạo thành công hóa đơn');
+      // toast.success('');
 
       // Update the tabs state to include the new tab
       const nextTabNumber = tabs.length + 1;
@@ -269,23 +276,19 @@ const CartBillADM = (props) => {
   const [showModalsUpdate, setShowModalsUpdate] = useState(false);
   const [itemUpdateClassify, setItemUpdateClassify] = useState({});
   const [itemUpdate, setItemUpdate] = useState({});
+
   const handleUpdateClassify = async (item) => {
     setShowModalsUpdate(true);
     console.log('Check itemitem: ', item);
-    if (item.length < 0) {
-      return null;
-    } else {
-      try {
-        const getOneSP = await findById(item[3]);
-        console.log('Check getOneSP: ', getOneSP);
-
-        setItemUpdateClassify(getOneSP);
-        setItemUpdate(item);
-      } catch (error) {
-        console.error(error);
-      }
+    try {
+      const getOneSP = await findById(item[3]);
+      setItemUpdateClassify(getOneSP);
+      setItemUpdate(item);
+    } catch (error) {
+      console.error(error);
     }
   };
+
   const handleCloseUpdateClassify = () => {
     setShowModalsUpdate(false);
   };
@@ -374,10 +377,9 @@ const CartBillADM = (props) => {
 
   useEffect(() => {
     const calculateTotalPrice = async () => {
-      let total = 0;
-      for (const item of DataCart) {
-        total += item[9];
-      }
+      // let total = 0;
+      const total = DataCart.reduce((accumulator, item) => accumulator + item[9], 0);
+
       setThanhTien(total);
       await updateTongTien(idHdParam, thanhTien);
     };
@@ -385,7 +387,7 @@ const CartBillADM = (props) => {
     calculateTotalPrice();
   }, [DataCart, idHdParam, thanhTien]);
 
-  //Add Khach Hang
+  // Add Khach Hang
   const [selectedCustomerName, setSelectedCustomerName] = useState('');
   const [selectedMaTK, setSelectedMaTk] = useState('');
   const [selectedCustomerEmail, setSelectedCustomerEmail] = useState('');
@@ -398,7 +400,7 @@ const CartBillADM = (props) => {
     setShowModalKH(false);
   };
 
-  //Handle Save
+  // Handle Save
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -411,16 +413,18 @@ const CartBillADM = (props) => {
   const [openCreateOnline, setCreateOnline] = useState(false);
   // const [information, setInformation] = useState();
   const handleClick = async () => {
-    const currentDate = new Date();
-    const formattedDate = format(currentDate, 'yyyy-MM-dd');
+    // const currentDate = new Date();
+    // const formattedDate = format(currentDate, 'yyyy-MM-dd');
     if (isDeliveryChecked === false) {
       setOpenPayment(true);
+    } else if (!tenKhShip.trim() || !sdtKHShip.trim()) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Thông Tin Người Nhận Hàng!!!',
+      });
+      // toast.warning('Hãy Thông Tin Người Nhận Hàng');
     } else {
-      if (!tenKhShip.trim() || !sdtKHShip.trim()) {
-        toast.warning('Hãy Thông Tin Người Nhận Hàng');
-      } else {
-        setCreateOnline(true);
-      }
+      setCreateOnline(true);
     }
   };
   const handlePaymentClose = () => {
@@ -428,6 +432,12 @@ const CartBillADM = (props) => {
   };
   const handleCloseCreateOnline = () => {
     setCreateOnline(false);
+  };
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setAlertContent(null);
   };
 
   return (
@@ -786,7 +796,7 @@ const CartBillADM = (props) => {
                 <span>Save</span>
               </LoadingButton>
             </div>
-            {/* Add Modals */}
+            {/* Add Modals
             <ModalAddProduct
               show={showModalsAdd}
               selectDataCart={selectDataCart}
@@ -795,50 +805,50 @@ const CartBillADM = (props) => {
               currentPage1={currentPage}
             />
             {/* Modal Update Product */}
-            <ModalUpdateProductOnCart
+            {/* <ModalUpdateProductOnCart
               show={showModalsUpdate}
               handleClose={handleCloseUpdateClassify}
               itemUpdateClassify={itemUpdateClassify}
               selectDataCart={selectDataCart}
               itemUpdate={itemUpdate}
               currentPage={currentPage}
-            />
+            /> */}
             {/* Modal Delete Product  */}
-            <ModalDeleteProductOnCart
+            {/* <ModalDeleteProductOnCart
               open={showModalsDelete}
               handleClose={handleCloseModalDelelte}
               itemDelete={itemDelete}
               selectDataCart={selectDataCart}
               currentPage={currentPage}
-            />
+            /> */}
             {/* Modal Delete Product  */}
-            <ModalDeleteAllProductOnCart
+            {/* <ModalDeleteAllProductOnCart
               open={showModalsDeleteAll}
               handleClose={handCloseDeleteAll}
               selectDataCart={selectDataCart}
               DataCart={DataCart}
-            />
+            /> */}
             {/* Modal Add Customer */}
-            <ModalAddKhachHang
+            {/* <ModalAddKhachHang
               open={showModalsKH}
               handleClose={handleCloseAddKH}
               setSelectedCustomerName={setSelectedCustomerName}
               setSelectedMaTk={setSelectedMaTk}
               setSelectedCustomerEmail={setSelectedCustomerEmail}
-            />
+            /> */}
             {/* ModalDeleteDirectSale */}
-            <ModalDeleteDirectSale open={open} handleClose={handleCloseDeleteInvoice} information={information} />
+            {/* <ModalDeleteDirectSale open={open} handleClose={handleCloseDeleteInvoice} information={information} /> */}
             {/* ModalPaymentComfirm */}
-            <ModalPaymentComfirm
+            {/* <ModalPaymentComfirm
               show={openPayment}
               handleClose={handlePaymentClose}
               thanhTien={thanhTien}
               listHD={listHD}
               tenKhTT={tenKhTT}
               sdtKHTT={sdtKHTT}
-            />
+            /> */}
             {/* ModelShipOnline */}
-            <ModalCreateBillOnline
+            {/* <ModalCreateBillOnline
               open={openCreateOnline}
               handleClose={handleCloseCreateOnline}
               thanhTien={thanhTien}
@@ -846,10 +856,22 @@ const CartBillADM = (props) => {
               tenKhShip={tenKhShip}
               sdtKHShip={sdtKHShip}
               result={result}
-            />
+            /> */}
           </Box>
         </Box>
       </Box>
+      {alertContent && (
+        <Snackbar
+          open
+          autoHideDuration={3000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+            {alertContent.message}
+          </Alert>
+        </Snackbar>
+      )}
     </>
   );
 };

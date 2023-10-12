@@ -239,8 +239,8 @@ export default function UserPage() {
 
   // Handle edit
   const handleEdit = () => {
-    navigate(`/create-bill/${object.idHd}`);
-    console.log('handleEdit');
+    console.log('object.idHd:', object.idHd);
+    navigate(`/dashboard/sales/card-bill/${object.idHd}`);
   };
 
   return (
@@ -362,8 +362,8 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
-          <Iconify onClick={() => handleEdit()} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+        <MenuItem onClick={() => handleEdit()}>
+          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
         </MenuItem>
 
