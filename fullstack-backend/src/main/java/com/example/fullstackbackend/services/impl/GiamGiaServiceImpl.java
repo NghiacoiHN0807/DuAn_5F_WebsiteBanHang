@@ -1,6 +1,11 @@
 package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.entity.GiamGia;
+<<<<<<< HEAD
+=======
+import com.example.fullstackbackend.repository.ChitietsanphamRepository;
+import com.example.fullstackbackend.repository.GiamGiaChiTietRepository;
+>>>>>>> main
 import com.example.fullstackbackend.repository.GiamGiaRepository;
 import com.example.fullstackbackend.services.GiamGiaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,4 +60,8 @@ public class GiamGiaServiceImpl implements GiamGiaService {
         giamGia.setTrangThai(10);
         giamGiaRepository.save(giamGia);
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 }

@@ -13,7 +13,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+<<<<<<< HEAD
 import java.time.LocalDate;
+=======
+import java.sql.Timestamp;
+>>>>>>> main
 
 @Entity
 @AllArgsConstructor
@@ -34,10 +38,17 @@ public class GiamGia {
     private String tenChuongTrinh;
 
     @Column(name = "ngay_bat_dau")
+<<<<<<< HEAD
     private LocalDate ngayBatDau;
 
     @Column(name = "ngay_ket_thuc")
     private LocalDate ngayKetThuc;
+=======
+    Timestamp ngayBatDau;
+
+    @Column(name = "ngay_ket_thuc")
+    Timestamp ngayKetThuc;
+>>>>>>> main
 
     @Column(name = "muc_giam_phan_tram")
     private BigDecimal mucGiamPhanTram;
@@ -46,6 +57,10 @@ public class GiamGia {
     private BigDecimal mucGiamTienMat;
 
     @Column(name = "trang_thai")
+<<<<<<< HEAD
     private Integer trangThai = 0;
+=======
+    private Integer trangThai;
+>>>>>>> main
 
 }

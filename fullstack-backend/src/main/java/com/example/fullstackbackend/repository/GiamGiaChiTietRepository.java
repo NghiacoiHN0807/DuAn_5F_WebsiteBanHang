@@ -24,4 +24,10 @@ public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, 
 
     @Query("SELECT g FROM GiamGiaChiTiet g WHERE g.idGiamGia.ngayBatDau = :ngayBatDau AND g.idGiamGia.ngayKetThuc = :ngayKetThuc")
     Page<GiamGiaChiTiet> findAllByDate(@Param("ngayBatDau") LocalDate ngayBatDau, @Param("ngayKetThuc") LocalDate ngayKetThuc, Pageable pageable);
+<<<<<<< HEAD
+=======
+
+    @Query("SELECT g.idGiamGia.idGiamGia FROM GiamGiaChiTiet g WHERE g.idGgct = :id")
+    Integer findByIdGiamGia_IdGiamGia(@Param("id") Integer id);
+>>>>>>> main
 }

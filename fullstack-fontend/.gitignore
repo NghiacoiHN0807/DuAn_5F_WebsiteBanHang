@@ -1,9 +1,18 @@
+<<<<<<< HEAD
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+=======
+>>>>>>> main
 # dependencies
 /node_modules
 /.pnp
 .pnp.js
+<<<<<<< HEAD
+=======
+*.pack
+.cache
+/node_modules/.cache/default-development/
+>>>>>>> main
 
 # testing
 /coverage

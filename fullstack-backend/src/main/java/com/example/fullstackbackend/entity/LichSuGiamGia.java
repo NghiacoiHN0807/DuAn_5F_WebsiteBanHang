@@ -26,11 +26,19 @@ public class LichSuGiamGia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idLsgg;
 
+<<<<<<< HEAD
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_hd", referencedColumnName = "id_hd")
     private HoaDon idHd;
 
     @ManyToOne(fetch = FetchType.LAZY)
+=======
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_hd", referencedColumnName = "id_hd")
+    private HoaDon idHd;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+>>>>>>> main
     @JoinColumn(name = "id_ggct", referencedColumnName = "id_ggct")
     private GiamGiaChiTiet idGgct;
 

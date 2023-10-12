@@ -29,6 +29,7 @@ public class HoaDon {
     @Column(name = "id_hd")
     private Integer idHd;
 
+<<<<<<< HEAD
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_tai_khoan", referencedColumnName = "id_tai_khoan")
     private TaiKhoan idTaiKhoan;
@@ -36,6 +37,11 @@ public class HoaDon {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_httt", referencedColumnName = "id_httt")
     private HinhThucThanhToan idHttt;
+=======
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_tai_khoan", referencedColumnName = "id_tai_khoan")
+    private TaiKhoan idTK;
+>>>>>>> main
 
     @Column(name = "ma_hd")
     private String maHd;
@@ -82,13 +88,38 @@ public class HoaDon {
     @Column(name = "ngay_du_tinh_nhan")
     private LocalDate ngayDuTinhNhan;
 
+<<<<<<< HEAD
     @Column(name = "nga_bat_dau_giao")
     private LocalDate ngaBatDauGiao;
+=======
+    @Column(name = "ngay_bat_dau_giao")
+    private LocalDate ngayBatDauGiao;
+>>>>>>> main
 
     @Column(name = "ngay_giao_thanh_cong")
     private LocalDate ngayGiaoThanhCong;
 
+<<<<<<< HEAD
     @Column(name = "trang_thai")
     private Integer trangThai;
 
+=======
+    @Column(name = "kieu_hoa_don")
+    private Integer kieuHoaDon;
+
+    @Column(name = "trang_thai")
+    private Integer trangThai;
+
+    public HoaDon(Integer idHd) {
+        this.idHd = idHd;
+    }
+
+    public Integer getIdHd() {
+        return idHd;
+    }
+
+    public void setIdHd(Integer idHd) {
+        this.idHd = idHd;
+    }
+>>>>>>> main
 }
