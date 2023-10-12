@@ -59,9 +59,8 @@ public class SanPhamController {
     }
 
     @GetMapping("dto")
-    public ResponseEntity<Page<SanPhamDTO>> getSanPhamDetails(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
-                                                              @RequestParam(value = "size", defaultValue = "5") Integer size) {
-        Page<SanPhamDTO> page = sanPhamService.getSanPhamDetails(pageNo, size);
+    public ResponseEntity<List<SanPhamDTO>> getSanPhamDetails() {
+        List<SanPhamDTO> page = sanPhamService.getSanPhamDetails();
         return ResponseEntity.ok(page);
     }
 

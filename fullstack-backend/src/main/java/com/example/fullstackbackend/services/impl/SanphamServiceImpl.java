@@ -104,13 +104,12 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
-    public Page<SanPhamDTO> getSanPhamDetails(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        Page<Object[]> result = sanphamRepository.getSanPhamDetails(pageable);
+    public List<SanPhamDTO> getSanPhamDetails() {
+        List<Object[]> result = sanphamRepository.getSanPhamDetails();
 
         List<SanPhamDTO> dtos = new ArrayList<>();
 
-        for (Object[] row : result.getContent()) {
+        for (Object[] row : result) {
             SanPhamDTO sanPhamDTO = new SanPhamDTO();
             sanPhamDTO.setIdSp((Integer) row[0]);
             sanPhamDTO.setMaSp((String) row[1]);
@@ -132,7 +131,7 @@ public class SanphamServiceImpl implements SanPhamService {
             dtos.add(sanPhamDTO);
         }
 
-        return new PageImpl<>(dtos, pageable, result.getTotalElements());
+        return dtos;
     }
 
 }

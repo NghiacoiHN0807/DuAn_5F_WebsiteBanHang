@@ -17,11 +17,6 @@ const ModelAddNewTKNV = (props) => {
   const [setEmail, getEmail] = useState("");
   const [setSoCanCuoc, getSoCanCuoc] = useState("");
 
-<<<<<<< HEAD:fullstack-fontend/src/components/ModelAddNewTKNV.js
-=======
-  const [chucVuOk, setChucVuOk] = useState({});
-
->>>>>>> origin/duyvd:fullstack-fontend/src/forms/ModelAddNewTKNV.js
   const handleSave = async () => {
     //I want check console.log get ma and tenNuoc
     // console.log("Check state: ", setMaTaiKhoan, setHo, setTen, setSdt, setEmail, setMatKhau, setTrangThai);
@@ -33,13 +28,7 @@ const ModelAddNewTKNV = (props) => {
       getHo("") &&
       getTen("") &&
       getSdt("") &&
-<<<<<<< HEAD:fullstack-fontend/src/components/ModelAddNewTKNV.js
       getEmail("")
-=======
-      getEmail("") &&
-      getSoCanCuoc("") &&
-      getChucVu(3)
->>>>>>> origin/duyvd:fullstack-fontend/src/forms/ModelAddNewTKNV.js
     ) {
       handleClose();
       toast.warning("Ma, Ten Or Trang Thai is null");
@@ -61,11 +50,6 @@ const ModelAddNewTKNV = (props) => {
         setTen,
         setSdt,
         setEmail,
-<<<<<<< HEAD:fullstack-fontend/src/components/ModelAddNewTKNV.js
-
-=======
-        setSoCanCuoc,
->>>>>>> origin/duyvd:fullstack-fontend/src/forms/ModelAddNewTKNV.js
         0
       );
       if (res && res.idTaiKhoan) {
@@ -76,13 +60,8 @@ const ModelAddNewTKNV = (props) => {
         getTen("");
         getSdt("");
         getEmail("");
-<<<<<<< HEAD:fullstack-fontend/src/components/ModelAddNewTKNV.js
 
         toast.success("A Tài khoản is created successfully");
-=======
-        getSoCanCuoc("");
-        toast.success("Tạo tài khoản thành công ");
->>>>>>> origin/duyvd:fullstack-fontend/src/forms/ModelAddNewTKNV.js
       } else {
         toast.error("Tạo Tài Khoản Không Thành Công");
       }
@@ -142,24 +121,6 @@ const ModelAddNewTKNV = (props) => {
                     type="text"
                   />
                 </div>
-<<<<<<< HEAD:fullstack-fontend/src/components/ModelAddNewTKNV.js
-=======
-
-                <div className="mb-3">
-                  <label className="form-label">Chức Vụ</label>
-                  <select
-                    class="form-select"
-                    aria-label="Default select example"
-                    onChange={(event) => getChucVu(event.target.value)}
-                  >
-                    <option value={1}>Manage</option>;
-                    <option value={2}>Nhân viên</option>;
-                    {/* {MyChucVu.filter(item => item.idCv === 1 && item.idCv === 2).map((item, index) => {
-                      return 
-                    })} */}
-                  </select>
-                </div>
->>>>>>> origin/duyvd:fullstack-fontend/src/forms/ModelAddNewTKNV.js
               </Col>
               <Col>
                 <div className="mb-3">
@@ -178,17 +139,6 @@ const ModelAddNewTKNV = (props) => {
                     type="email"
                   />
                 </div>
-<<<<<<< HEAD:fullstack-fontend/src/components/ModelAddNewTKNV.js
-=======
-                <div className="mb-3">
-                  <label className="form-label">Số Căn Cước</label>
-                  <Form.Control
-                    value={setSoCanCuoc}
-                    onChange={(event) => getSoCanCuoc(event.target.value)}
-                    type="text"
-                  />
-                </div>
->>>>>>> origin/duyvd:fullstack-fontend/src/forms/ModelAddNewTKNV.js
               </Col>
             </Row>
           </Form>

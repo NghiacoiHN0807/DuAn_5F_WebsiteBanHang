@@ -32,8 +32,8 @@ const getAllSanPham = () => {
     return custom.get(`/san-pham/minimage`);
 }
 
-const getSanPhamDetails = (pageNo, size) => {
-    return custom.get(`/san-pham/dto?page=${pageNo}&size=${size}`);
+const getSanPhamDetails = () => {
+    return custom.get(`/san-pham/dto`);
 }
 
 const detail = (id) => {

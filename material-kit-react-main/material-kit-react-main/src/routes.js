@@ -10,6 +10,7 @@ import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import Sales from './pages/DirectSale-ADM';
+import DiscountPage from './pages/discounts/DiscountPage';
 
 // ----------------------------------------------------------------------
 
@@ -26,7 +27,7 @@ export default function Router() {
         { path: 'clients', element: <UserPage /> },
         { path: 'staff', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
-        { path: 'discounts', element: <BlogPage /> },
+        { path: 'discounts', element: <DiscountPage /> },
       ],
     },
     {
