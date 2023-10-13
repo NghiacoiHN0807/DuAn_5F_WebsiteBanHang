@@ -115,7 +115,7 @@ public class SanphamServiceImpl implements SanPhamService {
             sanPhamDTO.setMaSp((String) row[1]);
             sanPhamDTO.setTenSp((String) row[2]);
             sanPhamDTO.setTenSize((String) row[3]);
-            sanPhamDTO.setUrl_image((String) row[4]);
+            sanPhamDTO.setUrlImage((String) row[4]);
             sanPhamDTO.setTenChuongTrinh((String) row[5]);
             sanPhamDTO.setMucGiamPhanTram((BigDecimal) row[6]);
             sanPhamDTO.setMucGiamTienMat((BigDecimal) row[7]);

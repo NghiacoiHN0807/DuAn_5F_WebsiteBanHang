@@ -21,7 +21,7 @@ public class SanPhamDTO {
 
     String tenSize;
 
-    String url_image;
+    String urlImage;
 
     String tenChuongTrinh;
 

@@ -39,6 +39,7 @@ import { getSanPhamDetails } from '../../service/giamGiaService';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'STT', alignRight: false },
+  { id: 'name', label: 'Ảnh', alignRight: false },
   { id: 'company', label: 'Tên chương trình', alignRight: false },
   { id: 'role', label: 'Tên sản phẩm', alignRight: false },
   { id: 'isVerified', label: 'Mức giảm', alignRight: false },
@@ -262,12 +263,12 @@ export default function DiscountPage() {
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
-  
+
     const dateTime = new Date(dateString);
     const hours = dateTime.getUTCHours().toString().padStart(2, '0');
     const minutes = dateTime.getUTCMinutes().toString().padStart(2, '0');
     const [year, month, day] = dateTime.toISOString().split('T')[0].split('-');
-  
+
     return `${hours}:${minutes} ${day}/${month}/${year}`;
   };
 
@@ -303,8 +304,8 @@ export default function DiscountPage() {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { idGgct, tenChuongTrinh, tenSp, mucGiamPhanTram, mucGiamTienMat, ngayBatDau, ngayKetThuc, donGia, soTienConLai, trangThai } = row;
+                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+                    const { idGgct, urlImage, tenChuongTrinh, tenSp, mucGiamPhanTram, mucGiamTienMat, ngayBatDau, ngayKetThuc, donGia, soTienConLai, trangThai } = row;
                     const selectedUser = selected.indexOf(idGgct) !== -1;
 
                     return (
@@ -312,7 +313,10 @@ export default function DiscountPage() {
                         <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, idGgct)} />
                         </TableCell>
-                        <TableCell align="left">{row.index}</TableCell>
+                        <TableCell align="left">{index + 1}</TableCell>
+                        <TableCell align="right">
+                          <img src={urlImage} alt="Mô tả ảnh" width="100" height="100" />
+                        </TableCell>
                         <TableCell align="left">{tenChuongTrinh}</TableCell>
                         <TableCell align="left">{tenSp}</TableCell>
                         <TableCell align="left">{mucGiamTienMat === null ? mucGiamPhanTram : formatCurrency(mucGiamTienMat)}</TableCell>
