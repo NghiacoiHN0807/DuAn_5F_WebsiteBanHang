@@ -1,4 +1,4 @@
-// import '../scss/Car-Bill-ADM.scss';
+import '../scss/Car-Bill-ADM.scss';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,6 +7,7 @@ import {
   Button,
   FormControl,
   FormControlLabel,
+  Grid,
   IconButton,
   InputLabel,
   MenuItem,
@@ -40,15 +41,15 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
-import ModalPaymentComfirm from '../forms/Modal-Payment-Confirm';
 import ModalCreateBillOnline from '../forms/Modal-Create-Online';
 import { updateTongTien } from '../service/OrderManagementTimeLine';
+import ModalAddKhachHang from '../forms/Modals-AddKhachHang';
+import { detailBill, finByProductOnCart, findById, postAddBill, selectAllInvoiceWaiting } from '../service/BillSevice';
+import ModalAddProduct from '../forms/Modals-AddProduct';
 import ModalUpdateProductOnCart from '../forms/Modals-Update-Product-Cart';
 import ModalDeleteProductOnCart from '../forms/Modal-Delete-Product';
 import ModalDeleteAllProductOnCart from '../forms/Modal-Delete-All-Product';
-import ModalAddKhachHang from '../forms/Modals-AddKhachHang';
-import ModalAddProduct from '../forms/Modals-AddProduct';
-import { detailBill, finByProductOnCart, findById, postAddBill, selectAllInvoiceWaiting } from '../service/BillSevice';
+import ModalPaymentComfirm from '../forms/Modal-Payment-Confirm';
 
 // Dislay invoice waiting
 const AntTabs = styled(Tabs)({
@@ -137,7 +138,9 @@ const CartBillADM = (props) => {
   };
 
   const handleChange1 = (tabLabel) => {
-    navigate(`/create-bill/${tabLabel.idHd}`);
+    navigate(`/dashboard/sales/card-bill/${tabLabel.idHd}`);
+
+    // navigate(`/create-bill/${tabLabel.idHd}`);
   };
 
   // Create a new Detail Direct
@@ -381,7 +384,7 @@ const CartBillADM = (props) => {
       const total = DataCart.reduce((accumulator, item) => accumulator + item[9], 0);
 
       setThanhTien(total);
-      await updateTongTien(idHdParam, thanhTien);
+      // await updateTongTien(idHdParam, thanhTien);
     };
 
     calculateTotalPrice();
@@ -618,8 +621,8 @@ const CartBillADM = (props) => {
                   </Button>
                 </div>
               </div>
-              <div className="row section-information">
-                <div className="col-7">
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6} md={7}>
                   {isDeliveryChecked ? (
                     <div className="text-information">
                       <div>
@@ -760,29 +763,32 @@ const CartBillADM = (props) => {
                       />
                     </div>
                   )}
-                </div>
-                <div className="col-5">
-                  <h5>
-                    <AccountBalanceWalletIcon />
-                    THÔNG TIN THANH TOÁN
-                  </h5>
-                  <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Giao Hàng" />
-                  <br />
-                  <div className="row">
-                    <div className="col-6">
-                      <p>Tiền Hàng</p>
-                      <p>Giảm Giá</p>
-                      <p>TỔNG: </p>
-                    </div>
-                    <div className="col-6">
-                      <p>{thanhTien}</p>
-                      <p>GIAM GIA</p>
-                      <p>{thanhTien}</p>
+                </Grid>
+                <Grid item xs={12} md={6} lg={4}>
+                  <div className="col-5">
+                    <h5>
+                      <AccountBalanceWalletIcon />
+                      THÔNG TIN THANH TOÁN
+                    </h5>
+                    <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Giao Hàng" />
+                    <br />
+                    <div className="row">
+                      <div className="col-6">
+                        <p>Tiền Hàng</p>
+                        <p>Giảm Giá</p>
+                        <p>TỔNG: </p>
+                      </div>
+                      <div className="col-6">
+                        <p>{thanhTien}</p>
+                        <p>GIAM GIA</p>
+                        <p>{thanhTien}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
+                </Grid>
+              </Grid>
             </div>
+
             <div className="class-checkout">
               <LoadingButton
                 size="small"
@@ -796,7 +802,8 @@ const CartBillADM = (props) => {
                 <span>Save</span>
               </LoadingButton>
             </div>
-            {/* Add Modals
+
+            {/* Add Modals */}
             <ModalAddProduct
               show={showModalsAdd}
               selectDataCart={selectDataCart}
@@ -805,29 +812,29 @@ const CartBillADM = (props) => {
               currentPage1={currentPage}
             />
             {/* Modal Update Product */}
-            {/* <ModalUpdateProductOnCart
+            <ModalUpdateProductOnCart
               show={showModalsUpdate}
               handleClose={handleCloseUpdateClassify}
               itemUpdateClassify={itemUpdateClassify}
               selectDataCart={selectDataCart}
               itemUpdate={itemUpdate}
               currentPage={currentPage}
-            /> */}
+            />
             {/* Modal Delete Product  */}
-            {/* <ModalDeleteProductOnCart
+            <ModalDeleteProductOnCart
               open={showModalsDelete}
               handleClose={handleCloseModalDelelte}
               itemDelete={itemDelete}
               selectDataCart={selectDataCart}
               currentPage={currentPage}
-            /> */}
+            />
             {/* Modal Delete Product  */}
-            {/* <ModalDeleteAllProductOnCart
+            <ModalDeleteAllProductOnCart
               open={showModalsDeleteAll}
               handleClose={handCloseDeleteAll}
               selectDataCart={selectDataCart}
               DataCart={DataCart}
-            /> */}
+            />
             {/* Modal Add Customer */}
             {/* <ModalAddKhachHang
               open={showModalsKH}
@@ -837,18 +844,18 @@ const CartBillADM = (props) => {
               setSelectedCustomerEmail={setSelectedCustomerEmail}
             /> */}
             {/* ModalDeleteDirectSale */}
-            {/* <ModalDeleteDirectSale open={open} handleClose={handleCloseDeleteInvoice} information={information} /> */}
+            <ModalDeleteDirectSale open={open} handleClose={handleCloseDeleteInvoice} information={information} />
             {/* ModalPaymentComfirm */}
-            {/* <ModalPaymentComfirm
+            <ModalPaymentComfirm
               show={openPayment}
               handleClose={handlePaymentClose}
               thanhTien={thanhTien}
               listHD={listHD}
               tenKhTT={tenKhTT}
               sdtKHTT={sdtKHTT}
-            /> */}
+            />
             {/* ModelShipOnline */}
-            {/* <ModalCreateBillOnline
+             <ModalCreateBillOnline
               open={openCreateOnline}
               handleClose={handleCloseCreateOnline}
               thanhTien={thanhTien}
@@ -856,7 +863,7 @@ const CartBillADM = (props) => {
               tenKhShip={tenKhShip}
               sdtKHShip={sdtKHShip}
               result={result}
-            /> */}
+            /> 
           </Box>
         </Box>
       </Box>

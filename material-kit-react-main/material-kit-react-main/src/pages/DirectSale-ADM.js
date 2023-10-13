@@ -216,7 +216,7 @@ export default function UserPage() {
     });
     // toast.success('Tạo thành công hóa đơn');
     getIdHttp = res.idHd;
-    navigate(`/create-bill/${getIdHttp}`);
+    navigate(`/dashboard/sales/card-bill/${getIdHttp}`);
   };
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
