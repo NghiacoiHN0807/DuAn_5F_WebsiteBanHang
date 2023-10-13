@@ -3,7 +3,6 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
-import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
@@ -11,6 +10,7 @@ import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import Sales from './pages/DirectSale-ADM';
 import DiscountPage from './pages/discounts/DiscountPage';
+import ModelAddNewGiamGia from './pages/discounts/ModalsAddNewGiamGia';
 
 // ----------------------------------------------------------------------
 
@@ -26,6 +26,7 @@ export default function Router() {
         { path: 'sales', element: <Sales /> },
         { path: 'clients', element: <UserPage /> },
         { path: 'staff', element: <UserPage /> },
+        { path: 'staff/add', element: <ModelAddNewGiamGia /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'discounts', element: <DiscountPage /> },
       ],

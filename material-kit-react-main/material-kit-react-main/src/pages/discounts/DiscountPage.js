@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 // @mui
 import {
@@ -38,16 +38,16 @@ import { getSanPhamDetails } from '../../service/giamGiaService';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'name', label: 'STT', alignRight: false },
-  { id: 'name', label: 'Ảnh', alignRight: false },
-  { id: 'company', label: 'Tên chương trình', alignRight: false },
-  { id: 'role', label: 'Tên sản phẩm', alignRight: false },
-  { id: 'isVerified', label: 'Mức giảm', alignRight: false },
-  { id: 'status', label: 'Thời gian', alignRight: false },
-  { id: 'status', label: 'Đơn giá', alignRight: false },
-  { id: 'status', label: 'Số tiền còn lại', alignRight: false },
-  { id: 'status', label: 'Trạng Thái', alignRight: false },
-  { id: 'status', label: 'Thao Tác', alignRight: false },
+  { id: 'stt', label: 'STT', alignRight: false },
+  { id: 'anh', label: 'Ảnh', alignRight: false },
+  { id: 'tenchuongtrinh', label: 'Tên chương trình', alignRight: false },
+  { id: 'tensanpham', label: 'Tên sản phẩm', alignRight: false },
+  { id: 'mucgiam', label: 'Mức giảm', alignRight: false },
+  { id: 'thoigian', label: 'Thời gian', alignRight: false },
+  { id: 'dongia', label: 'Đơn giá', alignRight: false },
+  { id: 'sotienconlai', label: 'Số tiền còn lại', alignRight: false },
+  { id: 'trangthai', label: 'Trạng Thái', alignRight: false },
+  { id: 'thaotac', label: 'Thao Tác', alignRight: false },
   { id: '' },
 ];
 
@@ -184,7 +184,7 @@ export default function DiscountPage() {
 
   // Set status of trangThai
   function mapTrangThaiToStatus(trangThai) {
-    return trangThai === 0 ? 'Hoạt động' : trangThai === 1 ? 'Đã thanh toán' : 'Không xác định';
+    return trangThai === 0 ? 'Hoạt động' : trangThai === 10 ? 'Ngưng hoạt động' : 'Không xác định';
   }
   const navigate = useNavigate();
 
@@ -283,9 +283,11 @@ export default function DiscountPage() {
           <Typography variant="h4" gutterBottom>
             Giảm giá
           </Typography>
+          <Link to={'/dashboard/staff/add'}>
           <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Thêm Giảm Giá
           </Button>
+          </Link>
         </Stack>
 
         <Card>
@@ -319,7 +321,7 @@ export default function DiscountPage() {
                         </TableCell>
                         <TableCell align="left">{tenChuongTrinh}</TableCell>
                         <TableCell align="left">{tenSp}</TableCell>
-                        <TableCell align="left">{mucGiamTienMat === null ? mucGiamPhanTram : formatCurrency(mucGiamTienMat)}</TableCell>
+                        <TableCell align="left">{mucGiamTienMat === 0 ? mucGiamPhanTram : formatCurrency(mucGiamTienMat)}</TableCell>
                         <TableCell align="left">{formatDate(ngayBatDau) + formatDate(ngayKetThuc)}</TableCell>
                         <TableCell align="left">{formatCurrency(donGia)}</TableCell>
                         <TableCell align="left">{formatCurrency(soTienConLai)}</TableCell>
