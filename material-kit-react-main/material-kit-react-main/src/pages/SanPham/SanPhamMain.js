@@ -230,9 +230,9 @@ export default function UserPage() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
           <Typography variant="h4" gutterBottom>
-            Chi tiết sản phẩm
+            Danh sách sản phẩm
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} href="/dashboard/addProduct">
             Thêm sản phẩm
           </Button>
         </Stack>

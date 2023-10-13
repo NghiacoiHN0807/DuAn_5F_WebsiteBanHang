@@ -10,6 +10,7 @@ import Page404 from './pages/Page404';
 import DashboardAppPage from './pages/DashboardAppPage';
 
 import SanPham from './pages/SanPham/SanPhamMain';
+import AddSanPham from './pages/SanPham/ModelAdd';
 
 // ----------------------------------------------------------------------
 
@@ -26,6 +27,7 @@ export default function Router() {
         { path: 'clients', element: <UserPage /> },
         { path: 'staff', element: <UserPage /> },
         { path: 'products', element: <SanPham /> },
+        { path: 'addProduct', element: <AddSanPham /> },
         { path: 'discounts', element: <BlogPage /> },
       ],
     },
