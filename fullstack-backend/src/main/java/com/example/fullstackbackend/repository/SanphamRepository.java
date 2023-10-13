@@ -37,11 +37,11 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
                     "    gg.ngay_bat_dau,\n" +
                     "    gg.ngay_ket_thuc\n" +
                     "FROM san_pham sp\n" +
-                    "LEFT JOIN chi_tiet_san_pham cts ON sp.id_sp = cts.id_sp\n" +
-                    "LEFT JOIN giam_gia_chi_tiet ggct ON cts.id_ctsp = ggct.id_ctsp\n" +
-                    "LEFT JOIN giam_gia gg ON ggct.id_giam_gia = gg.id_giam_gia\n" +
-                    "LEFT JOIN size sz ON cts.id_size = sz.id_size\n" +
-                    "LEFT JOIN (\n" +
+                    "JOIN chi_tiet_san_pham cts ON sp.id_sp = cts.id_sp\n" +
+                    "JOIN giam_gia_chi_tiet ggct ON cts.id_ctsp = ggct.id_ctsp\n" +
+                    "JOIN giam_gia gg ON ggct.id_giam_gia = gg.id_giam_gia\n" +
+                    "JOIN size sz ON cts.id_size = sz.id_size\n" +
+                    "JOIN (\n" +
                     "    SELECT id_sp, MIN(images) AS id_image, MIN(images) AS image_url\n" +
                     "    FROM images\n" +
                     "    GROUP BY id_sp\n" +

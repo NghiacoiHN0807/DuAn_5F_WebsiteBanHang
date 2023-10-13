@@ -29,10 +29,10 @@ import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
+import ModalDeleteDiscount from './Modal-Delete-Discount';
 // mock
 // import USERLIST from '../_mock/user';
 // import { useEffect } from 'react';
-import ModalDeleteDirectSale from '../../forms/Modal-Delete-DirectSale';
 import { getSanPhamDetails } from '../../service/giamGiaService';
 
 // ----------------------------------------------------------------------
@@ -122,7 +122,7 @@ export default function DiscountPage() {
   const [object, getObject] = useState([]);
   const handleOpenMenu = (event, row) => {
     console.log('Check event: ', event);
-    console.log('Check event: ', row);
+    console.log('Check row: ', row);
     getObject(row);
 
     setOpen(event.currentTarget);
@@ -184,7 +184,7 @@ export default function DiscountPage() {
 
   // Set status of trangThai
   function mapTrangThaiToStatus(trangThai) {
-    return trangThai === 8 ? 'Hóa Đơn Treo' : trangThai === 9 ? 'Đã thanh toán' : 'Unknown status';
+    return trangThai === 0 ? 'Hoạt động' : trangThai === 1 ? 'Đã thanh toán' : 'Không xác định';
   }
   const navigate = useNavigate();
 
@@ -407,7 +407,7 @@ export default function DiscountPage() {
         </MenuItem>
       </Popover>
       {/* Dialog xác nhận xóa */}
-      <ModalDeleteDirectSale open={openDelete} handleClose={handleClose} information={information} />
+      <ModalDeleteDiscount open={openDelete} handleClose={handleClose} information={information} />
       {alertContent && (
         <Snackbar
           open

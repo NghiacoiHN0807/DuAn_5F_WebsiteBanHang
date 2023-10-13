@@ -29,17 +29,6 @@ public class ChiTietSanPham {
     @Column(name = "id_ctsp")
     private Integer idCtsp;
 
-    @Column(name = "ma_ctsp")
-    private String maCtsp;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_cl", referencedColumnName = "id_cl")
-    private ChatLieu idCl;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_ms", referencedColumnName = "id_ms")
-    private MauSac idMs;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_size", referencedColumnName = "id_size")
     private Size idSize;
@@ -48,29 +37,8 @@ public class ChiTietSanPham {
     @JoinColumn(name = "id_sp", referencedColumnName = "id_sp")
     private SanPham idSp;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_loaisp", referencedColumnName = "id_loaisp")
-    private LoaiSp isLsp;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_xx", referencedColumnName = "id_xx")
-    private XuatXu idXx;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_tay_ao", referencedColumnName = "id_tay_ao")
-    private OngTayAo idTayAo;
-
-    @Column(name = "mo_ta")
-    private String moTa;
-
     @Column(name = "so_luong_ton")
     private Integer soLuongTon;
-
-    @Column(name = "gia_nhap")
-    private BigDecimal giaNhap;
-
-    @Column(name = "gia_ban")
-    private BigDecimal giaBan;
 
     @Column(name = "trang_thai")
     private Integer trangThai;
