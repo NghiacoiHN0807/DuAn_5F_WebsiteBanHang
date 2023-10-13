@@ -9,6 +9,8 @@ import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
+import ClientsPage from "./pages/taiKhoanKhachHang/ClientsPage";
+
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +24,7 @@ export default function Router() {
         { path: 'app', element: <DashboardAppPage /> },
         { path: 'bills', element: <DashboardAppPage /> },
         { path: 'sales', element: <DashboardAppPage /> },
-        { path: 'clients', element: <UserPage /> },
+        { path: 'clients', element: <ClientsPage /> },
         { path: 'staff', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'discounts', element: <BlogPage /> },
