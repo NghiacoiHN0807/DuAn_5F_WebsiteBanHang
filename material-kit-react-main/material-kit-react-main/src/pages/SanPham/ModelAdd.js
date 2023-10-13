@@ -1,7 +1,8 @@
 // import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
-import { postAddSanPham } from "../../services/SanPhamService";
-import { toast } from "react-toastify";
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+
 import {
   Box,
   Button,
@@ -12,28 +13,28 @@ import {
   DialogTitle,
   MenuItem,
   TextField,
-} from "@mui/material";
-import { fetchXX, detailXX } from "../../services/XuatXuService";
-import { fetchCL, detailCL } from "../../services/ChatLieuService";
-import { fetchCoAo, detailCoAo } from "../../services/LoaiCoAoService";
-import { fetchLSP, detailLSP } from "../../services/LoaiSPService";
-import { fetchMS, detailMS } from "../../services/MauSacService";
-import { fetchTayAo, detailTayAo } from "../../services/OngTayAoService";
-import { useNavigate } from "react-router-dom";
+} from '@mui/material';
+import { postAddSanPham } from '../../service/SanPhamService';
+import { fetchXX, detailXX } from '../../service/XuatXuService';
+import { fetchCL, detailCL } from '../../service/ChatLieuService';
+import { fetchCoAo, detailCoAo } from '../../service/LoaiCoAoService';
+import { fetchLSP, detailLSP } from '../../service/LoaiSPService';
+import { fetchMS, detailMS } from '../../service/MauSacService';
+import { fetchTayAo, detailTayAo } from '../../service/OngTayAoService';
 
 const ModelAddNew = (props) => {
-  const [maSp, setMaSp] = useState("");
-  const [tenSp, setTenSp] = useState("");
-  const [moTa, setMoTa] = useState("");
-  const [giaBan, setGiaBan] = useState("");
-  const [trangThai, setTrangThai] = useState("0");
+  const [maSp, setMaSp] = useState('');
+  const [tenSp, setTenSp] = useState('');
+  const [moTa, setMoTa] = useState('');
+  const [giaBan, setGiaBan] = useState('');
+  const [trangThai, setTrangThai] = useState('0');
 
-  const [chatLieu, setChatLieu] = useState("");
-  const [mauSac, setMauSac] = useState("");
-  const [loaiSP, setLoaiSP] = useState("");
-  const [xuatXu, setXuatXu] = useState("");
-  const [tayAo, setTayAo] = useState("");
-  const [coAo, setCoAo] = useState("");
+  const [chatLieu, setChatLieu] = useState('');
+  const [mauSac, setMauSac] = useState('');
+  const [loaiSP, setLoaiSP] = useState('');
+  const [xuatXu, setXuatXu] = useState('');
+  const [tayAo, setTayAo] = useState('');
+  const [coAo, setCoAo] = useState('');
 
   const [listCL, setListCL] = useState([]);
   const [listMS, setListMS] = useState([]);
@@ -51,22 +52,22 @@ const ModelAddNew = (props) => {
   }, []);
 
   const getAllList = async () => {
-    let resCL = await fetchCL();
+    const resCL = await fetchCL();
     setListCL(resCL);
 
-    let resMS = await fetchMS();
+    const resMS = await fetchMS();
     setListMS(resMS);
 
-    let resLSP = await fetchLSP();
+    const resLSP = await fetchLSP();
     setListLSP(resLSP);
 
-    let resXX = await fetchXX();
+    const resXX = await fetchXX();
     setListXX(resXX);
 
-    let resTayAo = await fetchTayAo();
+    const resTayAo = await fetchTayAo();
     setListTayAo(resTayAo);
 
-    let resCoAo = await fetchCoAo();
+    const resCoAo = await fetchCoAo();
     setListCoAo(resCoAo);
   };
 
@@ -94,21 +95,21 @@ const ModelAddNew = (props) => {
     const getObjCoAo = await detailCoAo(coAo);
 
     if (
-      setMaSp("") &&
-      setTenSp("") &&
-      setChatLieu("") &&
-      setMauSac("") &&
-      setLoaiSP("") &&
-      setXuatXu("") &&
-      setTayAo("") &&
-      setCoAo("") &&
-      setMoTa("") &&
-      setGiaBan("") &&
-      setTrangThai("")
+      setMaSp('') &&
+      setTenSp('') &&
+      setChatLieu('') &&
+      setMauSac('') &&
+      setLoaiSP('') &&
+      setXuatXu('') &&
+      setTayAo('') &&
+      setCoAo('') &&
+      setMoTa('') &&
+      setGiaBan('') &&
+      setTrangThai('')
     ) {
-      toast.warning("Some field is empty!");
+      toast.warning('Some field is empty!');
     } else {
-      let res = await postAddSanPham(
+      const res = await postAddSanPham(
         maSp,
         tenSp,
         getObjChatLieu,
@@ -122,45 +123,32 @@ const ModelAddNew = (props) => {
         trangThai
       );
 
-      console.log("Check res: ", res);
+      console.log('Check res: ', res);
       if (res && res.idSp) {
-        toast.success("Add ctsp successfully!");
-        navigate("/quan-ly-san-pham/san-pham/sua-san-pham/" + res.idSp);
+        toast.success('Add ctsp successfully!');
+        navigate(`/quan-ly-san-pham/san-pham/sua-san-pham/${res.idSp}`);
       } else {
-        toast.error("Add ctsp failed!");
+        toast.error('Add ctsp failed!');
       }
     }
   };
   return (
     <>
       <div className="row row-order-management">
-        <div
-          className="title"
-          style={{ textAlign: "center", margin: "20px 0" }}
-        >
+        <div className="title" style={{ textAlign: 'center', margin: '20px 0' }}>
           <h4>THÊM SẢN PHẨM</h4>
         </div>
         <Box
           component="form"
           sx={{
-            "& .MuiTextField-root": { m: 1, width: "151ch" },
+            '& .MuiTextField-root': { m: 1, width: '151ch' },
           }}
           noValidate
           autoComplete="off"
-          alignItems={"center"}
+          alignItems={'center'}
         >
-          <TextField
-            fullWidth
-            label="Mã sản phẩm"
-            id="fullWidth"
-            onChange={(event) => setMaSp(event.target.value)}
-          />
-          <TextField
-            fullWidth
-            label="Tên sản phẩm"
-            id="fullWidth"
-            onChange={(event) => setTenSp(event.target.value)}
-          />
+          <TextField fullWidth label="Mã sản phẩm" id="fullWidth" onChange={(event) => setMaSp(event.target.value)} />
+          <TextField fullWidth label="Tên sản phẩm" id="fullWidth" onChange={(event) => setTenSp(event.target.value)} />
           <TextField
             fullWidth
             label="Mô tả"
@@ -174,7 +162,7 @@ const ModelAddNew = (props) => {
         <Box
           component="form"
           sx={{
-            "& .MuiTextField-root": { m: 1, width: "49ch" },
+            '& .MuiTextField-root': { m: 1, width: '49ch' },
           }}
           noValidate
           autoComplete="off"
@@ -260,11 +248,11 @@ const ModelAddNew = (props) => {
         <Box
           component="form"
           sx={{
-            "& .MuiTextField-root": { m: 1, width: "45ch" },
+            '& .MuiTextField-root': { m: 1, width: '45ch' },
           }}
           noValidate
           autoComplete="off"
-          textAlign={"center"}
+          textAlign={'center'}
         >
           <TextField
             id="outlined-basic"
@@ -273,12 +261,8 @@ const ModelAddNew = (props) => {
             onChange={(event) => setGiaBan(event.target.value)}
           />
         </Box>
-        <div style={{ textAlign: "right", margin: "20px 0" }}>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={() => handleClickOpenAdd()}
-          >
+        <div style={{ textAlign: 'right', margin: '20px 0' }}>
+          <Button variant="contained" color="success" onClick={() => handleClickOpenAdd()}>
             Thêm
           </Button>
         </div>
@@ -289,7 +273,7 @@ const ModelAddNew = (props) => {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{"Xác nhận thêm?"}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">{'Xác nhận thêm?'}</DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
               Bạn có chắc chắn muốn thêm sản phẩm này không?

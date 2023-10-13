@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
-import { sentenceCase } from 'change-case';
 import { useState, useEffect } from 'react';
 // @mui
 import {
@@ -8,7 +7,6 @@ import {
   Table,
   Stack,
   Paper,
-  Avatar,
   Button,
   Popover,
   Checkbox,
@@ -21,17 +19,23 @@ import {
   IconButton,
   TableContainer,
   TablePagination,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 // components
-import Label from '../../components/label';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
-import USERLIST from '../../_mock/user';
+// import USERLIST from '../../_mock/user';
 // import { useEffect } from 'react';
-import { fetchSpWithImg } from '../../service/SanPhamService';
+import { fetchSpWithImg, deleteSanPham } from '../../service/SanPhamService';
 
 // ----------------------------------------------------------------------
 
@@ -42,7 +46,7 @@ const TABLE_HEAD = [
   { id: 'giaBan', label: 'Giá bán', alignRight: false },
   { id: 'moTa', label: 'Mô tả', alignRight: false },
   { id: 'trangThai', label: 'Trạng thái', alignRight: false },
-  { id: 'function', label: 'Chức năng', alignRight: false },
+  { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -76,6 +80,10 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
+function mapTrangThai(trangThai) {
+  return trangThai === 0 ? 'Còn bán' : trangThai === 10 ? 'Ngừng kinh doanh' : 'Unknown status';
+}
+
 export default function UserPage() {
   const [open, setOpen] = useState(null);
 
@@ -93,22 +101,19 @@ export default function UserPage() {
 
   const [listSP, setListSP] = useState([]);
   // Show Data On Tables
-  const [numberPages, setNumberPages] = useState(0);
-  const getListData = async (page) => {
+  // const [numberPages, setNumberPages] = useState(0);
+  const getListData = async () => {
     try {
-      const res = await fetchSpWithImg(page);
+      const res = await fetchSpWithImg();
       console.log('Check res: ', res);
       setListSP(res);
-
-      setNumberPages(Math.ceil(res.totalPages));
     } catch (error) {
       console.error('Error in list bill: ', error);
     }
   };
-  const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
-    getListData(currentPage);
-  }, [currentPage]);
+    getListData();
+  }, []);
 
   const handleOpenMenu = (event) => {
     setOpen(event.currentTarget);
@@ -147,7 +152,7 @@ export default function UserPage() {
     }
     setSelected(newSelected);
   };
-
+  // Next Page
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -164,9 +169,57 @@ export default function UserPage() {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listSP.length) : 0;
 
-  const filteredUsers =
-    listSP && listSP.content ? applySortFilter(listSP.content, getComparator(order, orderBy), filterName) : [];
+  const filteredUsers = listSP && listSP ? applySortFilter(listSP, getComparator(order, orderBy), filterName) : [];
   const isNotFound = !filteredUsers.length && !!filterName;
+
+  // Delete
+
+  const handleDelete = async (idSp) => {
+    const res = await deleteSanPham(idSp);
+    console.log('Check res: ', res);
+    if (res && res.idSp) {
+      handleAlertClick('Xóa thành công!', 'success');
+      getListData();
+      handleClose();
+    } else {
+      handleAlertClick('Xóa thất bại!', 'error');
+      getListData();
+      handleClose();
+    }
+  };
+
+  // Xac nhan xoa
+  const [openDelete, setOpenDelete] = useState(false);
+  const [idDelete, setIdDelete] = useState('');
+
+  const handleClickOpenDelete = (idSp) => {
+    setOpenDelete(true);
+    setIdDelete(idSp);
+  };
+
+  const handleClose = () => {
+    setOpenDelete(false);
+  };
+
+  // alert
+
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('success');
+
+  const handleAlertClick = (message, severity) => {
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setOpenAlert(true);
+  };
+
+  const handleAlertClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenAlert(false);
+  };
 
   return (
     <>
@@ -217,9 +270,9 @@ export default function UserPage() {
                         <TableCell align="left">{tenSp}</TableCell>
                         <TableCell align="left">{giaBan}</TableCell>
                         <TableCell align="left">{moTa}</TableCell>
-                        <TableCell align="left">{trangThai}</TableCell>
+                        <TableCell align="left">{mapTrangThai(trangThai)}</TableCell>
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={handleOpenMenu}>
+                          <IconButton size="large" color="inherit" onClick={() => handleClickOpenDelete(idSp)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -263,7 +316,7 @@ export default function UserPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={USERLIST.length}
+            count={listSP && listSP.length ? listSP.length : 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -295,11 +348,45 @@ export default function UserPage() {
           Edit
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }}>
+        <MenuItem sx={{ color: 'error.main' }} onClick={handleClickOpenDelete}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
       </Popover>
+
+      <Dialog
+        open={openDelete}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Xác nhận xóa?'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc chắn muốn xóa sản phẩm này không?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Canel</Button>
+
+          <Button onClick={() => handleDelete(idDelete)} autoFocus>
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Stack spacing={2} sx={{ width: '100%' }}>
+        <Snackbar
+          open={openAlert}
+          autoHideDuration={6000}
+          onClose={handleAlertClose}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        >
+          <Alert onClose={handleAlertClose} severity={alertSeverity} sx={{ width: '100%' }}>
+            {alertMessage}
+          </Alert>
+        </Snackbar>
+      </Stack>
     </>
   );
 }

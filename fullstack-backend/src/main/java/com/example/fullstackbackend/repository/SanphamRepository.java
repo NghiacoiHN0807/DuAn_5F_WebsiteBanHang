@@ -54,6 +54,6 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "LEFT JOIN images img ON first_img.first_image_id = img.id_images\n" +
             "LEFT JOIN chi_tiet_san_pham ctsp ON sp.id_sp = ctsp.id_sp\n" +
             "GROUP BY sp.id_sp, sp.ma_sp, sp.ten_sp, sp.id_cl, sp.id_ms, sp.id_loaisp, sp.id_xx, sp.id_tay_ao, sp.id_co_ao, sp.mo_ta, sp.gia_ban, sp.trang_thai, img.images;\n", nativeQuery = true)
-    Page<Object[]> getSpWithImg(Pageable pageable);
+    List<Object[]> getSpWithImg();
 
 }

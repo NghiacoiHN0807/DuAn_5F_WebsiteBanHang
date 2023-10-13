@@ -91,10 +91,8 @@ public class SanPhamController {
     }
 
     @GetMapping("getSpWithImg")
-    public ResponseEntity<Page<SanPhamCustom>> getSanPhamDetails(@RequestParam(defaultValue = "0") Integer page,
-                                                                 @RequestParam(defaultValue = "15") Integer size,
-                                                                 @RequestParam("p") Optional<Integer> p) {
-        Page<SanPhamCustom> pageSp = sanPhamService.sanPhamCustom(p.orElse(page), size);
+    public ResponseEntity<List<SanPhamCustom>> getSanPhamDetails() {
+        List<SanPhamCustom> pageSp = sanPhamService.sanPhamCustom();
         return ResponseEntity.ok(pageSp);
     }
 }

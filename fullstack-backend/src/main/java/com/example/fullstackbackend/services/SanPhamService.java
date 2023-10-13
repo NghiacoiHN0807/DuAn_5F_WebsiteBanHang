@@ -13,7 +13,7 @@ public interface SanPhamService {
 
     Page<SanPham> sanPhamPage(Integer pageNo, Integer size);
 
-    Page<SanPhamCustom> sanPhamCustom(Integer pageNo, Integer size);
+    List<SanPhamCustom> sanPhamCustom();
 
     SanPham add(SanPham add);
 

@@ -38,12 +38,9 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
-    public Page<SanPhamCustom> sanPhamCustom(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        Page<Object[]> result = sanphamRepository.getSpWithImg(pageable);
-
+    public List<SanPhamCustom> sanPhamCustom() {
         List<SanPhamCustom> dtos = new ArrayList<>();
-        for (Object[] row : result.getContent()) {
+        for (Object[] row : sanphamRepository.getSpWithImg()) {
             SanPhamCustom spCustom = new SanPhamCustom();
             spCustom.setIdSp((Integer) row[0]);
             spCustom.setMaSp((String) row[1]);
@@ -62,7 +59,7 @@ public class SanphamServiceImpl implements SanPhamService {
             dtos.add(spCustom);
         }
 
-        return new PageImpl<>(dtos, pageable, result.getTotalElements());
+        return dtos;
     }
 
     @Override
