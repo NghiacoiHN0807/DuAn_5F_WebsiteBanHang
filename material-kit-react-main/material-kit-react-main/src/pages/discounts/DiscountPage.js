@@ -245,8 +245,7 @@ export default function DiscountPage() {
 
   // Handle edit
   const handleEdit = () => {
-    navigate(`/create-bill/${object.idGgct}`);
-    console.log('handleEdit');
+    navigate(`/dashboard/staff/update/${object.idGgct}`);
   };
 
   function formatCurrency(price) {
@@ -399,8 +398,10 @@ export default function DiscountPage() {
         }}
       >
         <MenuItem>
+          <Link to={`/dashboard/staff/update/${object.idGgct}`}>
           <Iconify onClick={() => handleEdit()} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
+          </Link>
         </MenuItem>
 
         <MenuItem onClick={() => handleDelete()} sx={{ color: 'error.main' }}>

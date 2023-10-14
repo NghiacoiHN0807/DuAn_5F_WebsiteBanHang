@@ -9,7 +9,7 @@ import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { add, addGiamGia, getAllSanPham, getCtspByIdSp, getIdGiamGia, getImgByIdSp, update } from "../../service/giamGiaService";
+import { addGiamGia, getAllSanPham, getCtspByIdSp, getImgByIdSp, update } from "../../service/giamGiaService";
 import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
 
@@ -25,7 +25,7 @@ function union(a, b) {
   return [...a, ...not(b, a)];
 }
 
-const ModelAddNewGiamGia = (props) => {
+const ModelUpdateGiamGia = (props) => {
 
   const { id } = useParams();
 
@@ -284,8 +284,6 @@ const ModelAddNewGiamGia = (props) => {
         trangThai: 0,
       }
 
-      const idGg = await getIdGiamGia(id);
-
       const response = await addGiamGia(giaGiaAa);
 
       const promises = chiTietList.map(async (item) => {
@@ -299,13 +297,13 @@ const ModelAddNewGiamGia = (props) => {
             soTienConLai = item.sanPham.giaBan - giamGia.mucGiamTienMat;
           }
           const giamGiaChiTietOk = {
-            idCtsp: chiTietSanPham[ctsp.index],
+            idCtsp: ctsp,
             idGiamGia: response.data,
-            donGia: chiTietList[item.index].sanPham.giaBan,
+            donGia: item.sanPham.giaBan,
             soTienConLai,
             trangThai: 0
           }
-          return update(giamGiaChiTietOk, id);
+          return update(giamGiaChiTietOk);
         });
         return Promise.all(details);
       });
@@ -316,18 +314,18 @@ const ModelAddNewGiamGia = (props) => {
         navigate('/dashboard/discounts');
         setAlertContent({
           type: 'success',
-          message: 'Cập nhật thành công!',
+          message: 'Thêm thành công!',
         });
       } else {
         setAlertContent({
           type: 'success',
-          message: 'Cập nhật không thành công!',
+          message: 'Thêm không thành công!',
         });
       }
     } catch (error) {
       setAlertContent({
         type: 'success',
-        message: 'Đã xảy ra lỗi khi cập nhật giảm giá!',
+        message: 'Đã xảy ra lỗi khi thêm giảm giá!',
       });
     }
 
@@ -633,4 +631,4 @@ const ModelAddNewGiamGia = (props) => {
   );
 };
 
-export default ModelAddNewGiamGia;
+export default ModelUpdateGiamGia;

@@ -11,6 +11,7 @@ import DashboardAppPage from './pages/DashboardAppPage';
 import Sales from './pages/DirectSale-ADM';
 import DiscountPage from './pages/discounts/DiscountPage';
 import ModelAddNewGiamGia from './pages/discounts/ModalsAddNewGiamGia';
+import ModelUpdateGiamGia from './pages/discounts/ModalsUpdateGiamGia';
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +28,7 @@ export default function Router() {
         { path: 'clients', element: <UserPage /> },
         { path: 'staff', element: <UserPage /> },
         { path: 'staff/add', element: <ModelAddNewGiamGia /> },
+        { path: 'staff/update/:id', element: <ModelUpdateGiamGia /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'discounts', element: <DiscountPage /> },
       ],
