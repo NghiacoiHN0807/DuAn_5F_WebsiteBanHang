@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { add, addGiamGia, getAllSanPham, getCtspByIdSp, getImgByIdSp } from "../../service/giamGiaService";
+import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
 
 function not(a, b) {
@@ -40,6 +41,7 @@ const ModelAddNewGiamGia = (props) => {
   const [rightRowsPerPage, setRightRowsPerPage] = React.useState(5);
   const [chiTietList, setchiTietList] = React.useState([]);
   const [image, setImage] = useState([]);
+  const [images, setImages] = useState({});
 
   const getAllSp = async () => {
     try {
@@ -55,8 +57,14 @@ const ModelAddNewGiamGia = (props) => {
 
       // Sử dụng Promise.all để chờ tất cả các promise hoàn thành
       const tempImages = await Promise.all(promises);
-
-      setImage(tempImages.filter(img => img !== null));
+      tempImages.forEach((img, index) => {
+        if (img !== null) {
+          setImages(prevImages => ({
+            ...prevImages,
+            [res[index].idSp]: img
+          }));
+        }
+      });
     } catch (error) {
       console.error('Error loading images:', error);
     }
@@ -335,19 +343,19 @@ const ModelAddNewGiamGia = (props) => {
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Thiết lập giảm giá</label>
+                  <p className="form-label">Thiết lập giảm giá</p>
                   <div>
                     <div className="form-check">
-                      <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="flexRadioDefault1" value={"mucGiam"} checked={selected === "mucGiam"} />
-                      <label className="form-check-label">
+                      <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="form-check-label" value={"mucGiam"} checked={selected === "mucGiam"} />
+                      <p className="form-check-label">
                         Mức giảm
-                      </label>
+                      </p>
                     </div>
                     <div className="form-check">
-                      <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="flexRadioDefault2" value={"phanTram"} checked={selected === "phanTram"} />
-                      <label className="form-check-label1">
+                      <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="form-check-label1" value={"phanTram"} checked={selected === "phanTram"} />
+                      <p className="form-check-label1">
                         Theo %
-                      </label>
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -383,7 +391,7 @@ const ModelAddNewGiamGia = (props) => {
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="exampleFormControlInput1" className="form-label">Ngày bắt đầu</label>
+                  <p className="form-label">Ngày bắt đầu</p>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateTimePicker']}>
                       <DemoItem>
@@ -400,7 +408,7 @@ const ModelAddNewGiamGia = (props) => {
                 </div>
 
                 <div className="mb-3">
-                  <label htmlFor="exampleFormControlInput2" className="form-label">Ngày kết thúc</label>
+                  <p className="form-label">Ngày kết thúc</p>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateTimePicker']}>
                       <DemoItem>
@@ -518,8 +526,6 @@ const ModelAddNewGiamGia = (props) => {
                   <Table>
                     <TableHead>
                       <TableRow>
-                        <TableCell padding="checkbox">
-                        </TableCell>
                         <TableCell>STT</TableCell>
                         <TableCell>Ảnh sản phẩm</TableCell>
                         <TableCell>Mã sản phẩm</TableCell>
