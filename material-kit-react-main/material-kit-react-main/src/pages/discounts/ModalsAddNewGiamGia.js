@@ -3,7 +3,7 @@ import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Checkbox, Chip, Grid, Paper, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
+import { Alert, Button, Checkbox, Chip, Grid, Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
 import { Col, Image, Table } from 'react-bootstrap';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
@@ -42,6 +42,7 @@ const ModelAddNewGiamGia = (props) => {
   const [chiTietList, setchiTietList] = React.useState([]);
   const [image, setImage] = useState([]);
   const [images, setImages] = useState({});
+  const [alertContent, setAlertContent] = useState(null);
 
   const getAllSp = async () => {
     try {
@@ -146,6 +147,13 @@ const ModelAddNewGiamGia = (props) => {
     setChecked([]); // Xóa các phần tử đã chọn
   };
 
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setAlertContent(null);
+  };
+
 
 
 
@@ -209,27 +217,42 @@ const ModelAddNewGiamGia = (props) => {
   const handleSave = async (e) => {
     e.preventDefault();
     if (!maGiamGia.trim() || !tenChuongTrinh.trim() || !ngayBatDau || !ngayKetThuc) {
-      toast.warning('Vui lòng nhập đầy đủ thông tin chương trình giảm giá.');
+      setAlertContent({
+        type: 'warning',
+        message: 'Vui lòng nhập đầy đủ thông tin chương trình giảm giá!',
+      });
       return;
     }
 
     if (!selected) {
-      toast.warning('Vui lòng chọn loại giảm giá.');
+      setAlertContent({
+        type: 'warning',
+        message: 'Vui lòng chọn loại giảm giá!',
+      });
       return;
     }
 
     if (selected === 'phanTram' && (!mucGiamPhanTram || Number.isNaN(mucGiamPhanTram) || mucGiamPhanTram < 1 || mucGiamPhanTram > 50)) {
-      toast.warning('Vui lòng nhập mức giảm phần trăm hợp lệ (1-50).');
+      setAlertContent({
+        type: 'warning',
+        message: 'Vui lòng nhập mức giảm phần trăm hợp lệ (1-50)!',
+      });
       return;
     }
 
     if (selected === 'mucGiam' && (!mucGiamTienMat || Number.isNaN(mucGiamTienMat))) {
-      toast.warning('Vui lòng nhập mức giảm tiền mặt hợp lệ.');
+      setAlertContent({
+        type: 'warning',
+        message: 'Vui lòng nhập mức giảm tiền mặt hợp lệ!',
+      });
       return;
     }
 
     if (chiTietList.length === 0) {
-      toast.warning('Vui lòng chọn ít nhất một sản phẩm để áp dụng giảm giá.');
+      setAlertContent({
+        type: 'warning',
+        message: 'Vui lòng chọn ít nhất một sản phẩm để áp dụng giảm giá!',
+      });
       return;
     }
 
@@ -238,7 +261,10 @@ const ModelAddNewGiamGia = (props) => {
     };
 
     if (!checkDateValidity()) {
-      toast.warning('Ngày kết thúc phải sau ngày bắt đầu.');
+      setAlertContent({
+        type: 'warning',
+        message: 'Ngày kết thúc phải sau ngày bắt đầu!',
+      });
       return;
     }
 
@@ -286,12 +312,21 @@ const ModelAddNewGiamGia = (props) => {
 
       if (response.status === 'Ok!') {
         navigate('/quan-ly-giam-gia');
-        toast.success('Thêm thành công!');
+        setAlertContent({
+          type: 'success',
+          message: 'Thêm thành công!',
+        });
       } else {
-        toast.error('Thêm không thành công!');
+        setAlertContent({
+          type: 'success',
+          message: 'Thêm không thành công!',
+        });
       }
     } catch (error) {
-      toast.error('Đã xảy ra lỗi khi thêm giảm giá.');
+      setAlertContent({
+        type: 'success',
+        message: 'Đã xảy ra lỗi khi thêm giảm giá!',
+      });
     }
 
   };
@@ -580,6 +615,18 @@ const ModelAddNewGiamGia = (props) => {
           </div>
         </div>
       </div>
+      {alertContent && (
+        <Snackbar
+          open
+          autoHideDuration={3000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+            {alertContent.message}
+          </Alert>
+        </Snackbar>
+      )}
     </>
   );
 };
