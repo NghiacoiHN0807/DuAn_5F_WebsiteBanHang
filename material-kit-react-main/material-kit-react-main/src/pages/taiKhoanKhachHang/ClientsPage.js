@@ -9,7 +9,6 @@ import {
     GridToolbarExport,
     GridToolbarFilterButton
 } from "@mui/x-data-grid";
-import {toast} from "react-toastify";
 import Badge from "react-bootstrap/Badge";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -35,7 +34,8 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from "@mui/icons-material/Search";
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
-
+import {toast, ToastContainer} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {deleteTaiKhoanKH, fetchAllTKKH} from "../../service/taiKhoanKhachHangSevice";
 import Iconify from "../../components/iconify";
 
@@ -197,11 +197,11 @@ const ClientPage = () => {
         const res = await deleteTaiKhoanKH(item.id);
         console.log("Check res: ", res);
         if (res) {
-            toast.success("Xóa thành công!");
+            toast.success('Xóa thành công!');
             handleClose();
             handlePageClick(0);
         } else {
-            toast.error("Xóa thất bại!");
+            toast.error('Xóa thất bại!');
             handleClose();
         }
     };
@@ -217,6 +217,7 @@ const ClientPage = () => {
     const handleClose = () => {
         setOpen(false);
     };
+
     function CustomToolbar() {
         return (
             <GridToolbarContainer>
@@ -331,6 +332,24 @@ const ClientPage = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <ToastContainer
+                position="top-right" // Vị trí trung tâm ở phía trên
+                autoClose={5000} // Tự động đóng sau 5 giây
+                hideProgressBar={false} // Hiển thị thanh tiến trình
+                newestOnTop={false} // Hiển thị thông báo mới nhất ở trên cùng
+                closeOnClick // Đóng thông báo khi nhấp vào
+                rtl={false} // Văn bản từ trái qua phải
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                containerId="toast-container" // Đặt id của container
+                style={{
+                    width: "auto", // Điều chỉnh kích thước theo nhu cầu
+                    maxHeight: "100px", // Điều chỉnh chiều cao theo nhu cầu
+                }}
+            />
+
 
         </>
     );

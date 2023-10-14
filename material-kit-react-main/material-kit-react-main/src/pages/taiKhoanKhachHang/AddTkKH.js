@@ -21,38 +21,39 @@ const AddTkKH = () => {
     const [validationErrors, setValidationErrors] = useState("");
     const handleSave = async () => {
 
-        let res;
-        try {
-            res = await postAddTaiKhoanKhachHang(
-                maTaiKhoan,
-                ho,
-                ten,
-                sdt,
-                email,
-                matKhau,
-                trangThai
-            );
-            console.log("Check res: ", res);
-        } catch (error) {
-            if (error.response && error.response.data) {
-                console.log(error.response.data);
-                setValidationErrors(error.response.data);
-            } else {
-                console.error("Error:", error);
+            let res;
+            try {
+                res = await postAddTaiKhoanKhachHang(
+                    maTaiKhoan,
+                    ho,
+                    ten,
+                    sdt,
+                    email,
+                    matKhau,
+                    trangThai
+                );
+                console.log("Check res: ", res);
+            }catch (error){
+                if (error.response && error.response.data) {
+                    console.log(error.response.data);
+                    setValidationErrors(error.response.data);
+                } else {
+                    console.error("Error:", error);
+                }
+                return;
             }
-            return;
-        }
 
-        if (res && res.idTaiKhoan) {
-            toast.success("Thêm Thành Công");
-            navigate("/dashboard/clients");
-        } else {
-            toast.error("Thêm Thất Bại!");
-        }
+            if (res && res.idTaiKhoan) {
+                toast.success("Thêm Thành Công");
+                navigate("/dashboard/clients");
+            } else {
+                toast.error("Thêm Thất Bại!");
+            }
 
     };
     return (
         <>
+
             <Helmet>
                 <title> Client || 5F Store </title>
             </Helmet>
@@ -117,12 +118,15 @@ const AddTkKH = () => {
                         size={"large"}
                         variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>}
                         onClick={() => handleSave()}
-                        style={{marginTop: "20px"}} // Make button wider
+                        style={{ marginTop: "20px" }} // Make button wider
                     >
                         Thêm Tài Khoản Khách Hàng Mới
                     </Button>
                 </Box>
             </Container>
+
+
+
         </>
     );
 };
