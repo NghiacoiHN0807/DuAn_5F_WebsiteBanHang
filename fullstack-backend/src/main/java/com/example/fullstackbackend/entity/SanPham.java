@@ -76,7 +76,6 @@ public class SanPham {
         if (maSp == null) {
             maSp = generateMaSP();
         }
-
     }
     private String generateMaSP() {
         // Tạo một UUID mới

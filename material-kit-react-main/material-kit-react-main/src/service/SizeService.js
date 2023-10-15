@@ -1,26 +1,16 @@
 import custom from './custom-axios';
 
-const fetchAllSize = (page) => {
-  return custom.get(`/size/view-all?p=${page}`); // Call API
-};
+const fetchAllSize = (page) => custom.get(`/size/view-all?p=${page}`); // Call API
 
-const fetchSize = () => {
-  return custom.get(`/size/listSize`); // Call API
-};
+const fetchSize = () => custom.get(`/size/listSize`); // Call API
 
-const detailSize = (idSize) => {
-  return custom.get(`/size/detail/${idSize}`); // Call API
-};
+const detailSize = (idSize) => custom.get(`/size/detail/${idSize}`); // Call API
 
-const postAddSize = (maSize, tenSize, trangThai) => {
-  return custom.post('/size/add', { maSize, tenSize, trangThai });
-};
-const deleteSize = (id) => {
-  return custom.delete(`/size/delete/${id}`);
-};
+const postAddSize = (maSize, tenSize, trangThai) => custom.post('/size/add', { maSize, tenSize, trangThai });
 
-const putUpdateSize = (idSize, maSize, tenSize, trangThai) => {
-  return custom.put(`/size/update`, { idSize, maSize, tenSize, trangThai });
-};
+const deleteSize = (id) => custom.delete(`/size/delete/${id}`);
+
+const putUpdateSize = (idSize, maSize, tenSize, trangThai) =>
+  custom.put(`/size/update`, { idSize, maSize, tenSize, trangThai });
 
 export { fetchAllSize, fetchSize, detailSize, postAddSize, deleteSize, putUpdateSize };

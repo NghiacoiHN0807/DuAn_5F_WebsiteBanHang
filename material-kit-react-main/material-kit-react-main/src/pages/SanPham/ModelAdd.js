@@ -13,6 +13,13 @@ import {
   MenuItem,
   Grid,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { postAddSanPham } from '../../service/SanPhamService';
 import { fetchXX, detailXX } from '../../service/XuatXuService';
@@ -23,7 +30,7 @@ import { fetchMS, detailMS } from '../../service/MauSacService';
 import { fetchTayAo, detailTayAo } from '../../service/OngTayAoService';
 
 export default function AddSanPham() {
-  const [maSp, setMaSp] = useState('');
+  const [maSp, setMaSp] = useState(null);
   const [tenSp, setTenSp] = useState('');
   const [moTa, setMoTa] = useState('');
   const [giaBan, setGiaBan] = useState('');
@@ -67,6 +74,37 @@ export default function AddSanPham() {
     setListCoAo(resCoAo);
   };
 
+  // dong mo confirm
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpenAdd = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  // alert
+
+  const [openAlert, setOpenAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('success');
+
+  const handleAlertClick = (message, severity) => {
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+    setOpenAlert(true);
+  };
+
+  const handleAlertClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenAlert(false);
+  };
+
   const handleSave = async () => {
     // get object all\
     const getObjChatLieu = await detailCL(chatLieu);
@@ -89,7 +127,7 @@ export default function AddSanPham() {
       setGiaBan('') &&
       setTrangThai('')
     ) {
-      toast.warning('Some field is empty!');
+      handleAlertClick('Thêm thất bại!', 'danger');
     } else {
       const res = await postAddSanPham(
         maSp,
@@ -107,10 +145,12 @@ export default function AddSanPham() {
 
       console.log('Check res: ', res);
       if (res && res.idSp) {
-        toast.success('Add ctsp successfully!');
+        handleAlertClick('Thêm thành công!', 'success');
+        handleClose();
         // navigate(`/quan-ly-san-pham/san-pham/sua-san-pham/${res.idSp}`);
       } else {
-        toast.error('Add ctsp failed!');
+        handleAlertClick('Thêm thất bại!', 'danger');
+        handleClose();
       }
     }
   };
@@ -261,12 +301,44 @@ export default function AddSanPham() {
             </Grid>
           </Grid>
           <div>
-            <Button variant="contained" fullWidth sx={{ marginTop: '25px' }}>
+            <Button variant="contained" fullWidth sx={{ marginTop: '25px' }} onClick={() => handleClickOpenAdd()}>
               Thêm
             </Button>
           </div>
         </Card>
       </Container>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Xác nhận thêm?'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc chắn muốn thêm sản phẩm này không?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Canel</Button>
+          <Button onClick={() => handleSave()} autoFocus>
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Stack spacing={2} sx={{ width: '100%' }}>
+        <Snackbar
+          open={openAlert}
+          autoHideDuration={6000}
+          onClose={handleAlertClose}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        >
+          <Alert onClose={handleAlertClose} severity={alertSeverity} sx={{ width: '100%' }}>
+            {alertMessage}
+          </Alert>
+        </Snackbar>
+      </Stack>
     </>
   );
 }

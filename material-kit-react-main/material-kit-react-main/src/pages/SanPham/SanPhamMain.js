@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 // @mui
 import {
   Card,
@@ -32,9 +33,6 @@ import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
-// mock
-// import USERLIST from '../../_mock/user';
-// import { useEffect } from 'react';
 import { fetchSpWithImg, deleteSanPham } from '../../service/SanPhamService';
 
 // ----------------------------------------------------------------------
@@ -115,7 +113,10 @@ export default function UserPage() {
     getListData();
   }, []);
 
-  const handleOpenMenu = (event) => {
+  const [selectedId, setSelectedId] = useState('');
+
+  const handleOpenMenu = (event, idSp) => {
+    setSelectedId(idSp);
     setOpen(event.currentTarget);
   };
 
@@ -188,13 +189,17 @@ export default function UserPage() {
     }
   };
 
+  // Update
+  const navigate = useNavigate();
+  const handleUpdate = (idSp) => {
+    navigate(`/dashboard/updateProduct/${idSp}`);
+  };
+
   // Xac nhan xoa
   const [openDelete, setOpenDelete] = useState(false);
-  const [idDelete, setIdDelete] = useState('');
 
-  const handleClickOpenDelete = (idSp) => {
+  const handleClickOpenDelete = () => {
     setOpenDelete(true);
-    setIdDelete(idSp);
   };
 
   const handleClose = () => {
@@ -272,7 +277,7 @@ export default function UserPage() {
                         <TableCell align="left">{moTa}</TableCell>
                         <TableCell align="left">{mapTrangThai(trangThai)}</TableCell>
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={() => handleClickOpenDelete(idSp)}>
+                          <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, idSp)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -344,7 +349,7 @@ export default function UserPage() {
         }}
       >
         <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} onClick={() => handleUpdate(selectedId)} />
           Edit
         </MenuItem>
 
@@ -369,7 +374,7 @@ export default function UserPage() {
         <DialogActions>
           <Button onClick={handleClose}>Canel</Button>
 
-          <Button onClick={() => handleDelete(idDelete)} autoFocus>
+          <Button onClick={() => handleDelete(selectedId)} autoFocus>
             Ok
           </Button>
         </DialogActions>

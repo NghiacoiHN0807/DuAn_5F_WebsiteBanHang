@@ -11,6 +11,7 @@ import DashboardAppPage from './pages/DashboardAppPage';
 
 import SanPham from './pages/SanPham/SanPhamMain';
 import AddSanPham from './pages/SanPham/ModelAdd';
+import UpdateSanPham from './pages/SanPham/ModelUpdate';
 
 // ----------------------------------------------------------------------
 
@@ -28,6 +29,7 @@ export default function Router() {
         { path: 'staff', element: <UserPage /> },
         { path: 'products', element: <SanPham /> },
         { path: 'addProduct', element: <AddSanPham /> },
+        { path: 'updateProduct/:id', element: <UpdateSanPham /> },
         { path: 'discounts', element: <BlogPage /> },
       ],
     },
