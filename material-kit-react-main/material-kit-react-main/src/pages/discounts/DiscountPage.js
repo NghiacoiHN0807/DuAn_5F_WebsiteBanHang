@@ -34,6 +34,7 @@ import ModalDeleteDiscount from './Modal-Delete-Discount';
 // import USERLIST from '../_mock/user';
 // import { useEffect } from 'react';
 import { getSanPhamDetails } from '../../service/giamGiaService';
+import ModelUpdateGiamGia from './ModalsUpdateGiamGia';
 
 // ----------------------------------------------------------------------
 
@@ -245,7 +246,7 @@ export default function DiscountPage() {
 
   // Handle edit
   const handleEdit = () => {
-    navigate(`/dashboard/staff/update/${object.idGgct}`);
+    navigate(`/dashboard/discount/update/${object.idGgct}`);
   };
 
   function formatCurrency(price) {
@@ -282,7 +283,7 @@ export default function DiscountPage() {
           <Typography variant="h4" gutterBottom>
             Giảm giá
           </Typography>
-          <Link to={'/dashboard/staff/add'}>
+          <Link to={'/dashboard/discount/add'}>
           <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Thêm Giảm Giá
           </Button>
@@ -398,7 +399,7 @@ export default function DiscountPage() {
         }}
       >
         <MenuItem>
-          <Link to={`/dashboard/staff/update/${object.idGgct}`}>
+          <Link to={`/dashboard/discount/update/${object.idGgct}`}>
           <Iconify onClick={() => handleEdit()} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
           </Link>
@@ -423,6 +424,9 @@ export default function DiscountPage() {
           </Alert>
         </Snackbar>
       )}
+      <ModelUpdateGiamGia
+        data={object}
+      />
     </>
   );
 }

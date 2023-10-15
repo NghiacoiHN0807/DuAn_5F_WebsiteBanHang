@@ -27,6 +27,8 @@ function union(a, b) {
 
 const ModelUpdateGiamGia = (props) => {
 
+  console.log("Data: ", props.data);
+
   const { id } = useParams();
 
   // const { show, handleClose, isDataGiamGia, getGiamGia } = props;
@@ -340,7 +342,7 @@ const ModelUpdateGiamGia = (props) => {
   return (
     <>
       <Modal.Header>
-        <Modal.Title className='text-center m-25 w-100 text-uppercase'>Tạo chương trình giảm giá</Modal.Title>
+        <Modal.Title className='text-center m-25 w-100 text-uppercase'>Chỉnh sửa chương trình giảm giá</Modal.Title>
       </Modal.Header>
       <div className="d-flex justify-content-around">
         <div className="content-left">
