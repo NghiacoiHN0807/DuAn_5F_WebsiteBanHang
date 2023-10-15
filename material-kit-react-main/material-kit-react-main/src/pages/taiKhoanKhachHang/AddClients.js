@@ -6,7 +6,7 @@ import {Box, Button, Container, Stack, TextField, Typography} from "@mui/materia
 import {postAddTaiKhoanKhachHang} from "../../service/taiKhoanKhachHangSevice";
 import Iconify from "../../components/iconify";
 
-const AddTkKH = () => {
+const AddClients = () => {
     const [maTaiKhoan] = useState(null);
     const [ho, setHo] = useState("");
     const [ten, setTen] = useState("");
@@ -130,4 +130,4 @@ const AddTkKH = () => {
         </>
     );
 };
-export default AddTkKH;
+export default AddClients;

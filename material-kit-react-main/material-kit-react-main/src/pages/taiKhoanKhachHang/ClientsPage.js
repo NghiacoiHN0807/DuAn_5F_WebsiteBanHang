@@ -180,10 +180,10 @@ const ClientPage = () => {
 
 
     const handAdd = () => {
-        navigate("/dashboard/clients/them-tai-khoan");
+        navigate("/dashboard/clients/add");
     };
     const handAddDiaChi = (item) => {
-        navigate(`/dia-chi/${item.maTaiKhoan}`);
+        navigate(`/dashboard/address/${item.maTaiKhoan}`);
     };
 
     const handlClickRow = (item) => {

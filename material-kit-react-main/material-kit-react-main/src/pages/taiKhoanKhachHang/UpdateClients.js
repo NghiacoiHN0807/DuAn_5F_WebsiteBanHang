@@ -22,7 +22,7 @@ import {getDetailOneTK, postUpdateTaiKhoanKhachHang} from "../../service/taiKhoa
 import Iconify from "../../components/iconify";
 
 
-const UpdateTkKH = () => {
+const UpdateClients = () => {
     const param = useParams();
     const idTK = param.id;
     const [Data, setData] = useState([]);
@@ -220,4 +220,4 @@ const UpdateTkKH = () => {
         </>
     );
 };
-export default UpdateTkKH;
+export default UpdateClients;
