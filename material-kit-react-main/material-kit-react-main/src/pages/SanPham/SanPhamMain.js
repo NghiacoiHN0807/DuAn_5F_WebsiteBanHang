@@ -349,7 +349,7 @@ export default function UserPage() {
         }}
       >
         <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} onClick={() => handleUpdate(selectedId)} />
+          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} onClick={handleUpdate(selectedId)} />
           Edit
         </MenuItem>
 

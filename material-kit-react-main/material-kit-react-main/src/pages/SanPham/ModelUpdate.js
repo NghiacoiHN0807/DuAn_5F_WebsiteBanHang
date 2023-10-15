@@ -202,7 +202,7 @@ export default function UpdateSanPham() {
         <Card sx={{ padding: '25px' }}>
           <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={12}>
-              <TextField id="fullWidth" label="Mã sản phẩm" fullWidth value={maSp} disabled />
+              <TextField id="fullWidth" label="Mã sản phẩm" fullWidth disabled />
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -213,112 +213,124 @@ export default function UpdateSanPham() {
               />
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Chất liệu</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Chất liệu"
-                  value={chatLieu}
-                  onChange={(event) => setChatLieu(event.target.value)}
-                >
-                  {listCL.map((item, index) => (
-                    <MenuItem value={item.idCl} key={index}>
-                      {item.tenCl}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              {listCL.length > 0 && (
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Chất liệu</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Chất liệu"
+                    value={chatLieu}
+                    onChange={(event) => setChatLieu(event.target.value)}
+                  >
+                    {listCL.map((item, index) => (
+                      <MenuItem value={item.idCl} key={index}>
+                        {item.tenCl}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Màu sắc</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Màu sắc"
-                  value={mauSac}
-                  onChange={(event) => setMauSac(event.target.value)}
-                >
-                  {listMS.map((item, index) => (
-                    <MenuItem value={item.idMs} key={index}>
-                      {item.tenMs}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              {listMS.length > 0 && (
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Màu sắc</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Màu sắc"
+                    value={mauSac}
+                    onChange={(event) => setMauSac(event.target.value)}
+                  >
+                    {listMS.map((item, index) => (
+                      <MenuItem value={item.idMs} key={index}>
+                        {item.tenMs}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Loại sản phẩm</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Loại sản phẩm"
-                  value={loaiSP}
-                  onChange={(event) => setLoaiSP(event.target.value)}
-                >
-                  {listLSP.map((option, index) => (
-                    <MenuItem key={index} value={option.idLoaisp}>
-                      {option.tenLsp}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              {listLSP.length > 0 && (
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Loại sản phẩm</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Loại sản phẩm"
+                    value={loaiSP}
+                    onChange={(event) => setLoaiSP(event.target.value)}
+                  >
+                    {listLSP.map((option, index) => (
+                      <MenuItem key={index} value={option.idLoaisp}>
+                        {option.tenLsp}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Xuất xứ</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Xuất xứ"
-                  value={xuatXu}
-                  onChange={(event) => setXuatXu(event.target.value)}
-                >
-                  {listXX.map((item, index) => (
-                    <MenuItem value={item.idXx} key={index}>
-                      {item.tenNuoc}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              {listXX.length > 0 && (
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Xuất xứ</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Xuất xứ"
+                    value={xuatXu}
+                    onChange={(event) => setXuatXu(event.target.value)}
+                  >
+                    {listXX.map((item, index) => (
+                      <MenuItem value={item.idXx} key={index}>
+                        {item.tenNuoc}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Loại cổ áo</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Loại cổ áo"
-                  value={coAo}
-                  onChange={(event) => setCoAo(event.target.value)}
-                >
-                  {listCoAo.map((item, index) => (
-                    <MenuItem value={item.idCoAo} key={index}>
-                      {item.loaiCoAo}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              {listCoAo.length > 0 && (
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Loại cổ áo</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Loại cổ áo"
+                    value={coAo}
+                    onChange={(event) => setCoAo(event.target.value)}
+                  >
+                    {listCoAo.map((item, index) => (
+                      <MenuItem value={item.idCoAo} key={index}>
+                        {item.loaiCoAo}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </Grid>
             <Grid item xs={6}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Ống tay áo</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Ống tay áo"
-                  value={tayAo}
-                  onChange={(event) => setTayAo(event.target.value)}
-                >
-                  {listTayAo.map((option, index) => (
-                    <MenuItem key={index} value={option.idTayAo}>
-                      {option.loaiTayAo}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+              {listTayAo.length > 0 && (
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Ống tay áo</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    label="Ống tay áo"
+                    value={tayAo}
+                    onChange={(event) => setTayAo(event.target.value)}
+                  >
+                    {listTayAo.map((option, index) => (
+                      <MenuItem key={index} value={option.idTayAo}>
+                        {option.loaiTayAo}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
             </Grid>
             <Grid item xs={6}>
               <div>
@@ -340,14 +352,14 @@ export default function UpdateSanPham() {
                     value="0"
                     control={<Radio />}
                     label="Còn bán"
-                    checked={Number(trangThai) === 0 ? 'true' : ''}
+                    checked={Number(trangThai) === 0}
                     onChange={(event) => setTrangThai(event.target.value)}
                   />
                   <FormControlLabel
                     value="10"
                     control={<Radio />}
                     label="Ngừng kinh doanh"
-                    checked={Number(trangThai) === 10 ? 'true' : ''}
+                    checked={Number(trangThai) === 10}
                     onChange={(event) => setTrangThai(event.target.value)}
                   />
                 </RadioGroup>
