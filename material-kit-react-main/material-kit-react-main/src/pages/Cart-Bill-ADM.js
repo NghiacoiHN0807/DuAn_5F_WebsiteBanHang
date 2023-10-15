@@ -24,6 +24,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Typography,
 } from '@mui/material';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import axios from 'axios';
@@ -50,6 +51,7 @@ import ModalUpdateProductOnCart from '../forms/Modals-Update-Product-Cart';
 import ModalDeleteProductOnCart from '../forms/Modal-Delete-Product';
 import ModalDeleteAllProductOnCart from '../forms/Modal-Delete-All-Product';
 import ModalPaymentComfirm from '../forms/Modal-Payment-Confirm';
+import Iconify from '../components/iconify';
 
 // Dislay invoice waiting
 const AntTabs = styled(Tabs)({
@@ -384,7 +386,7 @@ const CartBillADM = (props) => {
       const total = DataCart.reduce((accumulator, item) => accumulator + item[9], 0);
 
       setThanhTien(total);
-      // await updateTongTien(idHdParam, thanhTien);
+      await updateTongTien(idHdParam, thanhTien);
     };
 
     calculateTotalPrice();
@@ -486,7 +488,11 @@ const CartBillADM = (props) => {
 
             <div className="row cart-information">
               <div className="row">
-                <h6>Giỏ Hàng</h6>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                  <Typography variant="h5" gutterBottom>
+                    Giỏ Hàng{' '}
+                  </Typography>
+                </Stack>
               </div>
               <TableContainer sx={{ marginTop: 2, marginBottom: 2 }} component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -547,7 +553,7 @@ const CartBillADM = (props) => {
               </TableContainer>
 
               <div className="col-2">
-                <Button onClick={handDeleteAll} variant="outlined" startIcon={<DeleteIcon />}>
+                <Button sx={{ marginBottom: 3 }} onClick={handDeleteAll} variant="outlined" startIcon={<DeleteIcon />}>
                   Delete
                 </Button>
               </div>
@@ -563,14 +569,14 @@ const CartBillADM = (props) => {
             </div>
             <div className="row customer-information">
               <div className="row">
-                <div className="col-6">
-                  <h6>Thông Tin Khách Hàng</h6>
-                </div>
-                <div className="col-6 button-list-personal">
-                  <Button onClick={handleAddKH} size="small" variant="outlined">
-                    Khách Hàng
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                  <Typography variant="h5" gutterBottom>
+                    Thông Tin Khách Hàng{' '}
+                  </Typography>
+                  <Button onClick={() => handleAddKH()} variant="outlined" startIcon={<Iconify icon="eva:plus-fill" />}>
+                    Khách Hàng{' '}
                   </Button>
-                </div>
+                </Stack>
               </div>
 
               <div className="text-information">
@@ -612,14 +618,23 @@ const CartBillADM = (props) => {
             </div>
             <div className="row information-payment">
               <div className="row header-information">
-                <div className="col-6">
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                  <Typography variant="h5" gutterBottom>
+                    Thông Tin Thanh Toán{' '}
+                  </Typography>
+                  <Button onClick={() => handleAddKH()} variant="outlined" startIcon={<Iconify icon="eva:plus-fill" />}>
+                    Primary{' '}
+                  </Button>
+                </Stack>
+                {/* <div className="col-6">
+
                   <h6>Thông Tin Thanh Toán</h6>
                 </div>
                 <div className="col-6 button-list">
                   <Button size="small" variant="outlined">
                     Primary
                   </Button>
-                </div>
+                </div> */}
               </div>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6} md={7}>
@@ -655,7 +670,7 @@ const CartBillADM = (props) => {
                         onChange={(e) => getSdtKHShip(e.target.value)}
                       />
                       <div className="address">
-                        <FormControl size="small" sx={{ m: 0, minWidth: 190, marginRight: 5 }}>
+                        <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}>
                           <InputLabel id="province-label">Tỉnh/Thành Phố</InputLabel>
                           <Select
                             labelId="province-label"
@@ -674,7 +689,7 @@ const CartBillADM = (props) => {
                             ))}
                           </Select>
                         </FormControl>
-                        <FormControl size="small" sx={{ m: 0, minWidth: 190, marginRight: 5 }}>
+                        <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}>
                           <InputLabel id="district-label">Quận/Huyện</InputLabel>
                           <Select
                             labelId="district-label"
@@ -693,7 +708,7 @@ const CartBillADM = (props) => {
                             ))}
                           </Select>
                         </FormControl>
-                        <FormControl size="small" sx={{ m: 0, minWidth: 190 }}>
+                        <FormControl size="small" sx={{ m: 0, minWidth: 170, marginTop: 2 }}>
                           <InputLabel id="ward-label">Phường/Xã</InputLabel>
                           <Select
                             labelId="ward-label"
@@ -773,7 +788,37 @@ const CartBillADM = (props) => {
                     <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Giao Hàng" />
                     <br />
                     <div className="row">
-                      <div className="col-6">
+                      <Stack
+                        sx={{ marginTop: 3 }}
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        mb={5}
+                      >
+                        <Typography variant="h6" gutterBottom>
+                          Tiền Hàng{' '}
+                        </Typography>
+                        <Typography variant="h6" gutterBottom>
+                          {thanhTien}{' '}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                        <Typography variant="h6" gutterBottom>
+                          Giảm Giá{' '}
+                        </Typography>
+                        <Typography variant="h6" gutterBottom>
+                          {thanhTien}{' '}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                        <Typography variant="h6" gutterBottom>
+                          Tổng{' '}
+                        </Typography>
+                        <Typography variant="h6" gutterBottom>
+                          {thanhTien}{' '}
+                        </Typography>
+                      </Stack>
+                      {/* <div className="col-6">
                         <p>Tiền Hàng</p>
                         <p>Giảm Giá</p>
                         <p>TỔNG: </p>
@@ -782,7 +827,7 @@ const CartBillADM = (props) => {
                         <p>{thanhTien}</p>
                         <p>GIAM GIA</p>
                         <p>{thanhTien}</p>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </Grid>
@@ -836,13 +881,13 @@ const CartBillADM = (props) => {
               DataCart={DataCart}
             />
             {/* Modal Add Customer */}
-            {/* <ModalAddKhachHang
+            <ModalAddKhachHang
               open={showModalsKH}
               handleClose={handleCloseAddKH}
               setSelectedCustomerName={setSelectedCustomerName}
               setSelectedMaTk={setSelectedMaTk}
               setSelectedCustomerEmail={setSelectedCustomerEmail}
-            /> */}
+            />
             {/* ModalDeleteDirectSale */}
             <ModalDeleteDirectSale open={open} handleClose={handleCloseDeleteInvoice} information={information} />
             {/* ModalPaymentComfirm */}
@@ -855,7 +900,7 @@ const CartBillADM = (props) => {
               sdtKHTT={sdtKHTT}
             />
             {/* ModelShipOnline */}
-             <ModalCreateBillOnline
+            <ModalCreateBillOnline
               open={openCreateOnline}
               handleClose={handleCloseCreateOnline}
               thanhTien={thanhTien}
@@ -863,7 +908,7 @@ const CartBillADM = (props) => {
               tenKhShip={tenKhShip}
               sdtKHShip={sdtKHShip}
               result={result}
-            /> 
+            />
           </Box>
         </Box>
       </Box>

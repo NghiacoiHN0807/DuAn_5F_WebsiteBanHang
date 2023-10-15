@@ -11,10 +11,20 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import PropTypes from 'prop-types';
 import { findByProductNameAndSize } from '../service/BillSevice';
 import { postAddDirect, updateCart } from '../service/DirectSaleSevice';
 
 const ModalDetailProduct = (props) => {
+  ModalDetailProduct.propTypes = {
+    show: PropTypes.bool.isRequired,
+    handleCloseDetai: PropTypes.func.isRequired,
+    dataDetail: PropTypes.string.isRequired,
+    selectDataCart: PropTypes.array.isRequired,
+    DataCart: PropTypes.array.isRequired,
+    listImages: PropTypes.number.isRequired,
+    currentPage1: PropTypes.number.isRequired,
+  };
   const { show, handleCloseDetai, dataDetail, selectDataCart, DataCart, listImages, currentPage1 } = props;
 
   //   Insert product

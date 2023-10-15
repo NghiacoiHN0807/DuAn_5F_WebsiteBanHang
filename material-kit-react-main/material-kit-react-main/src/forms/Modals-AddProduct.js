@@ -10,12 +10,21 @@ import {
   Typography,
 } from '@mui/material';
 import { sample } from 'lodash';
-import ModalDetailProduct from './Modal-Detail-SanPham';
-import { fetchAllCTSPBySize, findById } from '../service/BillSevice';
+import PropTypes from 'prop-types';
+// import ModalDetailProduct from './Modal-Detail-SanPham';
+import { fetchAllCTSPBySize } from '../service/BillSevice';
 // @mui
-import { ProductSort, ProductListADM, ProductCartWidget, ProductFilterSidebar } from '../sections/@dashboard/products';
+import { ProductSort, ProductListADM, ProductFilterSidebar } from '../sections/@dashboard/products';
 
 const ModalAddProduct = (props) => {
+  // Get Props
+  ModalAddProduct.propTypes = {
+    show: PropTypes.bool.isRequired,
+    handleClose: PropTypes.func.isRequired,
+    selectDataCart: PropTypes.func.isRequired,
+    DataCart: PropTypes.array.isRequired,
+    currentPage1: PropTypes.number.isRequired,
+  };
   const { show, handleClose, selectDataCart, DataCart, currentPage1 } = props;
   const [listData, setListData] = useState([]);
   const [numberPages, setNumberPages] = useState(0);

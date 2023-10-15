@@ -74,10 +74,8 @@ public class HoaDonController {
     }
 
     @GetMapping("view-all-online-invoice")
-    public Page<HoaDon> viewAllOnlineInvoice(@RequestParam(defaultValue = "0") Integer page,
-                                             @RequestParam(defaultValue = "10") Integer size,
-                                             @RequestParam("p") Optional<Integer> p) {
-        Page<HoaDon> hoaDons = hoadonSevice.hoaDonOnline(p.orElse(page), size);
+    public List<HoaDon> viewAllOnlineInvoice() {
+        List<HoaDon> hoaDons = hoadonSevice.hoaDonOnline();
         return hoaDons;
     }
 

@@ -12,7 +12,7 @@ public interface TaiKhoanKhachHangSevice {
 
     Page<TaiKhoan> Page(Integer pageNo, Integer size);
 
-    Page<TaiKhoan> PageKhachHang(Integer pageNo, Integer size);
+    List<TaiKhoan> PageKhachHang();
 
     TaiKhoan add(TaiKhoan add);
 

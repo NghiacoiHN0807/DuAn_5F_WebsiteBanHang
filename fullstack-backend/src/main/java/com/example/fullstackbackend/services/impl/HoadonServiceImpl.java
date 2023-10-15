@@ -44,9 +44,8 @@ public class HoadonServiceImpl implements HoadonSevice {
     }
 
     @Override
-    public Page<HoaDon> hoaDonOnline(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return hoadonRepository.pageOnlineInvoice(pageable);
+    public List<HoaDon> hoaDonOnline() {
+        return hoadonRepository.pageOnlineInvoice();
     }
 
     @Override

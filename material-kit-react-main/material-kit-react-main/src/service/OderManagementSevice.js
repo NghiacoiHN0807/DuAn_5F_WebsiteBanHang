@@ -1,7 +1,6 @@
 import custom from './custom-axios';
 
-const getAllOrderManagement = (page, keyword) =>
-  custom.get(`/hoa-don/view-all-online-invoice?p=${page}&keyword=${keyword}`);
+const getAllOrderManagement = () => custom.get(`/hoa-don/view-all-online-invoice`);
 
 const getDetailOneHD = (idHd) => custom.get(`/lich-su-hoa-don/view-all/${idHd}`);
 

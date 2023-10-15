@@ -7,12 +7,19 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { useState, forwardRef } from 'react';
+import PropTypes from 'prop-types';
 import { deleteProductOnCart } from '../service/DirectSaleSevice';
 
 const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
 export default function ModalDeleteAllProductOnCart(props) {
   // Get Props
+  ModalDeleteAllProductOnCart.propTypes = {
+    open: PropTypes.bool.isRequired,
+    handleClose: PropTypes.func.isRequired,
+    selectDataCart: PropTypes.func.isRequired,
+    DataCart: PropTypes.array.isRequired,
+  };
   const { open, handleClose, selectDataCart, DataCart } = props;
 
   const [alertContent, setAlertContent] = useState(null);

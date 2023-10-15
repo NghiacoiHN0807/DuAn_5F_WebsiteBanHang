@@ -10,12 +10,22 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import SendIcon from '@mui/icons-material/Send';
+import PropTypes from 'prop-types';
 import { paymentOnline } from '../service/BillSevice';
 import { updatePayment } from '../service/OrderManagementTimeLine';
 
 const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
 const ModalPaymentComfirm = (props) => {
+  // Get Props
+  ModalPaymentComfirm.propTypes = {
+    show: PropTypes.bool.isRequired,
+    handleClose: PropTypes.func.isRequired,
+    sdtKHTT: PropTypes.string.isRequired,
+    tenKhTT: PropTypes.string.isRequired,
+    thanhTien: PropTypes.number.isRequired,
+    listHD: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  };
   const { show, handleClose, listHD, thanhTien, tenKhTT, sdtKHTT } = props;
 
   //   Insert product
@@ -133,101 +143,100 @@ const ModalPaymentComfirm = (props) => {
         >
           <DialogTitle>{'THANH TOÁN HÓA ĐƠN'}</DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-slide-description">
-              <div>
-                <TextField
-                  id="standard-multiline-flexible"
-                  label="Mã Hóa Đơn"
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                  defaultValue={listHD.maHd}
-                  fullWidth
-                  sx={{ marginTop: 2 }}
-                />
-                <TextField
-                  id="standard-multiline-flexible"
-                  label="Thành Tiền"
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  InputProps={{
-                    readOnly: true,
-                  }}
-                  defaultValue={thanhTien}
-                  fullWidth
-                  sx={{ marginTop: 2 }}
-                />
-                <TextField
-                  onChange={(e) => setMoTa(e.target.value)}
-                  id="outlined-multiline-static"
-                  label="Mô Tả"
-                  sx={{ m: 1, marginTop: 2, marginLeft: 0 }}
-                  fullWidth
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  multiline
-                  rows={4}
-                />
-                <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Thanh Toán Online" />
-                {isDeliveryChecked ? (
-                  <>
-                    <TextField
-                      id="standard-multiline-flexible"
-                      label="Số Tiền Mặt Gửi"
-                      type="number"
-                      multiline
-                      maxRows={4}
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      defaultValue={0}
-                      sx={{ marginTop: 2, marginBottom: 2 }}
-                      onChange={(e) => setCashGiven(e.target.value)}
-                    />
-                    <Button
-                      sx={{ marginBottom: 2 }}
-                      variant="contained"
-                      endIcon={<SendIcon />}
-                      onClick={handleCalculateChange}
-                    >
-                      Tính Tiền
-                    </Button>
-                    <p>Số Tiền Chuyển Khoản: {changeAmount}</p>
-                  </>
-                ) : (
-                  <>
-                    <TextField
-                      id="standard-multiline-flexible"
-                      label="Số Tiền Khách Gửi"
-                      type="number"
-                      multiline
-                      maxRows={4}
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      sx={{ marginTop: 2, marginBottom: 2 }}
-                      onChange={(e) => setCashGiven(e.target.value)}
-                    />
-                    <Button
-                      sx={{ marginBottom: 2 }}
-                      variant="contained"
-                      endIcon={<SendIcon />}
-                      onClick={handleCalculateChange}
-                    >
-                      Tính Tiền
-                    </Button>
-                    <p>Số Tiền Thừa Của Khách: {changeAmount}</p>
-                  </>
-                )}
-              </div>
-            </DialogContentText>
+            {/* <DialogContentText id="alert-dialog-slide-description"> */}
+            <div>
+              <TextField
+                id="standard-multiline-flexible"
+                label="Mã Hóa Đơn"
+                multiline
+                maxRows={4}
+                variant="outlined"
+                size="small"
+                InputProps={{
+                  readOnly: true,
+                }}
+                defaultValue={listHD.maHd}
+                fullWidth
+                sx={{ marginTop: 2 }}
+              />
+              <TextField
+                id="standard-multiline-flexible"
+                label="Thành Tiền"
+                multiline
+                maxRows={4}
+                variant="outlined"
+                size="small"
+                InputProps={{
+                  readOnly: true,
+                }}
+                defaultValue={thanhTien}
+                fullWidth
+                sx={{ marginTop: 2 }}
+              />
+              <TextField
+                onChange={(e) => setMoTa(e.target.value)}
+                id="outlined-multiline-static"
+                label="Mô Tả"
+                sx={{ m: 1, marginTop: 2, marginLeft: 0 }}
+                fullWidth
+                maxRows={4}
+                variant="outlined"
+                size="small"
+                multiline
+              />
+              <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Thanh Toán Online" />
+              {isDeliveryChecked ? (
+                <>
+                  <TextField
+                    id="standard-multiline-flexible"
+                    label="Số Tiền Mặt Gửi"
+                    type="number"
+                    multiline
+                    maxRows={4}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    defaultValue={0}
+                    sx={{ marginTop: 2, marginBottom: 2 }}
+                    onChange={(e) => setCashGiven(e.target.value)}
+                  />
+                  <Button
+                    sx={{ marginBottom: 2 }}
+                    variant="contained"
+                    endIcon={<SendIcon />}
+                    onClick={handleCalculateChange}
+                  >
+                    Tính Tiền
+                  </Button>
+                  <span>Số Tiền Chuyển Khoản: {changeAmount}</span>
+                </>
+              ) : (
+                <>
+                  <TextField
+                    id="standard-multiline-flexible"
+                    label="Số Tiền Khách Gửi"
+                    type="number"
+                    multiline
+                    maxRows={4}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    sx={{ marginTop: 2, marginBottom: 2 }}
+                    onChange={(e) => setCashGiven(e.target.value)}
+                  />
+                  <Button
+                    sx={{ marginBottom: 2 }}
+                    variant="contained"
+                    endIcon={<SendIcon />}
+                    onClick={handleCalculateChange}
+                  >
+                    Tính Tiền
+                  </Button>
+                  <span>Số Tiền Thừa Của Khách: {changeAmount}</span>
+                </>
+              )}
+            </div>
+            {/* </DialogContentText> */}
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Hủy</Button>

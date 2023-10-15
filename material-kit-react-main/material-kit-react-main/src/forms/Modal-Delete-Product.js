@@ -7,12 +7,20 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { Alert, Snackbar } from '@mui/material';
+import PropTypes from 'prop-types';
 import { deleteProductOnCart } from '../service/DirectSaleSevice';
 
 const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
 export default function ModalDeleteProductOnCart(props) {
   // Get Props
+  ModalDeleteProductOnCart.propTypes = {
+    open: PropTypes.bool.isRequired,
+    handleClose: PropTypes.func.isRequired,
+    itemDelete: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+    selectDataCart: PropTypes.func.isRequired,
+    currentPage: PropTypes.number.isRequired,
+  };
   const { open, handleClose, itemDelete, selectDataCart, currentPage } = props;
 
   // Set maHd using useState
