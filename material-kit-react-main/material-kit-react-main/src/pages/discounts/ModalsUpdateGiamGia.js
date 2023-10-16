@@ -9,7 +9,7 @@ import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { addGiamGia, getAllSanPham, getCtspByIdSp, getImgByIdSp, update } from "../../service/giamGiaService";
+import { addGiamGia, getAllSanPham, getCtspByIdSp, getIdGiamGia, getImgByIdSp, update } from "../../service/giamGiaService";
 import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
 
@@ -286,6 +286,8 @@ const ModelUpdateGiamGia = (props) => {
         trangThai: 0,
       }
 
+      const idGg = await getIdGiamGia(id);
+
       const response = await addGiamGia(giaGiaAa);
 
       const promises = chiTietList.map(async (item) => {
@@ -299,13 +301,13 @@ const ModelUpdateGiamGia = (props) => {
             soTienConLai = item.sanPham.giaBan - giamGia.mucGiamTienMat;
           }
           const giamGiaChiTietOk = {
-            idCtsp: ctsp,
+            idCtsp: chiTietSanPham[ctsp.index],
             idGiamGia: response.data,
-            donGia: item.sanPham.giaBan,
+            donGia: chiTietList[item.index].sanPham.giaBan,
             soTienConLai,
             trangThai: 0
           }
-          return update(giamGiaChiTietOk);
+          return update(giamGiaChiTietOk, id);
         });
         return Promise.all(details);
       });
@@ -316,18 +318,18 @@ const ModelUpdateGiamGia = (props) => {
         navigate('/dashboard/discounts');
         setAlertContent({
           type: 'success',
-          message: 'Thêm thành công!',
+          message: 'Cập nhật thành công!',
         });
       } else {
         setAlertContent({
           type: 'success',
-          message: 'Thêm không thành công!',
+          message: 'Cập nhật không thành công!',
         });
       }
     } catch (error) {
       setAlertContent({
         type: 'success',
-        message: 'Đã xảy ra lỗi khi thêm giảm giá!',
+        message: 'Đã xảy ra lỗi khi cập nhật giảm giá!',
       });
     }
 

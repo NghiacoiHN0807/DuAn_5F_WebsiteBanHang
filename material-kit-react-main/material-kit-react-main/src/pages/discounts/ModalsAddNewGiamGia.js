@@ -9,7 +9,7 @@ import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { add, addGiamGia, getAllSanPham, getCtspByIdSp, getIdGiamGia, getImgByIdSp, update } from "../../service/giamGiaService";
+import { add, addGiamGia, getAllSanPham, getCtspByIdSp, getImgByIdSp } from "../../service/giamGiaService";
 import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
 
@@ -214,6 +214,8 @@ const ModelAddNewGiamGia = (props) => {
     setSelected(e.target.value);
   };
 
+  
+
   const handleSave = async (e) => {
     e.preventDefault();
     if (!maGiamGia.trim() || !tenChuongTrinh.trim() || !ngayBatDau || !ngayKetThuc) {
@@ -284,8 +286,6 @@ const ModelAddNewGiamGia = (props) => {
         trangThai: 0,
       }
 
-      const idGg = await getIdGiamGia(id);
-
       const response = await addGiamGia(giaGiaAa);
 
       const promises = chiTietList.map(async (item) => {
@@ -299,13 +299,13 @@ const ModelAddNewGiamGia = (props) => {
             soTienConLai = item.sanPham.giaBan - giamGia.mucGiamTienMat;
           }
           const giamGiaChiTietOk = {
-            idCtsp: chiTietSanPham[ctsp.index],
+            idCtsp: ctsp,
             idGiamGia: response.data,
-            donGia: chiTietList[item.index].sanPham.giaBan,
+            donGia: item.sanPham.giaBan,
             soTienConLai,
             trangThai: 0
           }
-          return update(giamGiaChiTietOk, id);
+          return add(giamGiaChiTietOk);
         });
         return Promise.all(details);
       });

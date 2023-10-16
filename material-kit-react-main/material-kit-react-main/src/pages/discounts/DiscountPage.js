@@ -424,9 +424,6 @@ export default function DiscountPage() {
           </Alert>
         </Snackbar>
       )}
-      <ModelUpdateGiamGia
-        data={object}
-      />
     </>
   );
 }
