@@ -1,4 +1,3 @@
-import Form from "react-bootstrap/Form";
 import {Helmet} from "react-helmet-async";
 import React, {useEffect, useRef, useState} from "react";
 import Badge from "react-bootstrap/Badge";
@@ -14,7 +13,6 @@ import {
     GridToolbarFilterButton
 } from "@mui/x-data-grid";
 import {
-    Button,
     Card,
     Container,
     FormControl,
@@ -118,7 +116,7 @@ const AllAddress = () => {
         {field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 130},
         {field: "tenNguoiNhan", headerName: "Tên Người Nhận", width: 120},
         {field: "sdtKh", headerName: "Số Điện Thoại", width: 120,},
-        {field: "diaChi", headerName: "Địa Chỉ", width: 210,},
+        {field: "diaChi", headerName: "Địa Chỉ", width: 300,},
         {field: "diaChiCuThe", headerName: "Địa Chỉ Cụ Thể", width: 210,},
         {
             field: "loaiDiaChi",

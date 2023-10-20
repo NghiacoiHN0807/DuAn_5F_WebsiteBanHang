@@ -5,7 +5,7 @@ import Badge from "react-bootstrap/Badge";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import {
-    DataGrid,
+    DataGrid, GridActionsCellItem,
     GridToolbarColumnsButton,
     GridToolbarContainer,
     GridToolbarDensitySelector,
@@ -87,7 +87,7 @@ const AddressByClient = () => {
     }, {field: "tenNguoiNhan", headerName: "Tên Người Nhận", width: 120}, {
         field: "sdtKh", headerName: "Số Điện Thoại", width: 120,
     }, {
-        field: "diaChi", headerName: "Địa Chỉ", width: 250,
+        field: "diaChi", headerName: "Địa Chỉ", width: 360,
     }, // {field: "diaChiCuThe", headerName: "Địa Chỉ Cụ Thể", width: 210,},
         {
             field: "loaiDiaChi", headerName: "Loại Địa Chỉ", width: 100, renderCell: (params) => {
@@ -110,7 +110,7 @@ const AddressByClient = () => {
                 </Badge>);
             },
         }, {
-            field: "trangThai", headerName: "Trạng Thái", width: 120, renderCell: (params) => {
+            field: "trangThai", headerName: "Trạng Thái", width: 160, renderCell: (params) => {
                 const {value: trangThai} = params;
                 let badgeVariant;
                 let statusText;
@@ -134,29 +134,21 @@ const AddressByClient = () => {
                 </Badge>);
             },
         }, {
-            field: "actions", headerName: "Hành Động", width: 250, renderCell: (params) => {
+            field: "actions", headerName: "Hành Động", width: 100, renderCell: (params) => {
                 const {row} = params;
-                return (<div>
-                    <Button
-                        size={"small"}
-                        variant="contained"
+                return [
+                    <GridActionsCellItem
                         color="primary"
                         onClick={() => handlClickRow(row)}
-                        startIcon={<EditIcon/>}
-                    >
-                        Chi Tiết
-                    </Button>
-                    <Button
-                        size={"small"}
-                        variant="contained"
-                        color="secondary"
-                        startIcon={<DeleteIcon/>}
+                        icon={<EditIcon/>}
+                   />,
+                    <GridActionsCellItem
+                        color="error"
+                        icon={<DeleteIcon/>}
                         onClick={() => handleClickOpenDelete(row)}
-                    >
-                        Xóa
-                    </Button>
+                 />,
 
-                </div>);
+                ];
             },
         },];
     const getListTP = async () => {
@@ -360,7 +352,10 @@ const AddressByClient = () => {
                     },
                 }}
                 slots={{toolbar: CustomToolbar}}
-
+                getRowSpacing={(params)=>({
+                    top: params.isFirstVisible ? 0 : 5,
+                    bottom: params.isLastVisible ? 0 : 5,
+                })}
                 pageSizeOptions={[5, 10, 15]}
             />
             <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">

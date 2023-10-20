@@ -3,6 +3,7 @@ import {Helmet} from "react-helmet-async";
 import {useNavigate} from "react-router-dom";
 import {
     DataGrid,
+    GridActionsCellItem,
     GridToolbarColumnsButton,
     GridToolbarContainer,
     GridToolbarDensitySelector,
@@ -66,7 +67,7 @@ const ClientPage = () => {
 
 
     const columns = [
-        {field: "index", headerName: "Index", width: 80},
+        {field: "index", headerName: "Index", width: 50},
         {field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 120},
         {field: "tenKh", headerName: "Tên Khách Hàng", width: 180},
         {field: "sdtKh", headerName: "Số Điện Thoại", width: 120,},
@@ -74,7 +75,7 @@ const ClientPage = () => {
         {
             field: "trangThai",
             headerName: "Trạng Thái",
-            width: 150,
+            width: 200,
             renderCell: (params) => {
                 const {value: trangThai} = params;
                 let badgeVariant;
@@ -107,40 +108,26 @@ const ClientPage = () => {
         {
             field: "actions",
             headerName: "Hành Động",
-            width: 300,
+            width: 100,
             renderCell: (params) => {
                 const {row} = params;
-                return (
-                    <div>
-                        <Button
-                            size={"small"}
-                            variant="contained"
+                return [
+                        <GridActionsCellItem
                             color="info"
                             onClick={() => handlClickRow(row)}
-                            startIcon={<EditIcon/>}
-                        >
-                            Chi Tiết
-                        </Button>
-                        <Button
-                            size={"small"}
-                            variant="contained"
+                            icon={<EditIcon/>}
+                        />,
+                        <GridActionsCellItem
                             color="inherit"
-                            startIcon={<AddLocationAltIcon/>}
+                            icon={<AddLocationAltIcon/>}
                             onClick={() => handAddDiaChi(row)}
-                        >
-                            Địa Chỉ
-                        </Button>
-                        <Button
-                            size={"small"}
-                            variant="contained"
+                        />,
+                        <GridActionsCellItem
                             color="error"
-                            startIcon={<DeleteIcon/>}
+                            icon={<DeleteIcon/>}
                             onClick={() => handleClickOpenDelete(row)}
-                        >
-                            Xóa
-                        </Button>
-                    </div>
-                );
+                        />
+                ];
             },
         },
     ];
@@ -231,7 +218,7 @@ const ClientPage = () => {
                     }}
                 />
 
-                <FormControl  variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                <FormControl variant="standard" sx={{m: 1, minWidth: 120}}>
                     <InputLabel id="status-select">Trạng Thái:</InputLabel>
                     <Select
                         labelId="status-select"
@@ -266,24 +253,24 @@ const ClientPage = () => {
                         Tài Khoản Mới
                     </Button>
                 </Stack>
-                <Card sx={{ display: 'flex', alignItems: 'center' }}>
+                <Card sx={{display: 'flex', alignItems: 'center'}}>
                     <Paper
                         component="form"
                         sx={{
                             p: '2px 4px',
                             display: 'flex',
                             alignItems: 'center',
-                            width:400,
+                            width: 400,
                         }}
                         onChange={(e) => setSearchKeyword(e.target.value)}
                     >
                         <InputBase
-                            sx={{ ml: 1, flex: 1 }}
+                            sx={{ml: 1, flex: 1}}
                             placeholder="Tìm Kiếm"
-                            inputProps={{ 'aria-label': 'Tìm Kiếm' }}
+                            inputProps={{'aria-label': 'Tìm Kiếm'}}
                         />
-                        <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-                            <SearchIcon />
+                        <IconButton type="button" sx={{p: '10px'}} aria-label="search">
+                            <SearchIcon/>
                         </IconButton>
                     </Paper>
                 </Card>
@@ -297,7 +284,10 @@ const ClientPage = () => {
                         },
                     }}
                     slots={{toolbar: CustomToolbar}}
-
+                    getRowSpacing={(params) => ({
+                        top: params.isFirstVisible ? 0 : 5,
+                        bottom: params.isLastVisible ? 0 : 5,
+                    })}
                     pageSizeOptions={[5, 10, 15]}
                 />
                 <Stack
