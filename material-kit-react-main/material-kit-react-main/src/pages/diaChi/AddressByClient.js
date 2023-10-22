@@ -5,7 +5,8 @@ import Badge from "react-bootstrap/Badge";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import {
-    DataGrid, GridActionsCellItem,
+    DataGrid,
+    GridActionsCellItem,
     GridToolbarColumnsButton,
     GridToolbarContainer,
     GridToolbarDensitySelector,
@@ -82,13 +83,13 @@ const AddressByClient = () => {
     };
 
 
-    const columns = [{field: "index", headerName: "##", width: 30}, {
-        field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 130
-    }, {field: "tenNguoiNhan", headerName: "Tên Người Nhận", width: 120}, {
-        field: "sdtKh", headerName: "Số Điện Thoại", width: 120,
-    }, {
-        field: "diaChi", headerName: "Địa Chỉ", width: 360,
-    }, // {field: "diaChiCuThe", headerName: "Địa Chỉ Cụ Thể", width: 210,},
+    const columns = [
+        {field: "index", headerName: "##", width: 30},
+        // {field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 130},
+        {field: "tenNguoiNhan", headerName: "Tên Người Nhận", width: 120},
+        {field: "sdtKh", headerName: "Số Điện Thoại", width: 120,},
+        {field: "diaChi", headerName: "Địa Chỉ", width: 200,},
+        {field: "diaChiCuThe", headerName: "Địa Chỉ Cụ Thể", width: 210,},
         {
             field: "loaiDiaChi", headerName: "Loại Địa Chỉ", width: 100, renderCell: (params) => {
                 const {value: loaiDiaChi} = params;
@@ -141,12 +142,12 @@ const AddressByClient = () => {
                         color="primary"
                         onClick={() => handlClickRow(row)}
                         icon={<EditIcon/>}
-                   />,
+                    />,
                     <GridActionsCellItem
                         color="error"
                         icon={<DeleteIcon/>}
                         onClick={() => handleClickOpenDelete(row)}
-                 />,
+                    />,
 
                 ];
             },
@@ -204,7 +205,7 @@ const AddressByClient = () => {
             tenNguoiNhan: item.tenNguoiNhan,
             sdtKh: item.sdt,
             diaChi: `${getNameByIdTP(item.tinhThanh)}, ${getNameByIdQH(item.quanHuyen)}, ${getNameByIdPX(item.phuongXa)}`,
-            // diaChiCuThe: item.diaChiCuThe,
+            diaChiCuThe: item.diaChiCuThe,
             loaiDiaChi: item.loaiDiaChi,
             trangThai: item.trangThai,
         }));
@@ -321,24 +322,24 @@ const AddressByClient = () => {
                     Tạo Địa Chỉ Mới
                 </Button>
             </Stack>
-            <Card sx={{ display: 'flex', alignItems: 'center' }}>
+            <Card sx={{display: 'flex', alignItems: 'center'}}>
                 <Paper
                     component="form"
                     sx={{
                         p: '2px 4px',
                         display: 'flex',
                         alignItems: 'center',
-                        width:400,
+                        width: 400,
                     }}
                     onChange={(e) => setSearchKeyword(e.target.value)}
                 >
                     <InputBase
-                        sx={{ ml: 1, flex: 1 }}
+                        sx={{ml: 1, flex: 1}}
                         placeholder="Tìm Kiếm"
-                        inputProps={{ 'aria-label': 'Tìm Kiếm' }}
+                        inputProps={{'aria-label': 'Tìm Kiếm'}}
                     />
-                    <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-                        <SearchIcon />
+                    <IconButton type="button" sx={{p: '10px'}} aria-label="search">
+                        <SearchIcon/>
                     </IconButton>
                 </Paper>
             </Card>
@@ -352,7 +353,7 @@ const AddressByClient = () => {
                     },
                 }}
                 slots={{toolbar: CustomToolbar}}
-                getRowSpacing={(params)=>({
+                getRowSpacing={(params) => ({
                     top: params.isFirstVisible ? 0 : 5,
                     bottom: params.isLastVisible ? 0 : 5,
                 })}
