@@ -1,7 +1,9 @@
 package com.example.fullstackbackend.services.impl;
 
+import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
 import com.example.fullstackbackend.repository.GiamGiaChiTietRepository;
+import com.example.fullstackbackend.repository.GiamGiaRepository;
 import com.example.fullstackbackend.services.GiamGiaChiTietService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,7 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,6 +21,9 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
 
     @Autowired
     private GiamGiaChiTietRepository giamGiaChiTietRepository;
+
+    @Autowired
+    private GiamGiaRepository giamGiaRepository;
 
     @Override
     public Page<GiamGiaChiTiet> getAll(Integer pageNo, Integer size) {
@@ -73,5 +80,16 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     @Override
     public Integer findByIdGiamGia_IdGiamGia(Integer id) {
         return giamGiaChiTietRepository.findByIdGiamGia_IdGiamGia(id);
+    }
+
+    @Override
+    public ChiTietSanPham updateGiaThuc(String discountType, BigDecimal gia, Long id) {
+
+        return null;
+    }
+
+    @Override
+    public List<ChiTietSanPham> chiTietSanPhamList() {
+        return null;
     }
 }

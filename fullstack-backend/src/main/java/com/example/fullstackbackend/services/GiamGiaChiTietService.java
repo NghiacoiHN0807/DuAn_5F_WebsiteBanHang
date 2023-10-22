@@ -1,9 +1,12 @@
 package com.example.fullstackbackend.services;
 
+import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
 import org.springframework.data.domain.Page;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface GiamGiaChiTietService {
@@ -27,5 +30,9 @@ public interface GiamGiaChiTietService {
     void remove(Integer id);
 
     Integer findByIdGiamGia_IdGiamGia(Integer id);
+
+    ChiTietSanPham updateGiaThuc(String discountType, BigDecimal gia, Long id);
+
+    List<ChiTietSanPham> chiTietSanPhamList();
 
 }

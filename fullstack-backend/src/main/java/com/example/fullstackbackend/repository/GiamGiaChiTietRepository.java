@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.repository;
 
+import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,7 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, Integer> {
@@ -27,4 +30,18 @@ public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, 
 
     @Query("SELECT g.idGiamGia.idGiamGia FROM GiamGiaChiTiet g WHERE g.idGgct = :id")
     Integer findByIdGiamGia_IdGiamGia(@Param("id") Integer id);
+
+    @Query(value = "UPDATE chi_tiet_san_pham " +
+            "SET gia_thuc_te = " +
+            "    CASE " +
+            "        WHEN :discountType = 'percentage' THEN (gia_ban - (gia_ban * :value / 100)) " +
+            "        WHEN :discountType = 'amount' THEN (gia_ban - :value) " +
+            "        ELSE gia_ban " +
+            "    END " +
+            "WHERE id_sp = :idSp;", nativeQuery = true)
+    ChiTietSanPham updateCtsp(@Param("discountType") String discountType, @Param("value") BigDecimal value, @Param("idSp") Long idSp);
+
+    @Query(value = "SELECT * FROM chi_tiet_san_pham WHERE gia_ban > gia_thuc_te", nativeQuery = true)
+    List<ChiTietSanPham> ctspGiamGia();
+
 }
