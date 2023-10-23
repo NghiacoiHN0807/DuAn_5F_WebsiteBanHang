@@ -45,17 +45,11 @@ public class SanphamServiceImpl implements SanPhamService {
             spCustom.setIdSp((Integer) row[0]);
             spCustom.setMaSp((String) row[1]);
             spCustom.setTenSp((String) row[2]);
-            spCustom.setIdCl((Integer) row[3]);
-            spCustom.setIdMs((Integer) row[4]);
-            spCustom.setIdLsp((Integer) row[5]);
-            spCustom.setIdXx((Integer) row[6]);
-            spCustom.setIdTayAo((Integer) row[7]);
-            spCustom.setIdCoAo((Integer) row[8]);
-            spCustom.setMoTa((String) row[9]);
-            spCustom.setGiaBan((BigDecimal) row[10]);
-            spCustom.setTrangThai((Integer) row[11]);
-            spCustom.setUrl((String) row[12]);
-            spCustom.setSize((String) row[13]);
+            spCustom.setMoTa((String) row[3]);
+            spCustom.setTrangThai((Integer) row[4]);
+            spCustom.setUrl((String) row[5]);
+            spCustom.setGiaMin((BigDecimal) row[6]);
+            spCustom.setGiaMax((BigDecimal) row[7]);
             dtos.add(spCustom);
         }
 

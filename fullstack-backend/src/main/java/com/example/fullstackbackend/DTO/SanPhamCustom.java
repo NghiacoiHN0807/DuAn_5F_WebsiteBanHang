@@ -24,25 +24,13 @@ public class SanPhamCustom {
 
     private String tenSp;
 
-    private Integer idCl;
-
-    private Integer idMs;
-
-    private Integer idLsp;
-
-    private Integer idXx;
-
-    private Integer idTayAo;
-
-    private Integer idCoAo;
-
     private String moTa;
-
-    private BigDecimal giaBan;
 
     private Integer trangThai;
 
     private String url;
 
-    private String size;
+    private BigDecimal giaMin;
+
+    private BigDecimal giaMax;
 }

@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Card,
   Stack,
@@ -34,7 +34,7 @@ import { fetchMS, detailMS } from '../../service/MauSacService';
 import { fetchTayAo, detailTayAo } from '../../service/OngTayAoService';
 
 export default function UpdateSanPham() {
-  const [maSp, setMaSp] = useState(null);
+  const [maSp, setMaSp] = useState('');
   const [tenSp, setTenSp] = useState('');
   const [moTa, setMoTa] = useState('');
   const [giaBan, setGiaBan] = useState('');
@@ -136,6 +136,8 @@ export default function UpdateSanPham() {
     setOpenAlert(false);
   };
 
+  const navigate = useNavigate();
+
   const handleSave = async () => {
     // get object all\
     const getObjChatLieu = await detailCL(chatLieu);
@@ -158,9 +160,10 @@ export default function UpdateSanPham() {
       setGiaBan('') &&
       setTrangThai('')
     ) {
-      handleAlertClick('Thêm thất bại!', 'danger');
+      handleAlertClick('Cập nhật thất bại!', 'danger');
     } else {
       const res = await putUpdateSanPham(
+        idSpHttp,
         maSp,
         tenSp,
         getObjChatLieu,
@@ -176,11 +179,11 @@ export default function UpdateSanPham() {
 
       console.log('Check res: ', res);
       if (res && res.idSp) {
-        handleAlertClick('Thêm thành công!', 'success');
+        handleAlertClick('Cập nhật thành công!', 'success');
         handleClose();
-        // navigate(`/quan-ly-san-pham/san-pham/sua-san-pham/${res.idSp}`);
+        navigate(`/dashboard/products`);
       } else {
-        handleAlertClick('Thêm thất bại!', 'danger');
+        handleAlertClick('Cập nhật thất bại!', 'danger');
         handleClose();
       }
     }
@@ -202,14 +205,16 @@ export default function UpdateSanPham() {
         <Card sx={{ padding: '25px' }}>
           <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={12}>
-              <TextField id="fullWidth" label="Mã sản phẩm" fullWidth disabled />
+              <TextField id="fullWidth" label="Mã sản phẩm" fullWidth disabled value={maSp} />
             </Grid>
+
             <Grid item xs={12}>
               <TextField
                 id="fullWidth"
                 label="Tên sản phẩm"
                 fullWidth
                 onChange={(event) => setTenSp(event.target.value)}
+                value={tenSp}
               />
             </Grid>
             <Grid item xs={6}>
@@ -339,6 +344,7 @@ export default function UpdateSanPham() {
                   label="Giá bán"
                   fullWidth
                   onChange={(event) => setGiaBan(event.target.value)}
+                  value={giaBan}
                 />
               </div>
               <div>
@@ -373,6 +379,7 @@ export default function UpdateSanPham() {
                 rows={4}
                 fullWidth
                 onChange={(event) => setMoTa(event.target.value)}
+                value={moTa}
               />
             </Grid>
           </Grid>
@@ -395,14 +402,14 @@ export default function UpdateSanPham() {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{'Xác nhận thêm?'}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{'Xác nhận sửa?'}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Bạn có chắc chắn muốn thêm sản phẩm này không?
+            Bạn có chắc chắn muốn sửa sản phẩm này không?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Canel</Button>
+          <Button onClick={() => handleClose()}>Canel</Button>
           <Button onClick={() => handleSave()} autoFocus>
             Ok
           </Button>

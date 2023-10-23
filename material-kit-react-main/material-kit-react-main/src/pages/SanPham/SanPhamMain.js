@@ -2,6 +2,8 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // @mui
 import {
   Card,
@@ -80,6 +82,10 @@ function applySortFilter(array, comparator, query) {
 
 function mapTrangThai(trangThai) {
   return trangThai === 0 ? 'Còn bán' : trangThai === 10 ? 'Ngừng kinh doanh' : 'Unknown status';
+}
+
+function getGia(giaMin, giaMax) {
+  return giaMin === giaMax ? giaMin : String(giaMin) + String(' - ') + String(giaMax);
 }
 
 export default function UserPage() {
@@ -179,7 +185,11 @@ export default function UserPage() {
     const res = await deleteSanPham(idSp);
     console.log('Check res: ', res);
     if (res && res.idSp) {
-      handleAlertClick('Xóa thành công!', 'success');
+      // handleAlertClick('Xóa thành công!', 'success');
+      toast.success('Xóa thành công!', {
+        position: 'top-right',
+        autoClose: 3000, // Thời gian tự động đóng (miligiây)
+      });
       getListData();
       handleClose();
     } else {
@@ -192,7 +202,7 @@ export default function UserPage() {
   // Update
   const navigate = useNavigate();
   const handleUpdate = (idSp) => {
-    navigate(`/dashboard/updateProduct/${idSp}`);
+    navigate(`/dashboard/products/update/${idSp}`);
   };
 
   // Xac nhan xoa
@@ -200,6 +210,7 @@ export default function UserPage() {
 
   const handleClickOpenDelete = () => {
     setOpenDelete(true);
+    handleCloseMenu();
   };
 
   const handleClose = () => {
@@ -237,7 +248,7 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Danh sách sản phẩm
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} href="/dashboard/addProduct">
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} href="/dashboard/products/add">
             Thêm sản phẩm
           </Button>
         </Stack>
@@ -259,7 +270,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { idSp, url, maSp, tenSp, giaBan, moTa, trangThai } = row;
+                    const { idSp, url, maSp, tenSp, giaMin, giaMax, moTa, trangThai } = row;
                     const selectedUser = selected.indexOf(idSp) !== -1;
 
                     return (
@@ -273,7 +284,7 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left">{maSp}</TableCell>
                         <TableCell align="left">{tenSp}</TableCell>
-                        <TableCell align="left">{giaBan}</TableCell>
+                        <TableCell align="left">{getGia(giaMin, giaMax)}</TableCell>
                         <TableCell align="left">{moTa}</TableCell>
                         <TableCell align="left">{mapTrangThai(trangThai)}</TableCell>
                         <TableCell align="right">
@@ -348,12 +359,12 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem>
-          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} onClick={handleUpdate(selectedId)} />
+        <MenuItem onClick={() => handleUpdate(selectedId)}>
+          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
         </MenuItem>
 
-        <MenuItem sx={{ color: 'error.main' }} onClick={handleClickOpenDelete}>
+        <MenuItem sx={{ color: 'error.main' }} onClick={() => handleClickOpenDelete()}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
         </MenuItem>
