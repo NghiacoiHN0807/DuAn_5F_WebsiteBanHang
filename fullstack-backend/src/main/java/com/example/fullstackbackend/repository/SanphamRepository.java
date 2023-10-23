@@ -54,11 +54,11 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "    ctsp.min_gia_ban,\n" +
             "    ctsp.max_gia_ban\n" +
             "FROM san_pham sp\n" +
-            "INNER JOIN (\n" +
+            "LEFT JOIN (\n" +
             "    SELECT id_sp, MIN(gia_ban) as min_gia_ban, max(gia_ban) as max_gia_ban\n" +
             "    FROM chi_tiet_san_pham\n" +
             "    GROUP BY id_sp\n" +
-            ") ctsp ON sp.id_sp = ctsp.id_sp;", nativeQuery = true)
+            ") ctsp ON sp.id_sp = ctsp.id_sp;\n", nativeQuery = true)
     List<Object[]> getSpWithImg();
 
 }

@@ -8,36 +8,32 @@ const fetchSP = () => custom.get(`/san-pham/listSP`); // Call API
 
 const detailSP = (idSp) => custom.get(`/san-pham/detail/${idSp}`); // Call API
 
-const postAddSanPham = (maSp, tenSp, idCl, idMs, idLsp, idXx, idCoAo, idTayAo, moTa, giaBan, trangThai) =>
+const postAddSanPham = (maSp, tenSp, idCl, idLsp, idXx, idCoAo, idTayAo, moTa, trangThai) =>
   custom.post('/san-pham/add', {
     maSp,
     tenSp,
     idCl,
-    idMs,
     idLsp,
     idXx,
     idCoAo,
     idTayAo,
     moTa,
-    giaBan,
     trangThai,
   });
 
 const deleteSanPham = (id) => custom.delete(`/san-pham/delete/${id}`);
 
-const putUpdateSanPham = (idSp, maSp, tenSp, idCl, idMs, idLsp, idXx, idCoAo, idTayAo, moTa, giaBan, trangThai) =>
+const putUpdateSanPham = (idSp, maSp, tenSp, idCl, idLsp, idXx, idCoAo, idTayAo, moTa, trangThai) =>
   custom.put(`/san-pham/update`, {
     idSp,
     maSp,
     tenSp,
     idCl,
-    idMs,
     idLsp,
     idXx,
     idCoAo,
     idTayAo,
     moTa,
-    giaBan,
     trangThai,
   });
 

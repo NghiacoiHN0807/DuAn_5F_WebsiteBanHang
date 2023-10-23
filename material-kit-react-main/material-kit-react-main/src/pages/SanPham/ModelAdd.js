@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   Stack,
@@ -26,25 +27,19 @@ import { fetchXX, detailXX } from '../../service/XuatXuService';
 import { fetchCL, detailCL } from '../../service/ChatLieuService';
 import { fetchCoAo, detailCoAo } from '../../service/LoaiCoAoService';
 import { fetchLSP, detailLSP } from '../../service/LoaiSPService';
-import { fetchMS, detailMS } from '../../service/MauSacService';
 import { fetchTayAo, detailTayAo } from '../../service/OngTayAoService';
 
 export default function AddSanPham() {
-  const [maSp, setMaSp] = useState(null);
   const [tenSp, setTenSp] = useState('');
   const [moTa, setMoTa] = useState('');
-  const [giaBan, setGiaBan] = useState('');
-  const [trangThai, setTrangThai] = useState('0');
 
   const [chatLieu, setChatLieu] = useState('');
-  const [mauSac, setMauSac] = useState('');
   const [loaiSP, setLoaiSP] = useState('');
   const [xuatXu, setXuatXu] = useState('');
   const [tayAo, setTayAo] = useState('');
   const [coAo, setCoAo] = useState('');
 
   const [listCL, setListCL] = useState([]);
-  const [listMS, setListMS] = useState([]);
   const [listLSP, setListLSP] = useState([]);
   const [listXX, setListXX] = useState([]);
   const [listTayAo, setListTayAo] = useState([]);
@@ -57,9 +52,6 @@ export default function AddSanPham() {
   const getAllList = async () => {
     const resCL = await fetchCL();
     setListCL(resCL);
-
-    const resMS = await fetchMS();
-    setListMS(resMS);
 
     const resLSP = await fetchLSP();
     setListLSP(resLSP);
@@ -105,53 +97,52 @@ export default function AddSanPham() {
     setOpenAlert(false);
   };
 
+  const navigate = useNavigate();
+
+  const showToast = () => {
+    // toast.success('Thêm thành công!', {
+    //   position: 'bottom-right',
+    //   autoClose: 5000,
+    //   hideProgressBar: false,
+    //   closeOnClick: true,
+    //   pauseOnHover: true,
+    //   draggable: true,
+    //   progress: undefined,
+    //   theme: 'light',
+    // });
+    toast.success('Thêm thành công!');
+
+    navigate(`/dashboard/products/update/6`);
+  };
+
   const handleSave = async () => {
     // get object all\
     const getObjChatLieu = await detailCL(chatLieu);
-    const getObjMauSac = await detailMS(mauSac);
     const getObjLoaiSP = await detailLSP(loaiSP);
     const getObjXuatXu = await detailXX(xuatXu);
     const getObjTayAo = await detailTayAo(tayAo);
     const getObjCoAo = await detailCoAo(coAo);
 
-    if (
-      setMaSp('') &&
-      setTenSp('') &&
-      setChatLieu('') &&
-      setMauSac('') &&
-      setLoaiSP('') &&
-      setXuatXu('') &&
-      setTayAo('') &&
-      setCoAo('') &&
-      setMoTa('') &&
-      setGiaBan('') &&
-      setTrangThai('')
-    ) {
-      handleAlertClick('Thêm thất bại!', 'danger');
-    } else {
-      const res = await postAddSanPham(
-        maSp,
-        tenSp,
-        getObjChatLieu,
-        getObjMauSac,
-        getObjLoaiSP,
-        getObjXuatXu,
-        getObjCoAo,
-        getObjTayAo,
-        moTa,
-        giaBan,
-        trangThai
-      );
+    const res = await postAddSanPham(
+      null,
+      tenSp,
+      getObjChatLieu,
+      getObjLoaiSP,
+      getObjXuatXu,
+      getObjCoAo,
+      getObjTayAo,
+      moTa,
+      0
+    );
 
-      console.log('Check res: ', res);
-      if (res && res.idSp) {
-        handleAlertClick('Thêm thành công!', 'success');
-        handleClose();
-        // navigate(`/quan-ly-san-pham/san-pham/sua-san-pham/${res.idSp}`);
-      } else {
-        handleAlertClick('Thêm thất bại!', 'danger');
-        handleClose();
-      }
+    console.log('Check res: ', res);
+    if (res && res.idSp) {
+      handleAlertClick('Thêm thành công!', 'success');
+      handleClose();
+      // navigate(`/quan-ly-san-pham/san-pham/sua-san-pham/${res.idSp}`);
+    } else {
+      handleAlertClick('Thêm thất bại!', 'danger');
+      handleClose();
     }
   };
 
@@ -196,24 +187,7 @@ export default function AddSanPham() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6}>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Màu sắc</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Màu sắc"
-                  value={mauSac}
-                  onChange={(event) => setMauSac(event.target.value)}
-                >
-                  {listMS.map((item, index) => (
-                    <MenuItem value={item.idMs} key={index}>
-                      {item.tenMs}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
+
             <Grid item xs={6}>
               <FormControl fullWidth>
                 <InputLabel id="demo-simple-select-label">Loại sản phẩm</InputLabel>
@@ -286,9 +260,7 @@ export default function AddSanPham() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6}>
-              <TextField id="fullWidth" label="Giá bán" fullWidth onChange={(event) => setGiaBan(event.target.value)} />
-            </Grid>
+
             <Grid item xs={6}>
               <TextField
                 id="outlined-multiline-static"
@@ -301,9 +273,12 @@ export default function AddSanPham() {
             </Grid>
           </Grid>
           <div>
-            <Button variant="contained" fullWidth sx={{ marginTop: '25px' }} onClick={() => handleClickOpenAdd()}>
+            {/* <Button variant="contained" fullWidth sx={{ marginTop: '25px' }} onClick={() => handleClickOpenAdd()}>
               Thêm
-            </Button>
+            </Button> */}
+            <Button onClick={() => showToast()}>Hiển thị toast</Button>
+
+            {/* Đây là container để hiển thị toast */}
           </div>
         </Card>
       </Container>

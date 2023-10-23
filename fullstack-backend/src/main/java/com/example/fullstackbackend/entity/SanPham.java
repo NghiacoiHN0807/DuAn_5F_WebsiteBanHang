@@ -41,8 +41,6 @@ public class SanPham {
     @JoinColumn(name = "id_cl", referencedColumnName = "id_cl")
     private ChatLieu idCl;
 
-
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_loaisp", referencedColumnName = "id_loaisp")
     private LoaiSp idLsp;
@@ -61,9 +59,6 @@ public class SanPham {
 
     @Column(name = "mo_ta")
     private String moTa;
-
-    @Column(name = "gia_ban")
-    private BigDecimal giaBan;
 
     @Column(name = "trang_thai")
     private Integer trangThai;

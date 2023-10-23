@@ -1,7 +1,9 @@
 import { Navigate, useRoutes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
+
 //
 import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
@@ -19,7 +21,28 @@ export default function Router() {
   const routes = useRoutes([
     {
       path: '/dashboard',
-      element: <DashboardLayout />,
+      element: (
+        <>
+          <DashboardLayout />
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            containerId="toast-container"
+            style={{
+              width: 'auto',
+              maxHeight: '100px',
+            }}
+          />
+        </>
+      ),
+
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
