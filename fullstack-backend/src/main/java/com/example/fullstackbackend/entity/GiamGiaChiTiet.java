@@ -36,5 +36,5 @@ public class GiamGiaChiTiet {
     private GiamGia idGiamGia;
 
     @Column(name = "trang_thai")
-    private Integer trangThai;
+    private Integer trangThai = 0;
 }

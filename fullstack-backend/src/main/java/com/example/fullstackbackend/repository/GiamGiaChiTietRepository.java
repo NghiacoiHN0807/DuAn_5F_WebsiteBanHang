@@ -6,6 +6,7 @@ import com.example.fullstackbackend.entity.GiamGiaChiTiet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -32,6 +33,7 @@ public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, 
     @Query("SELECT g.idGiamGia.idGiamGia FROM GiamGiaChiTiet g WHERE g.idGgct = :id")
     Integer findByIdGiamGia_IdGiamGia(@Param("id") Integer id);
 
+    @Modifying
     @Query(value = "UPDATE chi_tiet_san_pham " +
             "SET gia_thuc_te = " +
             "    CASE " +
@@ -39,8 +41,8 @@ public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, 
             "        WHEN :discountType = 'amount' THEN (gia_ban - :value) " +
             "        ELSE gia_ban " +
             "    END " +
-            "WHERE id_sp = :idSp;", nativeQuery = true)
-    ChiTietSanPham updateCtsp(@Param("discountType") String discountType, @Param("value") BigDecimal value, @Param("idSp") Integer idSp);
+            "WHERE id_sp = :idSp", nativeQuery = true)
+    void updateCtsp(@Param("discountType") String discountType, @Param("value") BigDecimal value, @Param("idSp") Integer idSp);
 
     @Query(value = "SELECT * FROM chi_tiet_san_pham WHERE gia_ban > gia_thuc_te", nativeQuery = true)
     List<ChiTietSanPham> ctspGiamGia();
@@ -54,6 +56,6 @@ public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, 
     @Query(value = "SELECT muc_giam_phan_tram, muc_giam_tien_mat FROM giam_gia " +
             "join giam_gia_chi_tiet on giam_gia.id_giam_gia = giam_gia_chi_tiet.id_giam_gia " +
             "where giam_gia_chi_tiet.id_sp =:idSp", nativeQuery = true)
-    MucGiamDTO mucGiam(Integer idSp);
+    Object[] mucGiam(@Param("idSp")Integer idSp);
 
 }

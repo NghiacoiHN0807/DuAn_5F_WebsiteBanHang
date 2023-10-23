@@ -34,6 +34,10 @@ public class ChiTietSanPham {
     private Size idSize;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_ms", referencedColumnName = "id_ms")
+    private MauSac idMs;
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_sp", referencedColumnName = "id_sp")
     private SanPham idSp;
 

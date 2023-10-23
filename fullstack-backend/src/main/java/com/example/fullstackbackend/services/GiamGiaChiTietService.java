@@ -1,6 +1,8 @@
 package com.example.fullstackbackend.services;
 
+import com.example.fullstackbackend.DTO.GiamGiaDTO;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
+import com.example.fullstackbackend.entity.GiamGia;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
 import org.springframework.data.domain.Page;
 
@@ -31,12 +33,14 @@ public interface GiamGiaChiTietService {
 
     Integer findByIdGiamGia_IdGiamGia(Integer id);
 
-    ChiTietSanPham updateGiaThuc(BigDecimal gia, Integer id);
+    void updateGiaThuc(Integer id);
 
     List<ChiTietSanPham> chiTietSanPhamList();
 
     String typeGiam(Integer idSp);
 
     BigDecimal mucGiam(Integer idSp);
+
+    GiamGia insert(GiamGiaDTO giamGiaDTO);
 
 }
