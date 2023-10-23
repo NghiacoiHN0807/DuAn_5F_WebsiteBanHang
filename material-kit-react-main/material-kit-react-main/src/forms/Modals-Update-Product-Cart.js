@@ -64,7 +64,7 @@ const ModalUpdateProductOnCart = (props) => {
 
       const getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize);
 
-      const donGia = itemUpdateClassify[0].idSp.giaBan * quantity;
+      const donGia = itemUpdateClassify[0].idSp.giaThucTe * quantity;
       //   Insert to the cart
 
       await updateCart(getIdHdCt, getOneCTSP, quantity, donGia);
@@ -112,7 +112,7 @@ const ModalUpdateProductOnCart = (props) => {
                     <Typography variant="subtitle1" color="text.secondary" component="div">
                       <p>Xuất Xứ: {itemUpdateClassify[0].idSp.idXx.tenNuoc}</p>
                       <p>Chất Liệu: {itemUpdateClassify[0].idSp.idCl.tenCl}</p>
-                      <h6>Giá: {itemUpdateClassify[0].idSp.giaBan}</h6>
+                      <h6>Giá: {itemUpdateClassify[0].idSp.giaThucTe}</h6>
                     </Typography>
                   </CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>

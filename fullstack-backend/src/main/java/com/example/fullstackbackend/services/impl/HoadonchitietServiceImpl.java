@@ -2,7 +2,9 @@ package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
+import com.example.fullstackbackend.entity.LichSuHoaDon;
 import com.example.fullstackbackend.repository.HoadonchitietRepository;
+import com.example.fullstackbackend.repository.LichSuHoaDonRepository;
 import com.example.fullstackbackend.services.HoadonchitietSevice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +22,9 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 
     @Autowired
     private HoadonchitietRepository hoadonchitietRepository;
+
+    @Autowired
+    private LichSuHoaDonRepository lichSuHoaDonRepository;
 
     @Override
     public List<HoaDonChiTiet> getAll() {
@@ -39,7 +45,14 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 
     @Override
     public HoaDonChiTiet add(HoaDonChiTiet add) {
-        return hoadonchitietRepository.save(add);
+        if (add.getTrangThai() >= 1 && add.getTrangThai() < 8 ) {
+            addLS(add);
+            return hoadonchitietRepository.save(add);
+        }else {
+            return hoadonchitietRepository.save(add);
+        }
+
+
     }
 
     @Override
@@ -55,6 +68,20 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     @Override
     public HoaDonChiTiet update(HoaDonChiTiet update) {
         return hoadonchitietRepository.save(update);
+    }
+
+    @Override
+    public LichSuHoaDon addLS(HoaDonChiTiet addLS) {
+        // Get datetime now
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+        LichSuHoaDon ls = new LichSuHoaDon();
+        ls.setIdHd(addLS.getIdHd());
+        ls.setTrangThai(6);
+        ls.setMoTa("Chỉnh sửa sản phẩm: "+ addLS.getIdCtsp().getIdSp().getTenSp());
+        ls.setNgayThayDoi(currentTimestamp);
+        return lichSuHoaDonRepository.save(ls);
     }
 
     @Override

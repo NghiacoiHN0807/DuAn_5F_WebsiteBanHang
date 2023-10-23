@@ -4,12 +4,13 @@ const getDetailOne = (idHd) => custom.get(`/hoa-don-chi-tiet/detail-get-one/${id
 
 const getDataCart = (idHd) => custom.get(`/hoa-don-chi-tiet/detail/${idHd}`);
 
-const postAddDirect = (idCtsp, soLuong, donGia, idHd, postAddDirect) =>
+const postAddDirect = (idCtsp, soLuong, donGia, idHd, trangThai) =>
   custom.post('/hoa-don-chi-tiet/add', {
     idCtsp,
     soLuong,
     donGia,
     idHd,
+    trangThai,
   });
 
 const updateCart = (idHdct, idCtsp, soLuong, donGia) =>

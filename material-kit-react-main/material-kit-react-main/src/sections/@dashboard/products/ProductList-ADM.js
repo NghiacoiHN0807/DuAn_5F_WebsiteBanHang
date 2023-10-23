@@ -18,10 +18,8 @@ export default function ProductListADM({ products, ...other }) {
   const [showModalDetail, setShowModalDetail] = useState(false);
 
   const handleChoose = async (id, cover) => {
-    console.log('id: ', id);
-    console.log('cover: ', cover);
-    console.log('products.selectDataCart: ', products[0].selectDataCart);
     const getOneSP = await findById(id);
+    // const getOneSP = await selectClassify(id);
     setListImages(cover);
     setDataDetail(getOneSP);
     setShowModalDetail(true);

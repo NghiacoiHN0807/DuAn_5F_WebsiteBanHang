@@ -197,32 +197,11 @@ export default function UserPage() {
 
   // Create a new Detail Direct
   const [alertContent, setAlertContent] = useState(null);
-  const [lastGeneratedNumber, setLastGeneratedNumber] = useState(0);
-
-  useEffect(() => {
-    // Đọc số lớn nhất từ cơ sở dữ liệu (localStorage) khi ứng dụng khởi động
-    const savedNumber = localStorage.getItem('lastGeneratedNumber');
-    if (savedNumber) {
-      setLastGeneratedNumber(Number(savedNumber));
-    }
-  }, []);
-  const generateNewCode = () => {
-    const newNumber = lastGeneratedNumber + 1;
-    setLastGeneratedNumber(newNumber);
-
-    // Lưu số mới vào cơ sở dữ liệu (localStorage)
-    localStorage.setItem('lastGeneratedNumber', newNumber.toString());
-
-    return `HD${newNumber.toString().padStart(5, '0')}`;
-  };
-
   let getIdHttp;
 
-  const currentDate = new Date();
-  const formattedDate = format(currentDate, 'yyyy-MM-dd');
   const handleAdd = async () => {
-    const newCode = generateNewCode();
-    const res = await postAddBill(newCode, formattedDate, 1, 8);
+    // const newCode = generateNewCode();
+    const res = await postAddBill(1, 8);
     setAlertContent({
       type: 'success',
       message: 'Tạo thành công hóa đơn',
@@ -377,12 +356,12 @@ export default function UserPage() {
       >
         <MenuItem onClick={() => handleEdit()}>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Edit
+          Sửa
         </MenuItem>
 
         <MenuItem onClick={() => handleDelete()} sx={{ color: 'error.main' }}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-          Delete
+          Xóa
         </MenuItem>
       </Popover>
       {/* Dialog xác nhận xóa */}

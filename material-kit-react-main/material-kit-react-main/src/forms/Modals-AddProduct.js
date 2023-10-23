@@ -33,6 +33,7 @@ const ModalAddProduct = (props) => {
   const getAllData = useCallback(async (page) => {
     try {
       const getData = await fetchAllCTSPBySize(page);
+      console.log('getData.content: ', getData.content);
       if (getData && getData.content) {
         setListData(getData.content);
         setNumberPages(getData.totalPages);
@@ -71,14 +72,22 @@ const ModalAddProduct = (props) => {
   const PRODUCTS = listData.map((item, index) => {
     const setIndex = index + 1;
     const imagesArray = item[0].split(',');
+    const arrayPrice = item[4].split(',');
     const firstImage = imagesArray[0];
+    const price = arrayPrice.map((price) => parseFloat(price));
+    // find max and min of price
+    const minPrice = Math.min(...price);
+    const maxPrice = Math.max(...price);
+    // Select price
+    const priceRange = minPrice === maxPrice ? minPrice : `${minPrice} ${maxPrice}`;
+
     const PRODUCT_COLOR = ['#00AB55', '#000000', '#FFFFFF', '#FFC0CB', '#FF4842', '#1890FF', '#94D82D', '#FFC107'];
 
     return {
       id: item[1],
       cover: firstImage,
       name: item[3],
-      price: item[4],
+      price: priceRange,
       priceSale: item[2],
       colors:
         (setIndex === 1 && PRODUCT_COLOR.slice(0, 2)) ||

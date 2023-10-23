@@ -2,6 +2,7 @@ package com.example.fullstackbackend.services;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
+import com.example.fullstackbackend.entity.LichSuHoaDon;
 import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
@@ -23,6 +24,8 @@ public interface HoadonchitietSevice {
     Boolean checkExists(Integer id);
 
     HoaDonChiTiet update(HoaDonChiTiet update);
+
+    LichSuHoaDon addLS(HoaDonChiTiet addLS);
 
     Optional<HoaDonChiTiet> detail(Integer id);
 

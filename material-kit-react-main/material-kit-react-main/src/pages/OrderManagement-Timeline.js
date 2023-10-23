@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../scss/OrderManagement-Timeline.scss';
-import { Button, Grid, Pagination, Stack } from '@mui/material';
+import { Button, Grid, Pagination, Stack, Typography } from '@mui/material';
 import { Badge, Image } from 'react-bootstrap';
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -21,14 +20,16 @@ import {
   FaBug,
   FaQuestionCircle,
 } from 'react-icons/fa';
+import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Timeline from '../MappingTimeLine/Timeline';
 import TimelineEvent from '../MappingTimeLine/TimelineEvent';
-import { getDetailHDCT, viewAllHTTT } from '../service/OrderManagementTimeLine';
+import { viewAllHTTT } from '../service/OrderManagementTimeLine';
 import { finByProductOnCart } from '../service/BillSevice';
 import ModalUpdateStatus from '../forms/Modal-Update-Status';
 import ModalPaymentComfirm from '../forms/Modal-Payment-Confirm';
 import { getDetailOneHD } from '../service/OderManagementSevice';
+import SelectHistoryBill from '../forms/Modals-SelectHistoryBill';
 
 const styles = {
   container: {
@@ -37,6 +38,11 @@ const styles = {
 };
 
 const OrderManagementTimeline = ({ classes }) => {
+  OrderManagementTimeline.propTypes = {
+    classes: PropTypes.object.isRequired,
+    container: PropTypes.object.isRequired,
+  };
+
   const param = useParams();
   const idHdParam = param.id;
   const [listData, setListData] = useState([]);
@@ -48,11 +54,9 @@ const OrderManagementTimeline = ({ classes }) => {
     try {
       const res = await getDetailOneHD(idHdParam);
       const res1 = await viewAllHTTT(idHdParam);
+      console.log('Check res: ', res);
       setListData(res);
       setListHTTT(res1);
-      console.log('check trangThai: ', res);
-      console.log('check setListHTTT: ', res1);
-      // setActiveIndex(res[0].idHd.trangThai);
       setActiveIndex(res[0].idHd.trangThai);
     } catch (error) {
       console.log('error: ', error);
@@ -164,6 +168,30 @@ const OrderManagementTimeline = ({ classes }) => {
   const handlePayment = () => {
     setShowModalAdd(true);
   };
+  // Modal show detail timeline bill
+  const [showModalsDT, setShowModalDT] = useState(false);
+  const handleSelect = () => {
+    setShowModalDT(true);
+  };
+  const handleCloseAddDT = () => {
+    setShowModalDT(false);
+  };
+  // Format Date Time
+  function formatDateTime(dateTimeString) {
+    // Tạo một đối tượng Date từ chuỗi thời gian
+    const dateTime = new Date(dateTimeString);
+
+    // Kiểm tra xem đối tượng Date đã được tạo thành công chưa
+    if (Number.isNaN(dateTime)) {
+      return 'Thời gian không hợp lệ';
+    }
+
+    // Chuyển đổi thành định dạng ngày giờ
+    const formattedDateTime = dateTime.toLocaleString();
+
+    return formattedDateTime;
+  }
+
   return (
     <>
       <div className="row-order-management-timeline">
@@ -175,8 +203,8 @@ const OrderManagementTimeline = ({ classes }) => {
                   key={index}
                   color={getColorForTrangThai(item.trangThai)}
                   icon={getIconForTrangThai(item.trangThai)}
-                  title={getTextForTrangThai(item.trangThai)} // Thay "title" bằng tên thuộc tính chứa tiêu đề trong item của listData
-                  subtitle={item.ngayThayDoi} // Thay "subtitle" bằng tên thuộc tính chứa ngày trong item của listData
+                  title={getTextForTrangThai(item.trangThai)}
+                  subtitle={formatDateTime(item.ngayThayDoi)}
                 />
               ))}
             </Timeline>
@@ -199,25 +227,39 @@ const OrderManagementTimeline = ({ classes }) => {
               : activeIndex === 3
               ? 'Xác Nhận Thanh Toán'
               : activeIndex === 4
-              ? 'Đã giao thành công'
+              ? 'Giao Thành Công'
+              : activeIndex === 5
+              ? 'Đã Giao Thành Công'
+              : activeIndex === 9
+              ? 'Đơn Đã Hoàn Thành'
+              : activeIndex === 10
+              ? 'Đơn Hàng Đã Bị Hủy'
               : 'Đơn Đã Hoàn Thành'}
           </Button>{' '}
           <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex <= 1}>
             Hủy Đơn Hàng
+          </Button>{' '}
+          <Button variant="outlined" color="error" onClick={handleSelect} disabled={activeIndex <= 1}>
+            Chi Tiết
           </Button>
         </div>
       </div>
       <div className="row-order-management-timeline">
         <div className="row row-top">
-          <div className="col-6">
-            <h6>Thông Tin Khách Hàng</h6>
-          </div>
-
-          <div className="col-6 button-edit">
+          <Stack
+            sx={{ marginLeft: 2, marginRight: 2 }}
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={5}
+          >
+            <Typography variant="h6" gutterBottom>
+              Thông Tin Khách Hàng{' '}
+            </Typography>
             <Button size="small" variant="outlined">
               Chỉnh sửa thông tin
             </Button>
-          </div>
+          </Stack>
         </div>
         {listData.length > 0 && (
           <div className="row row-botton">
@@ -284,11 +326,16 @@ const OrderManagementTimeline = ({ classes }) => {
       </div>
       <div className="row-order-management-timeline">
         <div className="row row-top">
-          <div className="col-6">
-            <h6>Lịch Sử Thanh Toán</h6>
-          </div>
-
-          <div className="col-6 button-edit">
+          <Stack
+            sx={{ marginLeft: 2, marginRight: 2 }}
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={5}
+          >
+            <Typography variant="h6" gutterBottom>
+              Lịch Sử Thanh Toán{' '}
+            </Typography>
             <Button
               onClick={() => handlePayment()}
               size="small"
@@ -297,7 +344,7 @@ const OrderManagementTimeline = ({ classes }) => {
             >
               Xác nhận thanh toán
             </Button>
-          </div>
+          </Stack>
         </div>
         <div className="row row-botton">
           <TableContainer component={Paper}>
@@ -338,9 +385,20 @@ const OrderManagementTimeline = ({ classes }) => {
       </div>
       <div className="row-order-management-timeline">
         <div className="row row-top">
-          <div className="col-6">
-            <h6>Giỏ Hàng</h6>
-          </div>
+          <Stack
+            sx={{ marginLeft: 2, marginRight: 2 }}
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            mb={5}
+          >
+            <Typography variant="h6" gutterBottom>
+              Giỏ Hàng{' '}
+            </Typography>
+            <Button size="small" variant="outlined">
+              Thêm Sản Phẩm
+            </Button>
+          </Stack>
         </div>
         <div className="row row-botton">
           <TableContainer sx={{ marginTop: 2, marginBottom: 2 }} component={Paper}>
@@ -389,11 +447,14 @@ const OrderManagementTimeline = ({ classes }) => {
                 )}
                 <TableRow>
                   <TableCell rowSpan={3} />
-                  {listData.length > 0 && <TableCell colSpan={2}>Thành Tiền: {listData[0].idHd.thanhTien}</TableCell>}
-                  {/* <TableCell align="right"></TableCell> */}
                 </TableRow>
               </TableBody>
-            </Table>
+            </Table>{' '}
+            {listData.length > 0 && (
+              <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
+                Thành Tiền: {listData[0].idHd.thanhTien}
+              </Typography>
+            )}
           </TableContainer>
           <Stack direction="row" spacing={2} justify="center" alignItems="center">
             <Pagination onChange={(event, page) => handlePageClick(page - 1)} count={numberPages} variant="outlined" />
@@ -420,6 +481,7 @@ const OrderManagementTimeline = ({ classes }) => {
           />
         </div>
       </div>
+      <SelectHistoryBill open={showModalsDT} h andleClose={handleCloseAddDT} listData={listData} />
     </>
   );
 };

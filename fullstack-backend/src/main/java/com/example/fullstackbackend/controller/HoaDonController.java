@@ -139,7 +139,7 @@ public class HoaDonController {
             hoaDon.setNgayBatDauGiao(newHD.getNgayBatDauGiao());
             hoaDon.setNgayGiaoThanhCong(newHD.getNgayGiaoThanhCong());
             hoaDon.setTrangThai(newHD.getTrangThai());
-            return hoadonSevice.add(hoaDon);
+            return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
         return newHD1;
     }
@@ -148,7 +148,7 @@ public class HoaDonController {
                                @RequestParam String moTa) {
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTrangThai(newHD.getTrangThai());
-            return hoadonSevice.add(hoaDon);
+            return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
 
         //Add to history bill
@@ -179,7 +179,7 @@ public class HoaDonController {
             hoaDon.setTienThua(newHD.getTienThua());
             hoaDon.setKieuHoaDon(newHD.getKieuHoaDon());
             hoaDon.setTrangThai(newHD.getTrangThai());
-            return hoadonSevice.add(hoaDon);
+            return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
 
         //Add to payments
@@ -220,7 +220,7 @@ public class HoaDonController {
             hoaDon.setThanhTien(newHD.getThanhTien());
             hoaDon.setKieuHoaDon(newHD.getKieuHoaDon());
             hoaDon.setTrangThai(newHD.getTrangThai());
-            return hoadonSevice.add(hoaDon);
+            return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
 
         //Add to history bill
@@ -244,7 +244,7 @@ public class HoaDonController {
     public HoaDon updateTongTien(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTongTien(newHD.getTongTien());
-            return hoadonSevice.add(hoaDon);
+            return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
         return newHD1;
     }
@@ -323,7 +323,7 @@ public class HoaDonController {
             lichSuHoaDonService.add(lichSuHoaDon);
 
             // Switch tab
-            response.sendRedirect("http://localhost:3000/order-management-timeline/" + idHd);
+            response.sendRedirect("http://localhost:3000/dashboard/bills/time-line/" + idHd);
 
             return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
         }

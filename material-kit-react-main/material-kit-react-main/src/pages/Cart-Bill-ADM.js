@@ -34,7 +34,6 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
 import { pink } from '@mui/material/colors';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { format } from 'date-fns';
 import { Alert, Image } from 'react-bootstrap';
 import { styled } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
@@ -146,24 +145,6 @@ const CartBillADM = (props) => {
   };
 
   // Create a new Detail Direct
-  const [lastGeneratedNumber, setLastGeneratedNumber] = useState(0);
-
-  useEffect(() => {
-    // Đọc số lớn nhất từ cơ sở dữ liệu (localStorage) khi ứng dụng khởi động
-    const savedNumber = localStorage.getItem('lastGeneratedNumber');
-    if (savedNumber) {
-      setLastGeneratedNumber(Number(savedNumber));
-    }
-  }, []);
-  const generateNewCode = () => {
-    const newNumber = lastGeneratedNumber + 1;
-    setLastGeneratedNumber(newNumber);
-
-    // Lưu số mới vào cơ sở dữ liệu (localStorage)
-    localStorage.setItem('lastGeneratedNumber', newNumber.toString());
-
-    return `HD${newNumber.toString().padStart(5, '0')}`;
-  };
   const [alertContent, setAlertContent] = useState(null);
 
   const handleAddTab = async () => {
@@ -174,11 +155,7 @@ const CartBillADM = (props) => {
       });
       // toast.warn('Đã Tồn Tại 5 Hóa Đơn Chờ. Vui Lòng Thanh Toán!!!');
     } else {
-      const currentDate = new Date();
-      const formattedDate = format(currentDate, 'yyyy-MM-dd');
-
-      const newCode = generateNewCode();
-      const res = await postAddBill(newCode, formattedDate, 1, 8);
+      const res = await postAddBill(1, 8);
       getListData();
       setAlertContent({
         type: 'success',
@@ -218,7 +195,7 @@ const CartBillADM = (props) => {
     const newTabs = [...tabs, newTab];
     console.log('Check newTabs: ', newTabs);
     setTabs(newTabs);
-    navigate(`/create-bill/${newTabs[0].idHd}`);
+    navigate(`/dashboard/sales/card-bill/${newTabs[0].idHd}`);
   };
 
   // Select Product On Cart
