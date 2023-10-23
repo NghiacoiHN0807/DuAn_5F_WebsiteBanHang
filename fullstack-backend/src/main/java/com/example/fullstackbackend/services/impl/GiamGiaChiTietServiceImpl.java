@@ -1,9 +1,11 @@
 package com.example.fullstackbackend.services.impl;
 
+import com.example.fullstackbackend.DTO.MucGiamDTO;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
 import com.example.fullstackbackend.repository.GiamGiaChiTietRepository;
 import com.example.fullstackbackend.repository.GiamGiaRepository;
+import com.example.fullstackbackend.services.ChitietsanphamService;
 import com.example.fullstackbackend.services.GiamGiaChiTietService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,6 +27,9 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     @Autowired
     private GiamGiaRepository giamGiaRepository;
 
+    @Autowired
+    private ChitietsanphamService chitietsanphamService;
+
     @Override
     public Page<GiamGiaChiTiet> getAll(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
@@ -35,12 +40,6 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     public Page<GiamGiaChiTiet> getAllByTrangThai(Integer pageNo, Integer size, Integer trangThai) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return giamGiaChiTietRepository.findAllByTrangThai(trangThai, pageable);
-    }
-
-    @Override
-    public Page<GiamGiaChiTiet> search(Integer pageNo, Integer size, String value) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return giamGiaChiTietRepository.findAllByValue(value, pageable);
     }
 
     @Override
@@ -83,13 +82,32 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     }
 
     @Override
-    public ChiTietSanPham updateGiaThuc(String discountType, BigDecimal gia, Long id) {
-
-        return null;
+    public ChiTietSanPham updateGiaThuc(BigDecimal gia, Integer id) {
+        String type = typeGiam(id);
+        ChiTietSanPham chiTietSanPham = giamGiaChiTietRepository.updateCtsp(type, gia, id);
+        return chiTietSanPham;
     }
 
     @Override
     public List<ChiTietSanPham> chiTietSanPhamList() {
-        return null;
+        return giamGiaChiTietRepository.ctspGiamGia();
+    }
+
+    @Override
+    public String typeGiam(Integer idSp) {
+        String check = giamGiaChiTietRepository.typeGiam(idSp);
+        if (check.isEmpty()) {
+            return "amount";
+        }
+        return "percentage";
+    }
+
+    @Override
+    public BigDecimal mucGiam(Integer idSp) {
+        MucGiamDTO mucGiamDTO = giamGiaChiTietRepository.mucGiam(idSp);
+        if (mucGiamDTO.getMucGiamPhanTram() != null) {
+            return mucGiamDTO.getMucGiamPhanTram();
+        }
+        return mucGiamDTO.getMucGiamTienMat();
     }
 }

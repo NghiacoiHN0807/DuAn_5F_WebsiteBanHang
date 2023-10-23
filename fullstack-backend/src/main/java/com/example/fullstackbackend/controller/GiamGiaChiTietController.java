@@ -34,12 +34,12 @@ public class GiamGiaChiTietController {
         return giamGiaChiTietService.getAll(pageNo, size);
     }
 
-    @GetMapping("search")
-    Page<GiamGiaChiTiet> search(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
-                                @RequestParam(value = "size", defaultValue = "5") Integer size,
-                                @RequestParam("value") String value) {
-        return giamGiaChiTietService.search(pageNo, size, value);
-    }
+//    @GetMapping("search")
+//    Page<GiamGiaChiTiet> search(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
+//                                @RequestParam(value = "size", defaultValue = "5") Integer size,
+//                                @RequestParam("value") String value) {
+//        return giamGiaChiTietService.search(pageNo, size, value);
+//    }
 
     @GetMapping("filter-date")
     Page<GiamGiaChiTiet> filterDate(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,

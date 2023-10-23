@@ -15,7 +15,7 @@ public interface GiamGiaChiTietService {
 
     Page<GiamGiaChiTiet> getAllByTrangThai(Integer pageNo, Integer size, Integer trangThai);
 
-    Page<GiamGiaChiTiet> search(Integer pageNo, Integer size, String value);
+//    Page<GiamGiaChiTiet> search(Integer pageNo, Integer size, String value);
 
     Page<GiamGiaChiTiet> getAllByDate(Integer pageNo, Integer size, LocalDate ngayBatDau, LocalDate ngayKetThuc);
 
@@ -31,8 +31,12 @@ public interface GiamGiaChiTietService {
 
     Integer findByIdGiamGia_IdGiamGia(Integer id);
 
-    ChiTietSanPham updateGiaThuc(String discountType, BigDecimal gia, Long id);
+    ChiTietSanPham updateGiaThuc(BigDecimal gia, Integer id);
 
     List<ChiTietSanPham> chiTietSanPhamList();
+
+    String typeGiam(Integer idSp);
+
+    BigDecimal mucGiam(Integer idSp);
 
 }

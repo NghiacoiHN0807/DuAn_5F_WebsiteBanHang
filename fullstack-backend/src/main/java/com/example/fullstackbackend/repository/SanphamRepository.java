@@ -17,35 +17,35 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
     @Query("SELECT s FROM SanPham s WHERE s.trangThai = :tinhTrang")
     Page<SanPham> findAllByTinhTrang(@Param("tinhTrang") Integer tinhTrang, Pageable pageable);
 
-    @Query("SELECT sp, MIN(img.images) " +
-            "FROM SanPham sp " +
-            "LEFT JOIN Images img ON sp.idSp = img.idSp.idSp " +
-            "GROUP BY sp.idSp")
+    @Query(value = "SELECT san_pham.*, MIN(images.images)\n" +
+            "            FROM san_pham\n" +
+            "            LEFT JOIN Images ON san_pham.id_sp = images.id_sp\n" +
+            "            GROUP BY san_pham.id_sp", nativeQuery = true)
     List<Object[]> getSanPhamWithMinImageUrl();
 
     @Query(value =
             "SELECT \n" +
-                    "    sp.id_sp,\n" +
-                    "    sp.ma_sp,\n" +
-                    "    sp.ten_sp,\n" +
-                    "    sz.ten_size,\n" +
-                    "    img.image_url,\n" +
-                    "    gg.ten_chuong_trinh,\n" +
-                    "    gg.muc_giam_phan_tram,\n" +
-                    "    gg.muc_giam_tien_mat,\n" +
-                    "    ggct.*,\n" +
-                    "    gg.ngay_bat_dau,\n" +
-                    "    gg.ngay_ket_thuc\n" +
-                    "FROM san_pham sp\n" +
-                    "JOIN chi_tiet_san_pham cts ON sp.id_sp = cts.id_sp\n" +
-                    "JOIN giam_gia_chi_tiet ggct ON cts.id_ctsp = ggct.id_ctsp\n" +
-                    "JOIN giam_gia gg ON ggct.id_giam_gia = gg.id_giam_gia\n" +
-                    "JOIN size sz ON cts.id_size = sz.id_size\n" +
-                    "JOIN (\n" +
-                    "    SELECT id_sp, MIN(images) AS id_image, MIN(images) AS image_url\n" +
-                    "    FROM images\n" +
-                    "    GROUP BY id_sp\n" +
-                    ") img ON sp.id_sp = img.id_sp;",
+                    "                        san_pham.id_sp,\n" +
+                    "                        san_pham.ma_sp,\n" +
+                    "                        san_pham.ten_sp,\n" +
+                    "                        giam_gia.ten_chuong_trinh,\n" +
+                    "                        giam_gia.muc_giam_phan_tram,\n" +
+                    "                        giam_gia.muc_giam_tien_mat,\n" +
+                    "                        images.images,\n" +
+                    "                        giam_gia_chi_tiet.*,\n" +
+                    "                        giam_gia.ngay_bat_dau,\n" +
+                    "                        giam_gia.ngay_ket_thuc,\n" +
+                    "                        chi_tiet_san_pham.*\n" +
+                    "                    FROM san_pham\n" +
+                    "                    LEFT JOIN chi_tiet_san_pham ON san_pham.id_sp = chi_tiet_san_pham.id_sp\n" +
+                    "                    LEFT JOIN giam_gia_chi_tiet ON san_pham.id_sp = giam_gia_chi_tiet.id_sp\n" +
+                    "                    LEFT JOIN giam_gia ON giam_gia_chi_tiet.id_giam_gia = giam_gia.id_giam_gia\n" +
+                    "                    LEFT JOIN (\n" +
+                    "                        SELECT id_sp, MIN(images) AS id_image, MIN(images) AS images\n" +
+                    "                        FROM images\n" +
+                    "                        GROUP BY id_sp\n" +
+                    "                    ) images ON san_pham.id_sp = images.id_sp\n" +
+                    "                    WHERE chi_tiet_san_pham.gia_thuc_te < chi_tiet_san_pham.gia_ban;",
             nativeQuery = true)
     List<Object[]> getSanPhamDetails();
 

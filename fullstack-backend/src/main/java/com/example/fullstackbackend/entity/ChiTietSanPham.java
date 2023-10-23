@@ -37,6 +37,15 @@ public class ChiTietSanPham {
     @JoinColumn(name = "id_sp", referencedColumnName = "id_sp")
     private SanPham idSp;
 
+    @Column(name = "gia_nhap")
+    private BigDecimal giaNhap;
+
+    @Column(name = "gia_ban")
+    private BigDecimal giaBan;
+
+    @Column(name = "gia_thuc_te")
+    private BigDecimal giaThucTe;
+
     @Column(name = "so_luong_ton")
     private Integer soLuongTon;
 
