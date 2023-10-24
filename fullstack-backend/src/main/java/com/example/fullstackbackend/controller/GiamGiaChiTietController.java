@@ -112,15 +112,16 @@ public class GiamGiaChiTietController {
 
     @PostMapping("insert-dto")
     ResponseEntity<?> insertDto(@RequestBody GiamGiaDTO giamGiaDTO) {
-        Optional<GiamGia> giamGia = giamGiaService.getOne(giamGiaDTO.getGiamGia().getIdGiamGia());
-        if (!giamGia.isPresent()) {
+        try {
             return ResponseEntity.status(HttpStatus.OK).body(
-                    new ReponObject("Ok!", "Add success id: " + giamGia, giamGiaChiTietService.insert(giamGiaDTO))
+                    new ReponObject("Ok!", "Add success id: ", giamGiaChiTietService.insert(giamGiaDTO))
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ReponObject("Failed!", "Not found id: ", "")
             );
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                new ReponObject("Failed!", "Not found id: " + giamGia, "")
-        );
     }
 
     @GetMapping("test/{id}")

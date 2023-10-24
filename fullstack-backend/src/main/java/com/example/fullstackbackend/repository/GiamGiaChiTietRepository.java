@@ -55,7 +55,11 @@ public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, 
 
     @Query(value = "SELECT muc_giam_phan_tram, muc_giam_tien_mat FROM giam_gia " +
             "join giam_gia_chi_tiet on giam_gia.id_giam_gia = giam_gia_chi_tiet.id_giam_gia " +
-            "where giam_gia_chi_tiet.id_sp =:idSp", nativeQuery = true)
-    Object[] mucGiam(@Param("idSp")Integer idSp);
+            "where giam_gia_chi_tiet.id_sp = :idSp " +
+            "ORDER BY giam_gia_chi_tiet.id_ggct DESC LIMIT 1", nativeQuery = true)
+    List<Object[]> mucGiam(@Param("idSp") Integer idSp);
+
+
+
 
 }

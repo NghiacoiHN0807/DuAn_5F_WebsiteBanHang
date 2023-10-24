@@ -101,29 +101,45 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
 
     @Override
     public String typeGiam(Integer idSp) {
-        String check = giamGiaChiTietRepository.typeGiam(idSp);
-        if (check.isEmpty()) {
-            return "amount";
+        List<Object[]> result = giamGiaChiTietRepository.mucGiam(idSp);
+
+        if (!result.isEmpty()) {
+            for (Object[] row : result) {
+                BigDecimal mucGiamPhanTram = (BigDecimal) row[0];
+                BigDecimal mucGiamTienMat = (BigDecimal) row[1];
+
+                if (mucGiamPhanTram != null) {
+                    return "percentage";
+                }
+                return "amount";
+            }
         }
-        return "percentage";
+
+        return null;
     }
 
     @Override
     public BigDecimal mucGiam(Integer idSp) {
-        Object[] result = giamGiaChiTietRepository.mucGiam(idSp);
+        List<Object[]> result = giamGiaChiTietRepository.mucGiam(idSp);
 
-        if (result != null && result.length == 2) {
-            BigDecimal mucGiamPhanTram = (BigDecimal) result[0];
-            BigDecimal mucGiamTienMat = (BigDecimal) result[1];
+        if (!result.isEmpty()) {
+            for (Object[] row : result) {
+                BigDecimal mucGiamPhanTram = (BigDecimal) row[0];
+                BigDecimal mucGiamTienMat = (BigDecimal) row[1];
 
-            if (mucGiamPhanTram != null) {
-                return mucGiamPhanTram;
+                if (mucGiamPhanTram != null) {
+                    return mucGiamPhanTram;
+                }
+                return mucGiamTienMat;
             }
-            return mucGiamTienMat;
         }
 
         return BigDecimal.ZERO; // Or handle the case where the result is unexpected.
     }
+
+
+
+
     @Override
     @Transactional
     public GiamGia insert(GiamGiaDTO giamGiaDTO) {
