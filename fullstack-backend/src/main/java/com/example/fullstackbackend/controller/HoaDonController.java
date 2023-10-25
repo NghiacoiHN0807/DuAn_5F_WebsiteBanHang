@@ -1,6 +1,5 @@
 package com.example.fullstackbackend.controller;
 
-import com.example.fullstackbackend.DTO.HoaDonDTO;
 import com.example.fullstackbackend.DTO.VNPayService;
 import com.example.fullstackbackend.entity.HinhThucThanhToan;
 import com.example.fullstackbackend.entity.HoaDon;
@@ -15,12 +14,9 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -33,7 +29,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -143,6 +138,7 @@ public class HoaDonController {
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
         return newHD1;
     }
+
     @PutMapping("update-status/{id}")
     public HoaDon updateStatus(@RequestBody HoaDon newHD, @PathVariable("id") Integer id,
                                @RequestParam String moTa) {
@@ -206,7 +202,6 @@ public class HoaDonController {
         lichSuHoaDon.setNgayThayDoi(currentTimestamp);
         lichSuHoaDonService.add(lichSuHoaDon);
 
-
         return newHD1;
     }
 
@@ -253,20 +248,22 @@ public class HoaDonController {
     @PostMapping("submitOrder")
     public String submidOrder(@RequestParam("amount") BigDecimal orderTotal,
                               @RequestParam("orderInfo") String orderInfo,
-                              HttpServletRequest request){
+                              HttpServletRequest request) {
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
         String vnpayUrl = vnPayService.createOrder(orderTotal, orderInfo, baseUrl);
         return vnpayUrl;
     }
 
-        @GetMapping("vnpay-payment")
-        public ResponseEntity<String> GetMapping(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @GetMapping("vnpay-payment")
+    public ResponseEntity<String> GetMapping(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int paymentStatus = vnPayService.orderReturn(request);
 
-            String orderInfo = request.getParameter("vnp_OrderInfo");
-            String totalPrice = request.getParameter("vnp_Amount");
-            BigDecimal realPrice = new BigDecimal(totalPrice).divide(new BigDecimal(100));
-            Integer idHd= Integer.valueOf(orderInfo);
+        String orderInfo = request.getParameter("vnp_OrderInfo");
+        String totalPrice = request.getParameter("vnp_Amount");
+        BigDecimal realPrice = new BigDecimal(totalPrice).divide(new BigDecimal(100));
+        Integer idHd = Integer.valueOf(orderInfo);
 
+        if (paymentStatus == 1) {
             //Detail HD by IdHd
             Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
             BigDecimal getTongTien = getOne.get().getTongTien();
@@ -279,7 +276,7 @@ public class HoaDonController {
             int setTrangThai;
             if (getOne.get().getTrangThai() == 3) {
                 setTrangThai = 4;
-            }else{
+            } else {
                 setTrangThai = 9;
             }
             hoaDonDTO1.setTrangThai(setTrangThai);
@@ -302,7 +299,7 @@ public class HoaDonController {
 
             if (tienMat.compareTo(BigDecimal.ZERO) <= 0) {
                 hinhThucThanhToanSevice.add(hinhThucThanhToan1);
-            }else{
+            } else {
                 hinhThucThanhToanSevice.add(hinhThucThanhToan1);
                 hinhThucThanhToanSevice.add(hinhThucThanhToan2);
             }
@@ -326,7 +323,13 @@ public class HoaDonController {
             response.sendRedirect("http://localhost:3000/dashboard/bills/time-line/" + idHd);
 
             return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
+        } else {
+            response.sendRedirect("http://localhost:3000/dashboard/sales/card-bill/" + idHd);
+            return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
+
         }
+
+    }
 
     @PutMapping("delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {

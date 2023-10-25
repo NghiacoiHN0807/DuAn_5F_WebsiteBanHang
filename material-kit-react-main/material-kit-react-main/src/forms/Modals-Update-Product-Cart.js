@@ -10,25 +10,71 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import PropTypes from 'prop-types';
 import { findByProductNameAndSize } from '../service/BillSevice';
 import { updateCart } from '../service/DirectSaleSevice';
 
 const ModalUpdateProductOnCart = (props) => {
+  ModalUpdateProductOnCart.propTypes = {
+    show: PropTypes.bool.isRequired,
+    handleClose: PropTypes.func.isRequired,
+    itemUpdateClassify: PropTypes.object.isRequired,
+    selectDataCart: PropTypes.func.isRequired,
+    itemUpdate: PropTypes.object.isRequired,
+    currentPage: PropTypes.number.isRequired,
+  };
   const { show, handleClose, itemUpdateClassify, selectDataCart, itemUpdate, currentPage } = props;
 
   //   Insert product
   //   Get Name Of Size And Number
   const [selectedSize, setSelectedSize] = useState(null);
-  // const [selectedSp, setSelectedSp] = useState("");
+  const [selectedMauSac, setSelectedMauSac] = useState(null);
   const [isSizeSelected, setIsSizeSelected] = useState(false);
+  const [isMSSelected, setIsMSSelected] = useState(false);
+  const [availableColors, setAvailableColors] = useState([]);
+  const [selectSoLuongTon, setSelectSoLuongTon] = useState([]);
 
   const handleShowSize = (size) => {
-    if (isSizeSelected && selectedSize === size.idSize.tenSize) {
+    // Select price
+    const checkSize = Array.isArray(itemUpdateClassify)
+      ? [...new Set(itemUpdateClassify.filter((item) => item.idSize.tenSize === size))]
+      : [];
+    // const checkSize = dataDetail.filter((item) => item.idSize.tenSize === size);
+
+    if (isSizeSelected && selectedSize === size) {
       setSelectedSize(null);
       setIsSizeSelected(false);
+      setAvailableColors([]);
+      setSelectedMauSac(null);
+      setIsMSSelected(false);
+      setSelectSoLuongTon([]);
     } else {
-      setSelectedSize(size.idSize.tenSize);
+      setSelectedSize(size);
       setIsSizeSelected(true);
+      setAvailableColors(checkSize);
+    }
+  };
+
+  const handleShowMS = (mauSac) => {
+    const checkSoLuong = Array.isArray(itemUpdateClassify)
+      ? [
+          ...new Set(
+            itemUpdateClassify.filter(
+              (item) => item.idMs.tenMs === mauSac.idMs.tenMs && item.idSize.tenSize === selectedSize
+            )
+          ),
+        ]
+      : [];
+    console.log('checkSoLuong:', checkSoLuong);
+
+    if (isMSSelected && selectedMauSac === mauSac.idMs.tenMs) {
+      setSelectedMauSac(null);
+      setIsMSSelected(false);
+      setSelectSoLuongTon([]);
+    } else {
+      setSelectSoLuongTon(checkSoLuong);
+      setSelectedMauSac(mauSac.idMs.tenMs);
+      setIsMSSelected(true);
     }
   };
   const [quantity, setQuantity] = useState(1); // Initialize with a default quantity
@@ -62,9 +108,12 @@ const ModalUpdateProductOnCart = (props) => {
     } else {
       const getIdHdCt = itemUpdate[1];
 
-      const getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize);
+      const getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize, selectedMauSac);
+      console.log('getOneCTSP: ', getOneCTSP);
 
-      const donGia = itemUpdateClassify[0].idSp.giaThucTe * quantity;
+      const donGia = getOneCTSP.giaThucTe * quantity;
+      console.log('donGia: ', donGia);
+
       //   Insert to the cart
 
       await updateCart(getIdHdCt, getOneCTSP, quantity, donGia);
@@ -80,7 +129,28 @@ const ModalUpdateProductOnCart = (props) => {
       });
     }
   };
+  // Set select one MS and Size
+  const uniqueSizes = Array.isArray(itemUpdateClassify)
+    ? [...new Set(itemUpdateClassify.map((item) => item.idSize.tenSize))]
+    : [];
+  const uniqueMS = Array.isArray(itemUpdateClassify)
+    ? [...new Set(itemUpdateClassify.map((item) => item.idMs.tenMs))]
+    : [];
 
+  // Select price
+  // Select price
+  const giaThucTe = Array.isArray(itemUpdateClassify)
+    ? [...new Set(itemUpdateClassify.map((item) => item.giaThucTe))]
+    : [];
+
+  // Find max and min of price
+  const minPrice = Math.min(...giaThucTe);
+  const maxPrice = Math.max(...giaThucTe);
+
+  // Create the price range string
+  const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
+  const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
+  const priceRange = minPrice === maxPrice ? formattedMinPrice : `${formattedMinPrice} - ${formattedMaxPrice}`;
   return (
     <>
       <div>
@@ -112,13 +182,13 @@ const ModalUpdateProductOnCart = (props) => {
                     <Typography variant="subtitle1" color="text.secondary" component="div">
                       <p>Xuất Xứ: {itemUpdateClassify[0].idSp.idXx.tenNuoc}</p>
                       <p>Chất Liệu: {itemUpdateClassify[0].idSp.idCl.tenCl}</p>
-                      <h6>Giá: {itemUpdateClassify[0].idSp.giaThucTe}</h6>
+                      <p>Giá: {selectSoLuongTon.length > 0 ? selectSoLuongTon[0].giaThucTe : priceRange}</p>
                     </Typography>
                   </CardContent>
                   <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
                     <div>
                       Size:{' '}
-                      {itemUpdateClassify.map((size, sizeIndex) => (
+                      {uniqueSizes.map((size, sizeIndex) => (
                         <Button
                           style={{
                             marginRight: '4px',
@@ -126,12 +196,48 @@ const ModalUpdateProductOnCart = (props) => {
                           }}
                           key={`size-button-${sizeIndex}`}
                           onClick={() => handleShowSize(size)}
-                          variant={selectedSize === size.idSize.tenSize ? 'contained' : 'outlined'}
+                          variant={selectedSize === size ? 'contained' : 'outlined'}
                           size="small"
                         >
-                          {size.idSize.tenSize}
+                          {size}
                         </Button>
                       ))}
+                    </div>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
+                    <div>
+                      Màu Sắc:{' '}
+                      {availableColors.length > 0
+                        ? // Hiển thị danh sách màu sắc từ availableColors
+                          availableColors.map((mauSac, msIndex) => (
+                            <Button
+                              style={{
+                                marginRight: '4px',
+                                marginBottom: '4px',
+                              }}
+                              key={`size-button-${msIndex}`}
+                              onClick={() => handleShowMS(mauSac)}
+                              variant={selectedMauSac === mauSac.idMs.tenMs ? 'contained' : 'outlined'}
+                              size="small"
+                            >
+                              {mauSac.idMs.tenMs}
+                            </Button>
+                          ))
+                        : // Hiển thị dữ liệu từ dataDetail
+                          uniqueMS.map((item, index) => (
+                            <Button
+                              style={{
+                                marginRight: '4px',
+                                marginBottom: '4px',
+                              }}
+                              key={`size-button-${index}`}
+                              onClick={() => handleShowMS(item)}
+                              variant={selectedMauSac === item ? 'contained' : 'outlined'}
+                              size="small"
+                            >
+                              {item}
+                            </Button>
+                          ))}
                     </div>
                   </Box>
                   <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>

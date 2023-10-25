@@ -481,7 +481,7 @@ const OrderManagementTimeline = ({ classes }) => {
           />
         </div>
       </div>
-      <SelectHistoryBill open={showModalsDT} h andleClose={handleCloseAddDT} listData={listData} />
+      <SelectHistoryBill open={showModalsDT} handleClose={handleCloseAddDT} listData={listData} />
     </>
   );
 };

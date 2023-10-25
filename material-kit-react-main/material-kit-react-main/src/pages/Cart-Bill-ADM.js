@@ -117,31 +117,33 @@ const CartBillADM = (props) => {
   }, [getDetailHD]);
   // Select invoice waiting.
   const [tabs, setTabs] = useState([]);
+  const [value, setValue] = useState(0);
 
-  const getListData = async () => {
+  const getListData = useCallback(async () => {
     try {
       const res = await selectAllInvoiceWaiting();
       setTabs(res);
+      const idHdParamNumber = parseInt(idHdParam, 10);
+      const checkIndexTab = res.findIndex((item) => item.idHd === idHdParamNumber);
+      console.log('checkIndexTab: ', checkIndexTab);
+
+      setValue(checkIndexTab);
     } catch (error) {
       console.error('Error in list bill: ', error);
     }
-  };
+  }, [idHdParam]);
 
   useEffect(() => {
     getListData();
-  }, []);
-
-  const [value, setValue] = useState(0);
+  }, [getListData]);
 
   const handleChange = (event, newValue) => {
-    console.log('Check newValue: ', newValue);
+    console.log('newValue', newValue);
     setValue(newValue);
   };
 
   const handleChange1 = (tabLabel) => {
     navigate(`/dashboard/sales/card-bill/${tabLabel.idHd}`);
-
-    // navigate(`/create-bill/${tabLabel.idHd}`);
   };
 
   // Create a new Detail Direct
@@ -176,7 +178,7 @@ const CartBillADM = (props) => {
       setValue(newTabs.length - 1);
 
       const getIdHttp = res.idHd;
-      navigate(`/create-bill/${getIdHttp}`);
+      navigate(`/dashboard/sales/card-bill/${getIdHttp}`);
     }
   };
 
@@ -191,9 +193,7 @@ const CartBillADM = (props) => {
     getListData();
     setValue(0);
     const newTab = { maHd: `Tab ${1}` };
-    console.log('Check newTab: ', newTab);
     const newTabs = [...tabs, newTab];
-    console.log('Check newTabs: ', newTabs);
     setTabs(newTabs);
     navigate(`/dashboard/sales/card-bill/${newTabs[0].idHd}`);
   };
@@ -505,6 +505,8 @@ const CartBillADM = (props) => {
                             <TableCell align="right">
                               <Button onClick={() => handleUpdateClassify(item)} size="small" variant="outlined">
                                 Size: {item[6]}
+                                <br />
+                                Màu: {item[11]}
                               </Button>
                             </TableCell>
                             <TableCell align="right">{item[7]}</TableCell>

@@ -95,7 +95,7 @@ const OrderManagement = () => {
 
   const [page, setPage] = useState(0);
 
-  const [order, setOrder] = useState('asc');
+  const [order, setOrder] = useState('desc');
 
   const [selected, setSelected] = useState([]);
 
@@ -108,7 +108,7 @@ const OrderManagement = () => {
   const getListData = async () => {
     try {
       const res = await getAllOrderManagement();
-      console.log('Check res: ', res);
+      console.log('Check hihi: ', res);
       setListData(res);
     } catch (error) {
       console.error(error);
@@ -264,32 +264,11 @@ const OrderManagement = () => {
     navigate(`/dashboard/bills/time-line/${object.idHd}`);
   };
   // Add new bill
-  const [lastGeneratedNumber, setLastGeneratedNumber] = useState(0);
-
-  useEffect(() => {
-    // Đọc số lớn nhất từ cơ sở dữ liệu (localStorage) khi ứng dụng khởi động
-    const savedNumber = localStorage.getItem('lastGeneratedNumber');
-    if (savedNumber) {
-      setLastGeneratedNumber(Number(savedNumber));
-    }
-  }, []);
-  const generateNewCode = () => {
-    const newNumber = lastGeneratedNumber + 1;
-    setLastGeneratedNumber(newNumber);
-
-    // Lưu số mới vào cơ sở dữ liệu (localStorage)
-    localStorage.setItem('lastGeneratedNumber', newNumber.toString());
-
-    return `HD${newNumber.toString().padStart(5, '0')}`;
-  };
 
   let getIdHttp;
 
-  const currentDate = new Date();
-  const formattedDate = format(currentDate, 'yyyy-MM-dd');
   const handleAdd = async () => {
-    const newCode = generateNewCode();
-    const res = await postAddBill(newCode, formattedDate, 1, 8);
+    const res = await postAddBill(1, 8);
     setAlertContent({
       type: 'success',
       message: 'Tạo thành công hóa đơn',

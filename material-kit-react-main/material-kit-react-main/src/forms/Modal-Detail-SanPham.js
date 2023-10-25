@@ -129,12 +129,8 @@ const ModalDetailProduct = (props) => {
           message: 'Sản phẩm đã có trong giỏ hàng. Chúng tôi đã cộng thêm số lượng vào sản phẩm',
         });
       } else {
-        console.log('idHdParam: ', idHdParam);
-        console.log('getOneCTSP: ', getOneCTSP);
-        console.log('quantity: ', quantity);
         //   Insert to the cart
         const donGia = getOneCTSP.giaThucTe * quantity;
-        console.log('donGia: ', donGia);
         await postAddDirect(getOneCTSP, quantity, donGia, idHdParam, 0);
         //   Close the modal
         setSelectedSize(null);
@@ -169,7 +165,6 @@ const ModalDetailProduct = (props) => {
   // Create the price range string
   const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
   const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
-  // const formatTienThuc = selectSoLuongTon.giaThucTe.toLocaleString('en-US').replace(/,/g, '.');
   const priceRange = minPrice === maxPrice ? formattedMinPrice : `${formattedMinPrice} - ${formattedMaxPrice}`;
 
   return (

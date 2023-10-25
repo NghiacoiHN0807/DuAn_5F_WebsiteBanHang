@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import clsx from 'clsx';
+import PropTypes from 'prop-types';
 import isReact from 'is-react';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
@@ -213,6 +214,19 @@ const TimelineEvent = ({
         </Grid>
       );
   }
+};
+TimelineEvent.propTypes = {
+  classes: PropTypes.object,
+  variant: PropTypes.string,
+  height: PropTypes.number,
+  first: PropTypes.bool,
+  color: PropTypes.string,
+  icon: PropTypes.elementType,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+  subtitle: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+  action: PropTypes.oneOfType([PropTypes.func, PropTypes.element]),
+  titleProps: PropTypes.object,
+  subtitleProps: PropTypes.object,
 };
 
 export default withStyles(styles)(TimelineEvent);

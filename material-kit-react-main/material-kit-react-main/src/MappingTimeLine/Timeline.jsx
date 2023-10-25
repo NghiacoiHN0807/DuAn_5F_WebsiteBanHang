@@ -1,5 +1,6 @@
 import React, { Children, cloneElement, Component, Fragment } from 'react';
 import clsx from 'clsx';
+import PropTypes from 'prop-types';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import Grid from '@material-ui/core/Grid';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -55,7 +56,7 @@ const renderPlaceholders = (props) => {
 
 class Timeline extends Component {
   componentDidMount() {
-    const scrollbar = this.scrollbar;
+    const { scrollbar } = this;
     scrollbar.scrollLeft = scrollbar.offsetWidth;
   }
 
@@ -134,5 +135,15 @@ class Timeline extends Component {
     );
   }
 }
+Timeline.propTypes = {
+  children: PropTypes.node,
+  classes: PropTypes.object,
+  variant: PropTypes.string,
+  height: PropTypes.number,
+  minEvents: PropTypes.number,
+  maxEvents: PropTypes.number,
+  placeholder: PropTypes.bool,
+  PerfectScrollbarProps: PropTypes.object,
+};
 
 export default withStyles(styles)(Timeline);

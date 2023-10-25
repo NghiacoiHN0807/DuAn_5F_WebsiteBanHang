@@ -1,5 +1,6 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
+import PropTypes from 'prop-types';
 
 const styles = {
   container: {
@@ -30,6 +31,11 @@ const styles = {
 };
 
 const Simple = ({ classes, first, quantity }) => {
+  Simple.propTypes = {
+    classes: PropTypes.object.isRequired,
+    first: PropTypes.bool,
+    quantity: PropTypes.number,
+  };
   const Bar = () => <div className={classes.barSimple} />;
 
   return (
@@ -49,6 +55,11 @@ const Simple = ({ classes, first, quantity }) => {
 export const PlaceholderSimple = withStyles(styles)(Simple);
 
 const Small = ({ classes, first, quantity }) => {
+  Small.propTypes = {
+    classes: PropTypes.object.isRequired,
+    first: PropTypes.bool,
+    quantity: PropTypes.number,
+  };
   const Bar = () => <div className={classes.barSmall} />;
 
   return (

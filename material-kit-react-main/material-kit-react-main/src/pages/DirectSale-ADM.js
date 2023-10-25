@@ -31,8 +31,8 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
 // mock
 // import USERLIST from '../_mock/user';
-// import { useEffect } from 'react';
-import { postAddBill, selectAllBill } from '../service/BillSevice';
+// import { useEffect } from 'react';selectAllBill,
+import { postAddBill, selectAllInvoiceWaiting } from '../service/BillSevice';
 import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 
 // ----------------------------------------------------------------------
@@ -108,7 +108,7 @@ export default function UserPage() {
   // const [numberPages, setNumberPages] = useState(0);
   const getListData = async () => {
     try {
-      const res = await selectAllBill();
+      const res = await selectAllInvoiceWaiting();
       console.log('Check res: ', res);
       setListBill(res);
 
