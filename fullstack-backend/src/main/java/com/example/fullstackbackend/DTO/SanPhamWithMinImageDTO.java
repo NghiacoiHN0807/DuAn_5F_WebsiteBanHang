@@ -11,6 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SanPhamWithMinImageDTO {
-    private SanPham sanPham;
+    private SanPhamIgDTO sanPham;
     private String url_image;
 }

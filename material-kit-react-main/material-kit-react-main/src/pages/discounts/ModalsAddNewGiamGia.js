@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
-import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { Alert, Button, Checkbox, Chip, Grid, Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
 import { Col, Image, Table } from 'react-bootstrap';
@@ -9,7 +8,7 @@ import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { add, addGiamGia, getAllSanPham, getCtspByIdSp, getImgByIdSp } from "../../service/giamGiaService";
+import { add, getAllSanPham, getImgByIdSp } from "../../service/giamGiaService";
 import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
 
@@ -26,8 +25,6 @@ function union(a, b) {
 }
 
 const ModelAddNewGiamGia = (props) => {
-
-  const { id } = useParams();
 
   // const { show, handleClose, isDataGiamGia, getGiamGia } = props;
   // console.log(dataSanPham)
@@ -214,7 +211,7 @@ const ModelAddNewGiamGia = (props) => {
     setSelected(e.target.value);
   };
 
-  
+
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -286,48 +283,35 @@ const ModelAddNewGiamGia = (props) => {
         trangThai: 0,
       }
 
-      const response = await addGiamGia(giaGiaAa);
 
-      const promises = chiTietList.map(async (item) => {
-        const chiTietSanPham = await getCtspByIdSp(item.sanPham.idSp);
-        const details = chiTietSanPham.map(async (ctsp) => {
-          let soTienConLai = 0;
-          if (giamGia.mucGiamPhanTram !== null) {
-            const mucGiam = giamGia.mucGiamPhanTram / 100;
-            soTienConLai = item.sanPham.giaBan * (1 - mucGiam);
-          } else {
-            soTienConLai = item.sanPham.giaBan - giamGia.mucGiamTienMat;
-          }
-          const giamGiaChiTietOk = {
-            idCtsp: ctsp,
-            idGiamGia: response.data,
-            donGia: item.sanPham.giaBan,
-            soTienConLai,
-            trangThai: 0
-          }
-          return add(giamGiaChiTietOk);
-        });
-        return Promise.all(details);
-      });
+      // Trích xuất danh sách idSp từ chiTietList
+      const idSpList = chiTietList.map(item => item.sanPham.idSp);
 
-      await Promise.all(promises);
+      // Cập nhật state listIdSp
+      const giamGiaChiTietOk = {
+        giamGia: giaGiaAa,
+        idSp: idSpList
+      }
+      console.log("giamGiaChiTietOk", giamGiaChiTietOk);
+
+      const response = await add(giamGiaChiTietOk);
 
       if (response.status === 'Ok!') {
         navigate('/dashboard/discounts');
         setAlertContent({
           type: 'success',
-          message: 'Cập nhật thành công!',
+          message: 'Thêm thành công!',
         });
       } else {
         setAlertContent({
           type: 'success',
-          message: 'Cập nhật không thành công!',
+          message: 'Thêm không thành công!',
         });
       }
     } catch (error) {
       setAlertContent({
         type: 'success',
-        message: 'Đã xảy ra lỗi khi cập nhật giảm giá!',
+        message: 'Đã xảy ra lỗi khi thêm giảm giá!',
       });
     }
 
@@ -563,6 +547,7 @@ const ModelAddNewGiamGia = (props) => {
                   <Table>
                     <TableHead>
                       <TableRow>
+                        <TableCell> </TableCell>
                         <TableCell>STT</TableCell>
                         <TableCell>Ảnh sản phẩm</TableCell>
                         <TableCell>Mã sản phẩm</TableCell>
@@ -595,7 +580,7 @@ const ModelAddNewGiamGia = (props) => {
                           </TableCell>
                           <TableCell>{value.sanPham.maSp}</TableCell>
                           <TableCell>{value.sanPham.tenSp}</TableCell>
-                          <TableCell>{formatCurrency(value.sanPham.giaBan)}</TableCell>
+                          <TableCell>{value.sanPham.giaSmall === value.sanPham.giaBig ? formatCurrency(value.sanPham.giaSmall) : `${formatCurrency(value.sanPham.giaSmall)} - ${formatCurrency(value.sanPham.giaBig)}`}</TableCell>
                           <TableCell>{value.sanPham.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
                         </TableRow>
                       ))}

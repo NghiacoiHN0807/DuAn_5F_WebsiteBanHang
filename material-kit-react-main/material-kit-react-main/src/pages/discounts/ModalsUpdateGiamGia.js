@@ -286,33 +286,18 @@ const ModelUpdateGiamGia = (props) => {
         trangThai: 0,
       }
 
-      const idGg = await getIdGiamGia(id);
 
-      const response = await addGiamGia(giaGiaAa);
+      // Trích xuất danh sách idSp từ chiTietList
+      const idSpList = chiTietList.map(item => item.sanPham.idSp);
 
-      const promises = chiTietList.map(async (item) => {
-        const chiTietSanPham = await getCtspByIdSp(item.sanPham.idSp);
-        const details = chiTietSanPham.map(async (ctsp) => {
-          let soTienConLai = 0;
-          if (giamGia.mucGiamPhanTram !== null) {
-            const mucGiam = giamGia.mucGiamPhanTram / 100;
-            soTienConLai = item.sanPham.giaBan * (1 - mucGiam);
-          } else {
-            soTienConLai = item.sanPham.giaBan - giamGia.mucGiamTienMat;
-          }
-          const giamGiaChiTietOk = {
-            idCtsp: chiTietSanPham[ctsp.index],
-            idGiamGia: response.data,
-            donGia: chiTietList[item.index].sanPham.giaBan,
-            soTienConLai,
-            trangThai: 0
-          }
-          return update(giamGiaChiTietOk, id);
-        });
-        return Promise.all(details);
-      });
+      // Cập nhật state listIdSp
+      const giamGiaChiTietOk = {
+        giamGia: giaGiaAa,
+        idSp: idSpList
+      }
+      console.log("giamGiaChiTietOk", giamGiaChiTietOk);
 
-      await Promise.all(promises);
+      const response = await update(giamGiaChiTietOk, id);
 
       if (response.status === 'Ok!') {
         navigate('/dashboard/discounts');

@@ -13,35 +13,35 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 public class SanPhamDTO {
-    Integer idSp;
+    private Integer idSp;
 
-    String maSp;
+    private String maSp;
 
-    String tenSp;
+    private String tenSp;
 
-    String tenSize;
+    private String urlImage;
 
-    String urlImage;
+    private String tenChuongTrinh;
 
-    String tenChuongTrinh;
+    private BigDecimal mucGiamPhanTram;
 
-    BigDecimal mucGiamPhanTram;
+    private BigDecimal mucGiamTienMat;
 
-    BigDecimal mucGiamTienMat;
+    private Integer idGgct;
 
-    Integer idGgct;
+    private Integer idGiamGia;
 
-    Integer idCtsp;
+    private BigDecimal giaBanMin;
 
-    Integer idGiamGia;
+    private BigDecimal giaBanMax;
 
-    BigDecimal donGia;
+    private BigDecimal giaThucTeMin;
 
-    BigDecimal soTienConLai;
+    private BigDecimal giaThucTeMax;
 
-    Integer trangThai;
+    private Integer trangThai;
 
-    Timestamp ngayBatDau;
+    private Timestamp ngayBatDau;
 
-    Timestamp ngayKetThuc;
+    private Timestamp ngayKetThuc;
 }

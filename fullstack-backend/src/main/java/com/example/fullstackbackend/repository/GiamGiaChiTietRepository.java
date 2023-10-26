@@ -3,6 +3,7 @@ package com.example.fullstackbackend.repository;
 import com.example.fullstackbackend.DTO.MucGiamDTO;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -60,6 +61,12 @@ public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, 
     List<Object[]> mucGiam(@Param("idSp") Integer idSp);
 
 
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM giam_gia_chi_tiet WHERE giam_gia_chi_tiet.id_sp = :idSp", nativeQuery = true)
+    void deleteGgctByidSp(@Param(("idSp")) Integer idSp);
+
+    Boolean existsByIdSp_IdSp(Integer idSp);
 
 
 }

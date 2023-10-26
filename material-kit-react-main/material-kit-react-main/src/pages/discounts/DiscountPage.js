@@ -41,15 +41,14 @@ import ModelUpdateGiamGia from './ModalsUpdateGiamGia';
 const TABLE_HEAD = [
   { id: 'stt', label: 'STT', alignRight: false },
   { id: 'anh', label: 'Ảnh', alignRight: false },
-  { id: 'tenchuongtrinh', label: 'Tên chương trình', alignRight: false },
+  { id: 'tenchuongtrinh', label: 'Chương Trình', alignRight: false },
   { id: 'tensanpham', label: 'Tên sản phẩm', alignRight: false },
   { id: 'mucgiam', label: 'Mức giảm', alignRight: false },
   { id: 'thoigian', label: 'Thời gian', alignRight: false },
   { id: 'dongia', label: 'Đơn giá', alignRight: false },
   { id: 'sotienconlai', label: 'Số tiền còn lại', alignRight: false },
   { id: 'trangthai', label: 'Trạng Thái', alignRight: false },
-  { id: 'thaotac', label: 'Thao Tác', alignRight: false },
-  { id: '' },
+  { id: 'thaotac', label: 'Thao Tác', alignRight: false }
 ];
 
 // ----------------------------------------------------------------------
@@ -101,6 +100,7 @@ export default function DiscountPage() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [listData, setListData] = useState([]);
+
   // Show Data On Tables
   // const [numberPages, setNumberPages] = useState(0);
   const getListData = async () => {
@@ -214,17 +214,6 @@ export default function DiscountPage() {
 
   const currentDate = new Date();
   const formattedDate = format(currentDate, 'yyyy-MM-dd');
-  // const handleAdd = async () => {
-  //   const newCode = generateNewCode();
-  //   const res = await postAddBill(newCode, formattedDate, 1, 8);
-  //   setAlertContent({
-  //     type: 'success',
-  //     message: 'Tạo thành công hóa đơn',
-  //   });
-  //   // toast.success('Tạo thành công hóa đơn');
-  //   getIdHttp = res.idGgct;
-  //   navigate(`/create-bill/${getIdHttp}`);
-  // };
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -246,6 +235,7 @@ export default function DiscountPage() {
 
   // Handle edit
   const handleEdit = () => {
+    console.log("abc");
     navigate(`/dashboard/discount/update/${object.idGgct}`);
   };
 
@@ -307,7 +297,7 @@ export default function DiscountPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                    const { idGgct, urlImage, tenChuongTrinh, tenSp, mucGiamPhanTram, mucGiamTienMat, ngayBatDau, ngayKetThuc, donGia, soTienConLai, trangThai } = row;
+                    const { idGgct, urlImage, tenChuongTrinh, tenSp, mucGiamPhanTram, mucGiamTienMat, ngayBatDau, ngayKetThuc, giaBanMin, giaBanMax, giaThucTeMin, giaThucTeMax, trangThai } = row;
                     const selectedUser = selected.indexOf(idGgct) !== -1;
 
                     return (
@@ -321,10 +311,10 @@ export default function DiscountPage() {
                         </TableCell>
                         <TableCell align="left">{tenChuongTrinh}</TableCell>
                         <TableCell align="left">{tenSp}</TableCell>
-                        <TableCell align="left">{mucGiamTienMat === 0 ? mucGiamPhanTram : formatCurrency(mucGiamTienMat)}</TableCell>
-                        <TableCell align="left">{formatDate(ngayBatDau) + formatDate(ngayKetThuc)}</TableCell>
-                        <TableCell align="left">{formatCurrency(donGia)}</TableCell>
-                        <TableCell align="left">{formatCurrency(soTienConLai)}</TableCell>
+                        <TableCell align="left">{mucGiamTienMat === null ? `${mucGiamPhanTram} %` : formatCurrency(mucGiamTienMat)}</TableCell>
+                        <TableCell align="left">{`${formatDate(ngayBatDau)} - ${formatDate(ngayKetThuc)}`}</TableCell>
+                        <TableCell align="left">{giaBanMin === giaBanMax ? formatCurrency(giaBanMin) : `${formatCurrency(giaBanMin)} - ${formatCurrency(giaBanMax)}`}</TableCell>
+                        <TableCell align="left">{giaThucTeMin === giaThucTeMax ? formatCurrency(giaThucTeMin) : `${formatCurrency(giaThucTeMin)} - ${formatCurrency(giaThucTeMax)}`}</TableCell>
                         <TableCell align="left">{mapTrangThaiToStatus(trangThai)}</TableCell>
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row)}>
@@ -398,11 +388,9 @@ export default function DiscountPage() {
           },
         }}
       >
-        <MenuItem>
-          <Link to={`/dashboard/discount/update/${object.idGgct}`}>
-          <Iconify onClick={() => handleEdit()} icon={'eva:edit-fill'} sx={{ mr: 2 }} />
+        <MenuItem onClick={() => handleEdit()}>
+          <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
-          </Link>
         </MenuItem>
 
         <MenuItem onClick={() => handleDelete()} sx={{ color: 'error.main' }}>

@@ -7,6 +7,7 @@ import com.example.fullstackbackend.entity.GiamGia;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.repository.GiamGiaChiTietRepository;
+import com.example.fullstackbackend.repository.SanphamRepository;
 import com.example.fullstackbackend.services.ChitietsanphamService;
 import com.example.fullstackbackend.services.GiamGiaChiTietService;
 import com.example.fullstackbackend.services.GiamGiaService;
@@ -28,6 +29,9 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
 
     @Autowired
     private GiamGiaChiTietRepository giamGiaChiTietRepository;
+
+    @Autowired
+    private SanphamRepository sanphamRepository;
 
     @Autowired
     private GiamGiaService giamGiaService;
@@ -75,9 +79,12 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     }
 
     @Override
+    @Transactional
     public void remove(Integer id) {
         GiamGiaChiTiet giamGiaChiTiet = getOne(id).orElseThrow();
         giamGiaChiTiet.setTrangThai(10);
+        Integer idSp = giamGiaChiTiet.getIdSp().getIdSp();
+        giamGiaChiTietRepository.updateCtsp("amount", BigDecimal.valueOf(0.0), idSp);
         giamGiaChiTietRepository.save(giamGiaChiTiet);
     }
 
@@ -137,21 +144,60 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
         return BigDecimal.ZERO; // Or handle the case where the result is unexpected.
     }
 
-
-
-
     @Override
     @Transactional
     public GiamGia insert(GiamGiaDTO giamGiaDTO) {
         GiamGia giamGia1 = (GiamGia) giamGiaService.add(giamGiaDTO.getGiamGia());
         List<Integer> idSp = giamGiaDTO.getIdSp();
         for (Integer i: idSp) {
-            GiamGiaChiTiet giamGiaChiTiet = new GiamGiaChiTiet();
-            SanPham sanPham = sanPhamService.detail(i).orElseThrow();
-            giamGiaChiTiet.setIdGiamGia(giamGia1);
-            giamGiaChiTiet.setIdSp(sanPham);
-            giamGiaChiTietRepository.save(giamGiaChiTiet);
-            updateGiaThuc(i);
+            Boolean exists = sanphamRepository.existsById(i);
+            if(exists) {
+                giamGiaChiTietRepository.deleteGgctByidSp(Integer.valueOf(i));
+                GiamGiaChiTiet giamGiaChiTiet = new GiamGiaChiTiet();
+                SanPham sanPham = sanPhamService.detail(i).orElseThrow();
+                giamGiaChiTiet.setIdGiamGia(giamGia1);
+                giamGiaChiTiet.setIdSp(sanPham);
+                giamGiaChiTietRepository.save(giamGiaChiTiet);
+                updateGiaThuc(i);
+            } else {
+                GiamGiaChiTiet giamGiaChiTiet = new GiamGiaChiTiet();
+                SanPham sanPham = sanPhamService.detail(i).orElseThrow();
+                giamGiaChiTiet.setIdGiamGia(giamGia1);
+                giamGiaChiTiet.setIdSp(sanPham);
+                giamGiaChiTietRepository.save(giamGiaChiTiet);
+                updateGiaThuc(i);
+            }
+        }
+        return giamGia1;
+    }
+
+    @Override
+    @Transactional
+    public GiamGia updateDto(GiamGiaDTO giamGiaDTO, Integer id) {
+        GiamGiaChiTiet giamGiaChiTiet = giamGiaChiTietRepository.findById(id).orElseThrow();
+        giamGiaDTO.getGiamGia().setIdGiamGia(giamGiaChiTiet.getIdGiamGia().getIdGiamGia());
+        GiamGia giamGia1 = (GiamGia) giamGiaService.add(giamGiaDTO.getGiamGia());
+        List<Integer> idSp = giamGiaDTO.getIdSp();
+        for (Integer i: idSp) {
+            Boolean exists = giamGiaChiTietRepository.existsByIdSp_IdSp(i);
+            System.out.println("exists: "+ exists);
+            if(exists) {
+                GiamGiaChiTiet giamGiaChiTiet1 = new GiamGiaChiTiet();
+                giamGiaChiTiet1.setIdGgct(id);
+                SanPham sanPham = sanPhamService.detail(i).orElseThrow();
+                giamGiaChiTiet1.setIdGiamGia(giamGia1);
+                giamGiaChiTiet1.setIdSp(sanPham);
+                giamGiaChiTietRepository.save(giamGiaChiTiet1);
+                updateGiaThuc(i);
+            } else {
+                GiamGiaChiTiet giamGiaChiTiet2 = new GiamGiaChiTiet();
+                SanPham sanPham = sanPhamService.detail(i).orElseThrow();
+                giamGiaChiTiet2.setIdGiamGia(giamGia1);
+                giamGiaChiTiet2.setIdSp(sanPham);
+                System.out.println("sanPham: " + sanPham);
+                giamGiaChiTietRepository.save(giamGiaChiTiet2);
+                updateGiaThuc(i);
+            }
         }
         return giamGia1;
     }

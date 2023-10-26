@@ -124,6 +124,20 @@ public class GiamGiaChiTietController {
         }
     }
 
+    @PutMapping("update-dto/{id}")
+    ResponseEntity<?> updateDto(@RequestBody GiamGiaDTO giamGiaDTO, @PathVariable("id") Integer id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ReponObject("Ok!", "Add success id: ", giamGiaChiTietService.updateDto(giamGiaDTO, id))
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ReponObject("Failed!", "Not found id: ", "")
+            );
+        }
+    }
+
     @GetMapping("test/{id}")
     ResponseEntity<?> testApi(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(giamGiaChiTietService.mucGiam(id));

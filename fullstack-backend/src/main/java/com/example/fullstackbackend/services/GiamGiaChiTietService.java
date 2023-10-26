@@ -43,4 +43,6 @@ public interface GiamGiaChiTietService {
 
     GiamGia insert(GiamGiaDTO giamGiaDTO);
 
+    GiamGia updateDto(GiamGiaDTO giamGiaDTO, Integer id);
+
 }

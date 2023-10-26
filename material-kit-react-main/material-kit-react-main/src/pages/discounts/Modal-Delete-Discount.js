@@ -7,6 +7,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { useState, useEffect, forwardRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { remove } from '../../service/giamGiaService';
 
 const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
@@ -15,6 +16,7 @@ export default function ModalDeleteDiscount(props) {
   const { open, handleClose, information } = props;
   const [idGgct, setIdGgct] = useState('');
   const [alertContent, setAlertContent] = useState(null);
+
 
   useEffect(() => {
     if (information != null) {
@@ -30,7 +32,7 @@ export default function ModalDeleteDiscount(props) {
       await remove(information.idGgct);
       setAlertContent({
         type: 'success',
-        message: 'Xóa không thành công!',
+        message: 'Xóa thành công!',
       });
     } else if (information.trangThai === 1) {
       setAlertContent({

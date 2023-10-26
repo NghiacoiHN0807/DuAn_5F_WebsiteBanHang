@@ -2,8 +2,14 @@ package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.DTO.SanPhamDTO;
+import com.example.fullstackbackend.DTO.SanPhamIgDTO;
 import com.example.fullstackbackend.DTO.SanPhamWithMinImageDTO;
+import com.example.fullstackbackend.entity.ChatLieu;
+import com.example.fullstackbackend.entity.LoaiCoAo;
+import com.example.fullstackbackend.entity.LoaiSp;
+import com.example.fullstackbackend.entity.OngTayAo;
 import com.example.fullstackbackend.entity.SanPham;
+import com.example.fullstackbackend.entity.XuatXu;
 import com.example.fullstackbackend.services.SanPhamService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,8 +57,20 @@ public class SanPhamController {
 
         List<SanPhamWithMinImageDTO> dtoList = new ArrayList<>();
         for (Object[] row : result) {
-            SanPham sp = (SanPham) row[0];
-            String imageUrl = (String) row[1];
+            SanPhamIgDTO sp = new SanPhamIgDTO();
+            sp.setIdSp((Integer) row[0]);
+            sp.setMaSp((String) row[1]);
+            sp.setTenSp((String) row[2]);
+            sp.setIdCl((Integer) row[3]);
+            sp.setIdLsp((Integer) row[4]);
+            sp.setIdXx((Integer) row[5]);
+            sp.setIdTayAo((Integer) row[6]);
+            sp.setIdCoAo((Integer) row[7]);
+            sp.setMoTa((String) row[8]);
+            sp.setTrangThai((Integer) row[9]);
+            String imageUrl = (String) row[10];
+            sp.setGiaSmall((BigDecimal) row[11]);
+            sp.setGiaBig((BigDecimal) row[12]);
             dtoList.add(new SanPhamWithMinImageDTO(sp, imageUrl));
         }
 

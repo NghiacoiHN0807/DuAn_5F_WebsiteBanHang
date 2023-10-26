@@ -45,7 +45,7 @@ const remove = (id) => {
 }
 
 const add = (giamGiaChiTiet) => {
-return custom.post(`/giam-gia-chi-tiet/api/insert`, giamGiaChiTiet);
+return custom.post(`/giam-gia-chi-tiet/api/insert-dto`, giamGiaChiTiet);
 }
 
 const addGiamGia = (request) => {
