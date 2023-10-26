@@ -167,14 +167,19 @@ const ClientPage = () => {
 
 
     const handAdd = () => {
+        toast.success('Chuyển Trang Thêm thành công!');
         navigate("/dashboard/clients/add");
     };
     const handAddDiaChi = (item) => {
+        toast.success('Chuyển Trang Địa Chỉ thành công!');
+
         navigate(`/dashboard/address/${item.maTaiKhoan}`);
     };
 
     const handlClickRow = (item) => {
         console.log("Check click: ", item);
+        toast.success('Chi tiết  thành công!');
+
         navigate(`/dashboard/clients/detail/${item.idTaiKhoan}`);
 
     };
@@ -323,22 +328,7 @@ const ClientPage = () => {
                 </DialogActions>
             </Dialog>
 
-            <ToastContainer
-                position="top-right" // Vị trí trung tâm ở phía trên
-                autoClose={5000} // Tự động đóng sau 5 giây
-                hideProgressBar={false} // Hiển thị thanh tiến trình
-                newestOnTop={false} // Hiển thị thông báo mới nhất ở trên cùng
-                closeOnClick // Đóng thông báo khi nhấp vào
-                rtl={false} // Văn bản từ trái qua phải
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-                containerId="toast-container" // Đặt id của container
-                style={{
-                    width: "auto", // Điều chỉnh kích thước theo nhu cầu
-                    maxHeight: "100px", // Điều chỉnh chiều cao theo nhu cầu
-                }}
-            />
+
 
 
         </>

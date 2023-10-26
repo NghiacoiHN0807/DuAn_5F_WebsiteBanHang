@@ -388,22 +388,7 @@ const AddressByClient = () => {
             </DialogActions>
         </Dialog>
 
-        <ToastContainer
-            position="top-right" // Vị trí trung tâm ở phía trên
-            autoClose={5000} // Tự động đóng sau 5 giây
-            hideProgressBar={false} // Hiển thị thanh tiến trình
-            newestOnTop={false} // Hiển thị thông báo mới nhất ở trên cùng
-            closeOnClick // Đóng thông báo khi nhấp vào
-            rtl={false} // Văn bản từ trái qua phải
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            containerId="toast-container" // Đặt id của container
-            style={{
-                width: "auto", // Điều chỉnh kích thước theo nhu cầu
-                maxHeight: "100px", // Điều chỉnh chiều cao theo nhu cầu
-            }}
-        />
+
     </>);
 };
 
