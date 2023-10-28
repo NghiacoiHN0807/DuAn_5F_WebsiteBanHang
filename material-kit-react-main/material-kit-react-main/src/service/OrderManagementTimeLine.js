@@ -33,6 +33,10 @@ const updatePaymentShip = (idHd, tenKh, sdtKh, ngayThanhToan, diaChi, thanhTien,
     trangThai,
   });
 
+const updateKH = (idHd, idTaiKhoan) =>
+  custom.put(`/hoa-don/update-khach-hang/${idHd}`, {
+    idTaiKhoan,
+  });
 const getDetailHDCT = (idHd) => custom.get(`/hoa-don-chi-tiet/detail-get-one/${idHd}`);
 
 const viewAllHTTT = (idHd) => custom.get(`/hinh-thuc-thanh-toan/view-all-list/${idHd}`);
@@ -56,4 +60,5 @@ export {
   updatePayment,
   updatePaymentShip,
   viewAllHTTT,
+  updateKH,
 };

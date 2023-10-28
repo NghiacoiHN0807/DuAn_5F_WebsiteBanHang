@@ -72,8 +72,8 @@ const ModalAddProduct = (props) => {
   const PRODUCTS = listData.map((item, index) => {
     const setIndex = index + 1;
     const imagesArray = item[0].split(',');
-    const arrayPrice = item[4].split(',');
     const firstImage = imagesArray[0];
+    const arrayPrice = item[4].split(',');
     const price = arrayPrice.map((price) => parseFloat(price));
     // find max and min of price
     const minPrice = Math.min(...price);

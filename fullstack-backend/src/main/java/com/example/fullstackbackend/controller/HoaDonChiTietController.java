@@ -94,6 +94,7 @@ public class HoaDonChiTietController {
                             newHDCT.getDonGia(),
                             id);
                 }).orElseThrow(() -> new xuatXuNotFoundException(id));
+        hoadonchitietSevice.addLS(newHDCT, 3);
         return newHD;
     }
     @DeleteMapping("delete/{id}")

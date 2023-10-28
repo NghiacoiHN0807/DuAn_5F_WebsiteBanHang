@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartPlus } from '@fortawesome/free-solid-svg-icons';
 import {
   Button,
+  Chip,
   FormControl,
   FormControlLabel,
   Grid,
@@ -94,7 +95,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(({ theme }) =
   },
 }));
 
-const CartBillADM = (props) => {
+const CartBillADM = () => {
   // Get IdHd on http
   const param = useParams();
   const idHdParam = param.id;
@@ -106,7 +107,7 @@ const CartBillADM = (props) => {
   const getDetailHD = useCallback(async () => {
     try {
       const getData = await detailBill(idHdParam);
-
+      console.log('getData: ', getData);
       setlistHD(getData);
     } catch (error) {
       console.error('Error: ', error);
@@ -208,7 +209,6 @@ const CartBillADM = (props) => {
       try {
         const res = await finByProductOnCart(page, idHdParam);
         if (res && res.content) {
-          console.log('Check DataCart: ', res);
           setDataCart(res.content);
           setNumberPages(res.totalPages);
         }
@@ -261,7 +261,6 @@ const CartBillADM = (props) => {
 
   const handleUpdateClassify = async (item) => {
     setShowModalsUpdate(true);
-    console.log('Check itemitem: ', item);
     try {
       const getOneSP = await findById(item[3]);
       setItemUpdateClassify(getOneSP);
@@ -370,9 +369,9 @@ const CartBillADM = (props) => {
   }, [DataCart, idHdParam, thanhTien]);
 
   // Add Khach Hang
-  const [selectedCustomerName, setSelectedCustomerName] = useState('');
-  const [selectedMaTK, setSelectedMaTk] = useState('');
-  const [selectedCustomerEmail, setSelectedCustomerEmail] = useState('');
+  // const [selectedCustomerName, setSelectedCustomerName] = useState('');
+  // const [selectedMaTK, setSelectedMaTk] = useState('');
+  // const [selectedCustomerEmail, setSelectedCustomerEmail] = useState('');
 
   const [showModalsKH, setShowModalKH] = useState(false);
   const handleAddKH = () => {
@@ -395,6 +394,7 @@ const CartBillADM = (props) => {
   const [openCreateOnline, setCreateOnline] = useState(false);
   // const [information, setInformation] = useState();
   const handleClick = async () => {
+    console.log('handleClick');
     // const currentDate = new Date();
     // const formattedDate = format(currentDate, 'yyyy-MM-dd');
     if (isDeliveryChecked === false) {
@@ -404,7 +404,6 @@ const CartBillADM = (props) => {
         type: 'warning',
         message: 'Hãy Thông Tin Người Nhận Hàng!!!',
       });
-      // toast.warning('Hãy Thông Tin Người Nhận Hàng');
     } else {
       setCreateOnline(true);
     }
@@ -559,40 +558,48 @@ const CartBillADM = (props) => {
               </div>
 
               <div className="text-information">
-                <TextField
-                  id="standard-multiline-flexible"
-                  label="Mã Tài Khoản "
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  value={selectedMaTK}
-                  fullWidth
-                  sx={{ marginTop: 2 }}
-                />
-                <TextField
-                  id="standard-multiline-flexible"
-                  label="Tên Khách Hàng"
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  value={selectedCustomerName}
-                  fullWidth
-                  sx={{ marginTop: 2 }}
-                />
-
-                <TextField
-                  id="standard-multiline-flexible"
-                  label="Email"
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  value={selectedCustomerEmail}
-                  sx={{ marginTop: 2 }}
-                />
+                {listHD.idKH ? (
+                  <>
+                    <TextField
+                      id="standard-multiline-flexible"
+                      label="Mã Tài Khoản "
+                      multiline
+                      maxRows={4}
+                      variant="outlined"
+                      size="small"
+                      defaultValue={listHD.idKH.maTaiKhoan}
+                      // value={listHD.idKH.maTaiKhoan}
+                      fullWidth
+                      sx={{ marginTop: 2 }}
+                    />
+                    <TextField
+                      id="standard-multiline-flexible"
+                      label="Tên Khách Hàng"
+                      multiline
+                      maxRows={4}
+                      variant="outlined"
+                      size="small"
+                      defaultValue={`${listHD.idKH.ho} ${listHD.idKH.ten}`}
+                      // value={selectedCustomerName}
+                      fullWidth
+                      sx={{ marginTop: 2 }}
+                    />
+                    <TextField
+                      id="standard-multiline-flexible"
+                      label="Số Điện Thoại"
+                      multiline
+                      maxRows={4}
+                      variant="outlined"
+                      size="small"
+                      defaultValue={listHD.idKH.sdt}
+                      fullWidth
+                      // value={selectedCustomerEmail}
+                      sx={{ marginTop: 2 }}
+                    />
+                  </>
+                ) : (
+                  <Chip label="Khách Lẻ" color="primary" />
+                )}
               </div>
             </div>
             <div className="row information-payment">
@@ -863,31 +870,34 @@ const CartBillADM = (props) => {
             <ModalAddKhachHang
               open={showModalsKH}
               handleClose={handleCloseAddKH}
-              setSelectedCustomerName={setSelectedCustomerName}
-              setSelectedMaTk={setSelectedMaTk}
-              setSelectedCustomerEmail={setSelectedCustomerEmail}
+              // setSelectedCustomerName={setSelectedCustomerName}
+              // setSelectedMaTk={setSelectedMaTk}
+              // setSelectedCustomerEmail={setSelectedCustomerEmail}
             />
             {/* ModalDeleteDirectSale */}
             <ModalDeleteDirectSale open={open} handleClose={handleCloseDeleteInvoice} information={information} />
-            {/* ModalPaymentComfirm */}
-            <ModalPaymentComfirm
-              show={openPayment}
-              handleClose={handlePaymentClose}
-              thanhTien={thanhTien}
-              listHD={listHD}
-              tenKhTT={tenKhTT}
-              sdtKHTT={sdtKHTT}
-            />
-            {/* ModelShipOnline */}
-            <ModalCreateBillOnline
-              open={openCreateOnline}
-              handleClose={handleCloseCreateOnline}
-              thanhTien={thanhTien}
-              listHD={listHD}
-              tenKhShip={tenKhShip}
-              sdtKHShip={sdtKHShip}
-              result={result}
-            />
+            {DataCart.length > 0 && (
+              <>
+                <ModalPaymentComfirm
+                  show={openPayment}
+                  handleClose={handlePaymentClose}
+                  thanhTien={thanhTien}
+                  listHD={listHD}
+                  tenKhTT={tenKhTT}
+                  sdtKHTT={sdtKHTT}
+                />
+
+                <ModalCreateBillOnline
+                  open={openCreateOnline}
+                  handleClose={handleCloseCreateOnline}
+                  thanhTien={thanhTien}
+                  listHD={listHD}
+                  tenKhShip={tenKhShip}
+                  sdtKHShip={sdtKHShip}
+                  result={result}
+                />
+              </>
+            )}
           </Box>
         </Box>
       </Box>

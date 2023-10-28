@@ -24,7 +24,7 @@ public interface HoadonchitietSevice {
 
     HoaDonChiTiet update(HoaDonChiTiet update);
 
-    LichSuHoaDon addLS(HoaDonChiTiet addLS);
+    LichSuHoaDon addLS(HoaDonChiTiet addLS,int status);
 
     Optional<HoaDonChiTiet> detail(Integer id);
 

@@ -18,9 +18,9 @@ const ModalUpdateProductOnCart = (props) => {
   ModalUpdateProductOnCart.propTypes = {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
-    itemUpdateClassify: PropTypes.object.isRequired,
+    itemUpdateClassify: PropTypes.array.isRequired,
     selectDataCart: PropTypes.func.isRequired,
-    itemUpdate: PropTypes.object.isRequired,
+    itemUpdate: PropTypes.array.isRequired,
     currentPage: PropTypes.number.isRequired,
   };
   const { show, handleClose, itemUpdateClassify, selectDataCart, itemUpdate, currentPage } = props;
@@ -151,6 +151,13 @@ const ModalUpdateProductOnCart = (props) => {
   const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
   const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
   const priceRange = minPrice === maxPrice ? formattedMinPrice : `${formattedMinPrice} - ${formattedMaxPrice}`;
+  const getFirstImage = (item) => {
+    if (item && item.trim() !== '') {
+      const imagesArray = item.split(',');
+      return imagesArray[0];
+    }
+    return null;
+  };
   return (
     <>
       <div>
@@ -166,8 +173,8 @@ const ModalUpdateProductOnCart = (props) => {
                     <CardMedia
                       component="img"
                       sx={{ maxWidth: 250, height: 300 }}
-                      image={itemUpdate[2]}
-                      alt={itemUpdate[2]}
+                      image={getFirstImage(itemUpdate[2])}
+                      alt={getFirstImage(itemUpdate[2])}
                     />
                   </Carousel.Item>
                   {/* );
@@ -184,89 +191,90 @@ const ModalUpdateProductOnCart = (props) => {
                       <p>Chất Liệu: {itemUpdateClassify[0].idSp.idCl.tenCl}</p>
                       <p>Giá: {selectSoLuongTon.length > 0 ? selectSoLuongTon[0].giaThucTe : priceRange}</p>
                     </Typography>
-                  </CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
-                    <div>
-                      Size:{' '}
-                      {uniqueSizes.map((size, sizeIndex) => (
-                        <Button
-                          style={{
-                            marginRight: '4px',
-                            marginBottom: '4px',
-                          }}
-                          key={`size-button-${sizeIndex}`}
-                          onClick={() => handleShowSize(size)}
-                          variant={selectedSize === size ? 'contained' : 'outlined'}
-                          size="small"
+                    <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
+                      <div>
+                        Size:{' '}
+                        {uniqueSizes.map((size, sizeIndex) => (
+                          <Button
+                            style={{
+                              marginRight: '4px',
+                              marginBottom: '4px',
+                            }}
+                            key={`size-button-${sizeIndex}`}
+                            onClick={() => handleShowSize(size)}
+                            variant={selectedSize === size ? 'contained' : 'outlined'}
+                            size="small"
+                          >
+                            {size}
+                          </Button>
+                        ))}
+                      </div>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <div>
+                        Màu Sắc:{' '}
+                        {availableColors.length > 0
+                          ? // Hiển thị danh sách màu sắc từ availableColors
+                            availableColors.map((mauSac, msIndex) => (
+                              <Button
+                                style={{
+                                  marginRight: '4px',
+                                  marginBottom: '4px',
+                                }}
+                                key={`size-button-${msIndex}`}
+                                onClick={() => handleShowMS(mauSac)}
+                                variant={selectedMauSac === mauSac.idMs.tenMs ? 'contained' : 'outlined'}
+                                size="small"
+                              >
+                                {mauSac.idMs.tenMs}
+                              </Button>
+                            ))
+                          : // Hiển thị dữ liệu từ dataDetail
+                            uniqueMS.map((item, index) => (
+                              <Button
+                                style={{
+                                  marginRight: '4px',
+                                  marginBottom: '4px',
+                                }}
+                                key={`size-button-${index}`}
+                                onClick={() => handleShowMS(item)}
+                                variant={selectedMauSac === item ? 'contained' : 'outlined'}
+                                size="small"
+                              >
+                                {item}
+                              </Button>
+                            ))}
+                      </div>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <span className="buttons_added">
+                        <p>Số lượng: </p>
+                        <IconButton
+                          onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                          color="primary"
+                          aria-label="add an alarm"
                         >
-                          {size}
-                        </Button>
-                      ))}
-                    </div>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
-                    <div>
-                      Màu Sắc:{' '}
-                      {availableColors.length > 0
-                        ? // Hiển thị danh sách màu sắc từ availableColors
-                          availableColors.map((mauSac, msIndex) => (
-                            <Button
-                              style={{
-                                marginRight: '4px',
-                                marginBottom: '4px',
-                              }}
-                              key={`size-button-${msIndex}`}
-                              onClick={() => handleShowMS(mauSac)}
-                              variant={selectedMauSac === mauSac.idMs.tenMs ? 'contained' : 'outlined'}
-                              size="small"
-                            >
-                              {mauSac.idMs.tenMs}
-                            </Button>
-                          ))
-                        : // Hiển thị dữ liệu từ dataDetail
-                          uniqueMS.map((item, index) => (
-                            <Button
-                              style={{
-                                marginRight: '4px',
-                                marginBottom: '4px',
-                              }}
-                              key={`size-button-${index}`}
-                              onClick={() => handleShowMS(item)}
-                              variant={selectedMauSac === item ? 'contained' : 'outlined'}
-                              size="small"
-                            >
-                              {item}
-                            </Button>
-                          ))}
-                    </div>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
-                    <span className="buttons_added">
-                      <p>Số lượng: </p>
-                      <IconButton
-                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        color="primary"
-                        aria-label="add an alarm"
-                      >
-                        <RemoveIcon fontSize="small" />
-                      </IconButton>
+                          <RemoveIcon fontSize="small" />
+                        </IconButton>
 
-                      <input
-                        aria-label="quantity"
-                        className="input-qty"
-                        max="Số tối đa"
-                        min="Số tối thiểu"
-                        type="text"
-                        pattern="[0-9]*"
-                        inputMode="numeric"
-                        value={quantity || '0'}
-                        onChange={handleQuantityChange}
-                      />
-                      <IconButton onClick={() => setQuantity(quantity + 1)} color="primary" aria-label="add an alarm">
-                        <AddIcon fontSize="small" />
-                      </IconButton>
-                    </span>
-                  </Box>
+                        <input
+                          aria-label="quantity"
+                          className="input-qty"
+                          max="Số tối đa"
+                          min="Số tối thiểu"
+                          type="text"
+                          pattern="[0-9]*"
+                          inputMode="numeric"
+                          value={quantity || '0'}
+                          onChange={handleQuantityChange}
+                        />
+                        <IconButton onClick={() => setQuantity(quantity + 1)} color="primary" aria-label="add an alarm">
+                          <AddIcon fontSize="small" />
+                        </IconButton>
+                        {selectSoLuongTon.length > 0 && <span>Số lượng tồn: {selectSoLuongTon[0].soLuongTon}</span>}
+                      </span>
+                    </Box>
+                  </CardContent>
                 </Box>
               </Card>
             </DialogContent>

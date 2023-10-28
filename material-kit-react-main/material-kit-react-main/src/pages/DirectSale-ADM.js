@@ -23,6 +23,7 @@ import {
   TablePagination,
   Snackbar,
   Alert,
+  Chip,
 } from '@mui/material';
 // components
 import Iconify from '../components/iconify';
@@ -39,7 +40,7 @@ import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 
 const TABLE_HEAD = [
   { id: 'maHd', label: 'Mã Hóa Đơn', alignRight: false },
-  { id: 'tenKh', label: 'Tên Khách Hàng', alignRight: false },
+  { id: 'ten', label: 'Tên Khách Hàng', alignRight: false },
   { id: 'sdtKh', label: 'Số Điện Thoại', alignRight: false },
   { id: 'ngayTao', label: 'Ngày Tạo', alignRight: false },
   { id: 'trangThai', label: 'Trạng Thái', alignRight: false },
@@ -93,7 +94,7 @@ export default function UserPage() {
 
   const [page, setPage] = useState(0);
 
-  const [order, setOrder] = useState('asc');
+  const [order, setOrder] = useState('desc');
 
   const [selected, setSelected] = useState([]);
 
@@ -105,31 +106,28 @@ export default function UserPage() {
 
   const [listBill, setListBill] = useState([]);
   // Show Data On Tables
-  // const [numberPages, setNumberPages] = useState(0);
   const getListData = async () => {
     try {
       const res = await selectAllInvoiceWaiting();
       console.log('Check res: ', res);
       setListBill(res);
-
-      // setNumberPages(Math.ceil(res.totalPages));
     } catch (error) {
       console.error('Error in list bill: ', error);
     }
   };
-  // const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
     getListData();
   }, []);
 
+  // Set status of trangThai
+  function mapTrangThaiToStatus(trangThai) {
+    return trangThai === 8 ? 'Hóa Đơn Treo' : trangThai === 9 ? 'Đã thanh toán' : 'Unknown status';
+  }
   // Open and Close menu
   const [object, getObject] = useState([]);
 
   const handleOpenMenu = (event, row) => {
-    console.log('Check event: ', event);
-    console.log('Check event: ', row);
     getObject(row);
-
     setOpen(event.currentTarget);
   };
 
@@ -189,10 +187,6 @@ export default function UserPage() {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
-  // Set status of trangThai
-  function mapTrangThaiToStatus(trangThai) {
-    return trangThai === 8 ? 'Hóa Đơn Treo' : trangThai === 9 ? 'Đã thanh toán' : 'Unknown status';
-  }
   const navigate = useNavigate();
 
   // Create a new Detail Direct
@@ -200,13 +194,11 @@ export default function UserPage() {
   let getIdHttp;
 
   const handleAdd = async () => {
-    // const newCode = generateNewCode();
     const res = await postAddBill(1, 8);
     setAlertContent({
       type: 'success',
       message: 'Tạo thành công hóa đơn',
     });
-    // toast.success('Tạo thành công hóa đơn');
     getIdHttp = res.idHd;
     navigate(`/dashboard/sales/card-bill/${getIdHttp}`);
   };
@@ -268,7 +260,7 @@ export default function UserPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { idHd, maHd, tenKh, sdtKh, ngayTao, trangThai } = row;
+                    const { idHd, maHd, ngayTao, trangThai } = row;
                     const selectedUser = selected.indexOf(idHd) !== -1;
 
                     return (
@@ -278,8 +270,10 @@ export default function UserPage() {
                         </TableCell>
                         <TableCell align="left">{maHd}</TableCell>
                         {/* <TableCell align="left">{thanhTien}</TableCell> */}
-                        <TableCell align="left">{tenKh}</TableCell>
-                        <TableCell align="left">{sdtKh}</TableCell>
+                        <TableCell align="left">
+                          {row.idKH ? `${row.idKH.ho} ${row.idKH.ten}` : <Chip label="Khách Lẻ" color="primary" />}
+                        </TableCell>{' '}
+                        <TableCell align="left">{row.idKH && row.idKH.sdt}</TableCell>{' '}
                         <TableCell align="left">{ngayTao}</TableCell>
                         <TableCell align="left">{mapTrangThaiToStatus(trangThai)}</TableCell>
                         <TableCell align="right">

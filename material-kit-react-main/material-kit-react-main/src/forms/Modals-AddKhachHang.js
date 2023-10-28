@@ -21,6 +21,8 @@ import {
 } from '@mui/material';
 import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { useParams } from 'react-router-dom';
+
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
@@ -28,6 +30,7 @@ import Scrollbar from '../components/scrollbar';
 import { UserListHeadNoCheckBox, UserListToolbar } from '../sections/@dashboard/user';
 // APIs
 import { getAllDataTaiKhoan } from '../service/BillSevice';
+import { updateKH } from '../service/OrderManagementTimeLine';
 
 const TABLE_HEAD = [
   { id: 'maTaiKhoan', label: 'Mã Khách Hàng', alignRight: false },
@@ -83,11 +86,11 @@ const ModalAddKhachHang = (props) => {
   ModalAddKhachHang.propTypes = {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
-    setSelectedCustomerName: PropTypes.func.isRequired,
-    setSelectedCustomerEmail: PropTypes.func.isRequired,
-    setSelectedMaTk: PropTypes.func.isRequired,
+    // setSelectedCustomerName: PropTypes.func.isRequired,
+    // setSelectedCustomerEmail: PropTypes.func.isRequired,
+    // setSelectedMaTk: PropTypes.func.isRequired,
   };
-  const { open, handleClose, setSelectedCustomerName, setSelectedCustomerEmail, setSelectedMaTk } = props;
+  const { open, handleClose } = props;
   //   open Data on Table
   const [listData, setListData] = useState([]);
 
@@ -125,15 +128,15 @@ const ModalAddKhachHang = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   // Open and Close menu
-  const [object, getObject] = useState([]);
+  // const [object, getObject] = useState([]);
 
-  const handleOpenMenu = (event, row) => {
-    console.log('Check event: ', event);
-    console.log('Check event: ', row);
-    getObject(row);
+  // const handleOpenMenu = (event, row) => {
+  //   console.log('Check event: ', event);
+  //   console.log('Check event: ', row);
+  //   getObject(row);
 
-    setOpen1(event.currentTarget);
-  };
+  //   setOpen1(event.currentTarget);
+  // };
 
   const handleCloseMenu = () => {
     setOpen1(null);
@@ -175,11 +178,15 @@ const ModalAddKhachHang = (props) => {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
+  const param = useParams();
+  const idHdParam = param.id;
   // Get number
   const handleChoose = async (item) => {
-    setSelectedMaTk(`${item.maTaiKhoan}`);
-    setSelectedCustomerName(`${item.ho} ${item.ten}`);
-    setSelectedCustomerEmail(`${item.email}`);
+    // setSelectedMaTk(`${item.maTaiKhoan}`);
+    // setSelectedCustomerName(`${item.ho} ${item.ten}`);
+    // setSelectedCustomerEmail(`${item.email}`);
+    console.log(idHdParam, item.idTaiKhoan);
+    await updateKH(idHdParam, item.idTaiKhoan);
     handleClose();
   };
   return (

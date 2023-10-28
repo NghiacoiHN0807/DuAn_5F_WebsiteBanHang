@@ -19,6 +19,11 @@ const selectAllInvoiceWaiting = () => custom.get(`/hoa-don/view-all-invoice-wait
 const paymentOnline = (amount, orderInfo) =>
   custom.post(`/hoa-don/submitOrder?amount=${amount}&orderInfo=${orderInfo}`);
 const paymentOnlineSuccess = () => custom.get(`/hoa-don/vnpay-payment`);
+// API host
+// const host = 'https://provinces.open-api.vn/api/';
+// const getHost = () => custom.get(host);
+// const getCallApiDistrict = (selectedProvince) => custom.get(`${host}p/${selectedProvince}?depth=2`);
+// const getCallApiDistrict = (selectedProvince) => custom.get(`${host}p/${selectedProvince}?depth=2`);
 
 export {
   selectAllBill,
@@ -36,4 +41,6 @@ export {
   selectAllInvoiceWaiting,
   paymentOnline,
   paymentOnlineSuccess,
+  // getHost,
+  // getCallApiDistrict,
 };

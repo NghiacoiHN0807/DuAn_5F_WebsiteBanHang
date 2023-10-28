@@ -26,6 +26,7 @@ import {
   FaMoneyBillWave,
   FaBug,
   FaQuestionCircle,
+  FaBackward,
 } from 'react-icons/fa';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
@@ -99,7 +100,7 @@ const SelectHistoryBill = (props) => {
 
   const [selected, setSelected] = useState([]);
 
-  const [orderBy, setOrderBy] = useState('trangThai');
+  const [orderBy, setOrderBy] = useState('thoiGianThayDoi');
 
   const [filterName, setFilterName] = useState('');
 
@@ -152,6 +153,7 @@ const SelectHistoryBill = (props) => {
     if (trangThai === 4 || trangThai === 9) return 'Đã Xác Nhận Thanh Toán';
     if (trangThai === 5) return 'Nhận Hàng Thành Công';
     if (trangThai === 6) return 'Đổi/Trả Hàng';
+    if (trangThai === 7) return 'Chỉnh Sửa Đơn Hàng';
     if (trangThai === 10) return 'Đơn Hàng Đã Bị Hủy';
     return 'Trạng Thái Trống';
   }
@@ -162,13 +164,15 @@ const SelectHistoryBill = (props) => {
     if (trangThai === 3) return FaPaperPlane;
     if (trangThai === 4 || trangThai === 9) return FaMoneyBillWave;
     if (trangThai === 5) return FaRegCheckCircle;
-    if (trangThai === 6) return FaCogs;
+    if (trangThai === 6) return FaBackward;
+    if (trangThai === 7) return FaCogs;
     if (trangThai === 10) return FaBug;
     return FaQuestionCircle;
   }
   function getColorForTrangThai(trangThai) {
     if (trangThai === 10) return '#ff0000';
     if (trangThai === 6) return '#ffff00';
+    if (trangThai === 7) return '#ffA500';
     if (trangThai >= 0) return '#64a338';
     return '#E3E3E3';
   }

@@ -19,11 +19,9 @@ export default function ProductListADM({ products, ...other }) {
 
   const handleChoose = async (id, cover) => {
     const getOneSP = await findById(id);
-    // const getOneSP = await selectClassify(id);
     setListImages(cover);
     setDataDetail(getOneSP);
     setShowModalDetail(true);
-    // You can use 'id' and 'cover' here for navigation or other actions
   };
   const handleCloseDetail = () => {
     setShowModalDetail(false);

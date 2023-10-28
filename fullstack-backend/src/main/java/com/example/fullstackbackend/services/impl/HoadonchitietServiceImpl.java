@@ -45,10 +45,10 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 
     @Override
     public HoaDonChiTiet add(HoaDonChiTiet add) {
-        if (add.getTrangThai() >= 1 && add.getTrangThai() < 8 ) {
-            addLS(add);
+        if (add.getTrangThai() >= 0 || add.getTrangThai() < 8) {
+            addLS(add, 1);
             return hoadonchitietRepository.save(add);
-        }else {
+        } else {
             return hoadonchitietRepository.save(add);
         }
 
@@ -57,7 +57,13 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 
     @Override
     public void delete(Integer id) {
-        hoadonchitietRepository.deleteById(id);
+        Optional<HoaDonChiTiet> detailHDCT = detail(id);
+        if (detailHDCT.get().getTrangThai() >= 0 || detailHDCT.get().getTrangThai() < 8) {
+            addLS(detailHDCT.get(), 2);
+            hoadonchitietRepository.deleteById(id);
+        } else {
+            hoadonchitietRepository.deleteById(id);
+        }
     }
 
     @Override
@@ -71,22 +77,36 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     @Override
-    public LichSuHoaDon addLS(HoaDonChiTiet addLS) {
+    public LichSuHoaDon addLS(HoaDonChiTiet addLS, int status) {
         // Get datetime now
         java.util.Date currentDate = new java.util.Date();
-        // Chuyển đổi thành Timestamp
         Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
         LichSuHoaDon ls = new LichSuHoaDon();
-        ls.setIdHd(addLS.getIdHd());
-        ls.setTrangThai(6);
-        ls.setMoTa("Chỉnh sửa sản phẩm: "+ addLS.getIdCtsp().getIdSp().getTenSp());
-        ls.setNgayThayDoi(currentTimestamp);
-        return lichSuHoaDonRepository.save(ls);
+        if (status == 1) {
+            ls.setIdHd(addLS.getIdHd());
+            ls.setTrangThai(7);
+            ls.setMoTa("Thêm sản phẩm: " + addLS.getIdCtsp().getIdSp().getTenSp() + " Với số lượng: " + addLS.getSoLuong());
+            ls.setNgayThayDoi(currentTimestamp);
+            return lichSuHoaDonRepository.save(ls);
+        } else if (status == 2) {
+            // Chuyển đổi thành Timestamp
+            ls.setIdHd(addLS.getIdHd());
+            ls.setTrangThai(7);
+            ls.setMoTa("Xóa Sản Phẩm: " + addLS.getIdCtsp().getIdSp().getTenSp());
+            ls.setNgayThayDoi(currentTimestamp);
+            return lichSuHoaDonRepository.save(ls);
+        } else if (status == 3) {
+            ls.setIdHd(addLS.getIdHd());
+            ls.setTrangThai(7);
+            ls.setMoTa("Sửa sản phẩm: " + addLS.getIdCtsp().getIdSp().getTenSp() + " Với số lượng: " + addLS.getSoLuong());
+            ls.setNgayThayDoi(currentTimestamp);
+            return lichSuHoaDonRepository.save(ls);
+        }
+        return null;
     }
 
     @Override
     public Optional<HoaDonChiTiet> detail(Integer id) {
-
         return hoadonchitietRepository.findById(id);
     }
 

@@ -2,7 +2,6 @@ import '../scss/OderManagement.scss';
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
 // @mui
 import {
   Card,
@@ -25,7 +24,6 @@ import {
   Alert,
   Chip,
 } from '@mui/material';
-import Badge from 'react-bootstrap/Badge';
 
 // components
 import Iconify from '../components/iconify';
@@ -38,9 +36,9 @@ import { postAddBill } from '../service/BillSevice';
 
 const TABLE_HEAD = [
   { id: 'maHd', label: 'Mã Hóa Đơn', alignRight: false },
-  { id: 'thanhTien', label: 'Thành Tiền', alignRight: false },
   { id: 'tenKh', label: 'Tên Khách Hàng', alignRight: false },
   { id: 'sdtKh', label: 'Số Điện Thoại', alignRight: false },
+  { id: 'thanhTien', label: 'Thành Tiền', alignRight: false },
   { id: 'ngayTao', label: 'Ngày Tạo', alignRight: false },
   { id: 'kieuHoaDon', label: 'Kiểu Hóa Đơn', alignRight: false },
   { id: 'trangThai', label: 'Trạng Thái', alignRight: false },
@@ -195,7 +193,7 @@ const OrderManagement = () => {
         statusText = 'Bán Tại Quầy';
         break;
       case 2:
-        badgeVariant = 'primary';
+        badgeVariant = 'secondary';
         statusText = 'Giao Hàng';
         break;
       default:
@@ -204,11 +202,7 @@ const OrderManagement = () => {
         break;
     }
 
-    return (
-      <Badge bg={badgeVariant} text="dark">
-        {statusText}
-      </Badge>
-    );
+    return <Chip label={statusText} color={badgeVariant} />;
   }
 
   function renderTrangThai(trangThai) {
@@ -329,7 +323,7 @@ const OrderManagement = () => {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { idHd, maHd, thanhTien, tenKh, sdtKh, ngayTao, kieuHoaDon, trangThai } = row;
+                    const { idHd, maHd, thanhTien, ngayTao, kieuHoaDon, trangThai } = row;
                     const selectedUser = selected.indexOf(idHd) !== -1;
 
                     return (
@@ -338,9 +332,11 @@ const OrderManagement = () => {
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, idHd)} />
                         </TableCell>
                         <TableCell align="left">{maHd}</TableCell>
+                        <TableCell align="left">
+                          {row.idKH ? `${row.idKH.ho} ${row.idKH.ten}` : <Chip label="Khách Lẻ" color="primary" />}
+                        </TableCell>{' '}
+                        <TableCell align="left">{row.idKH && row.idKH.sdt}</TableCell>{' '}
                         <TableCell align="left">{thanhTien}</TableCell>
-                        <TableCell align="left">{tenKh}</TableCell>
-                        <TableCell align="left">{sdtKh}</TableCell>
                         <TableCell align="left">{ngayTao}</TableCell>
                         <TableCell align="left">{renderKieuHoaDon(kieuHoaDon)}</TableCell>
                         <TableCell align="left">{renderTrangThai(trangThai)}</TableCell>

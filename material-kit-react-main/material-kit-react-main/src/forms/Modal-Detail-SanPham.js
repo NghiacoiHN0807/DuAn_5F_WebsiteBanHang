@@ -38,6 +38,7 @@ const ModalDetailProduct = (props) => {
 
   // Set select one MS and Size
   const uniqueSizes = [...new Set(dataDetail.map((size) => size.idSize.tenSize))];
+  const uniqueMS = [...new Set(dataDetail.map((ms) => ms.idMs.tenMs))];
 
   const handleShowSize = (size) => {
     const checkSize = dataDetail.filter((item) => item.idSize.tenSize === size);
@@ -53,23 +54,23 @@ const ModalDetailProduct = (props) => {
     } else {
       setSelectedSize(size);
       setIsSizeSelected(true);
-      setAvailableColors(checkSize);
+      setAvailableColors(checkSize.map((item) => item.idMs.tenMs));
     }
   };
 
   const handleShowMS = (mauSac) => {
     const checkSoLuong = dataDetail.filter(
-      (item) => item.idMs.tenMs === mauSac.idMs.tenMs && item.idSize.tenSize === selectedSize
+      (item) => item.idMs.tenMs === mauSac && item.idSize.tenSize === selectedSize
     );
     console.log('checkSoLuong:', checkSoLuong);
 
-    if (isMSSelected && selectedMauSac === mauSac.idMs.tenMs) {
+    if (isMSSelected && selectedMauSac === mauSac) {
       setSelectedMauSac(null);
       setIsMSSelected(false);
       setSelectSoLuongTon([]);
     } else {
       setSelectSoLuongTon(checkSoLuong);
-      setSelectedMauSac(mauSac.idMs.tenMs);
+      setSelectedMauSac(mauSac);
       setIsMSSelected(true);
     }
   };
@@ -186,104 +187,102 @@ const ModalDetailProduct = (props) => {
                       alt={listImages}
                     />
                   </Carousel.Item>
-                  {/* );
-                  })} */}
                 </Carousel>
 
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
                   <CardContent sx={{ flex: '1 0 auto' }}>
                     <Typography component="div" variant="h5">
-                      <h5>Tên Sản Phẩm: {dataDetail[0].idSp.tenSp}</h5>
+                      Tên Sản Phẩm: {dataDetail[0].idSp.tenSp}
                     </Typography>
                     <Typography variant="subtitle1" color="text.secondary" component="div">
                       <p>Xuất Xứ: {dataDetail[0].idSp.idXx.tenNuoc}</p>
                       <p>Chất Liệu: {dataDetail[0].idSp.idCl.tenCl}</p>
                       <p>Giá: {selectSoLuongTon.length > 0 ? selectSoLuongTon[0].giaThucTe : priceRange}</p>
                     </Typography>
-                  </CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
-                    <div>
-                      Size:{' '}
-                      {uniqueSizes.map((size, sizeIndex) => (
-                        <Button
-                          style={{
-                            marginRight: '4px',
-                            marginBottom: '4px',
-                          }}
-                          key={`size-button-${sizeIndex}`}
-                          onClick={() => handleShowSize(size)}
-                          variant={selectedSize === size ? 'contained' : 'outlined'}
-                          size="small"
+                    <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
+                      <div>
+                        Size:{' '}
+                        {uniqueSizes.map((size, sizeIndex) => (
+                          <Button
+                            style={{
+                              marginRight: '4px',
+                              marginBottom: '4px',
+                            }}
+                            key={`size-button-${sizeIndex}`}
+                            onClick={() => handleShowSize(size)}
+                            variant={selectedSize === size ? 'contained' : 'outlined'}
+                            size="small"
+                          >
+                            {size}
+                          </Button>
+                        ))}
+                      </div>
+                    </Box>
+                    {/* Box mau sac */}
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <div>
+                        Màu Sắc:{' '}
+                        {availableColors.length > 0
+                          ? // Hiển thị danh sách màu sắc từ availableColors
+                            availableColors.map((mauSac, msIndex) => (
+                              <Button
+                                style={{
+                                  marginRight: '4px',
+                                  marginBottom: '4px',
+                                }}
+                                key={`size-button-${msIndex}`}
+                                onClick={() => handleShowMS(mauSac)}
+                                variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
+                                size="small"
+                              >
+                                {mauSac}
+                              </Button>
+                            ))
+                          : // Hiển thị dữ liệu từ dataDetail
+                            uniqueMS.map((item, index) => (
+                              <Button
+                                style={{
+                                  marginRight: '4px',
+                                  marginBottom: '4px',
+                                }}
+                                key={`size-button-${index}`}
+                                onClick={() => handleShowMS(item)}
+                                variant={selectedMauSac === item ? 'contained' : 'outlined'}
+                                size="small"
+                              >
+                                {item}
+                              </Button>
+                            ))}
+                      </div>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <span className="buttons_added">
+                        <p>Số lượng: </p>
+                        <IconButton
+                          onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                          color="primary"
+                          aria-label="add an alarm"
                         >
-                          {size}
-                        </Button>
-                      ))}
-                    </div>
-                  </Box>
-
-                  <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
-                    <div>
-                      Màu Sắc:{' '}
-                      {availableColors.length > 0
-                        ? // Hiển thị danh sách màu sắc từ availableColors
-                          availableColors.map((mauSac, msIndex) => (
-                            <Button
-                              style={{
-                                marginRight: '4px',
-                                marginBottom: '4px',
-                              }}
-                              key={`size-button-${msIndex}`}
-                              onClick={() => handleShowMS(mauSac)}
-                              variant={selectedMauSac === mauSac.idMs.tenMs ? 'contained' : 'outlined'}
-                              size="small"
-                            >
-                              {mauSac.idMs.tenMs}
-                            </Button>
-                          ))
-                        : // Hiển thị dữ liệu từ dataDetail
-                          dataDetail.map((item, index) => (
-                            <Button
-                              style={{
-                                marginRight: '4px',
-                                marginBottom: '4px',
-                              }}
-                              key={`size-button-${index}`}
-                              onClick={() => handleShowMS(item)}
-                              variant={selectedMauSac === item.idMs.tenMs ? 'contained' : 'outlined'}
-                              size="small"
-                            >
-                              {item.idMs.tenMs}
-                            </Button>
-                          ))}
-                    </div>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
-                    <span className="buttons_added">
-                      <p>Số lượng: </p>
-                      <IconButton
-                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        color="primary"
-                        aria-label="add an alarm"
-                      >
-                        <RemoveIcon fontSize="small" />
-                      </IconButton>
-                      <input
-                        aria-label="quantity"
-                        className="input-qty"
-                        max="Số tối đa"
-                        min="Số tối thiểu"
-                        type="text"
-                        pattern="[0-9]*"
-                        inputMode="numeric"
-                        value={quantity || '0'}
-                        onChange={handleQuantityChange}
-                      />
-                      <IconButton onClick={() => setQuantity(quantity + 1)} color="primary" aria-label="add an alarm">
-                        <AddIcon fontSize="small" />
-                      </IconButton>
-                      {selectSoLuongTon.length > 0 && <span>Số lượng tồn: {selectSoLuongTon[0].soLuongTon}</span>}
-                    </span>
-                  </Box>
+                          <RemoveIcon fontSize="small" />
+                        </IconButton>
+                        <input
+                          aria-label="quantity"
+                          className="input-qty"
+                          max="Số tối đa"
+                          min="Số tối thiểu"
+                          type="text"
+                          pattern="[0-9]*"
+                          inputMode="numeric"
+                          value={quantity || '0'}
+                          onChange={handleQuantityChange}
+                        />
+                        <IconButton onClick={() => setQuantity(quantity + 1)} color="primary" aria-label="add an alarm">
+                          <AddIcon fontSize="small" />
+                        </IconButton>
+                        {selectSoLuongTon.length > 0 && <span>Số lượng tồn: {selectSoLuongTon[0].soLuongTon}</span>}
+                      </span>
+                    </Box>
+                  </CardContent>
                 </Box>
               </Card>
             </DialogContent>

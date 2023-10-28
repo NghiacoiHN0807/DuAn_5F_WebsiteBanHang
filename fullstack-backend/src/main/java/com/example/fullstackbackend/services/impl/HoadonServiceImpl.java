@@ -74,14 +74,10 @@ public class HoadonServiceImpl implements HoadonSevice {
 
             add.setMaHd(newNumber);
             add.setNgayTao(currentDate);
-//            add.setKieuHoaDon(1);
-//            add.setTrangThai(8);
             return hoadonRepository.save(add);
         } else {
             add.setMaHd("HD000001");
             add.setNgayTao(currentDate);
-//            add.setKieuHoaDon(1);
-//            add.setTrangThai(8);
             return hoadonRepository.save(add);
         }
     }

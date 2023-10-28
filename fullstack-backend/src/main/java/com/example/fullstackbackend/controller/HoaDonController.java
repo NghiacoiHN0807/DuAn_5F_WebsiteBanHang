@@ -4,6 +4,7 @@ import com.example.fullstackbackend.DTO.VNPayService;
 import com.example.fullstackbackend.entity.HinhThucThanhToan;
 import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.entity.LichSuHoaDon;
+import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.HinhThucThanhToanSevice;
 import com.example.fullstackbackend.services.HoadonSevice;
@@ -207,6 +208,8 @@ public class HoaDonController {
 
     @PutMapping("update-ship-online/{id}")
     public HoaDon updateShipOnline(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+//        int paymentStatus = vnPayService.orderReturn(request);
+
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTenKh(newHD.getTenKh());
             hoaDon.setSdtKh(newHD.getSdtKh());
@@ -244,6 +247,14 @@ public class HoaDonController {
         return newHD1;
     }
 
+    @PutMapping("update-khach-hang/{id}")
+    public HoaDon updateKhachHang(@RequestBody TaiKhoan newTK, @PathVariable("id") Integer id) {
+        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+            hoaDon.setIdKH(newTK);
+            return hoadonSevice.update(hoaDon);
+        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+        return newHD1;
+    }
 
     @PostMapping("submitOrder")
     public String submidOrder(@RequestParam("amount") BigDecimal orderTotal,

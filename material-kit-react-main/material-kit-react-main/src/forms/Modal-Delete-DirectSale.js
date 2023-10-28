@@ -32,7 +32,7 @@ export default function ModalDeleteDirectSale(props) {
   }, [information]);
 
   const handleDelete = async () => {
-    if (information.trangThai === 8) {
+    if (information.trangThai === 8 || information.trangThai === 0) {
       await deleteHD(information.idHd);
       setAlertContent({
         type: 'success',

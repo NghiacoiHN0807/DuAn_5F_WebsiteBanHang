@@ -3,7 +3,6 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { format } from 'date-fns';
@@ -43,9 +42,9 @@ export default function ModalCreateBillOnline(props) {
     setAlertContent(null);
   };
 
-  const handleDelete = async () => {
+  const handleChoose = async () => {
     await updatePaymentShip(idHdParam, tenKhShip, sdtKHShip, formattedDate, result, thanhTien, 2, 0);
-    navigate(`/order-management-timeline/${idHdParam}`);
+    navigate(`/dashboard/bills/time-line/${idHdParam}`);
     setAlertContent({
       type: 'success',
       message: 'Đặt Hàng Online Thành Công!!!',
@@ -66,35 +65,37 @@ export default function ModalCreateBillOnline(props) {
         <DialogContent>
           {/* <DialogContentText id="alert-dialog-slide-description"> */}
           <TextField
-            id="standard-multiline-flexible"
+            id="outlined-read-only-input"
             label="Tên Người Nhận Hàng"
-            multiline
             maxRows={4}
             variant="outlined"
             size="small"
             InputProps={{
               readOnly: true,
             }}
-            defaultValue={tenKhShip}
+            value={tenKhShip}
             fullWidth
             sx={{ marginTop: 2 }}
+            focused
           />
           <TextField
-            id="standard-multiline-flexible"
-            label="Số Điện Thoại Người Nhận Hàng"
-            multiline
-            maxRows={4}
-            variant="outlined"
-            size="small"
             defaultValue={sdtKHShip}
+            id="outlined-read-only-input"
+            label="Số Điện Thoại"
+            multiline
+            maxRows={4}
+            variant="outlined"
+            size="small"
             fullWidth
             InputProps={{
               readOnly: true,
             }}
+            // value={selectedCustomerEmail}
             sx={{ marginTop: 2 }}
+            focused
           />
           <TextField
-            id="standard-multiline-flexible"
+            id="outlined-read-only-input"
             label="Địa Chỉ"
             multiline
             maxRows={4}
@@ -106,12 +107,13 @@ export default function ModalCreateBillOnline(props) {
             defaultValue={result}
             fullWidth
             sx={{ marginTop: 2 }}
+            focused
           />
           {/* </DialogContentText> */}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Hủy</Button>
-          <Button onClick={handleDelete}>Đồng Ý</Button>
+          <Button onClick={handleChoose}>Đồng Ý</Button>
         </DialogActions>
       </Dialog>
       {alertContent && (
