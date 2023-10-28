@@ -24,7 +24,7 @@ function union(a, b) {
   return [...a, ...not(b, a)];
 }
 
-const ModelAddNewGiamGia = (props) => {
+const ModelAddNewGiamGia = () => {
 
   // const { show, handleClose, isDataGiamGia, getGiamGia } = props;
   // console.log(dataSanPham)
@@ -46,23 +46,6 @@ const ModelAddNewGiamGia = (props) => {
       const res = await getAllSanPham();
       console.log("data: ", res);
       setLeft(res);
-
-      // Tạo một mảng promise cho các phần tử res
-      const promises = res.map(async (item) => {
-        const resImg = await getImgByIdSp(item.idSp);
-        return resImg.length > 0 ? resImg[0].images : null;
-      });
-
-      // Sử dụng Promise.all để chờ tất cả các promise hoàn thành
-      const tempImages = await Promise.all(promises);
-      tempImages.forEach((img, index) => {
-        if (img !== null) {
-          setImages(prevImages => ({
-            ...prevImages,
-            [res[index].idSp]: img
-          }));
-        }
-      });
     } catch (error) {
       console.error('Error loading images:', error);
     }
@@ -191,8 +174,8 @@ const ModelAddNewGiamGia = (props) => {
     tenChuongTrinh: '',
     ngayBatDau: '',
     ngayKetThuc: '',
-    mucGiamPhanTram: null,
-    mucGiamTienMat: null,
+    mucGiamPhanTram: '',
+    mucGiamTienMat: '',
     trangThai: 0,
   });
 

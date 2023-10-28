@@ -180,7 +180,6 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
         List<Integer> idSp = giamGiaDTO.getIdSp();
         for (Integer i: idSp) {
             Boolean exists = giamGiaChiTietRepository.existsByIdSp_IdSp(i);
-            System.out.println("exists: "+ exists);
             if(exists) {
                 GiamGiaChiTiet giamGiaChiTiet1 = new GiamGiaChiTiet();
                 giamGiaChiTiet1.setIdGgct(id);
@@ -194,7 +193,6 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
                 SanPham sanPham = sanPhamService.detail(i).orElseThrow();
                 giamGiaChiTiet2.setIdGiamGia(giamGia1);
                 giamGiaChiTiet2.setIdSp(sanPham);
-                System.out.println("sanPham: " + sanPham);
                 giamGiaChiTietRepository.save(giamGiaChiTiet2);
                 updateGiaThuc(i);
             }

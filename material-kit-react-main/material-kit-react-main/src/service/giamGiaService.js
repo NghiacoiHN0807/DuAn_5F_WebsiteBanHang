@@ -57,7 +57,7 @@ const addLichSuGiamGia = (lsGiamGia) => {
 }
 
 const update = (giamGiaChiTiet, id) => {
-    return custom.put(`/giam-gia-chi-tiet/api/update/${id}`, giamGiaChiTiet);
+    return custom.put(`/giam-gia-chi-tiet/api/update-dto/${id}`, giamGiaChiTiet);
 }
 
 const updateGiamGia = (giamGia, id) => {

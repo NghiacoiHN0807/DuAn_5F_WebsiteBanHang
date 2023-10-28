@@ -227,6 +227,7 @@ export default function DiscountPage() {
   const handleDelete = () => {
     setInformation(object);
     setOpenDelete(true);
+    setOpen(null);
   };
   const handleClose = () => {
     setOpenDelete(false);

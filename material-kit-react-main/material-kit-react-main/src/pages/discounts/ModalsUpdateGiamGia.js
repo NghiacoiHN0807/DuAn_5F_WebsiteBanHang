@@ -9,7 +9,7 @@ import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { addGiamGia, getAllSanPham, getCtspByIdSp, getIdGiamGia, getImgByIdSp, update } from "../../service/giamGiaService";
+import { addGiamGia, detail, getAllSanPham, getCtspByIdSp, getIdGiamGia, getImgByIdSp, update } from "../../service/giamGiaService";
 import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
 
@@ -46,28 +46,33 @@ const ModelUpdateGiamGia = (props) => {
   const [images, setImages] = useState({});
   const [alertContent, setAlertContent] = useState(null);
 
+
+
+  const [giamGia, setGiamGia] = useState({
+    maGiamGia: '',
+    tenChuongTrinh: '',
+    ngayBatDau: '',
+    ngayKetThuc: '',
+    mucGiamPhanTram: '',
+    mucGiamTienMat: '',
+    trangThai: 0,
+  });
+
+  const [selected, setSelected] = useState("");
   const getAllSp = async () => {
+    if (mucGiamPhanTram !== null) {
+      setSelected("mucGiam");
+    } else if (mucGiamTienMat !== null) {
+      setSelected("phanTram");
+    }
     try {
       const res = await getAllSanPham();
+      const resDetail = await detail(id);
       console.log("data: ", res);
+      console.log("resDetail: ", resDetail.data.idGiamGia);
+      setGiamGia(resDetail.data.idGiamGia);
       setLeft(res);
 
-      // Tạo một mảng promise cho các phần tử res
-      const promises = res.map(async (item) => {
-        const resImg = await getImgByIdSp(item.idSp);
-        return resImg.length > 0 ? resImg[0].images : null;
-      });
-
-      // Sử dụng Promise.all để chờ tất cả các promise hoàn thành
-      const tempImages = await Promise.all(promises);
-      tempImages.forEach((img, index) => {
-        if (img !== null) {
-          setImages(prevImages => ({
-            ...prevImages,
-            [res[index].idSp]: img
-          }));
-        }
-      });
     } catch (error) {
       console.error('Error loading images:', error);
     }
@@ -191,30 +196,39 @@ const ModelUpdateGiamGia = (props) => {
     return formatter.format(price);
   }
 
-  const [giamGia, setGiamGia] = useState({
-    maGiamGia: '',
-    tenChuongTrinh: '',
-    ngayBatDau: '',
-    ngayKetThuc: '',
-    mucGiamPhanTram: null,
-    mucGiamTienMat: null,
-    trangThai: 0,
-  });
-
   console.log(chiTietList)
 
-  const { maGiamGia, tenChuongTrinh, mucGiamPhanTram, mucGiamTienMat } = giamGia;
+  const { maGiamGia, tenChuongTrinh, ngayBatDau, ngayKetThuc, mucGiamPhanTram, mucGiamTienMat } = giamGia;
+
+  const onChangeNbd = (newDate) => {
+    // Lấy ngày giờ mới từ newDate
+    const newDatetime = newDate;
+    setGiamGia({
+      ...giamGia,
+      ngayBatDau: newDatetime
+    })
+  }
+
+  const onChangeNkt = (newDate) => {
+    // Lấy ngày giờ mới từ newDate
+    const newDatetime = newDate;
+    setGiamGia({
+      ...giamGia,
+      ngayKetThuc: newDatetime
+    })
+  }
 
   const onInputChange = (e) => {
+    console.log("e: ", e);
     setGiamGia({ ...giamGia, [e.target.name]: e.target.value });
   };
 
   console.log(giamGia);
 
-  const [selected, setSelected] = useState("");
   const changeHandler = e => {
     setSelected(e.target.value);
   };
+  console.log(selected);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -259,8 +273,11 @@ const ModelUpdateGiamGia = (props) => {
     }
 
     const checkDateValidity = () => {
-      return !ngayKetThuc.isBefore(ngayBatDau);
-    };
+      const startDate = dayjs(ngayBatDau);
+      const endDate = dayjs(ngayKetThuc);
+
+      return endDate.isAfter(startDate);
+    }
 
     if (!checkDateValidity()) {
       setAlertContent({
@@ -270,53 +287,60 @@ const ModelUpdateGiamGia = (props) => {
       return;
     }
 
-    try {
-      const selectedDate = dayjs(ngayBatDau);
-      const ngay = selectedDate.format('YYYY-MM-DDTHH:mm:ss');
-      const selectedDatekt = dayjs(ngayKetThuc);
-      const ngaykt = selectedDatekt.format('YYYY-MM-DDTHH:mm:ss');
+    // try {
+    const selectedDate = dayjs(ngayBatDau);
 
-      const giaGiaAa = {
-        maGiamGia: giamGia.maGiamGia,
-        tenChuongTrinh: giamGia.tenChuongTrinh,
-        ngayBatDau: ngay,
-        ngayKetThuc: ngaykt,
-        mucGiamPhanTram: giamGia.mucGiamPhanTram,
-        mucGiamTienMat: giamGia.mucGiamTienMat,
-        trangThai: 0,
-      }
+    // Format ngày bắt đầu
+    const formattedStartDate = selectedDate.format('YYYY-MM-DDTHH:mm:ss');
+
+    const selectedDateEnd = dayjs(ngayKetThuc);
+
+    // Format ngày kết thúc 
+    const formattedEndDate = selectedDateEnd.format('YYYY-MM-DDTHH:mm:ss');
+
+    const giaGiaAa = {
+      maGiamGia: giamGia.maGiamGia,
+      tenChuongTrinh: giamGia.tenChuongTrinh,
+      ngayBatDau: formattedStartDate,
+      ngayKetThuc: formattedEndDate,
+      mucGiamPhanTram: giamGia.mucGiamPhanTram,
+      mucGiamTienMat: giamGia.mucGiamTienMat,
+      trangThai: 0,
+    }
+
+    console.log("giaGiaAa: ", giaGiaAa)
 
 
-      // Trích xuất danh sách idSp từ chiTietList
-      const idSpList = chiTietList.map(item => item.sanPham.idSp);
+    // Trích xuất danh sách idSp từ chiTietList
+    const idSpList = chiTietList.map(item => item.sanPham.idSp);
 
-      // Cập nhật state listIdSp
-      const giamGiaChiTietOk = {
-        giamGia: giaGiaAa,
-        idSp: idSpList
-      }
-      console.log("giamGiaChiTietOk", giamGiaChiTietOk);
+    // Cập nhật state listIdSp
+    const giamGiaChiTietOk = {
+      giamGia: giaGiaAa,
+      idSp: idSpList
+    }
+    console.log("giamGiaChiTietOk", giamGiaChiTietOk);
 
-      const response = await update(giamGiaChiTietOk, id);
+    const response = await update(giamGiaChiTietOk, id);
 
-      if (response.status === 'Ok!') {
-        navigate('/dashboard/discounts');
-        setAlertContent({
-          type: 'success',
-          message: 'Cập nhật thành công!',
-        });
-      } else {
-        setAlertContent({
-          type: 'success',
-          message: 'Cập nhật không thành công!',
-        });
-      }
-    } catch (error) {
+    if (response.status === 'Ok!') {
+      navigate('/dashboard/discounts');
       setAlertContent({
         type: 'success',
-        message: 'Đã xảy ra lỗi khi cập nhật giảm giá!',
+        message: 'Cập nhật thành công!',
+      });
+    } else {
+      setAlertContent({
+        type: 'error',
+        message: 'Cập nhật không thành công!',
       });
     }
+    // } catch (error) {
+    //   setAlertContent({
+    //     type: 'error',
+    //     message: 'Đã xảy ra lỗi khi cập nhật giảm giá!',
+    //   });
+    // }
 
   };
   // if (!giamGiaData) {
@@ -324,8 +348,13 @@ const ModelUpdateGiamGia = (props) => {
   // }
   const todayAtNoon = dayjs().set('hour', 12).startOf('hour');
   const todayAt9AM = dayjs().set('hour', 9).startOf('hour');
-  const [ngayBatDau, setNgayBatDau] = useState(dayjs().set('hour', 12).startOf('hour'));
-  const [ngayKetThuc, setNgayKetThuc] = useState(dayjs().set('hour', 12).startOf('hour'));
+
+  const ngayBatDauFromApi = giamGia.ngayBatDau;
+  const parsedStartDate = dayjs(ngayBatDauFromApi);
+
+  // const [ngayBatDau, setNgayBatDau] = useState(giamGia.ngayBatDau);
+  // console.log(ngayBatDau);
+  // const [ngayKetThuc, setNgayKetThuc] = useState();
   return (
     <>
       <Modal.Header>
@@ -420,11 +449,10 @@ const ModelUpdateGiamGia = (props) => {
                     <DemoContainer components={['DateTimePicker']}>
                       <DemoItem>
                         <DateTimePicker
-                          defaultValue={todayAtNoon}
-                          minDateTime={todayAt9AM}
+                          defaultValue={ngayBatDau}
                           name='ngayBatDau'
-                          value={ngayBatDau}
-                          onChange={(newDate) => setNgayBatDau(newDate)}
+                          value={dayjs(ngayBatDau)}
+                          onChange={(e) => onChangeNbd(e)}
                         />
                       </DemoItem>
                     </DemoContainer>
@@ -437,11 +465,10 @@ const ModelUpdateGiamGia = (props) => {
                     <DemoContainer components={['DateTimePicker']}>
                       <DemoItem>
                         <DateTimePicker
-                          defaultValue={todayAtNoon}
                           minDateTime={todayAt9AM}
                           name='ngayKetThuc'
-                          value={ngayKetThuc}
-                          onChange={(newDate) => setNgayKetThuc(newDate)}
+                          value={dayjs(ngayKetThuc)}
+                          onChange={(e) => onChangeNkt(e)}
                         />
                       </DemoItem>
                     </DemoContainer>
