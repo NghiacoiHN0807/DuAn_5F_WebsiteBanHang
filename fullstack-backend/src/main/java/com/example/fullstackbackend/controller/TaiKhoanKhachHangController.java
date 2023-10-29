@@ -40,11 +40,8 @@ public class TaiKhoanKhachHangController {
     }
 
     @GetMapping("view-all-kh")
-    public Page<TaiKhoan> viewAllKH(@RequestParam(defaultValue = "0") Integer page,
-                                    @RequestParam(defaultValue = "15") Integer size,
-                                    @RequestParam("p") Optional<Integer> p) {
-
-        return TaiKhoanKhachHangKHSevice.PageKhachHang(p.orElse(page), size);
+    public List<TaiKhoan> viewAllKH() {
+        return TaiKhoanKhachHangKHSevice.PageKhachHang();
     }
 
     @PostMapping("add")

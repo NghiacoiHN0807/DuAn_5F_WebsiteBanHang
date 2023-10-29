@@ -13,14 +13,13 @@ public interface HoadonSevice {
 
     Page<HoaDon> hoaDonPage(Integer pageNo, Integer size);
 
-    Page<HoaDon> hoaDonOffline(Integer pageNo, Integer size);
+    List<HoaDon> hoaDonOffline();
 
     List<HoaDon> selectAllInvoiceWaiting();
 
-    Page<HoaDon> hoaDonOnline(Integer pageNo, Integer size);
+    List<HoaDon> hoaDonOnline();
 
     HoaDon add(HoaDon add);
-
 
     void delete(Integer id);
 

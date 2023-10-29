@@ -63,10 +63,11 @@ public class ChitietsanphamController {
     }
 
 
-    @GetMapping("get-one-ctsp/{name}/{size}")
+    @GetMapping("get-one-ctsp/{name}/{size}/{ms}")
     public Optional<ChiTietSanPham> findByProductNameAndSize(@PathVariable("name") String name,
-                                                             @PathVariable("size") String size) {
-        Optional<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductNameAndSize(name, size);
+                                                             @PathVariable("size") String size,
+                                                             @PathVariable("ms") String ms) {
+        Optional<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductNameAndSize(name, size, ms);
         return chiTietSanPham;
     }
 
