@@ -35,10 +35,6 @@ export default function Router() {
             draggable
             pauseOnHover
             containerId="toast-container"
-            style={{
-              width: 'auto',
-              maxHeight: '100px',
-            }}
           />
         </>
       ),

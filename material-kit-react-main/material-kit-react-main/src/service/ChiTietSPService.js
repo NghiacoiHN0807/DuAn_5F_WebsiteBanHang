@@ -4,7 +4,7 @@ const fetchAllCTSP = (page) => {
   custom.get(`/chi-tiet-san-pham/view-all?p=${page}`); // Call API
 };
 
-const findSizeById = (id) => custom.get(`chi-tiet-san-pham/select-ctsp-byId/${id}`); // Call API
+const findCtspById = (id) => custom.get(`chi-tiet-san-pham/select-ctsp-byId/${id}`); // Call API
 
 const postAddCTSP = (idSp, idSize, soLuongTon, trangThai, soLuong) =>
   custom.post(`/chi-tiet-san-pham/add/${soLuong}`, {
@@ -25,4 +25,4 @@ const putUpdateCTSP = (idCtsp, idSize, idSp, soLuongTon, trangThai) =>
     trangThai,
   });
 
-export { fetchAllCTSP, postAddCTSP, deleteCTSP, putUpdateCTSP, findSizeById };
+export { fetchAllCTSP, postAddCTSP, deleteCTSP, putUpdateCTSP, findCtspById };

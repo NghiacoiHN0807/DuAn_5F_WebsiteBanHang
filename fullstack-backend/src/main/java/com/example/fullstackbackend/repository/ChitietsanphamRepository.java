@@ -19,8 +19,20 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
     @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.tenSp = :tenSp")
     List<ChiTietSanPham> findByProductName(@Param("tenSp") String tenSp);
 
-    @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.idSp = ?1")
-    List<ChiTietSanPham> findByIdSp(Integer idSp);
+    @Query(value = "SELECT\n" +
+            "  id_ctsp, \n" +
+            "  id_sp,\n" +
+            "  id_size,\n" +
+            "  id_ms,\n" +
+            "  gia_nhap,\n" +
+            "  gia_ban, \n" +
+            "  gia_thuc_te,\n" +
+            "  so_luong_ton,\n" +
+            "  trang_thai\n" +
+            "FROM chi_tiet_san_pham\n" +
+            "WHERE id_sp = ?1 \n" +
+            "ORDER BY id_ms, id_ctsp\n", nativeQuery = true)
+    List<ChiTietSanPham> findByIdSp(@Param("idSp") Integer idSp);
 
     @Query("SELECT c FROM ChiTietSanPham c WHERE c.idSp.idSp = :idSp")
     List<ChiTietSanPham> findByProductId(@Param("idSp") Integer idSp);

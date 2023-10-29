@@ -1,9 +1,7 @@
 package com.example.fullstackbackend.services;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.domain.Page;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;

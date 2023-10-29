@@ -1,7 +1,11 @@
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect, useCallback } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { pink } from '@mui/material/colors';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import { CardGroup } from 'react-bootstrap';
+import { useDropzone } from 'react-dropzone';
 import {
   Card,
   Stack,
@@ -24,35 +28,53 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  TableContainer,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
+  Paper,
+  TableHead,
+  CardActionArea,
+  CardMedia,
+  Box,
+  IconButton,
 } from '@mui/material';
+import Iconify from '../../components/iconify';
 import { putUpdateSanPham, detailSP } from '../../service/SanPhamService';
+import { findCtspById } from '../../service/ChiTietSPService';
+import { deleteAnh, fetchAnh } from '../../service/AnhService';
+import { postAddCloud, deleteCloud } from '../../service/CloudinaryService';
+
 import { fetchXX, detailXX } from '../../service/XuatXuService';
 import { fetchCL, detailCL } from '../../service/ChatLieuService';
 import { fetchCoAo, detailCoAo } from '../../service/LoaiCoAoService';
 import { fetchLSP, detailLSP } from '../../service/LoaiSPService';
-import { fetchMS, detailMS } from '../../service/MauSacService';
 import { fetchTayAo, detailTayAo } from '../../service/OngTayAoService';
+
+function mapTrangThai(trangThai) {
+  return trangThai === 0 ? 'Còn bán' : trangThai === 10 ? 'Ngừng kinh doanh' : 'Unknown status';
+}
 
 export default function UpdateSanPham() {
   const [maSp, setMaSp] = useState('');
   const [tenSp, setTenSp] = useState('');
   const [moTa, setMoTa] = useState('');
-  const [giaBan, setGiaBan] = useState('');
   const [trangThai, setTrangThai] = useState('0');
 
   const [chatLieu, setChatLieu] = useState('');
-  const [mauSac, setMauSac] = useState('');
   const [loaiSP, setLoaiSP] = useState('');
   const [xuatXu, setXuatXu] = useState('');
   const [tayAo, setTayAo] = useState('');
   const [coAo, setCoAo] = useState('');
 
   const [listCL, setListCL] = useState([]);
-  const [listMS, setListMS] = useState([]);
   const [listLSP, setListLSP] = useState([]);
   const [listXX, setListXX] = useState([]);
   const [listTayAo, setListTayAo] = useState([]);
   const [listCoAo, setListCoAo] = useState([]);
+  const [listCTSP, setListCTSP] = useState([]);
+  const [listImg, setListImg] = useState([]);
 
   useEffect(() => {
     getAllList();
@@ -61,9 +83,6 @@ export default function UpdateSanPham() {
   const getAllList = async () => {
     const resCL = await fetchCL();
     setListCL(resCL);
-
-    const resMS = await fetchMS();
-    setListMS(resMS);
 
     const resLSP = await fetchLSP();
     setListLSP(resLSP);
@@ -88,15 +107,15 @@ export default function UpdateSanPham() {
       setMaSp(res.maSp);
       setTenSp(res.tenSp);
       setMoTa(res.moTa);
-      setGiaBan(res.giaBan);
       setTrangThai(res.trangThai);
-
       setChatLieu(res.idCl.idCl);
-      setMauSac(res.idMs.idMs);
       setLoaiSP(res.idLsp.idLoaisp);
       setXuatXu(res.idXx.idXx);
       setTayAo(res.idTayAo.idTayAo);
       setCoAo(res.idCoAo.idCoAo);
+
+      const resCTSP = await findCtspById(idSpHttp);
+      setListCTSP(resCTSP);
     } catch (error) {
       console.log('error: ', error);
     }
@@ -141,7 +160,6 @@ export default function UpdateSanPham() {
   const handleSave = async () => {
     // get object all\
     const getObjChatLieu = await detailCL(chatLieu);
-    const getObjMauSac = await detailMS(mauSac);
     const getObjLoaiSP = await detailLSP(loaiSP);
     const getObjXuatXu = await detailXX(xuatXu);
     const getObjTayAo = await detailTayAo(tayAo);
@@ -151,13 +169,11 @@ export default function UpdateSanPham() {
       setMaSp('') &&
       setTenSp('') &&
       setChatLieu('') &&
-      setMauSac('') &&
       setLoaiSP('') &&
       setXuatXu('') &&
       setTayAo('') &&
       setCoAo('') &&
       setMoTa('') &&
-      setGiaBan('') &&
       setTrangThai('')
     ) {
       handleAlertClick('Cập nhật thất bại!', 'danger');
@@ -167,13 +183,11 @@ export default function UpdateSanPham() {
         maSp,
         tenSp,
         getObjChatLieu,
-        getObjMauSac,
         getObjLoaiSP,
         getObjXuatXu,
         getObjCoAo,
         getObjTayAo,
         moTa,
-        giaBan,
         trangThai
       );
 
@@ -187,6 +201,67 @@ export default function UpdateSanPham() {
         handleClose();
       }
     }
+  };
+
+  // image
+  const getAnhData = useCallback(async () => {
+    try {
+      const res = await fetchAnh(idSpHttp);
+      setListImg(res);
+    } catch (error) {
+      console.log('error: ', error);
+    }
+  }, [idSpHttp]);
+  useEffect(() => {
+    getAnhData();
+  }, [getAnhData]);
+
+  const [selectedImages, setSelectedImages] = useState([]);
+
+  const uploadImage = async () => {
+    if (selectedImages.length !== 0) {
+      const formData = new FormData();
+      selectedImages.forEach((image) => {
+        formData.append('images', image);
+        formData.append('idSp', idSpHttp);
+      });
+      const res = await postAddCloud(formData);
+      getAnhData();
+      console.log('Check res: ', res);
+      setSelectedImages([]);
+      const input = document.querySelector('input[type="file"]');
+      if (input) {
+        input.value = '';
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (selectedImages.length > 0) {
+      uploadImage();
+    }
+  }, [selectedImages]);
+
+  const onDrop = useCallback((acceptedFiles) => {
+    const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
+    setSelectedImages(imageFiles);
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: 'image/*',
+    multiple: true,
+  });
+
+  const handlDeleteImg = async (idImg, url) => {
+    const parts = url.split('/');
+    const publicId = parts[parts.length - 2].concat('/', parts[parts.length - 1].split('.')[0]);
+
+    const ces = await deleteCloud(publicId);
+    const res = await deleteAnh(idImg);
+    getAnhData();
+    console.log('Check ces: ', ces);
+    console.log('Check res: ', res);
   };
 
   return (
@@ -237,26 +312,7 @@ export default function UpdateSanPham() {
                 </FormControl>
               )}
             </Grid>
-            <Grid item xs={6}>
-              {listMS.length > 0 && (
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Màu sắc</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    label="Màu sắc"
-                    value={mauSac}
-                    onChange={(event) => setMauSac(event.target.value)}
-                  >
-                    {listMS.map((item, index) => (
-                      <MenuItem value={item.idMs} key={index}>
-                        {item.tenMs}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-            </Grid>
+
             <Grid item xs={6}>
               {listLSP.length > 0 && (
                 <FormControl fullWidth>
@@ -336,17 +392,6 @@ export default function UpdateSanPham() {
                   </Select>
                 </FormControl>
               )}
-            </Grid>
-            <Grid item xs={6}>
-              <div>
-                <TextField
-                  id="fullWidth"
-                  label="Giá bán"
-                  fullWidth
-                  onChange={(event) => setGiaBan(event.target.value)}
-                  value={giaBan}
-                />
-              </div>
               <div>
                 <RadioGroup
                   row
@@ -371,6 +416,7 @@ export default function UpdateSanPham() {
                 </RadioGroup>
               </div>
             </Grid>
+
             <Grid item xs={6}>
               <TextField
                 id="outlined-multiline-static"
@@ -393,6 +439,91 @@ export default function UpdateSanPham() {
             >
               Cập nhật
             </Button>
+          </div>
+        </Card>
+
+        <Card sx={{ padding: '25px', marginTop: '15px' }}>
+          <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={6}>
+              <Typography variant="h6" gutterBottom>
+                Cập nhật thuộc tính
+              </Typography>
+            </Grid>
+            <Grid item xs={6} style={{ textAlign: 'right' }}>
+              <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} href="/dashboard/products/add">
+                Thêm thuộc tính
+              </Button>
+            </Grid>
+            <Grid item xs={12}>
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Màu sắc</TableCell>
+                      <TableCell>Size</TableCell>
+                      <TableCell>Giá nhập</TableCell>
+                      <TableCell>Giá bán</TableCell>
+                      <TableCell>Số lượng tồn</TableCell>
+                      <TableCell>Trạng thái</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {listCTSP.map((row) => (
+                      <TableRow key={row.idCtsp} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                        <TableCell component="th" scope="row">
+                          {row.idMs.tenMs}
+                        </TableCell>
+                        <TableCell>{row.idSize.tenSize}</TableCell>
+                        <TableCell>{row.giaNhap}</TableCell>
+                        <TableCell>{row.giaBan}</TableCell>
+                        <TableCell>{row.soLuongTon}</TableCell>
+                        <TableCell>{mapTrangThai(row.trangThai)}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Grid>
+          </Grid>
+        </Card>
+        <Card sx={{ padding: '25px', marginTop: '15px' }}>
+          <div className="title" style={{ textAlign: 'center', margin: '20px 0' }}>
+            <h4>THÊM ẢNH</h4>
+          </div>
+
+          <div className="image-container">
+            <CardGroup>
+              {listImg &&
+                listImg.length > 0 &&
+                listImg.map((item, index) => (
+                  <Card key={index} sx={{ width: 200, marginRight: 5, marginBottom: 5 }}>
+                    <CardActionArea>
+                      <Box position="relative">
+                        <CardMedia component="img" height="200" image={item.url} alt="green iguana" />
+                        <IconButton
+                          sx={{ position: 'absolute', top: 0, right: 0 }}
+                          size="small"
+                          color="primary"
+                          onClick={() => handlDeleteImg(item.idImage, item.url)}
+                        >
+                          <DeleteIcon sx={{ color: pink[500], fontSize: 40 }} />
+                        </IconButton>
+                      </Box>
+                    </CardActionArea>
+                  </Card>
+                ))}
+              {listImg.length < 10 && (
+                <Card sx={{ width: 200, marginRight: 5, marginBottom: 5, padding: 2 }}>
+                  <div {...getRootProps()} className="dropzone">
+                    <input {...getInputProps()} />
+                    <p>
+                      <AddPhotoAlternateIcon sx={{ fontSize: 40 }} /> Kéo hoặc thả ảnh vô đây, hoặc click để chọn ảnh
+                    </p>
+                    <p>(Ảnh tải lên có thể mất khoảng 10-15s để load ảnh, xin hãy đợi 1 chút)</p>
+                  </div>
+                </Card>
+              )}
+            </CardGroup>
           </div>
         </Card>
       </Container>
