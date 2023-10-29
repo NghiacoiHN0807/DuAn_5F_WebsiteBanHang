@@ -131,4 +131,10 @@ public class SanphamServiceImpl implements SanPhamService {
         return new PageImpl<>(dtos, pageable, result.getTotalElements());
     }
 
+    @Override
+    public List<Object[]> topSptrend() {
+        return sanphamRepository.topSptrending();
+    }
+
+
 }

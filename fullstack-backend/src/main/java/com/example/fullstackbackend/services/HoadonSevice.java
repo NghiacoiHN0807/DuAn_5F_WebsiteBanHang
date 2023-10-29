@@ -33,4 +33,11 @@ public interface HoadonSevice {
     HoaDon finByMaHD(Integer maHD);
 
     HoaDon updatePaymentOnline(Integer idHd, HoaDon hoaDonDTO);
+
+    Double calculateTotalTongTien();
+
+    Long totalInvoice();
+
+    List<Object[]> getTotalRevenueByDay();
+
 }

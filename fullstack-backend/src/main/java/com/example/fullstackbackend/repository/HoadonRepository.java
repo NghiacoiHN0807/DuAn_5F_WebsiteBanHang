@@ -32,4 +32,22 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
     @Transactional
     @Query(value = "UPDATE HoaDon hd SET hd.trangThai= 10 WHERE hd.idHd=?1")
     void delete(Integer idHD);
+
+    @Query(value = "SELECT SUM(tong_tien) AS total_revenue \n" +
+            "FROM hoa_don where trang_thai = 4;", nativeQuery = true)
+    Double calculateTotalTongTien();
+
+
+
+
+    @Query(value = "SELECT COUNT(*) AS total_invoice\n" +
+            "\tFROM hoa_don\n" +
+            "\tWHERE trang_thai = 4;", nativeQuery = true)
+    long totalInvoice();
+
+    @Query (value = "SELECT  ngay_tao ngay , SUM(tong_tien) tong\n" +
+            "FROM duan_5f.hoa_don\n" +
+            "WHERE trang_thai = 4\n" +
+            "GROUP BY ngay_tao\n", nativeQuery = true)
+    List<Object[]> getTotalRevenueByDay();
 }

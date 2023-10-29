@@ -63,8 +63,8 @@ public class HoaDonController {
 
     @GetMapping("view-all-offline-invoice")
     public Page<HoaDon> viewOffline(@RequestParam(defaultValue = "0") Integer page,
-                                @RequestParam(defaultValue = "15") Integer size,
-                                @RequestParam("p") Optional<Integer> p) {
+                                    @RequestParam(defaultValue = "15") Integer size,
+                                    @RequestParam("p") Optional<Integer> p) {
         Page<HoaDon> hoaDons = hoadonSevice.hoaDonOffline(p.orElse(page), size);
         return hoaDons;
     }
@@ -147,6 +147,7 @@ public class HoaDonController {
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
         return newHD1;
     }
+
     @PutMapping("update-status/{id}")
     public HoaDon updateStatus(@RequestBody HoaDon newHD, @PathVariable("id") Integer id,
                                @RequestParam String moTa) {
@@ -257,80 +258,80 @@ public class HoaDonController {
     @PostMapping("submitOrder")
     public String submidOrder(@RequestParam("amount") BigDecimal orderTotal,
                               @RequestParam("orderInfo") String orderInfo,
-                              HttpServletRequest request){
+                              HttpServletRequest request) {
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
         String vnpayUrl = vnPayService.createOrder(orderTotal, orderInfo, baseUrl);
         return vnpayUrl;
     }
 
-        @GetMapping("vnpay-payment")
-        public ResponseEntity<String> GetMapping(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @GetMapping("vnpay-payment")
+    public ResponseEntity<String> GetMapping(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-            String orderInfo = request.getParameter("vnp_OrderInfo");
-            String totalPrice = request.getParameter("vnp_Amount");
-            BigDecimal realPrice = new BigDecimal(totalPrice).divide(new BigDecimal(100));
-            Integer idHd= Integer.valueOf(orderInfo);
+        String orderInfo = request.getParameter("vnp_OrderInfo");
+        String totalPrice = request.getParameter("vnp_Amount");
+        BigDecimal realPrice = new BigDecimal(totalPrice).divide(new BigDecimal(100));
+        Integer idHd = Integer.valueOf(orderInfo);
 
-            //Detail HD by IdHd
-            Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
-            BigDecimal getTongTien = getOne.get().getTongTien();
+        //Detail HD by IdHd
+        Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
+        BigDecimal getTongTien = getOne.get().getTongTien();
 
-            BigDecimal tienMat = getTongTien.subtract(realPrice);
-            //Add to updatePaymentOnline
-            HoaDon hoaDonDTO1 = new HoaDon();
-            hoaDonDTO1.setNgayThanhToan(LocalDate.now());
-            hoaDonDTO1.setTienDua(realPrice);
-            int setTrangThai;
-            if (getOne.get().getTrangThai() == 3) {
-                setTrangThai = 4;
-            }else{
-                setTrangThai = 9;
-            }
-            hoaDonDTO1.setTrangThai(setTrangThai);
-            HoaDon hoaDon = hoadonSevice.updatePaymentOnline(idHd, hoaDonDTO1);
-
-            // Add to payments
-            HinhThucThanhToan hinhThucThanhToan1 = new HinhThucThanhToan();
-            hinhThucThanhToan1.setIdHd(hoaDon);
-            hinhThucThanhToan1.setHinhThuc("Thanh Toán Online");
-            hinhThucThanhToan1.setSoTien(realPrice);
-            hinhThucThanhToan1.setMoTa("Thanh Toán Online");
-            hinhThucThanhToan1.setTrangThai(0);
-
-            HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
-            hinhThucThanhToan2.setIdHd(hoaDon);
-            hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
-            hinhThucThanhToan2.setSoTien(tienMat);
-            hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
-            hinhThucThanhToan2.setTrangThai(0);
-
-            if (tienMat.compareTo(BigDecimal.ZERO) <= 0) {
-                hinhThucThanhToanSevice.add(hinhThucThanhToan1);
-            }else{
-                hinhThucThanhToanSevice.add(hinhThucThanhToan1);
-                hinhThucThanhToanSevice.add(hinhThucThanhToan2);
-            }
-
-            //Add to history bill
-
-            // get datetimenow
-            java.util.Date currentDate = new java.util.Date();
-            // Chuyển đổi thành Timestamp
-            Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-
-            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-            lichSuHoaDon.setIdHd(hoaDon);
-            lichSuHoaDon.setIdTk(hoaDonDTO1.getIdTK());
-            lichSuHoaDon.setTrangThai(hoaDonDTO1.getTrangThai());
-            lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
-            lichSuHoaDon.setNgayThayDoi(currentTimestamp);
-            lichSuHoaDonService.add(lichSuHoaDon);
-
-            // Switch tab
-            response.sendRedirect("http://localhost:3000/order-management-timeline/" + idHd);
-
-            return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
+        BigDecimal tienMat = getTongTien.subtract(realPrice);
+        //Add to updatePaymentOnline
+        HoaDon hoaDonDTO1 = new HoaDon();
+        hoaDonDTO1.setNgayThanhToan(LocalDate.now());
+        hoaDonDTO1.setTienDua(realPrice);
+        int setTrangThai;
+        if (getOne.get().getTrangThai() == 3) {
+            setTrangThai = 4;
+        } else {
+            setTrangThai = 9;
         }
+        hoaDonDTO1.setTrangThai(setTrangThai);
+        HoaDon hoaDon = hoadonSevice.updatePaymentOnline(idHd, hoaDonDTO1);
+
+        // Add to payments
+        HinhThucThanhToan hinhThucThanhToan1 = new HinhThucThanhToan();
+        hinhThucThanhToan1.setIdHd(hoaDon);
+        hinhThucThanhToan1.setHinhThuc("Thanh Toán Online");
+        hinhThucThanhToan1.setSoTien(realPrice);
+        hinhThucThanhToan1.setMoTa("Thanh Toán Online");
+        hinhThucThanhToan1.setTrangThai(0);
+
+        HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
+        hinhThucThanhToan2.setIdHd(hoaDon);
+        hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
+        hinhThucThanhToan2.setSoTien(tienMat);
+        hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
+        hinhThucThanhToan2.setTrangThai(0);
+
+        if (tienMat.compareTo(BigDecimal.ZERO) <= 0) {
+            hinhThucThanhToanSevice.add(hinhThucThanhToan1);
+        } else {
+            hinhThucThanhToanSevice.add(hinhThucThanhToan1);
+            hinhThucThanhToanSevice.add(hinhThucThanhToan2);
+        }
+
+        //Add to history bill
+
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+
+        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+        lichSuHoaDon.setIdHd(hoaDon);
+        lichSuHoaDon.setIdTk(hoaDonDTO1.getIdTK());
+        lichSuHoaDon.setTrangThai(hoaDonDTO1.getTrangThai());
+        lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
+        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+        lichSuHoaDonService.add(lichSuHoaDon);
+
+        // Switch tab
+        response.sendRedirect("http://localhost:3000/order-management-timeline/" + idHd);
+
+        return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
+    }
 
     @PutMapping("delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
@@ -358,5 +359,18 @@ public class HoaDonController {
         }
     }
 
+    @GetMapping("/total-revenue")
+    public Double getTotalTongTien() {
+        return hoadonSevice.calculateTotalTongTien();
+    }
 
+    @GetMapping("/total-invoices")
+    public long getTotalInvoices() {
+        return hoadonSevice.totalInvoice();
+    }
+
+    @GetMapping("/total-revenue-by-day")
+    public List<Object[]> getTotalRevenueByDay() {
+        return hoadonSevice.getTotalRevenueByDay();
+    }
 }

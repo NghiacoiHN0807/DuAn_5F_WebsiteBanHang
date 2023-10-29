@@ -22,16 +22,16 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
         return taiKhoanRepository.findAll();
     }
 
+//    @Override
+//    public Page<TaiKhoan> phanTrang(Integer pageNo, Integer size) {
+//        Pageable pageable = PageRequest.of(pageNo, size);
+//        return taiKhoanRepository.findAll(pageable);
+//    }
+
     @Override
     public Page<TaiKhoan> phanTrang(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
-        return taiKhoanRepository.findAll(pageable);
-    }
-
-    @Override
-    public Page<TaiKhoan> phanTrang(Integer pageNo, Integer size, Integer trangThai) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return taiKhoanRepository.findAllByTrangThai(trangThai, pageable);
+        return taiKhoanRepository.findAllByTrangThai(pageable);
     }
 
     @Override

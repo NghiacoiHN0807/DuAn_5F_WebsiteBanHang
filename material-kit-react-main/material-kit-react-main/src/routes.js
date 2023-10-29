@@ -9,6 +9,9 @@ import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
+import UserStaff from './pages/Staff/Modal-User-Staff';
+import AddTKNV from './pages/Staff/Modal-Add-Staff';
+import UpdateTkNV from './pages/Staff/Modal-Update-Staff';
 
 // ----------------------------------------------------------------------
 
@@ -23,7 +26,9 @@ export default function Router() {
         { path: 'bills', element: <DashboardAppPage /> },
         { path: 'sales', element: <DashboardAppPage /> },
         { path: 'clients', element: <UserPage /> },
-        { path: 'staff', element: <UserPage /> },
+        { path: 'staff', element: <UserStaff /> },
+        { path: "addNewTKNV", element: <AddTKNV /> },
+        { path: "detail/:id", element: <UpdateTkNV /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'discounts', element: <BlogPage /> },
       ],

@@ -66,7 +66,7 @@ public class TaiKhoan {
     private String soCanCuoc;
 
     @Column(name = "trang_thai")
-    private Integer trangThai;
+    private Integer trangThai = 1;
 
     @PrePersist
     public void prePersist() {
