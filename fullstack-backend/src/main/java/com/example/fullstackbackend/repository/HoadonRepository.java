@@ -31,7 +31,7 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
     @Query(value = "UPDATE HoaDon hd SET hd.trangThai= 10 WHERE hd.idHd=?1")
     void delete(Integer idHD);
 
-<<<<<<< HEAD
+
     @Query(value = "SELECT SUM(tong_tien) AS total_revenue \n" +
             "FROM hoa_don where trang_thai = 4;", nativeQuery = true)
     Double calculateTotalTongTien();
@@ -49,8 +49,5 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
             "WHERE trang_thai = 4\n" +
             "GROUP BY ngay_tao\n", nativeQuery = true)
     List<Object[]> getTotalRevenueByDay();
-=======
-    // Select all data of bill
-//    List<HoaDon> findAllByOrdOrderByMaHdDesc();
->>>>>>> origin/main
+
 }

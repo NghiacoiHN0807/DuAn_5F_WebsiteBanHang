@@ -58,15 +58,9 @@ public class HoaDonController {
     }
 
     @GetMapping("view-all-offline-invoice")
-<<<<<<< HEAD
-    public Page<HoaDon> viewOffline(@RequestParam(defaultValue = "0") Integer page,
-                                    @RequestParam(defaultValue = "15") Integer size,
-                                    @RequestParam("p") Optional<Integer> p) {
-        Page<HoaDon> hoaDons = hoadonSevice.hoaDonOffline(p.orElse(page), size);
-=======
     public List<HoaDon> viewOffline() {
         List<HoaDon> hoaDons = hoadonSevice.hoaDonOffline();
->>>>>>> origin/main
+
         return hoaDons;
     }
 
@@ -274,32 +268,13 @@ public class HoaDonController {
 
     @GetMapping("vnpay-payment")
     public ResponseEntity<String> GetMapping(HttpServletRequest request, HttpServletResponse response) throws IOException {
-<<<<<<< HEAD
-=======
         int paymentStatus = vnPayService.orderReturn(request);
->>>>>>> origin/main
 
         String orderInfo = request.getParameter("vnp_OrderInfo");
         String totalPrice = request.getParameter("vnp_Amount");
         BigDecimal realPrice = new BigDecimal(totalPrice).divide(new BigDecimal(100));
         Integer idHd = Integer.valueOf(orderInfo);
 
-<<<<<<< HEAD
-        //Detail HD by IdHd
-        Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
-        BigDecimal getTongTien = getOne.get().getTongTien();
-
-        BigDecimal tienMat = getTongTien.subtract(realPrice);
-        //Add to updatePaymentOnline
-        HoaDon hoaDonDTO1 = new HoaDon();
-        hoaDonDTO1.setNgayThanhToan(LocalDate.now());
-        hoaDonDTO1.setTienDua(realPrice);
-        int setTrangThai;
-        if (getOne.get().getTrangThai() == 3) {
-            setTrangThai = 4;
-        } else {
-            setTrangThai = 9;
-=======
         if (paymentStatus == 1) {
             //Detail HD by IdHd
             Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
@@ -364,55 +339,11 @@ public class HoaDonController {
             response.sendRedirect("http://localhost:3000/dashboard/sales/card-bill/" + idHd);
             return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
 
->>>>>>> origin/main
-        }
-        hoaDonDTO1.setTrangThai(setTrangThai);
-        HoaDon hoaDon = hoadonSevice.updatePaymentOnline(idHd, hoaDonDTO1);
-
-        // Add to payments
-        HinhThucThanhToan hinhThucThanhToan1 = new HinhThucThanhToan();
-        hinhThucThanhToan1.setIdHd(hoaDon);
-        hinhThucThanhToan1.setHinhThuc("Thanh Toán Online");
-        hinhThucThanhToan1.setSoTien(realPrice);
-        hinhThucThanhToan1.setMoTa("Thanh Toán Online");
-        hinhThucThanhToan1.setTrangThai(0);
-
-        HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
-        hinhThucThanhToan2.setIdHd(hoaDon);
-        hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
-        hinhThucThanhToan2.setSoTien(tienMat);
-        hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
-        hinhThucThanhToan2.setTrangThai(0);
-
-        if (tienMat.compareTo(BigDecimal.ZERO) <= 0) {
-            hinhThucThanhToanSevice.add(hinhThucThanhToan1);
-        } else {
-            hinhThucThanhToanSevice.add(hinhThucThanhToan1);
-            hinhThucThanhToanSevice.add(hinhThucThanhToan2);
         }
 
-        //Add to history bill
-
-        // get datetimenow
-        java.util.Date currentDate = new java.util.Date();
-        // Chuyển đổi thành Timestamp
-        Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-
-        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-        lichSuHoaDon.setIdHd(hoaDon);
-        lichSuHoaDon.setIdTk(hoaDonDTO1.getIdTK());
-        lichSuHoaDon.setTrangThai(hoaDonDTO1.getTrangThai());
-        lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
-        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
-        lichSuHoaDonService.add(lichSuHoaDon);
-
-        // Switch tab
-        response.sendRedirect("http://localhost:3000/order-management-timeline/" + idHd);
-
-        return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
     }
 
-    }
+
 
     @PutMapping("delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {

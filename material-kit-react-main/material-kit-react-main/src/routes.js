@@ -9,16 +9,13 @@ import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
-<<<<<<< HEAD
 import UserStaff from './pages/Staff/Modal-User-Staff';
 import AddTKNV from './pages/Staff/Modal-Add-Staff';
 import UpdateTkNV from './pages/Staff/Modal-Update-Staff';
-=======
 import Sales from './pages/DirectSale-ADM';
 import CartBillADM from './pages/Cart-Bill-ADM';
 import OrderManagement from './pages/OrderManagement';
 import OrderManagementTimeline from './pages/OrderManagement-Timeline';
->>>>>>> origin/main
 
 // ----------------------------------------------------------------------
 
