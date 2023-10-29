@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TaiKhoanKhachHangRepository extends JpaRepository<TaiKhoan, Integer> {
@@ -16,7 +17,7 @@ public interface TaiKhoanKhachHangRepository extends JpaRepository<TaiKhoan, Int
     Page<TaiKhoan> findAll(Pageable pageable);
 
     @Query("SELECT g FROM TaiKhoan g WHERE g.idChucVu.idCv = 9")
-    Page<TaiKhoan> findAllKhachHang(Pageable pageable);
+    List<TaiKhoan> findAllKhachHang();
 
     @Query("select t from TaiKhoan t where  t.maTaiKhoan = ?1 order by t.idTaiKhoan DESC")
     Optional<TaiKhoan> findByMaTaiKhoanOrderByIdTaiKhoanDesc(String maTaiKhoan);

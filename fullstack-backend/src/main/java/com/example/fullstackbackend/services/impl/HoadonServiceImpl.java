@@ -1,6 +1,5 @@
 package com.example.fullstackbackend.services.impl;
 
-import com.example.fullstackbackend.DTO.HoaDonDTO;
 import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.repository.HoadonRepository;
 import com.example.fullstackbackend.services.HoadonSevice;
@@ -11,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +23,7 @@ public class HoadonServiceImpl implements HoadonSevice {
 
     @Override
     public List<HoaDon> getAll() {
-        return null;
+        return hoadonRepository.findAll();
     }
 
     @Override
@@ -33,9 +33,8 @@ public class HoadonServiceImpl implements HoadonSevice {
     }
 
     @Override
-    public Page<HoaDon> hoaDonOffline(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return hoadonRepository.pageOfflineInvoice(pageable);
+    public List<HoaDon> hoaDonOffline() {
+        return hoadonRepository.pageOfflineInvoice();
     }
 
     @Override
@@ -44,18 +43,48 @@ public class HoadonServiceImpl implements HoadonSevice {
     }
 
     @Override
-    public Page<HoaDon> hoaDonOnline(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return hoadonRepository.pageOnlineInvoice(pageable);
+    public List<HoaDon> hoaDonOnline() {
+        return hoadonRepository.pageOnlineInvoice();
     }
 
     @Override
     public HoaDon add(HoaDon add) {
-        return hoadonRepository.save(add);
+        List<HoaDon> allHoaDon = getAll();// Get datetime now
+        LocalDate currentDate = LocalDate.now();
+        if (!allHoaDon.isEmpty()) {
+
+            String maxMaHd = getAll().stream()
+                    .map(HoaDon::getMaHd)
+                    .filter(s -> s.matches("HD\\d+")) // Lọc ra các chuỗi có định dạng "HD" và theo sau là số.
+                    .map(s -> Integer.parseInt(s.replaceAll("HD0*", ""))) // Loại bỏ các số 0 ở đầu và chuyển thành số nguyên.
+                    .max(Integer::compareTo) // Tìm số lớn nhất.
+                    .map(maxNumber -> String.format("HD%06d", maxNumber)) // Định dạng lại thành chuỗi "HDxxxxxx".
+                    .orElse("HD000000");
+            System.out.println("maxMaHd: " + maxMaHd);
+
+            // Get the current number
+            String currentNumber = maxMaHd.substring(2);
+            System.out.println("currentNumber: " + currentNumber);
+            int number = Integer.parseInt(currentNumber);
+            System.out.println("number: " + number);
+            number++;
+
+            String newNumber = String.format("HD%06d", number);
+            System.out.println("newNumber: " + newNumber);
+
+            add.setMaHd(newNumber);
+            add.setNgayTao(currentDate);
+            return hoadonRepository.save(add);
+        } else {
+            add.setMaHd("HD000001");
+            add.setNgayTao(currentDate);
+            return hoadonRepository.save(add);
+        }
     }
 
     @Override
-    public void delete(Integer id) {hoadonRepository.delete(id);
+    public void delete(Integer id) {
+        hoadonRepository.delete(id);
     }
 
     @Override
@@ -82,7 +111,7 @@ public class HoadonServiceImpl implements HoadonSevice {
 
     @Override
     public HoaDon updatePaymentOnline(Integer idHd, HoaDon hoaDonDTO) {
-        HoaDon hoaDon = hoadonRepository.findById(idHd).orElseThrow(()->new EntityNotFoundException("HoaDonNotFound"));
+        HoaDon hoaDon = hoadonRepository.findById(idHd).orElseThrow(() -> new EntityNotFoundException("HoaDonNotFound"));
 
         hoaDon.setNgayThanhToan(hoaDonDTO.getNgayThanhToan());
         hoaDon.setTienDua(hoaDonDTO.getTienDua());
