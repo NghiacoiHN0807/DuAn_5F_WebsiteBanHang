@@ -34,9 +34,8 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
     }
 
     @Override
-    public Page<TaiKhoan> PageKhachHang(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return TaiKhoanKhachHangRepository.findAllKhachHang(pageable);
+    public List<TaiKhoan> PageKhachHang() {
+        return TaiKhoanKhachHangRepository.findAllKhachHang();
     }
 
     @Override

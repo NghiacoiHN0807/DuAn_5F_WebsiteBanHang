@@ -13,7 +13,7 @@ public interface ChitietsanphamService {
 
     List<ChiTietSanPham> findByProductName(String name);
 
-    Optional<ChiTietSanPham> findByProductNameAndSize(String name, String Size);
+    Optional<ChiTietSanPham> findByProductNameAndSize(String name, String Size, String ms);
 
     List<ChiTietSanPham> findByIdSp(Integer id);
 

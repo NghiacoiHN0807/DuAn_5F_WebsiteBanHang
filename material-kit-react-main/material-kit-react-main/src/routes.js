@@ -10,6 +10,10 @@ import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import DashboardAppPage from './pages/DashboardAppPage';
+import Sales from './pages/DirectSale-ADM';
+import CartBillADM from './pages/Cart-Bill-ADM';
+import OrderManagement from './pages/OrderManagement';
+import OrderManagementTimeline from './pages/OrderManagement-Timeline';
 
 import SanPham from './pages/SanPham/SanPhamMain';
 import AddSanPham from './pages/SanPham/ModelAdd';
@@ -42,8 +46,10 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
-        { path: 'bills', element: <DashboardAppPage /> },
-        { path: 'sales', element: <DashboardAppPage /> },
+        { path: 'bills', element: <OrderManagement /> },
+        { path: 'bills/time-line/:id', element: <OrderManagementTimeline /> },
+        { path: 'sales', element: <Sales /> },
+        { path: 'sales/card-bill/:id', element: <CartBillADM /> },
         { path: 'clients', element: <UserPage /> },
         { path: 'staff', element: <UserPage /> },
         { path: 'products', element: <SanPham /> },
