@@ -1,8 +1,7 @@
+import '../scss/OderManagement.scss';
 import { Helmet } from 'react-helmet-async';
-// import { filter } from 'lodash';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
 // @mui
 import {
   Card,
@@ -25,24 +24,23 @@ import {
   Alert,
   Chip,
 } from '@mui/material';
+
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
-// mock
-// import USERLIST from '../_mock/user';
-// import { useEffect } from 'react';selectAllBill,
-import { postAddBill, selectAllInvoiceWaiting } from '../service/BillSevice';
 import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
-
-// ----------------------------------------------------------------------
+import { getAllOrderManagement } from '../service/OderManagementSevice';
+import { postAddBill } from '../service/BillSevice';
 
 const TABLE_HEAD = [
   { id: 'maHd', label: 'Mã Hóa Đơn', alignRight: false },
-  { id: 'ten', label: 'Tên Khách Hàng', alignRight: false },
+  { id: 'tenKh', label: 'Tên Khách Hàng', alignRight: false },
   { id: 'sdtKh', label: 'Số Điện Thoại', alignRight: false },
+  { id: 'thanhTien', label: 'Thành Tiền', alignRight: false },
   { id: 'ngayTao', label: 'Ngày Tạo', alignRight: false },
+  { id: 'kieuHoaDon', label: 'Kiểu Hóa Đơn', alignRight: false },
   { id: 'trangThai', label: 'Trạng Thái', alignRight: false },
   { id: '' },
 ];
@@ -88,8 +86,9 @@ function applySortFilter(array, comparator, query) {
   }
   return stabilizedThis.map((el) => el[0]);
 }
+const OrderManagement = () => {
+  const [listData, setListData] = useState([]);
 
-export default function UserPage() {
   const [open, setOpen] = useState(null);
 
   const [page, setPage] = useState(0);
@@ -104,30 +103,25 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [listBill, setListBill] = useState([]);
-  // Show Data On Tables
   const getListData = async () => {
     try {
-      const res = await selectAllInvoiceWaiting();
-      console.log('Check res: ', res);
-      setListBill(res);
+      const res = await getAllOrderManagement();
+      console.log('Check hihi: ', res);
+      setListData(res);
     } catch (error) {
-      console.error('Error in list bill: ', error);
+      console.error(error);
     }
   };
   useEffect(() => {
     getListData();
   }, []);
 
-  // Set status of trangThai
-  function mapTrangThaiToStatus(trangThai) {
-    return trangThai === 8 ? 'Hóa Đơn Treo' : trangThai === 9 ? 'Đã thanh toán' : 'Unknown status';
-  }
-  // Open and Close menu
+  // / Open and Close menu
   const [object, getObject] = useState([]);
 
   const handleOpenMenu = (event, row) => {
     getObject(row);
+
     setOpen(event.currentTarget);
   };
 
@@ -143,7 +137,7 @@ export default function UserPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = listBill.map((n) => n.idHd);
+      const newSelecteds = listData.map((n) => n.idHd);
       setSelected(newSelecteds);
       return;
     }
@@ -181,16 +175,90 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listBill.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listData.length) : 0;
 
-  const filteredUsers = applySortFilter(listBill, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(listData, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
-  const navigate = useNavigate();
+  // Set status of trangThai
 
-  // Create a new Detail Direct
-  const [alertContent, setAlertContent] = useState(null);
+  function renderKieuHoaDon(trangThai) {
+    let badgeVariant;
+    let statusText;
+
+    switch (trangThai) {
+      case 1:
+        badgeVariant = 'warning';
+        statusText = 'Bán Tại Quầy';
+        break;
+      case 2:
+        badgeVariant = 'secondary';
+        statusText = 'Giao Hàng';
+        break;
+      default:
+        badgeVariant = 'light';
+        statusText = 'Đang Đặt';
+        break;
+    }
+
+    return <Chip label={statusText} color={badgeVariant} />;
+  }
+
+  function renderTrangThai(trangThai) {
+    let badgeVariant;
+    let statusText;
+
+    switch (trangThai) {
+      case 0:
+        badgeVariant = 'info';
+        statusText = 'Đang Chờ Xác Nhận Đơn Hàng';
+        break;
+      case 1:
+        badgeVariant = 'primary';
+        statusText = 'Đang Chờ Xác Nhận Thông Tin';
+        break;
+      case 2:
+        badgeVariant = 'secondary';
+        statusText = 'Đã Chuyển Cho Đơn Vị';
+        break;
+      case 3:
+        badgeVariant = 'warning';
+        statusText = 'Xác Nhận Thanh Toán';
+        break;
+      case 4:
+        badgeVariant = 'success';
+        statusText = 'Đã Giao Thành Công';
+        break;
+      case 8:
+        badgeVariant = 'secondary';
+        statusText = 'Đơn Hàng Bán Tại Quầy';
+        break;
+      case 9:
+        badgeVariant = 'success';
+        statusText = 'Đã Thanh Toán Tại Quầy';
+        break;
+      case 10:
+        badgeVariant = 'error';
+        statusText = 'Đơn hàng đã hủy';
+        break;
+      default:
+        badgeVariant = 'default';
+        statusText = 'Unknown status';
+        break;
+    }
+
+    return <Chip label={statusText} color={badgeVariant} />;
+  }
+
+  // Click on the table
+  const navigate = useNavigate();
+  const handlClickRow = () => {
+    console.log('Check click: ', object);
+    navigate(`/dashboard/bills/time-line/${object.idHd}`);
+  };
+  // Add new bill
+
   let getIdHttp;
 
   const handleAdd = async () => {
@@ -200,15 +268,17 @@ export default function UserPage() {
       message: 'Tạo thành công hóa đơn',
     });
     getIdHttp = res.idHd;
+    // await getDataCart(getIdHttp);
     navigate(`/dashboard/sales/card-bill/${getIdHttp}`);
   };
+  // Create a new Detail Direct
+  const [alertContent, setAlertContent] = useState(null);
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }
     setAlertContent(null);
   };
-
   // Handle delete
   const [openDelete, setOpenDelete] = useState(false);
   const [information, setInformation] = useState();
@@ -220,17 +290,10 @@ export default function UserPage() {
     setOpenDelete(false);
     getListData();
   };
-
-  // Handle edit
-  const handleEdit = () => {
-    console.log('object.idHd:', object.idHd);
-    navigate(`/dashboard/sales/card-bill/${object.idHd}`);
-  };
-
   return (
     <>
       <Helmet>
-        <title> Sales | Minimal UI </title>
+        <title> Bills | Minimal UI </title>
       </Helmet>
 
       <Container>
@@ -253,14 +316,14 @@ export default function UserPage() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={listBill.length}
+                  rowCount={listData.length}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { idHd, maHd, ngayTao, trangThai } = row;
+                    const { idHd, maHd, thanhTien, ngayTao, kieuHoaDon, trangThai } = row;
                     const selectedUser = selected.indexOf(idHd) !== -1;
 
                     return (
@@ -269,13 +332,14 @@ export default function UserPage() {
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, idHd)} />
                         </TableCell>
                         <TableCell align="left">{maHd}</TableCell>
-                        {/* <TableCell align="left">{thanhTien}</TableCell> */}
                         <TableCell align="left">
                           {row.idKH ? `${row.idKH.ho} ${row.idKH.ten}` : <Chip label="Khách Lẻ" color="primary" />}
                         </TableCell>{' '}
                         <TableCell align="left">{row.idKH && row.idKH.sdt}</TableCell>{' '}
+                        <TableCell align="left">{thanhTien}</TableCell>
                         <TableCell align="left">{ngayTao}</TableCell>
-                        <TableCell align="left">{mapTrangThaiToStatus(trangThai)}</TableCell>
+                        <TableCell align="left">{renderKieuHoaDon(kieuHoaDon)}</TableCell>
+                        <TableCell align="left">{renderTrangThai(trangThai)}</TableCell>
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row)}>
                             <Iconify icon={'eva:more-vertical-fill'} />
@@ -321,7 +385,7 @@ export default function UserPage() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={listBill && listBill.length ? listBill.length : 0}
+            count={listData && listData.length ? listData.length : 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -348,14 +412,14 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem onClick={() => handleEdit()}>
+        <MenuItem onClick={() => handlClickRow()}>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-          Sửa
+          Edit
         </MenuItem>
 
         <MenuItem onClick={() => handleDelete()} sx={{ color: 'error.main' }}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-          Xóa
+          Delete
         </MenuItem>
       </Popover>
       {/* Dialog xác nhận xóa */}
@@ -374,4 +438,6 @@ export default function UserPage() {
       )}
     </>
   );
-}
+};
+
+export default OrderManagement;

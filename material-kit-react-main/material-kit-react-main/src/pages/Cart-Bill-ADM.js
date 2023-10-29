@@ -1,19 +1,21 @@
 import '../scss/Car-Bill-ADM.scss';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartPlus } from '@fortawesome/free-solid-svg-icons';
 import {
   Button,
+  Chip,
   FormControl,
   FormControlLabel,
+  Grid,
   IconButton,
   InputLabel,
   MenuItem,
   Pagination,
   Paper,
   Select,
+  Snackbar,
   Stack,
   Switch,
   Table,
@@ -23,6 +25,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Typography,
 } from '@mui/material';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import axios from 'axios';
@@ -32,27 +35,25 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
 import { pink } from '@mui/material/colors';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { format } from 'date-fns';
-import { Image } from 'react-bootstrap';
+import { Alert, Image } from 'react-bootstrap';
 import { styled } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-// import Button from '@mui/material/Button';
 import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
-import ModalPaymentComfirm from '../forms/Modal-Payment-Confirm';
 import ModalCreateBillOnline from '../forms/Modal-Create-Online';
 import { updateTongTien } from '../service/OrderManagementTimeLine';
+import ModalAddKhachHang from '../forms/Modals-AddKhachHang';
+import { detailBill, finByProductOnCart, findById, postAddBill, selectAllInvoiceWaiting } from '../service/BillSevice';
+import ModalAddProduct from '../forms/Modals-AddProduct';
 import ModalUpdateProductOnCart from '../forms/Modals-Update-Product-Cart';
 import ModalDeleteProductOnCart from '../forms/Modal-Delete-Product';
 import ModalDeleteAllProductOnCart from '../forms/Modal-Delete-All-Product';
-import ModalAddKhachHang from '../forms/Modals-AddKhachHang';
-import ModalAddProduct from '../forms/Modals-AddProduct';
-import { detailBill, finByProductOnCart, findById, postAddBill, selectAllInvoiceWaiting } from '../service/BillSevice';
+import ModalPaymentComfirm from '../forms/Modal-Payment-Confirm';
+import Iconify from '../components/iconify';
 
 // Dislay invoice waiting
-
 const AntTabs = styled(Tabs)({
   borderBottom: '1px solid #e8e8e8',
   '& .MuiTabs-indicator': {
@@ -94,7 +95,7 @@ const AntTab = styled((props) => <Tab disableRipple {...props} />)(({ theme }) =
   },
 }));
 
-const CartBillADM = (props) => {
+const CartBillADM = () => {
   // Get IdHd on http
   const param = useParams();
   const idHdParam = param.id;
@@ -106,7 +107,7 @@ const CartBillADM = (props) => {
   const getDetailHD = useCallback(async () => {
     try {
       const getData = await detailBill(idHdParam);
-
+      console.log('getData: ', getData);
       setlistHD(getData);
     } catch (error) {
       console.error('Error: ', error);
@@ -117,63 +118,54 @@ const CartBillADM = (props) => {
   }, [getDetailHD]);
   // Select invoice waiting.
   const [tabs, setTabs] = useState([]);
+  const [value, setValue] = useState(0);
 
-  const getListData = async () => {
+  const getListData = useCallback(async () => {
     try {
       const res = await selectAllInvoiceWaiting();
       setTabs(res);
+      const idHdParamNumber = parseInt(idHdParam, 10);
+      const checkIndexTab = res.findIndex((item) => item.idHd === idHdParamNumber);
+      console.log('checkIndexTab: ', checkIndexTab);
+
+      setValue(checkIndexTab);
     } catch (error) {
       console.error('Error in list bill: ', error);
     }
-  };
+  }, [idHdParam]);
 
   useEffect(() => {
     getListData();
-  }, []);
-
-  const [value, setValue] = useState(0);
+  }, [getListData]);
 
   const handleChange = (event, newValue) => {
-    console.log('Check newValue: ', newValue);
+    console.log('newValue', newValue);
     setValue(newValue);
   };
 
   const handleChange1 = (tabLabel) => {
-    navigate(`/create-bill/${tabLabel.idHd}`);
+    navigate(`/dashboard/sales/card-bill/${tabLabel.idHd}`);
   };
 
   // Create a new Detail Direct
-  const [lastGeneratedNumber, setLastGeneratedNumber] = useState(0);
-
-  useEffect(() => {
-    // Đọc số lớn nhất từ cơ sở dữ liệu (localStorage) khi ứng dụng khởi động
-    const savedNumber = localStorage.getItem('lastGeneratedNumber');
-    if (savedNumber) {
-      setLastGeneratedNumber(Number(savedNumber));
-    }
-  }, []);
-  const generateNewCode = () => {
-    const newNumber = lastGeneratedNumber + 1;
-    setLastGeneratedNumber(newNumber);
-
-    // Lưu số mới vào cơ sở dữ liệu (localStorage)
-    localStorage.setItem('lastGeneratedNumber', newNumber.toString());
-
-    return `HD${newNumber.toString().padStart(5, '0')}`;
-  };
+  const [alertContent, setAlertContent] = useState(null);
 
   const handleAddTab = async () => {
     if (tabs.length >= 5) {
-      toast.warn('Đã Tồn Tại 5 Hóa Đơn Chờ. Vui Lòng Thanh Toán!!!');
+      setAlertContent({
+        type: 'warning',
+        message: 'Đã Tồn Tại 5 Hóa Đơn Chờ. Vui Lòng Thanh Toán!!!',
+      });
+      // toast.warn('Đã Tồn Tại 5 Hóa Đơn Chờ. Vui Lòng Thanh Toán!!!');
     } else {
-      const currentDate = new Date();
-      const formattedDate = format(currentDate, 'yyyy-MM-dd');
-
-      const newCode = generateNewCode();
-      const res = await postAddBill(newCode, formattedDate, 1, 8);
+      const res = await postAddBill(1, 8);
       getListData();
+      setAlertContent({
+        type: 'success',
+        message: 'Tạo thành công hóa đơn',
+      });
 
-      toast.success('Tạo thành công hóa đơn');
+      // toast.success('');
 
       // Update the tabs state to include the new tab
       const nextTabNumber = tabs.length + 1;
@@ -187,7 +179,7 @@ const CartBillADM = (props) => {
       setValue(newTabs.length - 1);
 
       const getIdHttp = res.idHd;
-      navigate(`/create-bill/${getIdHttp}`);
+      navigate(`/dashboard/sales/card-bill/${getIdHttp}`);
     }
   };
 
@@ -202,11 +194,9 @@ const CartBillADM = (props) => {
     getListData();
     setValue(0);
     const newTab = { maHd: `Tab ${1}` };
-    console.log('Check newTab: ', newTab);
     const newTabs = [...tabs, newTab];
-    console.log('Check newTabs: ', newTabs);
     setTabs(newTabs);
-    navigate(`/create-bill/${newTabs[0].idHd}`);
+    navigate(`/dashboard/sales/card-bill/${newTabs[0].idHd}`);
   };
 
   // Select Product On Cart
@@ -219,7 +209,6 @@ const CartBillADM = (props) => {
       try {
         const res = await finByProductOnCart(page, idHdParam);
         if (res && res.content) {
-          console.log('Check DataCart: ', res);
           setDataCart(res.content);
           setNumberPages(res.totalPages);
         }
@@ -269,23 +258,18 @@ const CartBillADM = (props) => {
   const [showModalsUpdate, setShowModalsUpdate] = useState(false);
   const [itemUpdateClassify, setItemUpdateClassify] = useState({});
   const [itemUpdate, setItemUpdate] = useState({});
+
   const handleUpdateClassify = async (item) => {
     setShowModalsUpdate(true);
-    console.log('Check itemitem: ', item);
-    if (item.length < 0) {
-      return null;
-    } else {
-      try {
-        const getOneSP = await findById(item[3]);
-        console.log('Check getOneSP: ', getOneSP);
-
-        setItemUpdateClassify(getOneSP);
-        setItemUpdate(item);
-      } catch (error) {
-        console.error(error);
-      }
+    try {
+      const getOneSP = await findById(item[3]);
+      setItemUpdateClassify(getOneSP);
+      setItemUpdate(item);
+    } catch (error) {
+      console.error(error);
     }
   };
+
   const handleCloseUpdateClassify = () => {
     setShowModalsUpdate(false);
   };
@@ -374,10 +358,9 @@ const CartBillADM = (props) => {
 
   useEffect(() => {
     const calculateTotalPrice = async () => {
-      let total = 0;
-      for (const item of DataCart) {
-        total += item[9];
-      }
+      // let total = 0;
+      const total = DataCart.reduce((accumulator, item) => accumulator + item[9], 0);
+
       setThanhTien(total);
       await updateTongTien(idHdParam, thanhTien);
     };
@@ -385,10 +368,10 @@ const CartBillADM = (props) => {
     calculateTotalPrice();
   }, [DataCart, idHdParam, thanhTien]);
 
-  //Add Khach Hang
-  const [selectedCustomerName, setSelectedCustomerName] = useState('');
-  const [selectedMaTK, setSelectedMaTk] = useState('');
-  const [selectedCustomerEmail, setSelectedCustomerEmail] = useState('');
+  // Add Khach Hang
+  // const [selectedCustomerName, setSelectedCustomerName] = useState('');
+  // const [selectedMaTK, setSelectedMaTk] = useState('');
+  // const [selectedCustomerEmail, setSelectedCustomerEmail] = useState('');
 
   const [showModalsKH, setShowModalKH] = useState(false);
   const handleAddKH = () => {
@@ -398,7 +381,7 @@ const CartBillADM = (props) => {
     setShowModalKH(false);
   };
 
-  //Handle Save
+  // Handle Save
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -411,16 +394,18 @@ const CartBillADM = (props) => {
   const [openCreateOnline, setCreateOnline] = useState(false);
   // const [information, setInformation] = useState();
   const handleClick = async () => {
-    const currentDate = new Date();
-    const formattedDate = format(currentDate, 'yyyy-MM-dd');
+    console.log('handleClick');
+    // const currentDate = new Date();
+    // const formattedDate = format(currentDate, 'yyyy-MM-dd');
     if (isDeliveryChecked === false) {
       setOpenPayment(true);
+    } else if (!tenKhShip.trim() || !sdtKHShip.trim()) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Thông Tin Người Nhận Hàng!!!',
+      });
     } else {
-      if (!tenKhShip.trim() || !sdtKHShip.trim()) {
-        toast.warning('Hãy Thông Tin Người Nhận Hàng');
-      } else {
-        setCreateOnline(true);
-      }
+      setCreateOnline(true);
     }
   };
   const handlePaymentClose = () => {
@@ -428,6 +413,12 @@ const CartBillADM = (props) => {
   };
   const handleCloseCreateOnline = () => {
     setCreateOnline(false);
+  };
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setAlertContent(null);
   };
 
   return (
@@ -473,7 +464,11 @@ const CartBillADM = (props) => {
 
             <div className="row cart-information">
               <div className="row">
-                <h6>Giỏ Hàng</h6>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                  <Typography variant="h5" gutterBottom>
+                    Giỏ Hàng{' '}
+                  </Typography>
+                </Stack>
               </div>
               <TableContainer sx={{ marginTop: 2, marginBottom: 2 }} component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -509,6 +504,8 @@ const CartBillADM = (props) => {
                             <TableCell align="right">
                               <Button onClick={() => handleUpdateClassify(item)} size="small" variant="outlined">
                                 Size: {item[6]}
+                                <br />
+                                Màu: {item[11]}
                               </Button>
                             </TableCell>
                             <TableCell align="right">{item[7]}</TableCell>
@@ -534,7 +531,7 @@ const CartBillADM = (props) => {
               </TableContainer>
 
               <div className="col-2">
-                <Button onClick={handDeleteAll} variant="outlined" startIcon={<DeleteIcon />}>
+                <Button sx={{ marginBottom: 3 }} onClick={handDeleteAll} variant="outlined" startIcon={<DeleteIcon />}>
                   Delete
                 </Button>
               </div>
@@ -550,66 +547,83 @@ const CartBillADM = (props) => {
             </div>
             <div className="row customer-information">
               <div className="row">
-                <div className="col-6">
-                  <h6>Thông Tin Khách Hàng</h6>
-                </div>
-                <div className="col-6 button-list-personal">
-                  <Button onClick={handleAddKH} size="small" variant="outlined">
-                    Khách Hàng
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                  <Typography variant="h5" gutterBottom>
+                    Thông Tin Khách Hàng{' '}
+                  </Typography>
+                  <Button onClick={() => handleAddKH()} variant="outlined" startIcon={<Iconify icon="eva:plus-fill" />}>
+                    Khách Hàng{' '}
                   </Button>
-                </div>
+                </Stack>
               </div>
 
               <div className="text-information">
-                <TextField
-                  id="standard-multiline-flexible"
-                  label="Mã Tài Khoản "
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  value={selectedMaTK}
-                  fullWidth
-                  sx={{ marginTop: 2 }}
-                />
-                <TextField
-                  id="standard-multiline-flexible"
-                  label="Tên Khách Hàng"
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  value={selectedCustomerName}
-                  fullWidth
-                  sx={{ marginTop: 2 }}
-                />
-
-                <TextField
-                  id="standard-multiline-flexible"
-                  label="Email"
-                  multiline
-                  maxRows={4}
-                  variant="outlined"
-                  size="small"
-                  fullWidth
-                  value={selectedCustomerEmail}
-                  sx={{ marginTop: 2 }}
-                />
+                {listHD.idKH ? (
+                  <>
+                    <TextField
+                      id="standard-multiline-flexible"
+                      label="Mã Tài Khoản "
+                      multiline
+                      maxRows={4}
+                      variant="outlined"
+                      size="small"
+                      defaultValue={listHD.idKH.maTaiKhoan}
+                      // value={listHD.idKH.maTaiKhoan}
+                      fullWidth
+                      sx={{ marginTop: 2 }}
+                    />
+                    <TextField
+                      id="standard-multiline-flexible"
+                      label="Tên Khách Hàng"
+                      multiline
+                      maxRows={4}
+                      variant="outlined"
+                      size="small"
+                      defaultValue={`${listHD.idKH.ho} ${listHD.idKH.ten}`}
+                      // value={selectedCustomerName}
+                      fullWidth
+                      sx={{ marginTop: 2 }}
+                    />
+                    <TextField
+                      id="standard-multiline-flexible"
+                      label="Số Điện Thoại"
+                      multiline
+                      maxRows={4}
+                      variant="outlined"
+                      size="small"
+                      defaultValue={listHD.idKH.sdt}
+                      fullWidth
+                      // value={selectedCustomerEmail}
+                      sx={{ marginTop: 2 }}
+                    />
+                  </>
+                ) : (
+                  <Chip label="Khách Lẻ" color="primary" />
+                )}
               </div>
             </div>
             <div className="row information-payment">
               <div className="row header-information">
-                <div className="col-6">
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                  <Typography variant="h5" gutterBottom>
+                    Thông Tin Thanh Toán{' '}
+                  </Typography>
+                  <Button onClick={() => handleAddKH()} variant="outlined" startIcon={<Iconify icon="eva:plus-fill" />}>
+                    Primary{' '}
+                  </Button>
+                </Stack>
+                {/* <div className="col-6">
+
                   <h6>Thông Tin Thanh Toán</h6>
                 </div>
                 <div className="col-6 button-list">
                   <Button size="small" variant="outlined">
                     Primary
                   </Button>
-                </div>
+                </div> */}
               </div>
-              <div className="row section-information">
-                <div className="col-7">
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6} md={7}>
                   {isDeliveryChecked ? (
                     <div className="text-information">
                       <div>
@@ -642,7 +656,7 @@ const CartBillADM = (props) => {
                         onChange={(e) => getSdtKHShip(e.target.value)}
                       />
                       <div className="address">
-                        <FormControl size="small" sx={{ m: 0, minWidth: 190, marginRight: 5 }}>
+                        <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}>
                           <InputLabel id="province-label">Tỉnh/Thành Phố</InputLabel>
                           <Select
                             labelId="province-label"
@@ -661,7 +675,7 @@ const CartBillADM = (props) => {
                             ))}
                           </Select>
                         </FormControl>
-                        <FormControl size="small" sx={{ m: 0, minWidth: 190, marginRight: 5 }}>
+                        <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}>
                           <InputLabel id="district-label">Quận/Huyện</InputLabel>
                           <Select
                             labelId="district-label"
@@ -680,7 +694,7 @@ const CartBillADM = (props) => {
                             ))}
                           </Select>
                         </FormControl>
-                        <FormControl size="small" sx={{ m: 0, minWidth: 190 }}>
+                        <FormControl size="small" sx={{ m: 0, minWidth: 170, marginTop: 2 }}>
                           <InputLabel id="ward-label">Phường/Xã</InputLabel>
                           <Select
                             labelId="ward-label"
@@ -750,29 +764,62 @@ const CartBillADM = (props) => {
                       />
                     </div>
                   )}
-                </div>
-                <div className="col-5">
-                  <h5>
-                    <AccountBalanceWalletIcon />
-                    THÔNG TIN THANH TOÁN
-                  </h5>
-                  <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Giao Hàng" />
-                  <br />
-                  <div className="row">
-                    <div className="col-6">
-                      <p>Tiền Hàng</p>
-                      <p>Giảm Giá</p>
-                      <p>TỔNG: </p>
-                    </div>
-                    <div className="col-6">
-                      <p>{thanhTien}</p>
-                      <p>GIAM GIA</p>
-                      <p>{thanhTien}</p>
+                </Grid>
+                <Grid item xs={12} md={6} lg={4}>
+                  <div className="col-5">
+                    <h5>
+                      <AccountBalanceWalletIcon />
+                      THÔNG TIN THANH TOÁN
+                    </h5>
+                    <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Giao Hàng" />
+                    <br />
+                    <div className="row">
+                      <Stack
+                        sx={{ marginTop: 3 }}
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        mb={5}
+                      >
+                        <Typography variant="h6" gutterBottom>
+                          Tiền Hàng{' '}
+                        </Typography>
+                        <Typography variant="h6" gutterBottom>
+                          {thanhTien}{' '}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                        <Typography variant="h6" gutterBottom>
+                          Giảm Giá{' '}
+                        </Typography>
+                        <Typography variant="h6" gutterBottom>
+                          {thanhTien}{' '}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                        <Typography variant="h6" gutterBottom>
+                          Tổng{' '}
+                        </Typography>
+                        <Typography variant="h6" gutterBottom>
+                          {thanhTien}{' '}
+                        </Typography>
+                      </Stack>
+                      {/* <div className="col-6">
+                        <p>Tiền Hàng</p>
+                        <p>Giảm Giá</p>
+                        <p>TỔNG: </p>
+                      </div>
+                      <div className="col-6">
+                        <p>{thanhTien}</p>
+                        <p>GIAM GIA</p>
+                        <p>{thanhTien}</p>
+                      </div> */}
                     </div>
                   </div>
-                </div>
-              </div>
+                </Grid>
+              </Grid>
             </div>
+
             <div className="class-checkout">
               <LoadingButton
                 size="small"
@@ -786,6 +833,7 @@ const CartBillADM = (props) => {
                 <span>Save</span>
               </LoadingButton>
             </div>
+
             {/* Add Modals */}
             <ModalAddProduct
               show={showModalsAdd}
@@ -822,34 +870,49 @@ const CartBillADM = (props) => {
             <ModalAddKhachHang
               open={showModalsKH}
               handleClose={handleCloseAddKH}
-              setSelectedCustomerName={setSelectedCustomerName}
-              setSelectedMaTk={setSelectedMaTk}
-              setSelectedCustomerEmail={setSelectedCustomerEmail}
+              // setSelectedCustomerName={setSelectedCustomerName}
+              // setSelectedMaTk={setSelectedMaTk}
+              // setSelectedCustomerEmail={setSelectedCustomerEmail}
             />
             {/* ModalDeleteDirectSale */}
             <ModalDeleteDirectSale open={open} handleClose={handleCloseDeleteInvoice} information={information} />
-            {/* ModalPaymentComfirm */}
-            <ModalPaymentComfirm
-              show={openPayment}
-              handleClose={handlePaymentClose}
-              thanhTien={thanhTien}
-              listHD={listHD}
-              tenKhTT={tenKhTT}
-              sdtKHTT={sdtKHTT}
-            />
-            {/* ModelShipOnline */}
-            <ModalCreateBillOnline
-              open={openCreateOnline}
-              handleClose={handleCloseCreateOnline}
-              thanhTien={thanhTien}
-              listHD={listHD}
-              tenKhShip={tenKhShip}
-              sdtKHShip={sdtKHShip}
-              result={result}
-            />
+            {DataCart.length > 0 && (
+              <>
+                <ModalPaymentComfirm
+                  show={openPayment}
+                  handleClose={handlePaymentClose}
+                  thanhTien={thanhTien}
+                  listHD={listHD}
+                  tenKhTT={tenKhTT}
+                  sdtKHTT={sdtKHTT}
+                />
+
+                <ModalCreateBillOnline
+                  open={openCreateOnline}
+                  handleClose={handleCloseCreateOnline}
+                  thanhTien={thanhTien}
+                  listHD={listHD}
+                  tenKhShip={tenKhShip}
+                  sdtKHShip={sdtKHShip}
+                  result={result}
+                />
+              </>
+            )}
           </Box>
         </Box>
       </Box>
+      {alertContent && (
+        <Snackbar
+          open
+          autoHideDuration={3000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+            {alertContent.message}
+          </Alert>
+        </Snackbar>
+      )}
     </>
   );
 };

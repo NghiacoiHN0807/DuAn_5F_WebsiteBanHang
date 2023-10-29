@@ -2,6 +2,7 @@ package com.example.fullstackbackend.services;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
+import com.example.fullstackbackend.entity.LichSuHoaDon;
 import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
@@ -15,7 +16,6 @@ public interface HoadonchitietSevice {
 
     Page<Object[]> getListProductOncart(Integer pageNo, Integer size, Integer idHd);
 
-
     HoaDonChiTiet add(HoaDonChiTiet add);
 
     void delete(Integer id);
@@ -23,6 +23,8 @@ public interface HoadonchitietSevice {
     Boolean checkExists(Integer id);
 
     HoaDonChiTiet update(HoaDonChiTiet update);
+
+    LichSuHoaDon addLS(HoaDonChiTiet addLS,int status);
 
     Optional<HoaDonChiTiet> detail(Integer id);
 

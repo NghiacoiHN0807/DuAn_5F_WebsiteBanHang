@@ -36,8 +36,8 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
     }
 
     @Override
-    public Optional<ChiTietSanPham> findByProductNameAndSize(String name, String size) {
-        return chitietsanphamRepository.findByProductNameAndSize(name, size);
+    public Optional<ChiTietSanPham> findByProductNameAndSize(String name, String size, String ms) {
+        return chitietsanphamRepository.findByProductNameAndSize(name, size, ms);
     }
 
     @Override

@@ -14,29 +14,31 @@ import {
   TableCell,
   Typography,
   TableContainer,
-  Popover,
-  MenuItem,
   Card,
   TablePagination,
 } from '@mui/material';
-import { useState, useEffect, useCallback } from 'react';
+import {
+  FaCogs,
+  FaPaperPlane,
+  FaRegCalendarCheck,
+  FaRegCheckCircle,
+  FaRegFileAlt,
+  FaMoneyBillWave,
+  FaBug,
+  FaQuestionCircle,
+  FaBackward,
+} from 'react-icons/fa';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useParams } from 'react-router-dom';
-
 // components
-import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
-import { UserListHeadNoCheckBox, UserListToolbar } from '../sections/@dashboard/user';
-// APIs
-import { getAllDataTaiKhoan } from '../service/BillSevice';
-import { updateKH } from '../service/OrderManagementTimeLine';
+import { UserListHeadNoCheckBox, UserListToolbarNoFilter } from '../sections/@dashboard/user';
 
 const TABLE_HEAD = [
-  { id: 'maTaiKhoan', label: 'Mã Khách Hàng', alignRight: false },
-  { id: 'hoTen', label: 'Tên Khách Hàng', alignRight: false },
-  { id: 'sdt', label: 'Số Điện Thoại', alignRight: false },
-  { id: 'email', label: 'Email', alignRight: false },
+  { id: 'trangThai', label: 'Trạng Thái', alignRight: false },
+  { id: 'thoiGianThayDoi', label: 'Thời Gian', alignRight: false },
+  { id: 'moTa', label: 'Mô Tả', alignRight: false },
   { id: '' },
 ];
 
@@ -82,38 +84,15 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-const ModalAddKhachHang = (props) => {
-  ModalAddKhachHang.propTypes = {
+const SelectHistoryBill = (props) => {
+  SelectHistoryBill.propTypes = {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
-    // setSelectedCustomerName: PropTypes.func.isRequired,
-    // setSelectedCustomerEmail: PropTypes.func.isRequired,
-    // setSelectedMaTk: PropTypes.func.isRequired,
+    listData: PropTypes.array.isRequired,
   };
-  const { open, handleClose } = props;
-  //   open Data on Table
-  const [listData, setListData] = useState([]);
-
-  const getAllData = useCallback(async (page) => {
-    try {
-      const getData = await getAllDataTaiKhoan(page);
-      console.log('getData: ', getData);
-      if (getData) {
-        setListData(getData);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
-  // const [currentPage, setCurrentPage] = useState(0);
-
-  useEffect(() => {
-    getAllData();
-  }, [getAllData]);
+  const { open, handleClose, listData } = props;
 
   // Edit table
-  const [open1, setOpen1] = useState(null);
 
   const [page, setPage] = useState(0);
 
@@ -121,26 +100,13 @@ const ModalAddKhachHang = (props) => {
 
   const [selected, setSelected] = useState([]);
 
-  const [orderBy, setOrderBy] = useState('maHd');
+  const [orderBy, setOrderBy] = useState('thoiGianThayDoi');
 
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   // Open and Close menu
-  // const [object, getObject] = useState([]);
-
-  // const handleOpenMenu = (event, row) => {
-  //   console.log('Check event: ', event);
-  //   console.log('Check event: ', row);
-  //   getObject(row);
-
-  //   setOpen1(event.currentTarget);
-  // };
-
-  const handleCloseMenu = () => {
-    setOpen1(null);
-  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -177,26 +143,64 @@ const ModalAddKhachHang = (props) => {
   const filteredUsers = applySortFilter(listData, getComparator(order, orderBy), filterName);
 
   const isNotFound = !filteredUsers.length && !!filterName;
+  // Set Trang Thai
+  function getTextForTrangThai(trangThai) {
+    if (trangThai === 0) return 'Tạo Đơn Hàng Ship';
+    if (trangThai === 8) return 'Đã Xác Nhận Đơn Tại Quầy';
+    if (trangThai === 1) return 'Đã Xác Nhận Đơn ';
+    if (trangThai === 2) return 'Đã Xác Nhận Người Mua';
+    if (trangThai === 3) return 'Đã Chuyển Cho Đơn Vị';
+    if (trangThai === 4 || trangThai === 9) return 'Đã Xác Nhận Thanh Toán';
+    if (trangThai === 5) return 'Nhận Hàng Thành Công';
+    if (trangThai === 6) return 'Đổi/Trả Hàng';
+    if (trangThai === 7) return 'Chỉnh Sửa Đơn Hàng';
+    if (trangThai === 10) return 'Đơn Hàng Đã Bị Hủy';
+    return 'Trạng Thái Trống';
+  }
+  function getIconForTrangThai(trangThai) {
+    if (trangThai === 0 || trangThai === 8) return FaRegFileAlt;
+    if (trangThai === 1) return FaRegFileAlt;
+    if (trangThai === 2) return FaRegCalendarCheck;
+    if (trangThai === 3) return FaPaperPlane;
+    if (trangThai === 4 || trangThai === 9) return FaMoneyBillWave;
+    if (trangThai === 5) return FaRegCheckCircle;
+    if (trangThai === 6) return FaBackward;
+    if (trangThai === 7) return FaCogs;
+    if (trangThai === 10) return FaBug;
+    return FaQuestionCircle;
+  }
+  function getColorForTrangThai(trangThai) {
+    if (trangThai === 10) return '#ff0000';
+    if (trangThai === 6) return '#ffff00';
+    if (trangThai === 7) return '#ffA500';
+    if (trangThai >= 0) return '#64a338';
+    return '#E3E3E3';
+  }
 
-  const param = useParams();
-  const idHdParam = param.id;
-  // Get number
-  const handleChoose = async (item) => {
-    // setSelectedMaTk(`${item.maTaiKhoan}`);
-    // setSelectedCustomerName(`${item.ho} ${item.ten}`);
-    // setSelectedCustomerEmail(`${item.email}`);
-    console.log(idHdParam, item.idTaiKhoan);
-    await updateKH(idHdParam, item.idTaiKhoan);
-    handleClose();
-  };
+  // Format Date Time
+  function formatDateTime(dateTimeString) {
+    // Tạo một đối tượng Date từ chuỗi thời gian
+    const dateTime = new Date(dateTimeString);
+
+    // Kiểm tra xem đối tượng Date đã được tạo thành công chưa
+    if (Number.isNaN(dateTime)) {
+      return 'Thời gian không hợp lệ';
+    }
+
+    // Chuyển đổi thành định dạng ngày giờ
+    const formattedDateTime = dateTime.toLocaleString();
+
+    return formattedDateTime;
+  }
+
   return (
     <>
       <div>
         <Dialog open={open} onClose={handleClose} maxWidth="xl" fullWidth>
-          <DialogTitle>DANH SÁCH TÀI KHOẢN KHÁCH HÀNG</DialogTitle>
+          <DialogTitle>Chi Tiết Lịch Sử Hóa Đơn</DialogTitle>
           <DialogContent>
             <Card>
-              <UserListToolbar
+              <UserListToolbarNoFilter
                 numSelected={selected.length}
                 filterName={filterName}
                 onFilterName={handleFilterByName}
@@ -216,30 +220,26 @@ const ModalAddKhachHang = (props) => {
                     />
                     <TableBody>
                       {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                        const { idTaiKhoan, maTaiKhoan, ho, ten, sdt, email } = row;
-                        const selectedUser = selected.indexOf(idTaiKhoan) !== -1;
+                        const { trangThai, moTa, ngayThayDoi } = row;
+                        const selectedUser = selected.indexOf(trangThai) !== -1;
 
                         return (
                           <TableRow hover key={index} tabIndex={-1} role="checkbox" selected={selectedUser}>
                             <TableCell component="th" scope="row" padding="none">
                               <Stack direction="row" alignItems="center" spacing={2}>
-                                <Avatar alt={maTaiKhoan} src={`/assets/images/avatars/avatar_${index + 1}.jpg`} />
+                                <Avatar alt={getTextForTrangThai(trangThai)}>
+                                  {getIconForTrangThai(trangThai)({
+                                    color: getColorForTrangThai(trangThai),
+                                    size: '24px',
+                                  })}
+                                </Avatar>
                                 <Typography variant="subtitle2" noWrap>
-                                  {maTaiKhoan}
+                                  {getTextForTrangThai(trangThai)}
                                 </Typography>
                               </Stack>
                             </TableCell>
-                            {/* <TableCell align="left">{maTaiKhoan}</TableCell> */}
-                            <TableCell align="left">
-                              {ho} {ten}
-                            </TableCell>
-                            <TableCell align="left">{sdt}</TableCell>
-                            <TableCell align="left">{email}</TableCell>
-                            <TableCell align="right">
-                              <Button variant="outlined" size="small" onClick={() => handleChoose(row)}>
-                                Chọn
-                              </Button>
-                            </TableCell>
+                            <TableCell align="left">{formatDateTime(ngayThayDoi)}</TableCell>
+                            <TableCell align="left">{moTa}</TableCell>
                           </TableRow>
                         );
                       })}
@@ -287,42 +287,13 @@ const ModalAddKhachHang = (props) => {
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </Card>
-            <Popover
-              open={Boolean(open1)}
-              anchorEl={open1}
-              onClose={handleCloseMenu}
-              anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-              PaperProps={{
-                sx: {
-                  p: 1,
-                  width: 140,
-                  '& .MuiMenuItem-root': {
-                    px: 1,
-                    typography: 'body2',
-                    borderRadius: 0.75,
-                  },
-                },
-              }}
-            >
-              <MenuItem>
-                <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                Edit
-              </MenuItem>
-
-              <MenuItem sx={{ color: 'error.main' }}>
-                <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                Delete
-              </MenuItem>
-            </Popover>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Hủy</Button>
-            <Button onClick={handleClose}>Hoàn Tất</Button>
+            <Button onClick={handleClose}>Đóng</Button>
           </DialogActions>
         </Dialog>
       </div>
     </>
   );
 };
-export default ModalAddKhachHang;
+export default SelectHistoryBill;
