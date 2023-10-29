@@ -9,9 +9,16 @@ import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
+<<<<<<< HEAD
 import UserStaff from './pages/Staff/Modal-User-Staff';
 import AddTKNV from './pages/Staff/Modal-Add-Staff';
 import UpdateTkNV from './pages/Staff/Modal-Update-Staff';
+=======
+import Sales from './pages/DirectSale-ADM';
+import CartBillADM from './pages/Cart-Bill-ADM';
+import OrderManagement from './pages/OrderManagement';
+import OrderManagementTimeline from './pages/OrderManagement-Timeline';
+>>>>>>> origin/main
 
 // ----------------------------------------------------------------------
 
@@ -23,8 +30,10 @@ export default function Router() {
       children: [
         { element: <Navigate to="/dashboard/app" />, index: true },
         { path: 'app', element: <DashboardAppPage /> },
-        { path: 'bills', element: <DashboardAppPage /> },
-        { path: 'sales', element: <DashboardAppPage /> },
+        { path: 'bills', element: <OrderManagement /> },
+        { path: 'bills/time-line/:id', element: <OrderManagementTimeline /> },
+        { path: 'sales', element: <Sales /> },
+        { path: 'sales/card-bill/:id', element: <CartBillADM /> },
         { path: 'clients', element: <UserPage /> },
         { path: 'staff', element: <UserStaff /> },
         { path: "addNewTKNV", element: <AddTKNV /> },
