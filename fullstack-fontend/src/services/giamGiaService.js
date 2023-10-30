@@ -1,7 +1,7 @@
 import custom from './custom-axios';
 
-const getAll = () => {
-    return custom.get(`/giam-gia-chi-tiet/api/view-all`);
+const getAll = (pageNo, size) => {
+    return custom.get(`/giam-gia-chi-tiet/api/view-all?page=${pageNo}&size=${size}`);
 }
 
 const detailGiamGia = (id) => {
@@ -29,7 +29,11 @@ const filerDate = (pageNo, size, first, last) => {
 }
 
 const getAllSanPham = () => {
-    return custom.get(`/san-pham/minimage`);
+    return custom.get(`/san-pham/api/views`);
+}
+
+const getAllLoaiSp = () => {
+    return custom.get(`/loai-sp/api/views`);
 }
 
 const getSanPhamDetails = (pageNo, size) => {
@@ -45,11 +49,11 @@ const remove = (id) => {
 }
 
 const add = (giamGiaChiTiet) => {
-return custom.post(`/giam-gia-chi-tiet/api/insert`, giamGiaChiTiet);
+    return custom.post(`/giam-gia-chi-tiet/api/insert`, giamGiaChiTiet);
 }
 
-const addGiamGia = (request) => {
-    return custom.post(`/giam-gia/api/insert`, request);
+const addGiamGia = (giamGia) => {
+return custom.post(`/giam-gia-chi-tiet/api/insert`, giamGiaChiTiet);
 }
 
 const addLichSuGiamGia = (lsGiamGia) => {

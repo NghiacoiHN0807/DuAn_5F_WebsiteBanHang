@@ -1,7 +1,7 @@
 package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.DTO.SanPhamCustom;
-import com.example.fullstackbackend.DTO.SanPhamDTO;;
+import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.repository.SanphamRepository;
 import com.example.fullstackbackend.services.SanPhamService;
@@ -27,6 +27,10 @@ public class SanphamServiceImpl implements SanPhamService {
     private SanphamRepository sanphamRepository;
 
     @Override
+    public Page<SanPham> getAll(Integer pageNo, Integer limit, Integer tinhTrang) {
+        Pageable pageable = PageRequest.of(pageNo, limit);
+        return sanphamRepository.findAllByTinhTrang(tinhTrang, pageable);
+    }
     public List<SanPham> getAll() {
         return sanphamRepository.findAll();
     }
@@ -100,35 +104,34 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
-    public Page<SanPhamDTO> getSanPhamDetails(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        Page<Object[]> result = sanphamRepository.getSanPhamDetails(pageable);
+    public List<SanPhamDTO> getSanPhamDetails() {
+        List<Object[]> result = sanphamRepository.getSanPhamDetails();
 
         List<SanPhamDTO> dtos = new ArrayList<>();
 
-        for (Object[] row : result.getContent()) {
+        for (Object[] row : result) {
             SanPhamDTO sanPhamDTO = new SanPhamDTO();
             sanPhamDTO.setIdSp((Integer) row[0]);
             sanPhamDTO.setMaSp((String) row[1]);
             sanPhamDTO.setTenSp((String) row[2]);
-            sanPhamDTO.setTenSize((String) row[3]);
-            sanPhamDTO.setUrl_image((String) row[4]);
-            sanPhamDTO.setTenChuongTrinh((String) row[5]);
-            sanPhamDTO.setMucGiamPhanTram((BigDecimal) row[6]);
-            sanPhamDTO.setMucGiamTienMat((BigDecimal) row[7]);
-            sanPhamDTO.setIdGgct((Integer) row[8]);
-            sanPhamDTO.setIdCtsp((Integer) row[9]);
-            sanPhamDTO.setIdGiamGia((Integer) row[10]);
-            sanPhamDTO.setDonGia((BigDecimal) row[11]);
-            sanPhamDTO.setSoTienConLai((BigDecimal) row[12]);
-            sanPhamDTO.setTrangThai((Integer) row[13]);
-            sanPhamDTO.setNgayBatDau((Timestamp) row[14]);
-            sanPhamDTO.setNgayKetThuc((Timestamp) row[15]);
+            sanPhamDTO.setTenChuongTrinh((String) row[3]);
+            sanPhamDTO.setMucGiamPhanTram((BigDecimal) row[4]);
+            sanPhamDTO.setMucGiamTienMat((BigDecimal) row[5]);
+            sanPhamDTO.setUrlImage((String) row[6]);
+            sanPhamDTO.setIdGgct((Integer) row[7]);
+            sanPhamDTO.setIdGiamGia((Integer) row[8]);
+            sanPhamDTO.setNgayBatDau((Timestamp) row[9]);
+            sanPhamDTO.setNgayKetThuc((Timestamp) row[10]);
+            sanPhamDTO.setGiaBanMin((BigDecimal) row[11]);
+            sanPhamDTO.setGiaBanMax((BigDecimal) row[12]);
+            sanPhamDTO.setGiaThucTeMin((BigDecimal) row[13]);
+            sanPhamDTO.setGiaThucTeMax((BigDecimal) row[14]);
+            sanPhamDTO.setTrangThai((Integer) row[15]);
 
             dtos.add(sanPhamDTO);
         }
 
-        return new PageImpl<>(dtos, pageable, result.getTotalElements());
+        return dtos;
     }
 
     @Override

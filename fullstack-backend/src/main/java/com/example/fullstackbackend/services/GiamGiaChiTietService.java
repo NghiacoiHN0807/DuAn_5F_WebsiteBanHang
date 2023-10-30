@@ -1,9 +1,14 @@
 package com.example.fullstackbackend.services;
 
+import com.example.fullstackbackend.DTO.GiamGiaDTO;
+import com.example.fullstackbackend.entity.ChiTietSanPham;
+import com.example.fullstackbackend.entity.GiamGia;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
 import org.springframework.data.domain.Page;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface GiamGiaChiTietService {
@@ -12,7 +17,7 @@ public interface GiamGiaChiTietService {
 
     Page<GiamGiaChiTiet> getAllByTrangThai(Integer pageNo, Integer size, Integer trangThai);
 
-    Page<GiamGiaChiTiet> search(Integer pageNo, Integer size, String value);
+//    Page<GiamGiaChiTiet> search(Integer pageNo, Integer size, String value);
 
     Page<GiamGiaChiTiet> getAllByDate(Integer pageNo, Integer size, LocalDate ngayBatDau, LocalDate ngayKetThuc);
 
@@ -27,5 +32,17 @@ public interface GiamGiaChiTietService {
     void remove(Integer id);
 
     Integer findByIdGiamGia_IdGiamGia(Integer id);
+
+    void updateGiaThuc(Integer id);
+
+    List<ChiTietSanPham> chiTietSanPhamList();
+
+    String typeGiam(Integer idSp);
+
+    BigDecimal mucGiam(Integer idSp);
+
+    GiamGia insert(GiamGiaDTO giamGiaDTO);
+
+    GiamGia updateDto(GiamGiaDTO giamGiaDTO, Integer id);
 
 }

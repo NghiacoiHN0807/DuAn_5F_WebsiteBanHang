@@ -1,3 +1,10 @@
+import Container from "react-bootstrap/Container";
+// import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+// import Button from "react-bootstrap/Button";
+// import Form from "react-bootstrap/Form";
+// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+// import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -187,3 +194,16 @@ export default function PrimarySearchAppBar() {
     </Box>
   );
 }
+const Header = (props) => {
+  // const location = useLocation();
+  return (
+    <>
+      <Navbar collapseOnSelect expand="lg" bg="while" variant="while">
+        <Container>
+          <Navbar.Collapse id="responsive-navbar-nav">
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+    </>
+  );
+};

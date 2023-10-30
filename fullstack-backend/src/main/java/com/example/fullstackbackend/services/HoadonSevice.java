@@ -32,6 +32,7 @@ public interface HoadonSevice {
     HoaDon finByMaHD(Integer maHD);
 
     HoaDon updatePaymentOnline(Integer idHd, HoaDon hoaDonDTO);
+<<<<<<< HEAD
 
     Double calculateTotalTongTien();
 
@@ -40,3 +41,6 @@ public interface HoadonSevice {
     List<Object[]> getTotalRevenueByDay();
 
 }
+=======
+}
+>>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e

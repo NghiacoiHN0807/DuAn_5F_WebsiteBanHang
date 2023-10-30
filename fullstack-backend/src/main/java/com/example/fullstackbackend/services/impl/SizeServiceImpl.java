@@ -31,7 +31,7 @@ public class SizeServiceImpl implements SizeService {
 
     @Override
     public Size add(Size add) {
-       return sizeRepository.save(add);
+        return sizeRepository.save(add);
     }
 
     @Override

@@ -15,8 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -30,19 +28,13 @@ public class GiamGiaChiTiet {
     private Integer idGgct;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_ctsp", referencedColumnName = "id_ctsp")
-    private ChiTietSanPham idCtsp;
+    @JoinColumn(name = "id_sp", referencedColumnName = "id_sp")
+    private SanPham idSp;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_giam_gia", referencedColumnName = "id_giam_gia")
     private GiamGia idGiamGia;
 
-    @Column(name = "don_gia")
-    private BigDecimal donGia;
-
-    @Column(name = "so_tien_con_lai")
-    private BigDecimal soTienConLai;
-
     @Column(name = "trang_thai")
-    private Integer trangThai;
+    private Integer trangThai = 0;
 }

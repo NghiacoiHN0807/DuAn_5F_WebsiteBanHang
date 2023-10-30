@@ -1,15 +1,12 @@
 package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
-import com.example.fullstackbackend.entity.SanPham;
-import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.ChitietsanphamService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,8 +37,8 @@ public class ChitietsanphamController {
 
     @GetMapping("view-all-ctsp")
     public Page<Object[]> getSanPhamsWithSizes(@RequestParam(defaultValue = "0") Integer page,
-                                                     @RequestParam(defaultValue = "15") Integer size,
-                                                     @RequestParam("p") Optional<Integer> p) {
+                                               @RequestParam(defaultValue = "15") Integer size,
+                                               @RequestParam("p") Optional<Integer> p) {
         Page<Object[]> chiTietSP = chitietsanphamSevice.getSanPhamsWithSizes(p.orElse(page), size);
         return chiTietSP;
     }

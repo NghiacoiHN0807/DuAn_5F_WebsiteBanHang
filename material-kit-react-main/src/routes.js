@@ -3,7 +3,6 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
-import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
@@ -13,9 +12,15 @@ import UserStaff from './pages/Staff/Modal-User-Staff';
 import AddTKNV from './pages/Staff/Modal-Add-Staff';
 import UpdateTkNV from './pages/Staff/Modal-Update-Staff';
 import Sales from './pages/DirectSale-ADM';
+<<<<<<< HEAD:material-kit-react-main/src/routes.js
 import CartBillADM from './pages/Cart-Bill-ADM';
 import OrderManagement from './pages/OrderManagement';
 import OrderManagementTimeline from './pages/OrderManagement-Timeline';
+=======
+import DiscountPage from './pages/discounts/DiscountPage';
+import ModelAddNewGiamGia from './pages/discounts/ModalsAddNewGiamGia';
+import ModelUpdateGiamGia from './pages/discounts/ModalsUpdateGiamGia';
+>>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e:material-kit-react-main/material-kit-react-main/src/routes.js
 
 // ----------------------------------------------------------------------
 
@@ -32,11 +37,17 @@ export default function Router() {
         { path: 'sales', element: <Sales /> },
         { path: 'sales/card-bill/:id', element: <CartBillADM /> },
         { path: 'clients', element: <UserPage /> },
+<<<<<<< HEAD:material-kit-react-main/src/routes.js
         { path: 'staff', element: <UserStaff /> },
         { path: "addNewTKNV", element: <AddTKNV /> },
         { path: "detail/:id", element: <UpdateTkNV /> },
+=======
+        { path: 'staff', element: <UserPage /> },
+        { path: 'discount/add', element: <ModelAddNewGiamGia /> },
+        { path: 'discount/update/:id', element: <ModelUpdateGiamGia /> },
+>>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e:material-kit-react-main/material-kit-react-main/src/routes.js
         { path: 'products', element: <ProductsPage /> },
-        { path: 'discounts', element: <BlogPage /> },
+        { path: 'discounts', element: <DiscountPage /> },
       ],
     },
     {

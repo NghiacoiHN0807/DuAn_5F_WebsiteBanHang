@@ -1,15 +1,21 @@
 package com.example.fullstackbackend.services;
 
-import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.DTO.SanPhamCustom;
+import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.entity.SanPham;
 import org.springframework.data.domain.Page;
+<<<<<<< HEAD
 import org.springframework.data.domain.Pageable;
+=======
+>>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e
 
 import java.util.List;
 import java.util.Optional;
 
 public interface SanPhamService {
+
+
+    Page<SanPham> getAll(Integer pageNo, Integer limit, Integer tinhTrang);
 
     List<SanPham> getAll();
 
@@ -29,7 +35,12 @@ public interface SanPhamService {
 
     List<Object[]> getSanPhamWithMinImageUrl();
 
+<<<<<<< HEAD
     Page<SanPhamDTO> getSanPhamDetails(Integer pageNo, Integer size);
 
     List<Object[]> topSptrend();
+=======
+    List<SanPhamDTO> getSanPhamDetails();
+
+>>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e
 }

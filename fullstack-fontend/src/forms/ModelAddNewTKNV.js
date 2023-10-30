@@ -17,10 +17,15 @@ const ModelAddNewTKNV = (props) => {
   const [setEmail, getEmail] = useState("");
   const [setSoCanCuoc, getSoCanCuoc] = useState("");
 
+<<<<<<< HEAD
 
   const [chucVuOk, setChucVuOk] = useState({});
 
 
+=======
+  const [chucVuOk, setChucVuOk] = useState({});
+
+>>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e
   const handleSave = async () => {
     //I want check console.log get ma and tenNuoc
     // console.log("Check state: ", setMaTaiKhoan, setHo, setTen, setSdt, setEmail, setMatKhau, setTrangThai);
@@ -32,7 +37,13 @@ const ModelAddNewTKNV = (props) => {
       getHo("") &&
       getTen("") &&
       getSdt("") &&
+<<<<<<< HEAD
       getEmail("")
+=======
+      getEmail("") &&
+      getSoCanCuoc("") &&
+      getChucVu(3)
+>>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e
     ) {
       handleClose();
       toast.warning("Ma, Ten Or Trang Thai is null");
@@ -54,7 +65,10 @@ const ModelAddNewTKNV = (props) => {
         setTen,
         setSdt,
         setEmail,
+<<<<<<< HEAD
 
+=======
+>>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e
         setSoCanCuoc,
         0
       );
@@ -66,7 +80,10 @@ const ModelAddNewTKNV = (props) => {
         getTen("");
         getSdt("");
         getEmail("");
+<<<<<<< HEAD
 
+=======
+>>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e
         toast.success("A Tài khoản is created successfully");
         getSoCanCuoc("");
         toast.success("Tạo tài khoản thành công ");
@@ -129,6 +146,10 @@ const ModelAddNewTKNV = (props) => {
                     type="text"
                   />
                 </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e
                 <div className="mb-3">
                   <label className="form-label">Chức Vụ</label>
                   <select
