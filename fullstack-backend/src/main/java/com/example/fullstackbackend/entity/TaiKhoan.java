@@ -19,8 +19,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -37,7 +39,7 @@ public class TaiKhoan {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_chuc_vu", referencedColumnName = "id_cv")
-    private ChucVu idChucVu;
+        private ChucVu idChucVu;
 
     @Column(name = "ma_tai_khoan")
     private String maTaiKhoan;
@@ -71,6 +73,9 @@ public class TaiKhoan {
 
     @Column(name = "trang_thai")
     private Integer trangThai;
+
+    public TaiKhoan(String username, String password, List<GrantedAuthority> authorities) {
+    }
 
     @PrePersist
     public void prePersist() {

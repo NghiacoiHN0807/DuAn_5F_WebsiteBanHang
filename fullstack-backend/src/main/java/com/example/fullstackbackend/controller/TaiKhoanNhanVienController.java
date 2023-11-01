@@ -5,11 +5,8 @@ import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,9 +33,9 @@ public class TaiKhoanNhanVienController {
     }
 
     @GetMapping("view-alls")
-    public Page<TaiKhoan> viewAlll(@RequestParam(defaultValue = "0", value= "page") Integer page,
-                                          @RequestParam(defaultValue = "15") Integer size,
-                                           @RequestParam("trangThai") Integer trangThai) {
+    public Page<TaiKhoan> viewAlll(@RequestParam(defaultValue = "0", value = "page") Integer page,
+                                   @RequestParam(defaultValue = "15") Integer size,
+                                   @RequestParam("trangThai") Integer trangThai) {
         return taiKhoanNhanVienService.phanTrang(page, size, trangThai);
     }
 
@@ -66,7 +63,7 @@ public class TaiKhoanNhanVienController {
 
 
     @PutMapping("update/{id}")
-    public TaiKhoan update(@PathVariable("id") Integer id,@RequestBody TaiKhoan taiKhoan, BindingResult bindingResult) {
+    public TaiKhoan update(@PathVariable("id") Integer id, @RequestBody TaiKhoan taiKhoan, BindingResult bindingResult) {
 //        taiKhoanNhanVien.setIdTaiKhoan(id);
         if (bindingResult.hasErrors()) {
             return null;

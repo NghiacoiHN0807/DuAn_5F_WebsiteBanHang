@@ -29,7 +29,7 @@ public interface TaiKhoanKhachHangRepository extends JpaRepository<TaiKhoan, Int
     void XoaMem(Integer idTaiKhoan);
 
     @Query("select t from TaiKhoan t where t.email = ?1 AND t.trangThai = 0")
-    TaiKhoan findByEmail(String email);
+    List<TaiKhoan> findByEmail(String email);
 
     @Query("SELECT g FROM TaiKhoan g")
     List<TaiKhoan> finAll();
