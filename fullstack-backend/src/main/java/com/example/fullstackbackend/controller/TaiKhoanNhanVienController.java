@@ -5,11 +5,8 @@ import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,8 +35,15 @@ public class TaiKhoanNhanVienController {
     }
 
     @GetMapping("view-alls")
+<<<<<<< HEAD
     public List<TaiKhoan> viewAlll() {
         return taiKhoanNhanVienService.getAll();
+=======
+    public Page<TaiKhoan> viewAlll(@RequestParam(defaultValue = "0", value = "page") Integer page,
+                                   @RequestParam(defaultValue = "15") Integer size,
+                                   @RequestParam("trangThai") Integer trangThai) {
+        return taiKhoanNhanVienService.phanTrang(page, size, trangThai);
+>>>>>>> origin/nghiant0807
     }
 
     @PostMapping("add")
