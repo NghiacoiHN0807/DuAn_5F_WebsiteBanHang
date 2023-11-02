@@ -71,12 +71,7 @@
     "react-qr-scanner": "^1.0.0-alpha.11",
     "react-router-dom": "^6.8.1",
     "react-scripts": "^5.0.1",
-<<<<<<< HEAD:material-kit-react-main/package.json
     "sass": "^1.49.10",
-=======
-    "react-toastify": "^9.1.3",
-    "sass": "^1.69.3",
->>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e:material-kit-react-main/material-kit-react-main/package.json
     "simplebar-react": "^3.2.1",
     "web-vitals": "^3.1.1"
   },

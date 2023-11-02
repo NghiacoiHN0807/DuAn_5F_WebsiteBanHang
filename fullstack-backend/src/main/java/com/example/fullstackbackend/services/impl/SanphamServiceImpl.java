@@ -104,6 +104,11 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
+    public Page<SanPhamDTO> getSanPhamDetails(Integer pageNo, Integer size) {
+        return null;
+    }
+
+    @Override
     public List<SanPhamDTO> getSanPhamDetails() {
         List<Object[]> result = sanphamRepository.getSanPhamDetails();
 

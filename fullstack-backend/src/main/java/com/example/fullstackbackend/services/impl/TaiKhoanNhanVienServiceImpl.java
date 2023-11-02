@@ -4,8 +4,13 @@ import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.repository.TaiKhoanNhanVienRepository;
 import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +39,19 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
         return taiKhoanRepository.findAllByTrangThai(pageable);
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
     @Override
     public TaiKhoan add(TaiKhoan taiKhoan) {
-        return taiKhoanRepository.save(taiKhoan);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encodedPassword = encoder.encode(taiKhoan.getMatKhau());
+        System.out.println("Encoded password: " + encodedPassword);
+        taiKhoan.setMatKhau(encodedPassword); // Gán mật khẩu đã mã hóa vào tài khoản
+        TaiKhoan savedTaiKhoan = taiKhoanRepository.save(taiKhoan);
+        return savedTaiKhoan;
     }
 
 

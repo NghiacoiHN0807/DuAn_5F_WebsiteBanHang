@@ -119,7 +119,6 @@ public class HoadonServiceImpl implements HoadonSevice {
 
         return hoadonRepository.save(hoaDon);
     }
-<<<<<<< HEAD
 
     @Override
     public Double calculateTotalTongTien() {
@@ -142,6 +141,3 @@ public class HoadonServiceImpl implements HoadonSevice {
 
 
 }
-=======
-}
->>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e
