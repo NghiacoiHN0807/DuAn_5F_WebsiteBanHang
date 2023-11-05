@@ -39,7 +39,7 @@ public class TaiKhoan {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_chuc_vu", referencedColumnName = "id_cv")
-        private ChucVu idChucVu;
+    private ChucVu idChucVu;
 
     @Column(name = "ma_tai_khoan")
     private String maTaiKhoan;
@@ -63,7 +63,6 @@ public class TaiKhoan {
     @Email(message = "Email Chưa Đúng Định Dạng")
     @Column(name = "email")
     private String email;
-
 
     @Column(name = "mat_khau")
     private String matKhau;

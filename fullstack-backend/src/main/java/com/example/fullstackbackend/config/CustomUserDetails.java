@@ -1,8 +1,9 @@
 package com.example.fullstackbackend.config;
 
-import com.example.fullstackbackend.entity.TaiKhoan;
+import com.example.fullstackbackend.config.user.TaiKhoanUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,16 +14,16 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
-    TaiKhoan taiKhoan;
+    TaiKhoanUser taiKhoan;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         List<GrantedAuthority> authorities = new ArrayList<>();
 
-        System.out.println("authorities: " + authorities);
 
         if (taiKhoan.getIdChucVu().getMaCv().equalsIgnoreCase("CV01")) {
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
@@ -31,18 +32,20 @@ public class CustomUserDetails implements UserDetails {
         } else if (taiKhoan.getIdChucVu().getMaCv().equalsIgnoreCase("CV03")) {
             authorities.add(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
         }
+        System.out.println("\nauthorities: " + authorities);
+//        System.out.println("\nauthorities: " + authorities);
 
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return taiKhoan.getMatKhau();
+        return taiKhoan.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return taiKhoan.getEmail();
+        return taiKhoan.getUsername();
     }
 
     @Override

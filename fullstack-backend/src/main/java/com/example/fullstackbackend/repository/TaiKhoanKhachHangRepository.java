@@ -28,9 +28,4 @@ public interface TaiKhoanKhachHangRepository extends JpaRepository<TaiKhoan, Int
     @Query("update TaiKhoan t set t.trangThai = 10 where t.idTaiKhoan = ?1")
     void XoaMem(Integer idTaiKhoan);
 
-    @Query("select t from TaiKhoan t where t.email = ?1 AND t.trangThai = 0")
-    List<TaiKhoan> findByEmail(String email);
-
-    @Query("SELECT g FROM TaiKhoan g")
-    List<TaiKhoan> finAll();
 }

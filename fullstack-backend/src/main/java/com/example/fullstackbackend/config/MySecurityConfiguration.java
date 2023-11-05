@@ -1,17 +1,21 @@
 package com.example.fullstackbackend.config;
 
 
+import com.example.fullstackbackend.config.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -21,19 +25,25 @@ public class MySecurityConfiguration {
     private final UserService userService;
 
     @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
+    }
+
+    @Bean(BeanIds.AUTHENTICATION_MANAGER)
+    public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration auth) throws Exception {
+        // Get AuthenticationManager bean
+        return auth.getAuthenticationManager();
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
         // Password encoder, for Spring Security to use to encrypt user passwords
         return new BCryptPasswordEncoder();
     }
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-//    }
-
 
     @Primary
     @Bean
-    public AuthenticationManagerBuilder configureAuth(AuthenticationManagerBuilder auth) throws Exception {
+    protected AuthenticationManagerBuilder configureAuth(AuthenticationManagerBuilder auth) throws Exception {
         System.out.println("auth: " + auth);
         auth.userDetailsService(userService) // Provide userservice for spring security
                 .passwordEncoder(passwordEncoder()); // Provide password encoder
@@ -42,64 +52,31 @@ public class MySecurityConfiguration {
 
 
     @Bean
-    public SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
+    protected SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
         System.out.println("http: " + http);
         return http.authorizeHttpRequests(
                         req ->
                                 req
-                                        .requestMatchers("/", "/add").permitAll()
-                                        .requestMatchers("/tai-khoan-khach-hang/*")
-                                        .hasRole("ADMIN").requestMatchers("/tai-khoan/*")
-                                        .hasRole("STAFF").anyRequest().authenticated())
+                                        .requestMatchers("/", "/add", "/api/login").permitAll()
+                                        .requestMatchers("/hoa-don/view-all-invoice-waiting").hasRole("ADMIN")
+                                        .requestMatchers("/hoa-don/view-all-online-invoice").hasRole("CV01")
+                                        .requestMatchers("/tai-khoan/view-all").hasRole("STAFF")
+                                        .requestMatchers("/hoa-don/view-all").hasRole("CUSTOMER")
+                                        .anyRequest().authenticated())
                 .formLogin(login -> login.loginProcessingUrl("/chat-lieu/view-all"))
-                .logout(logout -> logout.logoutUrl("/logout"))
+                .logout(logout -> logout.logoutUrl("/logout")).addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable()).build();
     }
-
-
-}
-//
-//package com.example.fullstackbackend.config;
-//
-//
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.beans.factory.annotation.Qualifier;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.security.web.SecurityFilterChain;
-//
-//@Configuration
-//@EnableWebSecurity
-//@RequiredArgsConstructor
-//public class MySecurityConfiguration {
-//
-////    private final UserService userService;
-//
 //    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        // Password encoder, for Spring Security to use to encrypt user passwords
-//        return new BCryptPasswordEncoder();
-//    }
-//
-//
-//    @Bean
-//    public SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
+//    protected SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
 //        System.out.println("http: " + http);
-//        return http.authorizeHttpRequests(
+//        http.authorizeHttpRequests(
 //                        req ->
 //                                req
-//                                        .requestMatchers("/")
-//                                        .permitAll().requestMatchers("/tai-khoan-khach-hang/*")
-//                                        .hasRole("ADMIN").requestMatchers("/tai-khoan/*")
-//                                        .hasRole("STAFF").anyRequest().authenticated())
-//                .formLogin(login -> login.loginProcessingUrl("/chat-lieu/view-all"))
-//                .logout(logout -> logout.logoutUrl("/logout"))
-//                .csrf(csrf -> csrf.disable()).build();
+//                                        .requestMatchers("/api/login").permitAll()
+//                                        .anyRequest().authenticated())
+//                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+//                .csrf(csrf -> csrf.disable());
+//        return http.build();
 //    }
-//
-//
-//}
+}
