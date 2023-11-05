@@ -14,6 +14,8 @@ import CartBillADM from './pages/Cart-Bill-ADM';
 import OrderManagement from './pages/OrderManagement';
 import OrderManagementTimeline from './pages/OrderManagement-Timeline';
 import DiscountPage from './pages/discounts/DiscountPage';
+import ModelAddNewGiamGia from './pages/discounts/ModalsAddNewGiamGia';
+import ModelUpdateGiamGia from './pages/discounts/ModalsUpdateGiamGia';
 
 // ----------------------------------------------------------------------
 
@@ -33,6 +35,8 @@ export default function Router() {
         { path: 'staff', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'discounts', element: <DiscountPage /> },
+        { path: 'discount/add', element: <ModelAddNewGiamGia /> },
+        { path: 'discount/update/:id', element: <ModelUpdateGiamGia /> },
       ],
     },
     {

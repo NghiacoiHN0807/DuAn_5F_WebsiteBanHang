@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.util.Date;
 
 @Entity
 @AllArgsConstructor
@@ -34,10 +34,10 @@ public class GiamGia {
     private String tenChuongTrinh;
 
     @Column(name = "ngay_bat_dau")
-    Timestamp ngayBatDau;
+    Date ngayBatDau;
 
     @Column(name = "ngay_ket_thuc")
-    Timestamp ngayKetThuc;
+    Date ngayKetThuc;
 
     @Column(name = "muc_giam_phan_tram")
     private BigDecimal mucGiamPhanTram;

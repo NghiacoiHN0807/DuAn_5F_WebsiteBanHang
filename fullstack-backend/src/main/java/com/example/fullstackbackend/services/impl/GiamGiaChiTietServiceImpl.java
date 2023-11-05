@@ -82,8 +82,11 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     @Transactional
     public void remove(Integer id) {
         GiamGiaChiTiet giamGiaChiTiet = getOne(id).orElseThrow();
+        GiamGia giamGia = giamGiaService.getOne(giamGiaChiTiet.getIdGiamGia().getIdGiamGia()).orElseThrow();
+        giamGia.setTrangThai(10);
         giamGiaChiTiet.setTrangThai(10);
         Integer idSp = giamGiaChiTiet.getIdSp().getIdSp();
+        giamGiaService.add(giamGia);
         giamGiaChiTietRepository.updateCtsp("amount", BigDecimal.valueOf(0.0), idSp);
         giamGiaChiTietRepository.save(giamGiaChiTiet);
     }
