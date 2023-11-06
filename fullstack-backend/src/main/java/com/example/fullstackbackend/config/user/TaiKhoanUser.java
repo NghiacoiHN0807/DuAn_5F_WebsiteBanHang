@@ -37,10 +37,10 @@ public class TaiKhoanUser {
     private String sdt;
 
     @Column(name = "email")
-    private String username;
+    private String email;
 
     @Column(name = "mat_khau")
-    private String password;
+    private String matKhau;
 
     @Column(name = "trang_thai")
     private Integer trangThai;

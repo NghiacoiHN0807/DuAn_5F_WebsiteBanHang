@@ -1,6 +1,5 @@
 package com.example.fullstackbackend.config.jwt;
 
-import com.example.fullstackbackend.config.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -8,37 +7,37 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class JwtTokenProvider {
 
     // This code is secret, just only sever see that
-    private final String JWT_SECRET = "duan_5f";
+    private final String JWT_SECRET = "NghiaSieuDepTrai";
 
     // Set time for jwt
-    private final Long JWT_EXPIRATION = 604800000L;
+    private final Long JWT_EXPIRATION = 600000L;
 
     // Create Json JWT from user's information
-    public String generateToken(String userDetails) {
+    public String generateToken(UserDetails stringJWT) {
         // Set date time now expiry
         Date now = new Date();
         Date expiryDay = new Date(now.getTime() + JWT_EXPIRATION);
         // Set return JWT
-        return Jwts.builder().
-                setSubject(userDetails)
+        return Jwts.builder()
+                .setSubject(stringJWT.getUsername())
                 .setIssuedAt(now)
                 .setExpiration(expiryDay)
+                .claim("authorities", stringJWT.getAuthorities())
                 .signWith(SignatureAlgorithm.HS512, JWT_SECRET.getBytes())
                 .compact();
     }
 
-//    public String getJWTToken(String username) {
+//    public String generateToken(String username) {
 //        String secretKey = "mySecretKey";
 //        List<GrantedAuthority> grantedAuthorities = AuthorityUtils
 //                .commaSeparatedStringToAuthorityList("ROLE_USER");
@@ -60,18 +59,23 @@ public class JwtTokenProvider {
 //    }
 
     // Get user's information from JWT
-    public Long getUserIdFromJWT(String token) {
-        Claims claims = Jwts.parser().setSigningKey(JWT_SECRET)
+    public String getUserIdFromJWT(String token) {
+        Claims claims = Jwts.parser().setSigningKey(JWT_SECRET.getBytes())
                 .parseClaimsJws(token).getBody();
-        System.out.println("claims: "+ claims);
-        return Long.parseLong(claims.getSubject());
+        System.out.println("claims: " + claims);
+        return claims.getSubject();
+//        return extractClaims(token).getSubject();
     }
 
-    ;
+//    private Claims extractClaims(String token) {
+//        return Jwts.parser().setSigningKey(JWT_SECRET.getBytes()).parseClaimsJws(token).getBody();
+//    }
+//
+//    ;
 
     public Boolean validateToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(JWT_SECRET).parseClaimsJws(authToken);
+            Jwts.parser().setSigningKey(JWT_SECRET.getBytes()).parseClaimsJws(authToken);
             return true;
         } catch (MalformedJwtException ex) {
             log.error("Invalid JWT token");

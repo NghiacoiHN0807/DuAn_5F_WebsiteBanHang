@@ -17,13 +17,12 @@ import java.util.List;
 @NoArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
-    TaiKhoanUser taiKhoan;
+    private TaiKhoanUser taiKhoan;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-
 
         if (taiKhoan.getIdChucVu().getMaCv().equalsIgnoreCase("CV01")) {
             authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
@@ -33,19 +32,18 @@ public class CustomUserDetails implements UserDetails {
             authorities.add(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
         }
         System.out.println("\nauthorities: " + authorities);
-//        System.out.println("\nauthorities: " + authorities);
 
         return authorities;
     }
 
     @Override
     public String getPassword() {
-        return taiKhoan.getPassword();
+        return taiKhoan.getMatKhau();
     }
 
     @Override
     public String getUsername() {
-        return taiKhoan.getUsername();
+        return taiKhoan.getEmail();
     }
 
     @Override

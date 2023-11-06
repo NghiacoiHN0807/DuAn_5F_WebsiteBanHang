@@ -12,7 +12,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -33,29 +32,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         try {
-            // Get JWT from request
-            String jwt = getJwtFromRequest(request);
+        // Get JWT from request
+        System.out.println("===request:" + request);
+        String jwt = getJwtFromRequest(request);
 
-            if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
-                // Get id from JWT String
-                Long userID = jwtTokenProvider.getUserIdFromJWT(jwt);
+        if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
+//        if (StringUtils.hasText(jwt)) {
+//                // Get id from JWT String
+            String userID = jwtTokenProvider.getUserIdFromJWT(jwt);
 
-                System.out.println("userID: "+ userID);
+            System.out.println("userID: " + userID);
 
-                // Get information's user from id
-                UserDetails userDetails = userDetailsService.loadUserByUsername(String.valueOf(userID));
+            // Get information's user from id
+            UserDetails userDetails = userDetailsService.loadUserByUsername(String.valueOf(userID));
 
-                System.out.println("userDetails: "+ userDetails);
+            System.out.println("userDetails: " + userDetails);
 
-                if (userDetails != null) {
-                    // Nếu người dùng hợp lệ, set thông tin cho Seturity Context
-                    UsernamePasswordAuthenticationToken
-                            authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            if (userDetails != null) {
+                // Nếu người dùng hợp lệ, set thông tin cho Seturity Context
+                UsernamePasswordAuthenticationToken
+                        authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+        }
         } catch (Exception ex) {
             log.error("Failed on set user authentication");
         }

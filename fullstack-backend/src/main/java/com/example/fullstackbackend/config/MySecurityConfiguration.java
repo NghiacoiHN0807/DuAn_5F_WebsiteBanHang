@@ -63,8 +63,9 @@ public class MySecurityConfiguration {
                                         .requestMatchers("/tai-khoan/view-all").hasRole("STAFF")
                                         .requestMatchers("/hoa-don/view-all").hasRole("CUSTOMER")
                                         .anyRequest().authenticated())
-                .formLogin(login -> login.loginProcessingUrl("/chat-lieu/view-all"))
-                .logout(logout -> logout.logoutUrl("/logout")).addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+//                .formLogin(login -> login.loginProcessingUrl("/chat-lieu/view-all"))
+                .logout(logout -> logout.logoutUrl("/logout"))
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable()).build();
     }
 //    @Bean
