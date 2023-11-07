@@ -2,7 +2,7 @@
 
 ## Các thành viên 
 
-- Nhóm trưởng:  [@Nghĩa](https://github.com/NghiacoiHN)
+- Nhóm trưởng:  [@Nghĩa](https://github.com/NghiacoiHN0807)
 - Thành viên: [@Phúc](https://github.com/tonyphucvn)
 - Thành viên: [@Vinh]()
 - Thành viên: [@Long]()
