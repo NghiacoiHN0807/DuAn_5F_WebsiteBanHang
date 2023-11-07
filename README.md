@@ -15,10 +15,10 @@
 
 ## Cách cài đặt phần mềm
 ### Font-End
--Cài thư viện
-npm i
--Khởi động
+-Cài thư viện:
+npm i (npm install)
+-Khởi động:
 npm start
 ### Back-End
--Cài lại thư viện
+-Cài lại thư viện:
 mvn clean dependency:purge-local-repository dependency:resolve
