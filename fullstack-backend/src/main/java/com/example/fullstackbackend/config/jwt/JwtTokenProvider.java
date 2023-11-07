@@ -37,41 +37,14 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-//    public String generateToken(String username) {
-//        String secretKey = "mySecretKey";
-//        List<GrantedAuthority> grantedAuthorities = AuthorityUtils
-//                .commaSeparatedStringToAuthorityList("ROLE_USER");
-//
-//        String token = Jwts
-//                .builder()
-//                .setId("softtekJWT")
-//                .setSubject(username)
-//                .claim("authorities",
-//                        grantedAuthorities.stream()
-//                                .map(GrantedAuthority::getAuthority)
-//                                .collect(Collectors.toList()))
-//                .setIssuedAt(new Date(System.currentTimeMillis()))
-//                .setExpiration(new Date(System.currentTimeMillis() + 600000))
-//                .signWith(SignatureAlgorithm.HS512,
-//                        secretKey.getBytes()).compact();
-//
-//        return "Bearer " + token;
-//    }
-
     // Get user's information from JWT
     public String getUserIdFromJWT(String token) {
         Claims claims = Jwts.parser().setSigningKey(JWT_SECRET.getBytes())
                 .parseClaimsJws(token).getBody();
         System.out.println("claims: " + claims);
         return claims.getSubject();
-//        return extractClaims(token).getSubject();
     }
 
-//    private Claims extractClaims(String token) {
-//        return Jwts.parser().setSigningKey(JWT_SECRET.getBytes()).parseClaimsJws(token).getBody();
-//    }
-//
-//    ;
 
     public Boolean validateToken(String authToken) {
         try {
