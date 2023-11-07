@@ -4,7 +4,11 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import reportWebVitals from './reportWebVitals';
+<<<<<<< HEAD
 import 'bootstrap/scss/bootstrap.scss';
+=======
+import 'bootstrap/dist/css/bootstrap.min.css';
+>>>>>>> origin/nghiant0807
 
 // ----------------------------------------------------------------------
 
