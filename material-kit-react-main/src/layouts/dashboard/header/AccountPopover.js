@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 // @mui
 import { alpha } from '@mui/material/styles';
 import { Box, Divider, Typography, Stack, MenuItem, Avatar, IconButton, Popover } from '@mui/material';
@@ -25,13 +28,23 @@ const MENU_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function AccountPopover() {
+  const navigate = useNavigate();
+
   const [open, setOpen] = useState(null);
+  const [userInfo, setUserInfo] = useState('');
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
   };
 
+  // useState(() => {
+
+  // });
+  // Logout the user
   const handleClose = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('userFormToken');
+    navigate('/login');
     setOpen(null);
   };
 

@@ -57,13 +57,13 @@ public class MySecurityConfiguration {
         return http.authorizeHttpRequests(
                         req ->
                                 req
-                                        .requestMatchers("/", "/add", "/api/login").permitAll()
+                                        .requestMatchers("/", "/add", "/api/*").permitAll()
                                         .requestMatchers("/hoa-don/view-all-invoice-waiting").hasRole("ADMIN")
                                         .requestMatchers("/hoa-don/view-all-online-invoice").hasRole("CV01")
                                         .requestMatchers("/tai-khoan/view-all").hasRole("STAFF")
                                         .requestMatchers("/hoa-don/view-all").hasRole("CUSTOMER")
                                         .anyRequest().authenticated())
-//                .formLogin(login -> login.loginProcessingUrl("/chat-lieu/view-all"))
+//                .formLogin(login -> login.loginProcessingUrl(""))
                 .logout(logout -> logout.logoutUrl("/logout"))
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable()).build();
