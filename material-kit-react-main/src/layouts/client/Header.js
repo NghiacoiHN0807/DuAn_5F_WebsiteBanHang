@@ -30,7 +30,7 @@ const Header = () => (
             <span className="nav-separator">|</span>
           </Nav.Item>
           <Nav.Item>
-            <Nav.Link eventKey="link-2" className="nav-links">
+            <Nav.Link href="/login" eventKey="link-2" className="nav-links">
               Login
             </Nav.Link>
           </Nav.Item>

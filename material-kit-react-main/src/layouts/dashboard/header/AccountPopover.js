@@ -31,7 +31,7 @@ export default function AccountPopover() {
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(null);
-  const [userInfo, setUserInfo] = useState('');
+  // const [userInfo, setUserInfo] = useState('');
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -42,6 +42,9 @@ export default function AccountPopover() {
   // });
   // Logout the user
   const handleClose = () => {
+    setOpen(null);
+  };
+  const handleLogout = () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('userFormToken');
     navigate('/login');
@@ -110,7 +113,7 @@ export default function AccountPopover() {
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
-        <MenuItem onClick={handleClose} sx={{ m: 1 }}>
+        <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
           Logout
         </MenuItem>
       </Popover>

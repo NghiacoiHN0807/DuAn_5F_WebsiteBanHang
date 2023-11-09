@@ -65,10 +65,10 @@ public class SecurityController {
     public UserDetails deatilUser(HttpServletRequest request) {
         // Get Token
         String token = request.getHeader("Authorization").substring(7);
-        System.out.println("Token: "+token);
+        System.out.println("Token: " + token);
         // Get user email
         String userId = tokenProvider.getUserIdFromJWT(token);
-        System.out.println("userId: "+userId);
+        System.out.println("userId: " + userId);
         // Return get user
         return userService.loadUserByUsername(userId);
     }

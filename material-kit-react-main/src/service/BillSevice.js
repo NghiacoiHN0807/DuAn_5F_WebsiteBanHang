@@ -1,6 +1,14 @@
 import custom from './custom-axios';
 
-const selectAllBill = () => custom.get(`/hoa-don/view-all-offline-invoice`);
+const myHeaders = new Headers();
+myHeaders.append('Authorization', 'Bearer ', localStorage.getItem('accessToken'));
+
+const selectAllBill = () =>
+  custom.get(`/hoa-don/view-all-offline-invoice`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+    },
+  });
 const postAddBill = (kieuHoaDon, trangThai) => custom.post('/hoa-don/add', { kieuHoaDon, trangThai });
 // const detailBill = (id_hd) => custom.get(`/hoa-don/detail/${id_hd}`);
 const detailBill = (idHd) => custom.get(`/hoa-don/detail/${idHd}`);
@@ -15,7 +23,12 @@ const findByProductNameAndSize = (name, size, ms) =>
 const findById = (idSp) => custom.get(`/chi-tiet-san-pham/select-ctsp-byId/${idSp}`);
 const finByProductOnCart = (page, idHd) => custom.get(`/hoa-don-chi-tiet/view-all-prduct/${idHd}?p=${page}`);
 const getAllDataTaiKhoan = () => custom.get(`/tai-khoan-khach-hang/view-all-kh`);
-const selectAllInvoiceWaiting = () => custom.get(`/hoa-don/view-all-invoice-waiting`);
+const selectAllInvoiceWaiting = () =>
+  custom.get(`/hoa-don/view-all-invoice-waiting`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+    },
+  });
 const paymentOnline = (amount, orderInfo) =>
   custom.post(`/hoa-don/submitOrder?amount=${amount}&orderInfo=${orderInfo}`);
 const paymentOnlineSuccess = () => custom.get(`/hoa-don/vnpay-payment`);

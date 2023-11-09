@@ -50,7 +50,6 @@ public class MySecurityConfiguration {
         return auth;
     }
 
-
     @Bean
     protected SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
         System.out.println("http: " + http);
@@ -58,26 +57,14 @@ public class MySecurityConfiguration {
                         req ->
                                 req
                                         .requestMatchers("/", "/add", "/api/*").permitAll()
-                                        .requestMatchers("/hoa-don/view-all-invoice-waiting").hasRole("ADMIN")
-                                        .requestMatchers("/hoa-don/view-all-online-invoice").hasRole("CV01")
+                                        .requestMatchers("/hoa-don/*", "/hoa-don-chi-tiet/*", "/lich-su-hoa-don/*").hasRole("ADMIN")
                                         .requestMatchers("/tai-khoan/view-all").hasRole("STAFF")
                                         .requestMatchers("/hoa-don/view-all").hasRole("CUSTOMER")
                                         .anyRequest().authenticated())
 //                .formLogin(login -> login.loginProcessingUrl(""))
-                .logout(logout -> logout.logoutUrl("/logout"))
+//                .logout(logout -> logout.logoutUrl("/logout"))
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable()).build();
     }
-//    @Bean
-//    protected SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
-//        System.out.println("http: " + http);
-//        http.authorizeHttpRequests(
-//                        req ->
-//                                req
-//                                        .requestMatchers("/api/login").permitAll()
-//                                        .anyRequest().authenticated())
-//                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-//                .csrf(csrf -> csrf.disable());
-//        return http.build();
-//    }
+
 }

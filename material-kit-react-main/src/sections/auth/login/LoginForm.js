@@ -62,8 +62,6 @@ export default function LoginForm() {
       .then((result) => {
         console.log('result: ', result);
         localStorage.setItem('accessToken', result.accessToken);
-        const myHeaders = new Headers();
-        myHeaders.append('Authorization', 'Bearer ', localStorage.getItem('accessToken'));
         axios
           .get('http://localhost:8080/api/detail-user', {
             headers: {
@@ -72,18 +70,21 @@ export default function LoginForm() {
           })
           .then((response) => {
             if (response.status === 200) {
-              localStorage.setItem('userFormToken', response.data);
-              console.log(response.data);
-            } else {
-              throw Error(response.status);
+              localStorage.setItem('userFormToken', JSON.stringify(response.data));
+              console.log('response:', response.data);
+              const authorities = response.data.authorities[0].authority;
+              navigate(
+                authorities === 'ROLE_ADMIN' || authorities === 'ROLE_STAFF' ? '/dashboard/app' : '/client/home'
+              );
             }
+            throw Error(response.status);
           })
           .catch((error) => console.log('error', error));
         setAlertContent({
           type: 'success',
           message: 'Login Success',
         });
-        navigate('/dashboard');
+        // navigate('/dashboard');
       })
       .catch(
         (error) => console.log('error', error),
