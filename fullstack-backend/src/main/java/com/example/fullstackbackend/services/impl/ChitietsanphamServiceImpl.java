@@ -2,6 +2,9 @@ package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.repository.ChitietsanphamRepository;
+import com.example.fullstackbackend.repository.MausacRepository;
+import com.example.fullstackbackend.repository.SanphamRepository;
+import com.example.fullstackbackend.repository.SizeRepository;
 import com.example.fullstackbackend.services.ChitietsanphamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +21,15 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
 
     @Autowired
     private ChitietsanphamRepository chitietsanphamRepository;
+
+    @Autowired
+    private SanphamRepository spRepo;
+
+    @Autowired
+    private MausacRepository msRepo;
+
+    @Autowired
+    private SizeRepository sizeRepo;
 
     @Override
     public Page<ChiTietSanPham> chiTietSP(Integer pageNo, Integer size) {
@@ -92,10 +105,38 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
         return chitietsanphamRepository.existsById(id);
     }
 
-//    @Override
-//    public ChiTietSanPham getChiTietSanPhamBySanPhamIds(Integer idSp) {
-//        return chitietsanphamRepository.findByIdSp_IdSp(idSp);
-//    }
+    @Override
+    public ChiTietSanPham addColorAndSize(Integer idSp, Integer idMs, Integer idSize) {
+        if(chitietsanphamRepository.existsBySpAndMsAndSize(idSp, idMs, idSize) == 1){
+            return null;
+        }else {
+            ChiTietSanPham ctsp = new ChiTietSanPham();
+            ctsp.setIdSp(spRepo.findById(idSp).orElse(null));
+            ctsp.setIdMs(msRepo.findById(idMs).orElse(null));
+            ctsp.setIdSize(sizeRepo.findById(idSize).orElse(null));
+            return chitietsanphamRepository.save(ctsp);
+        }
+    }
+
+    @Override
+    public ChiTietSanPham updateNumber(Integer idCtsp, BigDecimal giaNhap, BigDecimal giaBan, Integer soLuongTon, Integer trangThai) {
+        ChiTietSanPham ctsp = chitietsanphamRepository.findById(idCtsp).orElse(null);
+        BigDecimal giaB = ctsp.getGiaBan();
+        BigDecimal giaTT = ctsp.getGiaThucTe();
+        ctsp.setGiaNhap(giaNhap);
+        if(giaB == giaTT || giaB == null){
+            ctsp.setGiaBan(giaBan);
+            ctsp.setGiaThucTe(giaBan);
+        }
+        if(giaB.compareTo(giaTT) == 1){
+            BigDecimal phanTramGG = giaB.divide(giaTT);
+            ctsp.setGiaBan(giaBan);
+            ctsp.setGiaThucTe(giaBan.divide(phanTramGG));
+        }
+        ctsp.setSoLuongTon(soLuongTon);
+        ctsp.setTrangThai(trangThai);
+        return ctsp;
+    }
 
 
 }

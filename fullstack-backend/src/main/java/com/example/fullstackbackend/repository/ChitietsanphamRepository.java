@@ -53,4 +53,12 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
     @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.idSp = ?1 and x.idSize.idSize = ?2")
     ChiTietSanPham checkExistSPandSize(Integer idSp, Integer idSize);
 
+    @Query(value = "SELECT COUNT(id_ctsp) > 0 as TonTai\n" +
+            "            FROM chi_tiet_san_pham c \n" +
+            "            WHERE c.id_sp = :idSp AND c.id_ms = :idMs AND c.id_size = :idSize", nativeQuery = true)
+    Integer existsBySpAndMsAndSize(@Param("idSp") Integer idSp,
+                                   @Param("idMs") Integer idMs,
+                                   @Param("idSize") Integer idSize);
+
+
 }

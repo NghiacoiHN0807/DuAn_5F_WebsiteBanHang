@@ -3,6 +3,7 @@ package com.example.fullstackbackend.services;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import org.springframework.data.domain.Page;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,5 +31,9 @@ public interface ChitietsanphamService {
     Optional<ChiTietSanPham> detail(Integer id);
 
     Boolean checkExists(Integer id);
+
+    ChiTietSanPham addColorAndSize(Integer idSp, Integer idMs, Integer idSize);
+
+    ChiTietSanPham updateNumber(Integer idCtsp, BigDecimal giaNhap, BigDecimal giaBan, Integer soLuongTon, Integer trangThai);
 
 }

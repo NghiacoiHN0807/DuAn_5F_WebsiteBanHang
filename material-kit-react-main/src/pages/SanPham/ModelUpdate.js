@@ -4,6 +4,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { pink } from '@mui/material/colors';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import EditIcon from '@mui/icons-material/Edit';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { CardGroup } from 'react-bootstrap';
 import { useDropzone } from 'react-dropzone';
 import {
@@ -39,6 +42,7 @@ import {
   CardMedia,
   Box,
   IconButton,
+  FormLabel,
 } from '@mui/material';
 import Iconify from '../../components/iconify';
 import { putUpdateSanPham, detailSP } from '../../service/SanPhamService';
@@ -51,9 +55,18 @@ import { fetchCL, detailCL } from '../../service/ChatLieuService';
 import { fetchCoAo, detailCoAo } from '../../service/LoaiCoAoService';
 import { fetchLSP, detailLSP } from '../../service/LoaiSPService';
 import { fetchTayAo, detailTayAo } from '../../service/OngTayAoService';
+import { fetchMS } from '../../service/MauSacService';
+import { fetchSize } from '../../service/SizeService';
+import '../../scss/UpdateSp.scss';
 
 function mapTrangThai(trangThai) {
-  return trangThai === 0 ? 'Còn bán' : trangThai === 10 ? 'Ngừng kinh doanh' : 'Unknown status';
+  return trangThai === 0
+    ? 'Còn bán'
+    : trangThai === 10
+    ? 'Ngừng kinh doanh'
+    : trangThai === 1
+    ? 'Không khả dụng'
+    : 'Unknown status';
 }
 
 export default function UpdateSanPham() {
@@ -67,6 +80,8 @@ export default function UpdateSanPham() {
   const [xuatXu, setXuatXu] = useState('');
   const [tayAo, setTayAo] = useState('');
   const [coAo, setCoAo] = useState('');
+  const [mauSac, setMauSac] = useState('');
+  const [size, setSize] = useState('');
 
   const [listCL, setListCL] = useState([]);
   const [listLSP, setListLSP] = useState([]);
@@ -75,6 +90,8 @@ export default function UpdateSanPham() {
   const [listCoAo, setListCoAo] = useState([]);
   const [listCTSP, setListCTSP] = useState([]);
   const [listImg, setListImg] = useState([]);
+  const [listMS, setListMS] = useState([]);
+  const [listSize, setListSize] = useState([]);
 
   useEffect(() => {
     getAllList();
@@ -95,6 +112,12 @@ export default function UpdateSanPham() {
 
     const resCoAo = await fetchCoAo();
     setListCoAo(resCoAo);
+
+    const resMS = await fetchMS();
+    setListMS(resMS);
+
+    const resSize = await fetchSize();
+    setListSize(resSize);
   };
 
   // Detail sp
@@ -125,14 +148,34 @@ export default function UpdateSanPham() {
   }, [getListData]);
 
   // dong mo confirm
-  const [open, setOpen] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
 
-  const handleClickOpenAdd = () => {
-    setOpen(true);
+  const handleClickUpdate = () => {
+    setOpenUpdate(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseUpdate = () => {
+    setOpenUpdate(false);
+  };
+
+  const [openColorAndSize, setOpenColorAndSize] = useState(false);
+
+  const handleClickColorAndSize = () => {
+    setOpenColorAndSize(true);
+  };
+
+  const handleCloseColorAndSize = () => {
+    setOpenColorAndSize(false);
+  };
+
+  const [openEditAtt, setOpenEditAtt] = useState(false);
+
+  const handleClickEditAtt = () => {
+    setOpenEditAtt(true);
+  };
+
+  const handleClostEditAtt = () => {
+    setOpenEditAtt(false);
   };
 
   // alert
@@ -194,11 +237,11 @@ export default function UpdateSanPham() {
       console.log('Check res: ', res);
       if (res && res.idSp) {
         handleAlertClick('Cập nhật thành công!', 'success');
-        handleClose();
+        handleCloseUpdate();
         navigate(`/dashboard/products`);
       } else {
         handleAlertClick('Cập nhật thất bại!', 'danger');
-        handleClose();
+        handleCloseUpdate();
       }
     }
   };
@@ -218,7 +261,7 @@ export default function UpdateSanPham() {
 
   const [selectedImages, setSelectedImages] = useState([]);
 
-  const uploadImage = async () => {
+  const uploadImage = useCallback(async () => {
     if (selectedImages.length !== 0) {
       const formData = new FormData();
       selectedImages.forEach((image) => {
@@ -234,13 +277,13 @@ export default function UpdateSanPham() {
         input.value = '';
       }
     }
-  };
+  }, [selectedImages, getAnhData, idSpHttp]);
 
   useEffect(() => {
     if (selectedImages.length > 0) {
       uploadImage();
     }
-  }, [selectedImages]);
+  }, [selectedImages, uploadImage]);
 
   const onDrop = useCallback((acceptedFiles) => {
     const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
@@ -257,11 +300,15 @@ export default function UpdateSanPham() {
     const parts = url.split('/');
     const publicId = parts[parts.length - 2].concat('/', parts[parts.length - 1].split('.')[0]);
 
-    const ces = await deleteCloud(publicId);
-    const res = await deleteAnh(idImg);
+    await deleteCloud(publicId);
+    await deleteAnh(idImg);
     getAnhData();
-    console.log('Check ces: ', ces);
-    console.log('Check res: ', res);
+  };
+
+  // radio
+
+  const handleChangeSize = (event, newAlignment) => {
+    setSize(newAlignment);
   };
 
   return (
@@ -435,7 +482,7 @@ export default function UpdateSanPham() {
               color="success"
               fullWidth
               sx={{ marginTop: '25px' }}
-              onClick={() => handleClickOpenAdd()}
+              onClick={() => handleClickUpdate()}
             >
               Cập nhật
             </Button>
@@ -450,7 +497,11 @@ export default function UpdateSanPham() {
               </Typography>
             </Grid>
             <Grid item xs={6} style={{ textAlign: 'right' }}>
-              <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} href="/dashboard/products/add">
+              <Button
+                variant="contained"
+                startIcon={<Iconify icon="eva:plus-fill" />}
+                onClick={() => handleClickColorAndSize()}
+              >
                 Thêm thuộc tính
               </Button>
             </Grid>
@@ -465,6 +516,7 @@ export default function UpdateSanPham() {
                       <TableCell>Giá bán</TableCell>
                       <TableCell>Số lượng tồn</TableCell>
                       <TableCell>Trạng thái</TableCell>
+                      <TableCell> </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -478,6 +530,11 @@ export default function UpdateSanPham() {
                         <TableCell>{row.giaBan}</TableCell>
                         <TableCell>{row.soLuongTon}</TableCell>
                         <TableCell>{mapTrangThai(row.trangThai)}</TableCell>
+                        <TableCell>
+                          <IconButton aria-label="add an alarm" onClick={() => handleClickEditAtt()}>
+                            <EditIcon />
+                          </IconButton>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -487,49 +544,56 @@ export default function UpdateSanPham() {
           </Grid>
         </Card>
         <Card sx={{ padding: '25px', marginTop: '15px' }}>
-          <div className="title" style={{ textAlign: 'center', margin: '20px 0' }}>
-            <h4>THÊM ẢNH</h4>
-          </div>
+          <Typography variant="h6" gutterBottom sx={{ paddingBottom: '20px' }}>
+            Cập nhật hình ảnh
+          </Typography>
 
           <div className="image-container">
             <CardGroup>
-              {listImg &&
-                listImg.length > 0 &&
-                listImg.map((item, index) => (
-                  <Card key={index} sx={{ width: 200, marginRight: 5, marginBottom: 5 }}>
-                    <CardActionArea>
-                      <Box position="relative">
-                        <CardMedia component="img" height="200" image={item.url} alt="green iguana" />
-                        <IconButton
-                          sx={{ position: 'absolute', top: 0, right: 0 }}
-                          size="small"
-                          color="primary"
-                          onClick={() => handlDeleteImg(item.idImage, item.url)}
-                        >
-                          <DeleteIcon sx={{ color: pink[500], fontSize: 40 }} />
-                        </IconButton>
-                      </Box>
-                    </CardActionArea>
-                  </Card>
-                ))}
-              {listImg.length < 10 && (
-                <Card sx={{ width: 200, marginRight: 5, marginBottom: 5, padding: 2 }}>
-                  <div {...getRootProps()} className="dropzone">
-                    <input {...getInputProps()} />
-                    <p>
-                      <AddPhotoAlternateIcon sx={{ fontSize: 40 }} /> Kéo hoặc thả ảnh vô đây, hoặc click để chọn ảnh
-                    </p>
-                    <p>(Ảnh tải lên có thể mất khoảng 10-15s để load ảnh, xin hãy đợi 1 chút)</p>
-                  </div>
-                </Card>
-              )}
+              <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                {listImg &&
+                  listImg.length > 0 &&
+                  listImg.map((item, index) => (
+                    <Grid item xs={2.3} key={index}>
+                      <Card key={index} sx={{ width: 200, marginRight: 5, marginBottom: 5 }}>
+                        <CardActionArea>
+                          <Box position="relative">
+                            <CardMedia component="img" height="200" image={item.url} alt="green iguana" />
+                            <IconButton
+                              sx={{ position: 'absolute', top: 0, right: 0 }}
+                              size="small"
+                              color="primary"
+                              onClick={() => handlDeleteImg(item.idImage, item.url)}
+                            >
+                              <DeleteIcon sx={{ color: pink[500], fontSize: 40 }} />
+                            </IconButton>
+                          </Box>
+                        </CardActionArea>
+                      </Card>
+                    </Grid>
+                  ))}
+                {listImg.length < 10 && (
+                  <Grid item xs={2.3}>
+                    <Card sx={{ width: 200, marginRight: 5, marginBottom: 5, padding: 2 }}>
+                      <div {...getRootProps()} className="dropzone">
+                        <input {...getInputProps()} />
+                        <p>
+                          <AddPhotoAlternateIcon sx={{ fontSize: 40 }} /> Kéo hoặc thả ảnh vô đây, hoặc click để chọn
+                          ảnh
+                        </p>
+                        <p>(Ảnh tải lên có thể mất khoảng 10-15s để load ảnh, xin hãy đợi 1 chút)</p>
+                      </div>
+                    </Card>
+                  </Grid>
+                )}
+              </Grid>
             </CardGroup>
           </div>
         </Card>
       </Container>
       <Dialog
-        open={open}
-        onClose={handleClose}
+        open={openUpdate}
+        onClose={handleCloseUpdate}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -540,7 +604,122 @@ export default function UpdateSanPham() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => handleClose()}>Canel</Button>
+          <Button onClick={() => handleCloseUpdate()}>Canel</Button>
+          <Button onClick={() => handleSave()} autoFocus>
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openColorAndSize}
+        onClose={handleCloseColorAndSize}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Thêm thuộc tính'}</DialogTitle>
+        <DialogContent>
+          <div className="listMauSac">
+            {listMS.length > 0 && (
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Màu sắc</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  label="Màu sắc"
+                  value={mauSac}
+                  onChange={(event) => setMauSac(event.target.value)}
+                >
+                  {listMS.map((item, index) => (
+                    <MenuItem value={item.idMs} key={index}>
+                      {item.tenMs}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+          </div>
+          <div className="listSize">
+            <span>Size: </span>
+            {listSize.length > 0 && (
+              <ToggleButtonGroup
+                color="success"
+                value={size}
+                exclusive
+                onChange={handleChangeSize}
+                aria-label="Platform"
+              >
+                {listSize.map((item, index) => (
+                  <ToggleButton value={item.idSize} key={index}>
+                    {item.tenSize}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            )}
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleCloseColorAndSize()}>Canel</Button>
+          <Button onClick={() => handleSave()} autoFocus>
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openEditAtt}
+        onClose={handleClostEditAtt}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Cập nhật số lượng và trạng thái'}</DialogTitle>
+        <DialogContent>
+          <div className="editAtt">
+            <TextField
+              id="outlined-number"
+              label="Giá nhập"
+              type="number"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              fullWidth
+            />
+          </div>
+          <div className="editAtt">
+            <TextField
+              id="outlined-number"
+              label="Giá bán"
+              type="number"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              fullWidth
+            />
+          </div>
+          <div className="editAtt">
+            <TextField
+              id="outlined-number"
+              label="Số lượng tồn"
+              type="number"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              fullWidth
+            />
+          </div>
+          <div className="editAtt">
+            <FormControl>
+              <FormLabel id="demo-row-radio-buttons-group-label">Trạng thái</FormLabel>
+              <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
+                <FormControlLabel value="0" control={<Radio />} label="Còn bán" />
+                <FormControlLabel value="1" control={<Radio />} label="Ngừng kinh doanh" />
+                <FormControlLabel value="10" control={<Radio />} label="Không khả dụng" />
+              </RadioGroup>
+            </FormControl>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleClostEditAtt()}>Canel</Button>
           <Button onClick={() => handleSave()} autoFocus>
             Ok
           </Button>
