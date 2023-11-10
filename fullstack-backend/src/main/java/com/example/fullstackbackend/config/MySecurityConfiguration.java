@@ -50,34 +50,29 @@ public class MySecurityConfiguration {
         return auth;
     }
 
-
     @Bean
     protected SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
         System.out.println("http: " + http);
         return http.authorizeHttpRequests(
                         req ->
                                 req
-                                        .requestMatchers("/", "/add", "/api/login").permitAll()
-                                        .requestMatchers("/hoa-don/view-all-invoice-waiting").hasRole("ADMIN")
-                                        .requestMatchers("/hoa-don/view-all-online-invoice").hasRole("CV01")
+                                        .requestMatchers("/", "/add", "/api/*").permitAll()
+                                        .requestMatchers("/**").hasRole("ADMIN")
                                         .requestMatchers("/tai-khoan/view-all").hasRole("STAFF")
                                         .requestMatchers("/hoa-don/view-all").hasRole("CUSTOMER")
+<<<<<<< HEAD
                                         .anyRequest().permitAll())
 //                .formLogin(login -> login.loginProcessingUrl("/chat-lieu/view-all"))
                 .logout(logout -> logout.logoutUrl("/logout"))
+=======
+                                        .anyRequest().authenticated())
+//                .formLogin(login -> login.loginProcessingUrl(""))
+//                .logout(logout -> logout.logoutUrl("/logout"))
+>>>>>>> origin/nghiant0807
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .csrf(csrf -> csrf.disable()).build();
+                .csrf(csrf -> csrf.disable())
+                .cors(a -> a.configure(http))
+                .build();
     }
-//    @Bean
-//    protected SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
-//        System.out.println("http: " + http);
-//        http.authorizeHttpRequests(
-//                        req ->
-//                                req
-//                                        .requestMatchers("/api/login").permitAll()
-//                                        .anyRequest().authenticated())
-//                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-//                .csrf(csrf -> csrf.disable());
-//        return http.build();
-//    }
+
 }

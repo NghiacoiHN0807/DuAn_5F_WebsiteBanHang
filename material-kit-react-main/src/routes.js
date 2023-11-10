@@ -13,15 +13,27 @@ import Sales from './pages/DirectSale-ADM';
 import CartBillADM from './pages/Cart-Bill-ADM';
 import OrderManagement from './pages/OrderManagement';
 import OrderManagementTimeline from './pages/OrderManagement-Timeline';
+<<<<<<< HEAD
 import DiscountPage from './pages/discounts/DiscountPage';
 import ModelAddNewGiamGia from './pages/discounts/ModalsAddNewGiamGia';
 import ModelUpdateGiamGia from './pages/discounts/ModalsUpdateGiamGia';
+=======
+import Home from './pages/client/Home';
+import DashboardLayoutClient from './layouts/dashboard/DashboardLayout-Client';
+>>>>>>> origin/nghiant0807
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
+  const getLocalStore = localStorage.getItem('userFormToken');
+  const authorities = getLocalStore && JSON.parse(getLocalStore).authorities[0].authority;
+
+  const layoutElement =
+    authorities === 'ROLE_ADMIN' || authorities === 'ROLE_STAFF' ? <DashboardLayout /> : <DashboardLayoutClient />;
+
   const routes = useRoutes([
     {
+<<<<<<< HEAD
       path: '/dashboard',
       element: <DashboardLayout />,
       children: [
@@ -38,6 +50,28 @@ export default function Router() {
         { path: 'discount/add', element: <ModelAddNewGiamGia /> },
         { path: 'discount/update/:id', element: <ModelUpdateGiamGia /> },
       ],
+=======
+      path: authorities === 'ROLE_ADMIN' || authorities === 'ROLE_STAFF' ? '/dashboard' : '/client',
+      element: layoutElement,
+      children:
+        authorities === 'ROLE_ADMIN' || authorities === 'ROLE_STAFF'
+          ? [
+              { element: <Navigate to="/dashboard/app" />, index: true },
+              { path: 'app', element: <DashboardAppPage /> },
+              { path: 'bills', element: <OrderManagement /> },
+              { path: 'bills/time-line/:id', element: <OrderManagementTimeline /> },
+              { path: 'sales', element: <Sales /> },
+              { path: 'sales/card-bill/:id', element: <CartBillADM /> },
+              { path: 'clients', element: <UserPage /> },
+              { path: 'staff', element: <UserPage /> },
+              { path: 'products', element: <ProductsPage /> },
+              { path: 'discounts', element: <BlogPage /> },
+            ]
+          : [
+              { element: <Navigate to="/client/home" />, index: true },
+              { path: 'home', element: <Home /> },
+            ],
+>>>>>>> origin/nghiant0807
     },
     {
       path: 'login',
@@ -46,7 +80,15 @@ export default function Router() {
     {
       element: <SimpleLayout />,
       children: [
-        { element: <Navigate to="/dashboard/app" />, index: true },
+        {
+          element:
+            authorities === 'ROLE_ADMIN' || authorities === 'ROLE_STAFF' ? (
+              <Navigate to="/dashboard/app" />
+            ) : (
+              <Navigate to="/client/home" />
+            ),
+          index: true,
+        },
         { path: '404', element: <Page404 /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],

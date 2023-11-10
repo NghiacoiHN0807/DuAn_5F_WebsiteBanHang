@@ -1,8 +1,11 @@
 // ----------------------------------------------------------------------
+const getLocalStore = localStorage.getItem('userFormToken');
+const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
+console.log('authorities: ', authorities);
 
 const account = {
-  displayName: 'Jaydon Frankie',
-  email: 'demo@minimals.cc',
+  displayName: `${authorities.ho} ${authorities.ten}`,
+  email: authorities.email,
   photoURL: '/assets/images/avatars/avatar_default.jpg',
 };
 

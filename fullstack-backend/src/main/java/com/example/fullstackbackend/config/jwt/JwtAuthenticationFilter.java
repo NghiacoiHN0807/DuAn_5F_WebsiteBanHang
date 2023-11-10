@@ -33,7 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             // Get JWT from request
-            System.out.println("===request:" + request);
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
@@ -41,12 +40,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //                // Get id from JWT String
                 String userID = jwtTokenProvider.getUserIdFromJWT(jwt);
 
-                System.out.println("userID: " + userID);
-
                 // Get information's user from id
                 UserDetails userDetails = userDetailsService.loadUserByUsername(String.valueOf(userID));
-
-                System.out.println("userDetails: " + userDetails);
 
                 if (userDetails != null) {
                     // Nếu người dùng hợp lệ, set thông tin cho Seturity Context

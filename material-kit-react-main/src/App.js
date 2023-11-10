@@ -1,6 +1,6 @@
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import Container from 'react-bootstrap/Container';
+// import Container from 'react-bootstrap/Container';
 // routes
 import Router from './routes';
 // import RouterClient from './routes-client';
@@ -23,6 +23,7 @@ export default function App() {
         <ThemeProvider>
           <ScrollToTop />
           <StyledChart />
+<<<<<<< HEAD
           {/* Router's ADMIN */}
           <Router />
           {/* Router's CLIENT */}
@@ -31,6 +32,9 @@ export default function App() {
             <RouterClient />
           </Container>
           <Footer /> */}
+=======
+          <Router />
+>>>>>>> origin/nghiant0807
         </ThemeProvider>
       </BrowserRouter>
     </HelmetProvider>
