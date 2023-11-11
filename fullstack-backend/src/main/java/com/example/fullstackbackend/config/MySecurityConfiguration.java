@@ -56,13 +56,11 @@ public class MySecurityConfiguration {
         return http.authorizeHttpRequests(
                         req ->
                                 req
-                                        .requestMatchers("/", "/add", "/api/*").permitAll()
+                                        .requestMatchers("/", "/add", "/api/**").permitAll()
                                         .requestMatchers("/**").hasRole("ADMIN")
                                         .requestMatchers("/tai-khoan/view-all").hasRole("STAFF")
                                         .requestMatchers("/hoa-don/view-all").hasRole("CUSTOMER")
                                         .anyRequest().authenticated())
-//                .formLogin(login -> login.loginProcessingUrl(""))
-//                .logout(logout -> logout.logoutUrl("/logout"))
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())
                 .cors(a -> a.configure(http))

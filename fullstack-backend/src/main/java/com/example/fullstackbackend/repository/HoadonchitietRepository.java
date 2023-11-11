@@ -13,7 +13,6 @@ import java.util.List;
 
 
 @Repository
-
 public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, Integer> {
     @Query(value = "SELECT id_hdct, id_ctsp, id_hd, so_luong, don_gia, ly_do_huy, trang_thai FROM duan_5f.hoa_don_chi_tiet where id_hd = ?1", nativeQuery = true)
     List<HoaDonChiTiet> detailHDCT(Integer id);
@@ -40,6 +39,6 @@ public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, In
             "JOIN duan_5f.hoa_don_chi_tiet hdct ON ct.id_ctsp = hdct.id_ctsp\n" +
             "JOIN duan_5f.hoa_don hd ON hd.id_hd = hdct.id_hd\n" +
             "WHERE ct.trang_thai = 0 AND hd.id_hd = ?1")
-    Page<Object[]> getListProductOncart(Pageable pageable, Integer idHd);
+    List<Object[]> getListProductOncart(Integer idHd);
 
 }
