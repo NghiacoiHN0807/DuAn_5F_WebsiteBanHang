@@ -33,8 +33,29 @@ export default function LoginForm() {
     }
     setAlertContent(null);
   };
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/detail-user', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+      });
 
-  const handleClick = () => {
+      if (response.status === 200) {
+        localStorage.setItem('userFormToken', JSON.stringify(response.data));
+        console.log('response:', response.data);
+        console.log('response: ', response);
+        const authorities = response.data.authorities[0].authority;
+        navigate(authorities === 'ROLE_ADMIN' || authorities === 'ROLE_STAFF' ? '/dashboard/app' : '/client/home');
+      } else {
+        throw Error(response.status);
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
+  };
+
+  const handleClick = async () => {
     console.log(params);
     const myHeaders = new Headers();
     myHeaders.append('Content-Type', 'application/json');
@@ -52,48 +73,30 @@ export default function LoginForm() {
       redirect: 'follow',
     };
 
-    fetch('http://localhost:8080/api/login', requestOptions)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw Error(response.status);
-      })
-      .then((result) => {
-        console.log('result: ', result);
-        localStorage.setItem('accessToken', result.accessToken);
-        axios
-          .get('http://localhost:8080/api/detail-user', {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-            },
-          })
-          .then((response) => {
-            if (response.status === 200) {
-              localStorage.setItem('userFormToken', JSON.stringify(response.data));
-              console.log('response:', response.data);
-              const authorities = response.data.authorities[0].authority;
-              navigate(
-                authorities === 'ROLE_ADMIN' || authorities === 'ROLE_STAFF' ? '/dashboard/app' : '/client/home'
-              );
-            }
-            throw Error(response.status);
-          })
-          .catch((error) => console.log('error', error));
+    try {
+      const response = await fetch('http://localhost:8080/api/login', requestOptions);
+
+      if (response.ok) {
         setAlertContent({
           type: 'success',
           message: 'Login Success',
         });
-        // navigate('/dashboard');
-      })
-      .catch(
-        (error) => console.log('error', error),
-        setAlertContent({
-          type: 'error',
-          message: 'Login Failed',
-        })
-      );
+        const result = await response.json();
+        console.log('result: ', result);
+        localStorage.setItem('accessToken', result.accessToken);
+        await fetchUserData();
+      } else {
+        throw new Error(response.status);
+      }
+    } catch (error) {
+      console.log('error', error);
+      setAlertContent({
+        type: 'error',
+        message: 'Login Failed',
+      });
+    }
   };
+
   return (
     <>
       <Stack spacing={3}>

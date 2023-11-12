@@ -734,9 +734,8 @@ const CartBillADM = () => {
                     <div className="text-information">
                       <div>
                         <h5>
-                          {' '}
                           <AccountBoxIcon />
-                          Thông Tin Thanh Toán
+                          Thông Tin Khách Hàng
                         </h5>
                       </div>
                       <TextField
@@ -765,55 +764,43 @@ const CartBillADM = () => {
                   )}
                 </Grid>
                 <Grid item xs={12} md={6} lg={4}>
-                  <div className="col-5">
-                    <h5>
-                      <AccountBalanceWalletIcon />
-                      THÔNG TIN THANH TOÁN
-                    </h5>
-                    <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Giao Hàng" />
-                    <br />
-                    <div className="row">
-                      <Stack
-                        sx={{ marginTop: 3 }}
-                        direction="row"
-                        alignItems="center"
-                        justifyContent="space-between"
-                        mb={5}
-                      >
-                        <Typography variant="h6" gutterBottom>
-                          Tiền Hàng{' '}
-                        </Typography>
-                        <Typography variant="h6" gutterBottom>
-                          {thanhTien}{' '}
-                        </Typography>
-                      </Stack>
-                      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                        <Typography variant="h6" gutterBottom>
-                          Giảm Giá{' '}
-                        </Typography>
-                        <Typography variant="h6" gutterBottom>
-                          {thanhTien}{' '}
-                        </Typography>
-                      </Stack>
-                      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                        <Typography variant="h6" gutterBottom>
-                          Tổng{' '}
-                        </Typography>
-                        <Typography variant="h6" gutterBottom>
-                          {thanhTien}{' '}
-                        </Typography>
-                      </Stack>
-                      {/* <div className="col-6">
-                        <p>Tiền Hàng</p>
-                        <p>Giảm Giá</p>
-                        <p>TỔNG: </p>
-                      </div>
-                      <div className="col-6">
-                        <p>{thanhTien}</p>
-                        <p>GIAM GIA</p>
-                        <p>{thanhTien}</p>
-                      </div> */}
-                    </div>
+                  <h5>
+                    <AccountBalanceWalletIcon />
+                    THÔNG TIN THANH TOÁN
+                  </h5>
+                  <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Giao Hàng" />
+                  <br />
+                  <div className="row">
+                    <Stack
+                      sx={{ marginTop: 5 }}
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      mb={3}
+                    >
+                      <Typography variant="h6" gutterBottom>
+                        Tiền Hàng{' '}
+                      </Typography>
+                      <Typography variant="h6" gutterBottom>
+                        {thanhTien}{' '}
+                      </Typography>
+                    </Stack>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+                      <Typography variant="h6" gutterBottom>
+                        Giảm Giá{' '}
+                      </Typography>
+                      <Typography variant="h6" gutterBottom>
+                        {thanhTien}{' '}
+                      </Typography>
+                    </Stack>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+                      <Typography variant="h6" gutterBottom>
+                        Tổng{' '}
+                      </Typography>
+                      <Typography variant="h6" gutterBottom>
+                        {thanhTien}{' '}
+                      </Typography>
+                    </Stack>
                   </div>
                 </Grid>
               </Grid>
