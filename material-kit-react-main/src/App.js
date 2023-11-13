@@ -14,6 +14,8 @@ import ScrollToTop from './components/scroll-to-top';
 // SCSS
 import './scss/App.scss';
 import './scss/Home.scss';
+import './scss/GiamGiaAdd.scss';
+import './scss/GiamGiaClient.scss';
 // ----------------------------------------------------------------------
 
 export default function App() {

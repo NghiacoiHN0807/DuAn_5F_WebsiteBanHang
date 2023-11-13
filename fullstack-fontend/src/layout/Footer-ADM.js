@@ -15,6 +15,7 @@ const Footer = (props) => {
           </div>
           <NavDropdown
             color="black"
+<<<<<<< HEAD
             title="Product Management"
             id="basic-nav-dropdown"
             className="link-footer"
@@ -42,12 +43,42 @@ const Footer = (props) => {
           <NavLink to="/home" className={"nav-link"}>
             Sales statistics
           </NavLink>
+=======
+            title="Dropdown"
+            id="basic-nav-dropdown"
+            className="link-footer"
+          >
+            <NavDropdown.Item href="#action/3.1">
+              <NavLink to="/table-xuatXu" className={"nav-link"}>
+                Table Xuat Xu
+              </NavLink>
+            </NavDropdown.Item>
+            <NavDropdown.Item href="#action/3.2">
+              Another action
+            </NavDropdown.Item>
+            <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item href="#action/3.4">
+              Separated link
+            </NavDropdown.Item>
+          </NavDropdown>
+          <Nav.Link href="/home" className="link-footer">
+            Active
+          </Nav.Link>
+          <Nav.Link eventKey="link-1" className="link-footer">
+            Link
+          </Nav.Link>
+          <Nav.Link eventKey="link-2" className="link-footer">
+            Link
+          </Nav.Link>
+>>>>>>> c6b89cf1 (push-new)
         </Nav>
       </footer>
     </>
   );
 };
 export default Footer;
+<<<<<<< HEAD
 // import React from "react";
 // import { Nav, NavDropdown } from "react-bootstrap";
 // import logo5F from "../assets/logo_5F.png";
@@ -112,3 +143,5 @@ export default Footer;
 //     </footer>
 
 // export default Footer;
+=======
+>>>>>>> c6b89cf1 (push-new)
