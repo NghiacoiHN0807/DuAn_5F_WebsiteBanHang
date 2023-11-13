@@ -47,10 +47,10 @@ public class HoaDonChiTietController {
         }
     }
     @GetMapping("view-all-prduct/{idHd}")
-    public Page<Object[]> getSanPhamsWithSizes(@RequestParam(defaultValue = "0") Integer page,
+    public List<Object[]> getSanPhamsWithSizes(@RequestParam(defaultValue = "0") Integer page,
                                                @RequestParam(defaultValue = "15") Integer size,
                                                @RequestParam("p") Optional<Integer> p, @PathVariable("idHd") Integer idHd) {
-        Page<Object[]> chiTietSP = hoadonchitietSevice.getListProductOncart(p.orElse(page), size, idHd);
+        List<Object[]> chiTietSP = hoadonchitietSevice.getListProductOncart(idHd);
         return chiTietSP;
     }
 

@@ -40,6 +40,6 @@ public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, In
             "JOIN duan_5f.hoa_don_chi_tiet hdct ON ct.id_ctsp = hdct.id_ctsp\n" +
             "JOIN duan_5f.hoa_don hd ON hd.id_hd = hdct.id_hd\n" +
             "WHERE ct.trang_thai = 0 AND hd.id_hd = ?1")
-    Page<Object[]> getListProductOncart(Pageable pageable, Integer idHd);
+    List<Object[]> getListProductOncart(Integer idHd);
 
 }
