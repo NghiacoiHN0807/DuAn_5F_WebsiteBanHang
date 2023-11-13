@@ -20,7 +20,7 @@ public class JwtTokenProvider {
     private final String JWT_SECRET = "NghiaSieuDepTrai";
 
     // Set time for jwt
-    private final Long JWT_EXPIRATION = 600000L;
+    private final Long JWT_EXPIRATION = 60000000000L;
 
     // Create Json JWT from user's information
     public String generateToken(UserDetails stringJWT) {

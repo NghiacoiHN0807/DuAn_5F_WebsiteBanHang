@@ -13,7 +13,6 @@ import java.util.List;
 
 
 @Repository
-
 public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, Integer> {
     @Query(value = "SELECT id_hdct, id_ctsp, id_hd, so_luong, don_gia, ly_do_huy, trang_thai FROM duan_5f.hoa_don_chi_tiet where id_hd = ?1", nativeQuery = true)
     List<HoaDonChiTiet> detailHDCT(Integer id);
