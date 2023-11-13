@@ -63,13 +63,9 @@ public class HoaDonController {
 
     @GetMapping("view-all-offline-invoice")
     public List<HoaDon> viewOffline() {
-<<<<<<< HEAD
         List<HoaDon> hoaDons = hoadonSevice.hoaDonOffline();
 
         return hoaDons;
-=======
-        return hoadonSevice.hoaDonOffline();
->>>>>>> origin/longth
     }
 
     @GetMapping("view-all-invoice-waiting")

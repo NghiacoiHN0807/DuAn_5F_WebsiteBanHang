@@ -54,22 +54,7 @@ public class MySecurityConfiguration {
     protected SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
         System.out.println("http: " + http);
         return http.authorizeHttpRequests(
-<<<<<<< HEAD
-                req ->
-                        req
-                                .requestMatchers("/add").permitAll()
-                                .requestMatchers("/tai-khoan-khach-hang/*")
 
-                                .hasRole("ADMIN")
-                                .anyRequest().permitAll())
-                .formLogin(login -> login.loginProcessingUrl("/chat-lieu/view-all"))
-                .logout(logout -> logout.logoutUrl("/logout"))
-                .csrf(csrf -> csrf.disable()).build();
-    }
-
-
-}
-=======
                         req ->
                                 req
                                         .requestMatchers("/", "/add", "/api/**","san-pham/**", "chi-tiet-san-pham/**").permitAll()
@@ -84,4 +69,3 @@ public class MySecurityConfiguration {
     }
 
 }
->>>>>>> origin/longth
