@@ -54,15 +54,6 @@ public class MySecurityConfiguration {
     protected SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
         System.out.println("http: " + http);
         return http.authorizeHttpRequests(
-<<<<<<< HEAD
-                req ->
-                        req
-                                .requestMatchers("/", "/add", "/api/**").permitAll()
-                                .requestMatchers("/**").hasRole("ADMIN")
-                                .requestMatchers("/tai-khoan/view-all").hasRole("STAFF")
-                                .requestMatchers("/hoa-don/view-all").hasRole("CUSTOMER")
-                                .anyRequest().authenticated())
-=======
                         req ->
                                 req
                                         .requestMatchers("/", "/add", "/api/**","san-pham/**", "chi-tiet-san-pham/**").permitAll()
@@ -70,7 +61,6 @@ public class MySecurityConfiguration {
                                         .requestMatchers("/tai-khoan/view-all").hasRole("STAFF")
                                         .requestMatchers("/hoa-don/view-all").hasRole("CUSTOMER")
                                         .anyRequest().authenticated())
->>>>>>> origin/nghiant0807
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())
                 .cors(a -> a.configure(http))
