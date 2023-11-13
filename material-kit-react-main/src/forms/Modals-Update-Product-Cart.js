@@ -21,9 +21,8 @@ const ModalUpdateProductOnCart = (props) => {
     itemUpdateClassify: PropTypes.array.isRequired,
     selectDataCart: PropTypes.func.isRequired,
     itemUpdate: PropTypes.array.isRequired,
-    currentPage: PropTypes.number.isRequired,
   };
-  const { show, handleClose, itemUpdateClassify, selectDataCart, itemUpdate, currentPage } = props;
+  const { show, handleClose, itemUpdateClassify, selectDataCart, itemUpdate } = props;
 
   //   Insert product
   //   Get Name Of Size And Number
@@ -122,7 +121,7 @@ const ModalUpdateProductOnCart = (props) => {
       handleClose();
       setQuantity(1);
       //   Load new data on cart
-      selectDataCart(currentPage);
+      selectDataCart();
       setAlertContent({
         type: 'success',
         message: 'Cập nhập sản phẩm thành công',
