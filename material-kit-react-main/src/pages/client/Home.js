@@ -1,85 +1,89 @@
-import { Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
+// react
+import { useCallback, useEffect, useState } from 'react';
+import { sample } from 'lodash';
+import { Card, DialogContent, Stack } from '@mui/material';
 import { Container } from '@mui/system';
 import { Carousel, Col, Row } from 'react-bootstrap';
+// import
 import anh1 from '../../assets/slider_2.jpg';
 import anh2 from '../../assets/banner-thoi-trang-nam.jpg';
 import anh3 from '../../assets/banner-thoi-trang-the-thao-cho-nam_113858272.jpg';
 import '../../scss/Home.scss';
+import { fetchAllCTSPBySize } from '../../service/BillSevice';
+// @mui
+import { ProductSort, ProductListClient, ProductFilterSidebar } from '../../sections/@dashboard/products';
 
 const Home = () => {
-  const products = [
-    {
-      image: '/path/to/image1.jpg',
-      title: 'Product 1',
-      description: 'Description of Product 1',
-    },
-    {
-      image: '/path/to/image2.jpg',
-      title: 'Product 2',
-      description: 'Description of Product 2',
-    },
-    {
-      image: '/path/to/image2.jpg',
-      title: 'Product 2',
-      description: 'Description of Product 2',
-    },
-    {
-      image: '/path/to/image2.jpg',
-      title: 'Product 2',
-      description: 'Description of Product 2',
-    },
-    {
-      image: '/path/to/image2.jpg',
-      title: 'Product 2',
-      description: 'Description of Product 2',
-    },
-    {
-      image: '/path/to/image2.jpg',
-      title: 'Product 2',
-      description: 'Description of Product 2',
-    },
-    {
-      image: '/path/to/image2.jpg',
-      title: 'Product 2',
-      description: 'Description of Product 2',
-    },
-    {
-      image: '/path/to/image2.jpg',
-      title: 'Product 2',
-      description: 'Description of Product 2',
-    },
-    {
-      image: '/path/to/image2.jpg',
-      title: 'Product 2',
-      description: 'Description of Product 2',
-    },
-    {
-      image: '/path/to/image2.jpg',
-      title: 'Product 2',
-      description: 'Description of Product 2',
-    },
-    {
-      image: '/path/to/image2.jpg',
-      title: 'Product 2',
-      description: 'Description of Product 2',
-    },
-    {
-      image: '/path/to/image2.jpg',
-      title: 'Product 2',
-      description: 'Description of Product 2',
-    },
-    // ... Add more products
-  ];
+  const [listData, setListData] = useState([]);
+
+  const getAllData = useCallback(async () => {
+    try {
+      const getData = await fetchAllCTSPBySize();
+      console.log('getData: ', getData);
+      if (getData) {
+        setListData(getData);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getAllData();
+  }, [getAllData]);
+
+  const [openFilter, setOpenFilter] = useState(false);
+
+  const handleOpenFilter = () => {
+    setOpenFilter(true);
+  };
+
+  const handleCloseFilter = () => {
+    setOpenFilter(false);
+  };
+
+  const PRODUCTS = listData.map((item, index) => {
+    const setIndex = index + 1;
+    const imagesArray = item[0].split(',');
+    const firstImage = imagesArray[0];
+    const arrayPrice = item[4].split(',');
+    const price = arrayPrice.map((price) => parseFloat(price));
+    // find max and min of price
+    const minPrice = Math.min(...price);
+    const maxPrice = Math.max(...price);
+    // Select price
+    const priceRange = minPrice === maxPrice ? minPrice : `${minPrice} ${maxPrice}`;
+
+    const PRODUCT_COLOR = ['#00AB55', '#000000', '#FFFFFF', '#FFC0CB', '#FF4842', '#1890FF', '#94D82D', '#FFC107'];
+
+    return {
+      id: item[1],
+      cover: firstImage,
+      name: item[3],
+      price: priceRange,
+      priceSale: item[2],
+      colors:
+        (setIndex === 1 && PRODUCT_COLOR.slice(0, 2)) ||
+        (setIndex === 2 && PRODUCT_COLOR.slice(1, 3)) ||
+        (setIndex === 3 && PRODUCT_COLOR.slice(2, 4)) ||
+        (setIndex === 4 && PRODUCT_COLOR.slice(3, 6)) ||
+        (setIndex === 23 && PRODUCT_COLOR.slice(4, 6)) ||
+        (setIndex === 24 && PRODUCT_COLOR.slice(5, 6)) ||
+        PRODUCT_COLOR,
+      status: sample(['sale', 'new', 'hot', '']),
+    };
+  });
+
   const itemsPerSlide = 4; // Number of cards per slide
 
-  const numSlides = Math.ceil(products.length / itemsPerSlide);
+  const numSlides = Math.ceil(PRODUCTS.length / itemsPerSlide);
 
   const slides = [];
   for (let i = 0; i < numSlides; i += 1) {
     const startIndex = i * itemsPerSlide;
-    const endIndex = Math.min(startIndex + itemsPerSlide, products.length);
+    const endIndex = Math.min(startIndex + itemsPerSlide, PRODUCTS.length);
 
-    const slideProducts = products.slice(startIndex, endIndex);
+    const slideProducts = PRODUCTS.slice(startIndex, endIndex);
 
     const slide = (
       <Carousel.Item key={i}>
@@ -88,17 +92,25 @@ const Home = () => {
             {slideProducts.map((product, index) => (
               <Col key={index}>
                 <Card sx={{ maxWidth: 345 }}>
-                  <CardActionArea>
-                    <CardMedia component="img" height="140" image={product.image} alt={product.title} />
-                    <CardContent>
-                      <Typography gutterBottom variant="h5" component="div">
-                        {product.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {product.description}
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
+                  <DialogContent>
+                    <Stack
+                      direction="row"
+                      flexWrap="wrap-reverse"
+                      alignItems="center"
+                      justifyContent="flex-end"
+                      sx={{ mb: 5 }}
+                    >
+                      <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
+                        <ProductFilterSidebar
+                          openFilter={openFilter}
+                          onOpenFilter={handleOpenFilter}
+                          onCloseFilter={handleCloseFilter}
+                        />
+                        <ProductSort />
+                      </Stack>
+                    </Stack>
+                    <ProductListClient products={PRODUCTS} />
+                  </DialogContent>
                 </Card>
               </Col>
             ))}

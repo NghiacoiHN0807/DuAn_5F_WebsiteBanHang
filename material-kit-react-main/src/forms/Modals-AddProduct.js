@@ -17,15 +17,13 @@ const ModalAddProduct = (props) => {
   };
   const { show, handleClose, selectDataCart, DataCart } = props;
   const [listData, setListData] = useState([]);
-  // const [numberPages, setNumberPages] = useState(0);
 
   const getAllData = useCallback(async (page) => {
     try {
       const getData = await fetchAllCTSPBySize(page);
-      console.log('getData.content: ', getData);
+      console.log('getData: ', getData);
       if (getData) {
         setListData(getData);
-        // setNumberPages(getData.totalPages);
       }
     } catch (error) {
       console.error(error);
@@ -35,17 +33,6 @@ const ModalAddProduct = (props) => {
   useEffect(() => {
     getAllData();
   }, [getAllData]);
-
-  // const handlePageClick = (page) => {
-  //   getAllData(page);
-  //   setCurrentPage(page);
-  // };
-
-  // const handleChoose = async (id, cover) => {
-  //   console.log('idSp: ', id);
-  //   console.log('imgs: ', cover);
-
-  // };
 
   //   Select card product
   const [openFilter, setOpenFilter] = useState(false);
@@ -112,17 +99,7 @@ const ModalAddProduct = (props) => {
                 <ProductSort />
               </Stack>
             </Stack>
-
             <ProductListADM products={PRODUCTS} />
-            {/* <ProductCartWidget /> */}
-
-            {/* <Stack direction="row" spacing={2} justify="center" alignItems="center">
-              <Pagination
-                onChange={(event, page) => handlePageClick(page - 1)}
-                count={numberPages}
-                variant="outlined"
-              />
-            </Stack> */}
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Hủy</Button>
