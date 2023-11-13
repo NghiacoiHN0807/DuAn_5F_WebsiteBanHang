@@ -73,6 +73,14 @@ const totalTheoNgay       = () => {
     return custom.get(`/hoa-don/total-revenue-by-day`);
 }
 
+const tyLeTraHang       = () => {
+    return custom.get(`/hoa-don/ty-le-tra-hang`);
+}
+
+const tongSpDaBan       = () => {
+    return custom.get(`/hoa-don/tong-sp-da-ban`);
+}
+
 
 export {
     selectAllBill,
@@ -93,4 +101,6 @@ export {
     totalRevenue,
     totalInvoieces,
     totalTheoNgay,
+    tyLeTraHang,
+    tongSpDaBan,
 };

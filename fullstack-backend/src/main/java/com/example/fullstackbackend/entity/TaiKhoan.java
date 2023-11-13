@@ -1,11 +1,8 @@
 package com.example.fullstackbackend.entity;
 
-<<<<<<< HEAD
 import jakarta.validation.constraints.*;
 import jakarta.validation.constraints.Size;
-=======
 
->>>>>>> origin/nghiant0807
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,11 +21,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-<<<<<<< HEAD
-=======
+
 import org.springframework.security.core.GrantedAuthority;
 
->>>>>>> origin/nghiant0807
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.UUID;

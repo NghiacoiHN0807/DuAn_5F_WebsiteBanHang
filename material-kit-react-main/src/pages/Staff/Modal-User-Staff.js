@@ -2,8 +2,6 @@ import { Link, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 // icon
-import CancelIcon from '@mui/icons-material/Cancel';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Chip from '@mui/material/Chip';
 
 // import { filter } from 'lodash';
@@ -307,15 +305,17 @@ export default function UserStaff() {
                             label="Hoạt động"
                             color="primary"
                             variant="outlined"
-                            style={{ color: 'green', borderColor: 'green' }}
+                            style={{ color: 'white', backgroundColor: 'green',border: 'none' }}
                           />
+
                         ) : (
                           <Chip
                             label="Dừng hoạt động"
                             color="secondary"
                             variant="outlined"
-                            style={{ color: 'red', borderColor: 'red' }}
+                            style={{ color: 'white', backgroundColor: 'red' ,border: 'none' }}
                           />
+
                         )}
                       </TableCell>
 

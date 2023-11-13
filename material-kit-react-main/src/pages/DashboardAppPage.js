@@ -1,5 +1,4 @@
 
-
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
 // @mui
@@ -9,11 +8,13 @@ import React, { useState, useEffect } from 'react';
 
 // icon
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faCircleDollarToSlot, faSackDollar } from '@fortawesome/free-solid-svg-icons';
+import { faAppleAlt, faBoxOpen, faBug, faCircleDollarToSlot, faSackDollar, faShoppingBag } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 // components
 import Iconify from '../components/iconify';
-import { totalRevenue, totalInvoieces, totalTheoNgay } from '../service/bill-service'
+import { totalRevenue, totalInvoieces, totalTheoNgay, tyLeTraHang, tongSpDaBan } from '../service/bill-service'
 import { topSpTrending } from '../service/san-pham-service'
 // sections
 import {
@@ -38,21 +39,28 @@ export default function DashboardAppPage() {
   const [invoieces, setinvoieces] = useState(0);
   const [spTrending, setSpTrending] = useState([]);
   const [hdNgay, setheoNgay] = useState([]);  // State for trending data
+  const [rate, setRate] = useState(0); // State for
+  const [allSp, setAllSp] = useState(0);
 
   theme.palette.info.main = '#4CAF50';
 
   useEffect(() => {
     const fetchData = async () => {
       const res = await totalRevenue();
-      const ris = await totalTheoNgay();
       const invoiecesResponse = await totalInvoieces();
       const trendingResponse = await topSpTrending();
+      const rateResponse = await tyLeTraHang();
+      const response = await totalTheoNgay();
+      const allSpres = await tongSpDaBan();
+
+
 
       setTotalBill(Number(res));
       setinvoieces(Number(invoiecesResponse));
       setSpTrending(trendingResponse);  // Set trending data
-
-      // setheoNgay(hdNgay);  // Cập nhật biến hdNgay với dữ liệu từ totalTheoNgay
+      setRate(Number(rateResponse));
+      setheoNgay(response);
+      setAllSp(Number(allSpres));
 
       console.log(hdNgay);
     };
@@ -79,36 +87,38 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng Doanh Thu" total={totalBill} icon={'ant-design:apple-filled'} />
+            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={<FontAwesomeIcon icon={faAppleAlt} />} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng Đơn Hàng" total={invoieces} color="info" icon={'ant-design:apple-filled'} />
+            <AppWidgetSummary title="Tổng Đơn Hàng" total={invoieces} color="info" icon={<FontAwesomeIcon icon={faShoppingBag} />} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Item Orders" total={1723315} color="warning" icon={'ant-design:windows-filled'} />
+            <AppWidgetSummary title="Tổng sản phẩm đã bán" total={allSp} color="warning" icon={<FontAwesomeIcon icon={faBoxOpen} />} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
+            <AppWidgetSummary title="Tỷ Lệ Trả Hàng (%)" total={rate} color="error" icon={<FontAwesomeIcon icon={faBug} />} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Tổng Tiền Theo Ngày"
               subheader="Biểu đồ tổng tiền theo ngày"
-              chartLabels={hdNgay.map(item => item.ngay)}
+              chartLabels={hdNgay.map(item => item[0])} // Assuming the first element in each sub-array is the date
               chartData={[
                 {
                   name: 'Tổng Tiền',
                   type: 'line',
                   fill: 'solid',
-                  data: hdNgay.map(item => item.tong),
+                  data: hdNgay.map(item => item[1]), // Assuming the second element in each sub-array is the total amount
                 },
               ]}
             />
+
           </Grid>
+
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits

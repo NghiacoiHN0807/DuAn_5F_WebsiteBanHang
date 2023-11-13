@@ -39,17 +39,12 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
         return taiKhoanRepository.findAllByTrangThai(pageable);
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
     @Override
     public TaiKhoan add(TaiKhoan taiKhoan) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String encodedPassword = encoder.encode(taiKhoan.getMatKhau());
-        System.out.println("Encoded password: " + encodedPassword);
-        taiKhoan.setMatKhau(encodedPassword); // Gán mật khẩu đã mã hóa vào tài khoản
+//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+//        String encodedPassword = encoder.encode(taiKhoan.getMatKhau());
+//        System.out.println("Encoded password: " + encodedPassword);
+//        taiKhoan.setMatKhau(encodedPassword); // Gán mật khẩu đã mã hóa vào tài khoản
         TaiKhoan savedTaiKhoan = taiKhoanRepository.save(taiKhoan);
         return savedTaiKhoan;
     }

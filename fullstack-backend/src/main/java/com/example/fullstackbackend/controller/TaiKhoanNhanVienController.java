@@ -35,15 +35,9 @@ public class TaiKhoanNhanVienController {
     }
 
     @GetMapping("view-alls")
-<<<<<<< HEAD
     public List<TaiKhoan> viewAlll() {
         return taiKhoanNhanVienService.getAll();
-=======
-    public Page<TaiKhoan> viewAlll(@RequestParam(defaultValue = "0", value = "page") Integer page,
-                                   @RequestParam(defaultValue = "15") Integer size,
-                                   @RequestParam("trangThai") Integer trangThai) {
-        return taiKhoanNhanVienService.phanTrang(page, size, trangThai);
->>>>>>> origin/nghiant0807
+
     }
 
     @PostMapping("add")

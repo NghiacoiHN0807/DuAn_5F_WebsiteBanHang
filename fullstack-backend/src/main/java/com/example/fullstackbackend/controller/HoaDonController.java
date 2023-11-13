@@ -385,4 +385,14 @@ public class HoaDonController {
     public List<Object[]> getTotalRevenueByDay() {
         return hoadonSevice.getTotalRevenueByDay();
     }
+
+    @GetMapping("/ty-le-tra-hang")
+    public Double getTyLeTraHang() {
+        return hoadonSevice.getTyLeTraHang();
+    }
+
+    @GetMapping("/tong-sp-da-ban")
+    public Long getSpDaBan() {
+        return hoadonSevice.tongSpDaban();
+    }
 }

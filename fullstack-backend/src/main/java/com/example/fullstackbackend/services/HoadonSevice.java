@@ -39,4 +39,8 @@ public interface HoadonSevice {
 
     List<Object[]> getTotalRevenueByDay();
 
+    Double getTyLeTraHang();
+
+    Long tongSpDaban();
+
 }

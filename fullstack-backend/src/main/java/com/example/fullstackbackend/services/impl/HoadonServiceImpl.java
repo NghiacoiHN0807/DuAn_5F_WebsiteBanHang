@@ -139,5 +139,15 @@ public class HoadonServiceImpl implements HoadonSevice {
         return hoadonRepository.getTotalRevenueByDay();
     }
 
+    @Override
+    public Double getTyLeTraHang() {
+        return hoadonRepository.getTyLeTraHang();
+    }
+
+    @Override
+    public Long tongSpDaban() {
+        return hoadonRepository.getTongSpBan();
+    }
+
 
 }
