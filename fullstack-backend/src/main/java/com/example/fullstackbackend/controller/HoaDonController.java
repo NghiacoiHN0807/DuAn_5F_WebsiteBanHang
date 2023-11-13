@@ -49,31 +49,37 @@ public class HoaDonController {
     @Autowired
     private HinhThucThanhToanSevice hinhThucThanhToanSevice;
 
+    // get datetimenow
+    java.util.Date currentDate = new java.util.Date();
+    // Chuyển đổi thành Timestamp
+    Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+
     @GetMapping("view-all")
     public Page<HoaDon> viewAll(@RequestParam(defaultValue = "0") Integer page,
                                 @RequestParam(defaultValue = "10") Integer size,
                                 @RequestParam("p") Optional<Integer> p) {
-        Page<HoaDon> hoaDons = hoadonSevice.hoaDonPage(p.orElse(page), size);
-        return hoaDons;
+        return hoadonSevice.hoaDonPage(p.orElse(page), size);
     }
 
     @GetMapping("view-all-offline-invoice")
     public List<HoaDon> viewOffline() {
+<<<<<<< HEAD
         List<HoaDon> hoaDons = hoadonSevice.hoaDonOffline();
 
         return hoaDons;
+=======
+        return hoadonSevice.hoaDonOffline();
+>>>>>>> origin/longth
     }
 
     @GetMapping("view-all-invoice-waiting")
     public List<HoaDon> selectAllInvoiceWaiting() {
-        List<HoaDon> hoaDons = hoadonSevice.selectAllInvoiceWaiting();
-        return hoaDons;
+        return hoadonSevice.selectAllInvoiceWaiting();
     }
 
     @GetMapping("view-all-online-invoice")
     public List<HoaDon> viewAllOnlineInvoice() {
-        List<HoaDon> hoaDons = hoadonSevice.hoaDonOnline();
-        return hoaDons;
+        return hoadonSevice.hoaDonOnline();
     }
 
     @PostMapping("add")
@@ -83,12 +89,6 @@ public class HoaDonController {
         } else {
             HoaDon hoaDon = hoadonSevice.add(newHD);
             //Add to history bill
-
-            // Lấy ngày giờ hiện tại
-            java.util.Date currentDate = new java.util.Date();
-            // Chuyển đổi thành Timestamp
-            Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
             lichSuHoaDon.setIdHd(hoaDon);
             lichSuHoaDon.setIdTk(hoaDon.getIdTK());
@@ -103,20 +103,19 @@ public class HoaDonController {
 
     @GetMapping("detail/{id}")
     public HoaDon detail(@PathVariable("id") Integer id) {
-        HoaDon findHDCT = hoadonSevice.detail(id).
+        return hoadonSevice.detail(id).
                 orElseThrow(() -> new xuatXuNotFoundException(id));
-        return findHDCT;
+
     }
 
     @GetMapping("findByMaHD/{id}")
     public HoaDon finByMaHD(@PathVariable("id") Integer id) {
-        HoaDon findID = hoadonSevice.finByMaHD(id);
-        return findID;
+        return hoadonSevice.finByMaHD(id);
     }
 
     @PutMapping("update/{id}")
     public HoaDon update(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
-        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+        return hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setIdTK(newHD.getIdTK());
             hoaDon.setMaHd(newHD.getMaHd());
             hoaDon.setNgayTao(newHD.getNgayTao());
@@ -138,7 +137,6 @@ public class HoaDonController {
             hoaDon.setTrangThai(newHD.getTrangThai());
             return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
-        return newHD1;
     }
 
     @PutMapping("update-status/{id}")
@@ -151,10 +149,6 @@ public class HoaDonController {
 
         //Add to history bill
 
-        // get datetimenow
-        java.util.Date currentDate = new java.util.Date();
-        // Chuyển đổi thành Timestamp
-        Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
 
         LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
         lichSuHoaDon.setIdHd(newHD1);
@@ -190,12 +184,6 @@ public class HoaDonController {
         hinhThucThanhToanSevice.add(hinhThucThanhToan2);
 
         //Add to history bill
-
-        // get datetimenow
-        java.util.Date currentDate = new java.util.Date();
-        // Chuyển đổi thành Timestamp
-        Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-
         LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
         lichSuHoaDon.setIdHd(newHD1);
         lichSuHoaDon.setIdTk(newHD1.getIdTK());
@@ -223,12 +211,6 @@ public class HoaDonController {
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
 
         //Add to history bill
-
-        // get datetimenow
-        java.util.Date currentDate = new java.util.Date();
-        // Chuyển đổi thành Timestamp
-        Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-
         LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
         lichSuHoaDon.setIdHd(newHD1);
         lichSuHoaDon.setIdTk(newHD1.getIdTK());
@@ -241,20 +223,21 @@ public class HoaDonController {
 
     @PutMapping("update-tong-tien/{id}")
     public HoaDon updateTongTien(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
-        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+        return hoadonSevice.detail(id).map(hoaDon -> {
+//            BigDecimal thanhTien =  newHD.getTongTien().subtract(newHD.getSoTienGiamGia()).add(newHD.getTienShip());
             hoaDon.setTongTien(newHD.getTongTien());
+            hoaDon.setThanhTien(newHD.getTongTien());
             return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
-        return newHD1;
     }
 
     @PutMapping("update-khach-hang/{id}")
     public HoaDon updateKhachHang(@RequestBody TaiKhoan newTK, @PathVariable("id") Integer id) {
-        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+        return hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setIdKH(newTK);
             return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
-        return newHD1;
+
     }
 
     @PostMapping("submitOrder")
@@ -262,8 +245,7 @@ public class HoaDonController {
                               @RequestParam("orderInfo") String orderInfo,
                               HttpServletRequest request) {
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        String vnpayUrl = vnPayService.createOrder(orderTotal, orderInfo, baseUrl);
-        return vnpayUrl;
+        return vnPayService.createOrder(orderTotal, orderInfo, baseUrl);
     }
 
     @GetMapping("vnpay-payment")
@@ -317,12 +299,6 @@ public class HoaDonController {
             }
 
             //Add to history bill
-
-            // get datetimenow
-            java.util.Date currentDate = new java.util.Date();
-            // Chuyển đổi thành Timestamp
-            Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
             lichSuHoaDon.setIdHd(hoaDon);
             lichSuHoaDon.setIdTk(hoaDonDTO1.getIdTK());
@@ -352,12 +328,6 @@ public class HoaDonController {
         } else {
             Optional<HoaDon> hoaDon = hoadonSevice.detail(id);
             //Add to history bill
-
-            // get datetimenow
-            java.util.Date currentDate = new java.util.Date();
-            // Chuyển đổi thành Timestamp
-            Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
-
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
             lichSuHoaDon.setIdHd(hoaDon.get());
             lichSuHoaDon.setIdTk(hoaDon.get().getIdTK());

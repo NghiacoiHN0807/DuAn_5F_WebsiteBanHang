@@ -21,6 +21,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,8 +84,11 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     @Transactional
     public void remove(Integer id) {
         GiamGiaChiTiet giamGiaChiTiet = getOne(id).orElseThrow();
+        GiamGia giamGia = giamGiaService.getOne(giamGiaChiTiet.getIdGiamGia().getIdGiamGia()).orElseThrow();
+        giamGia.setTrangThai(10);
         giamGiaChiTiet.setTrangThai(10);
         Integer idSp = giamGiaChiTiet.getIdSp().getIdSp();
+        giamGiaService.add(giamGia);
         giamGiaChiTietRepository.updateCtsp("amount", BigDecimal.valueOf(0.0), idSp);
         giamGiaChiTietRepository.save(giamGiaChiTiet);
     }
@@ -147,6 +152,8 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     @Override
     @Transactional
     public GiamGia insert(GiamGiaDTO giamGiaDTO) {
+
+        System.out.println("giamGiaDTO.getGiamGia().getNgayBatDau(): "+ giamGiaDTO.getGiamGia().getNgayBatDau());
         GiamGia giamGia1 = (GiamGia) giamGiaService.add(giamGiaDTO.getGiamGia());
         List<Integer> idSp = giamGiaDTO.getIdSp();
         for (Integer i: idSp) {

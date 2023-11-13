@@ -33,7 +33,7 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
             "            WHERE ct.trang_thai =0\n" +
             "            GROUP BY sp.id_sp, sp.ma_sp, sp.ten_sp\n" +
             "            ORDER BY sp.ma_sp DESC", nativeQuery = true)
-    Page<Object[]> getSanPhamWithSizes(Pageable pageable);
+    List<Object[]> getSanPhamWithSizes();
 
     @Query("SELECT x FROM ChiTietSanPham x WHERE x.idSp.tenSp = :tenSp AND x.idSize.tenSize = :tenSize AND x.idMs.tenMs = :tenMs")
     Optional<ChiTietSanPham> findByProductNameAndSize(@Param("tenSp") String tenSp, @Param("tenSize") String tenSize, @Param("tenMs") String tenMs);

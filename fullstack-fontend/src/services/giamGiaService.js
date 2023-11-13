@@ -53,7 +53,7 @@ const add = (giamGiaChiTiet) => {
 }
 
 const addGiamGia = (giamGia) => {
-return custom.post(`/giam-gia-chi-tiet/api/insert`, giamGiaChiTiet);
+return custom.post(`/giam-gia-chi-tiet/api/insert`, giamGia);
 }
 
 const addLichSuGiamGia = (lsGiamGia) => {

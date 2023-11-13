@@ -68,5 +68,19 @@ public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, 
 
     Boolean existsByIdSp_IdSp(Integer idSp);
 
+    @Modifying
+    @Query(value = "update chi_tiet_san_pham set gia_thuc_te = gia_ban where id_sp = :idSp", nativeQuery = true)
+    void updateCtsp(@Param("idSp") Integer idSp);
+
+    @Modifying
+    @Query(value = "update giam_gia set trang_thai = :trangThai where id_giam_gia = :idGiamGia", nativeQuery = true)
+    void updateTrangThaiGiamGia(@Param("trangThai") Integer trangThai, @Param("idGiamGia") Integer idGiamGia);
+
+    @Modifying
+    @Query(value = "update giam_gia_chi_tiet set trang_thai = :trangThai where id_giam_gia = :idGiamGia", nativeQuery = true)
+    void updateTrangThaiGiamGiaChiTiet(@Param("trangThai") Integer trangThai, @Param("idGiamGia") Integer idGiamGia);
+
+    @Query(value = "select * from giam_gia_chi_tiet where id_giam_gia = :idGiamGia", nativeQuery = true)
+    List<GiamGiaChiTiet> findByIdGiamGia(@Param("idGiamGia") Integer idGiamGia);
 
 }

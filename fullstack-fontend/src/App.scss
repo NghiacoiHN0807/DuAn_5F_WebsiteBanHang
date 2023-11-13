@@ -1,0 +1,42 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+.app-container {
+  .add-new {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+//Header
+.gray-background {
+  background-color: rgb(237, 237, 237);
+  .nav-links {
+    font-size: small;
+    color: black;
+  }
+  .nav-separator {
+    margin: 0 5px; /* Điều chỉnh khoảng cách giữa dấu "|" và các NavLink */
+    color: black; /* Màu sắc của dấu "|" */
+  }
+}
+//Home
+.gray-background-home {
+  background-color: rgb(237, 237, 237);
+  text-align: center;
+  font-size: small;
+  .hello {
+    color: rgb(0, 0, 0);
+    font-size: small;
+  }
+}

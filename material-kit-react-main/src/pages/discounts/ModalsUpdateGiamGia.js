@@ -8,7 +8,7 @@ import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { addGiamGia, detail, getAllSanPham, getCtspByIdSp, getIdGiamGia, getImgByIdSp, update } from "../../service/giamGiaService";
+import { detail, getAllSanPham, update } from "../../service/giamGiaService";
 import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
 

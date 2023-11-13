@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useState } from "react";
+import { format } from 'date-fns';
+import { vi } from 'date-fns/locale'; // Import locale cho tiếng Việt
 import Modal from "react-bootstrap/Modal";
 import { useNavigate, useParams } from "react-router-dom";
 import { Alert, Button, Checkbox, Chip, Grid, Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
@@ -251,10 +253,18 @@ const ModelAddNewGiamGia = () => {
     }
 
     try {
+
+// Định dạng ngày và giờ theo múi giờ Việt Nam
+
       const selectedDate = dayjs(ngayBatDau);
-      const ngay = selectedDate.format('YYYY-MM-DDTHH:mm:ss');
+      const ngay = selectedDate.format('YYYY-MM-DDTHH:mm:ss', { locale: vi });
       const selectedDatekt = dayjs(ngayKetThuc);
-      const ngaykt = selectedDatekt.format('YYYY-MM-DDTHH:mm:ss');
+      const ngaykt = selectedDatekt.format('YYYY-MM-DDTHH:mm:ss', { locale: vi });
+
+      // const formattedDateFirst = format(ngay, 'dd/MM/yyyy HH:mm:ss', { locale: vi });
+      // const formattedDateLast = format(ngaykt, 'dd/MM/yyyy HH:mm:ss', { locale: vi });
+
+      console.log("ngay", ngay)
 
       const giaGiaAa = {
         maGiamGia: giamGia.maGiamGia,
@@ -265,6 +275,8 @@ const ModelAddNewGiamGia = () => {
         mucGiamTienMat: giamGia.mucGiamTienMat,
         trangThai: 0,
       }
+
+      console.log("giaGiaAa", giaGiaAa)
 
 
       // Trích xuất danh sách idSp từ chiTietList
