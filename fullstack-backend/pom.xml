@@ -106,6 +106,7 @@
             <version>3.1.1</version>
         </dependency>
 
+<<<<<<< HEAD
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -122,6 +123,8 @@
             <artifactId>jaxb-api</artifactId>
             <version>2.3.1</version>
         </dependency>
+=======
+>>>>>>> dcb3e31fa0c1456e8bc977a2275425ff64662a4f
 
     </dependencies>
 

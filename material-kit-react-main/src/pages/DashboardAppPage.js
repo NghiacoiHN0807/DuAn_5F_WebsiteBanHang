@@ -1,10 +1,21 @@
+
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+
+// icon
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faAppleAlt, faBoxOpen, faBug, faCircleDollarToSlot, faSackDollar, faShoppingBag } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+
 // components
 import Iconify from '../components/iconify';
+import { totalRevenue, totalInvoieces, totalTheoNgay, tyLeTraHang, tongSpDaBan } from '../service/bill-service'
+import { topSpTrending } from '../service/san-pham-service'
 // sections
 import {
   AppTasks,
@@ -18,10 +29,50 @@ import {
   AppConversionRates,
 } from '../sections/@dashboard/app';
 
+
 // ----------------------------------------------------------------------
+library.add(faSackDollar);
 
 export default function DashboardAppPage() {
   const theme = useTheme();
+  const [totalBill, setTotalBill] = useState(0);
+  const [invoieces, setinvoieces] = useState(0);
+  const [spTrending, setSpTrending] = useState([]);
+  const [hdNgay, setheoNgay] = useState([]);  // State for trending data
+  const [rate, setRate] = useState(0); // State for
+  const [allSp, setAllSp] = useState(0);
+
+  theme.palette.info.main = '#4CAF50';
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await totalRevenue();
+      const invoiecesResponse = await totalInvoieces();
+      const trendingResponse = await topSpTrending();
+      const rateResponse = await tyLeTraHang();
+      const response = await totalTheoNgay();
+      const allSpres = await tongSpDaBan();
+
+
+
+      setTotalBill(Number(res));
+      setinvoieces(Number(invoiecesResponse));
+      setSpTrending(trendingResponse);  // Set trending data
+      setRate(Number(rateResponse));
+      setheoNgay(response);
+      setAllSp(Number(allSpres));
+
+      console.log(hdNgay);
+    };
+
+    fetchData();
+
+  }, []);
+
+  const currentVisitsData = spTrending.map(item => ({
+    label: item[1], // Tên quốc gia, ví dụ "Ao Kakame"
+    value: item[0], // Số lượng lượt truy cập, ví dụ 5z`
+  }));
 
   return (
     <>
@@ -31,78 +82,51 @@ export default function DashboardAppPage() {
 
       <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Hi, Welcome back
+          Thống Kê
         </Typography>
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Weekly Sales" total={714000} icon={'ant-design:android-filled'} />
+            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={<FontAwesomeIcon icon={faAppleAlt} />} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="New Users" total={1352831} color="info" icon={'ant-design:apple-filled'} />
+            <AppWidgetSummary title="Tổng Đơn Hàng" total={invoieces} color="info" icon={<FontAwesomeIcon icon={faShoppingBag} />} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Item Orders" total={1723315} color="warning" icon={'ant-design:windows-filled'} />
+            <AppWidgetSummary title="Tổng sản phẩm đã bán" total={allSp} color="warning" icon={<FontAwesomeIcon icon={faBoxOpen} />} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
+            <AppWidgetSummary title="Tỷ Lệ Trả Hàng (%)" total={rate} color="error" icon={<FontAwesomeIcon icon={faBug} />} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
-              title="Website Visits"
-              subheader="(+43%) than last year"
-              chartLabels={[
-                '01/01/2003',
-                '02/01/2003',
-                '03/01/2003',
-                '04/01/2003',
-                '05/01/2003',
-                '06/01/2003',
-                '07/01/2003',
-                '08/01/2003',
-                '09/01/2003',
-                '10/01/2003',
-                '11/01/2003',
-              ]}
+              title="Tổng Tiền Theo Ngày"
+              subheader="Biểu đồ tổng tiền theo ngày"
+              chartLabels={hdNgay.map(item => item[0])} // Assuming the first element in each sub-array is the date
               chartData={[
                 {
-                  name: 'Team A',
-                  type: 'column',
-                  fill: 'solid',
-                  data: [23, 11, 22, 27, 13, 22, 37, 21, 44, 22, 30],
-                },
-                {
-                  name: 'Team B',
-                  type: 'area',
-                  fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
-                },
-                {
-                  name: 'Team C',
+                  name: 'Tổng Tiền',
                   type: 'line',
                   fill: 'solid',
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                  data: hdNgay.map(item => item[1]), // Assuming the second element in each sub-array is the total amount
                 },
               ]}
             />
+
           </Grid>
+
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
-              title="Current Visits"
-              chartData={[
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
-              ]}
+              title="Top 4 sản phẩm bán chạy "
+              chartData={currentVisitsData} // Truyền dữ liệu từ mảng đã biến đổi
               chartColors={[
+                '#4CAF50', // Sử dụng màu xanh lá thay thế
                 theme.palette.primary.main,
-                theme.palette.info.main,
                 theme.palette.warning.main,
                 theme.palette.error.main,
               ]}

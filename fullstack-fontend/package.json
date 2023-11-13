@@ -10,6 +10,20 @@
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
+<<<<<<< HEAD
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/icons": "^4.11.3",
+    "@material-ui/lab": "^4.0.0-alpha.61",
+    "@mui/core": "^5.0.0-alpha.54",
+    "@mui/icons-material": "^5.14.1",
+    "@mui/lab": "^5.0.0-alpha.137",
+    "@mui/material": "^5.14.4",
+    "@mui/styles": "^5.14.3",
+    "@mui/x-data-grid": "^6.10.2",
+    "@mui/x-date-pickers": "^6.11.1",
+    "@react-google-maps/api": "^2.19.2",
+=======
+>>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",

@@ -119,4 +119,35 @@ public class HoadonServiceImpl implements HoadonSevice {
 
         return hoadonRepository.save(hoaDon);
     }
+
+    @Override
+    public Double calculateTotalTongTien() {
+        Double total = hoadonRepository.calculateTotalTongTien();
+        if(total == null){
+            return 0.0;
+        }
+        return total;
+    }
+
+    @Override
+    public Long totalInvoice() {
+        long totalInvoices = hoadonRepository.totalInvoice();
+        return totalInvoices;
+    }
+
+    public List<Object[]> getTotalRevenueByDay() {
+        return hoadonRepository.getTotalRevenueByDay();
+    }
+
+    @Override
+    public Double getTyLeTraHang() {
+        return hoadonRepository.getTyLeTraHang();
+    }
+
+    @Override
+    public Long tongSpDaban() {
+        return hoadonRepository.getTongSpBan();
+    }
+
+
 }

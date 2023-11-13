@@ -99,4 +99,10 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "GROUP BY sp.id_sp, sp.ma_sp, sp.ten_sp, sp.id_cl, sp.id_ms, sp.id_loaisp, sp.id_xx, sp.id_tay_ao, sp.id_co_ao, sp.mo_ta, sp.gia_ban, sp.trang_thai, img.images;\n", nativeQuery = true)
     Page<Object[]> getSpWithImg(Pageable pageable);
 
+    @Query(value = "select  so_luong,  ten_sp from duan_5f.san_pham sp , duan_5f.chi_tiet_san_pham  ctsp , duan_5f.hoa_don_chi_tiet hdct\n" +
+            "where sp.id_sp = ctsp.id_sp\n" +
+            "and ctsp.id_ctsp = hdct.id_ctsp\n" +
+            "order by so_luong desc\n" +
+            "limit 4;", nativeQuery = true)
+    List<Object[]> topSptrending();
 }

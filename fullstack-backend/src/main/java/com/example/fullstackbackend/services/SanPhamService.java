@@ -31,6 +31,10 @@ public interface SanPhamService {
 
     List<Object[]> getSanPhamWithMinImageUrl();
 
+    Page<SanPhamDTO> getSanPhamDetails(Integer pageNo, Integer size);
+
+    List<Object[]> topSptrend();
+
     List<SanPhamDTO> getSanPhamDetails();
 
 }
