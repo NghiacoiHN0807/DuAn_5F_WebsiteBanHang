@@ -1,7 +1,7 @@
 // react
 import { useCallback, useEffect, useState } from 'react';
 import { sample } from 'lodash';
-import { Card, DialogContent, Stack } from '@mui/material';
+import { Card, CardActionArea, CardContent, CardMedia, Typography } from '@mui/material';
 import { Container } from '@mui/system';
 import { Carousel, Col, Row } from 'react-bootstrap';
 // import
@@ -11,7 +11,6 @@ import anh3 from '../../assets/banner-thoi-trang-the-thao-cho-nam_113858272.jpg'
 import '../../scss/Home.scss';
 import { fetchAllCTSPBySize } from '../../service/BillSevice';
 // @mui
-import { ProductSort, ProductListClient, ProductFilterSidebar } from '../../sections/@dashboard/products';
 
 const Home = () => {
   const [listData, setListData] = useState([]);
@@ -31,16 +30,6 @@ const Home = () => {
   useEffect(() => {
     getAllData();
   }, [getAllData]);
-
-  const [openFilter, setOpenFilter] = useState(false);
-
-  const handleOpenFilter = () => {
-    setOpenFilter(true);
-  };
-
-  const handleCloseFilter = () => {
-    setOpenFilter(false);
-  };
 
   const PRODUCTS = listData.map((item, index) => {
     const setIndex = index + 1;
@@ -89,28 +78,29 @@ const Home = () => {
       <Carousel.Item key={i}>
         <Container>
           <Row>
-            {slideProducts.map((product, index) => (
+            {/* {slideProducts.map((product, index) => (
               <Col key={index}>
                 <Card sx={{ maxWidth: 345 }}>
                   <DialogContent>
-                    <Stack
-                      direction="row"
-                      flexWrap="wrap-reverse"
-                      alignItems="center"
-                      justifyContent="flex-end"
-                      sx={{ mb: 5 }}
-                    >
-                      <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-                        <ProductFilterSidebar
-                          openFilter={openFilter}
-                          onOpenFilter={handleOpenFilter}
-                          onCloseFilter={handleCloseFilter}
-                        />
-                        <ProductSort />
-                      </Stack>
-                    </Stack>
                     <ProductListClient products={PRODUCTS} />
                   </DialogContent>
+                </Card>
+              </Col>
+            ))} */}
+            {slideProducts.map((product, index) => (
+              <Col key={index}>
+                <Card sx={{ maxWidth: 345 }}>
+                  <CardActionArea>
+                    <CardMedia component="img" height="140" image={product.cover} alt={product.cover} />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {product.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {product.price}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
                 </Card>
               </Col>
             ))}
