@@ -4,7 +4,9 @@ const fetchAllCTSP = (page) => {
   custom.get(`/chi-tiet-san-pham/view-all?p=${page}`); // Call API
 };
 
-const findCtspById = (id) => custom.get(`chi-tiet-san-pham/select-ctsp-byId/${id}`); // Call API
+const findCtspById = (id) => custom.get(`chi-tiet-san-pham/select-ctsp-byId/${id}`);
+
+const detailCTSP = (id) => custom.get(`chi-tiet-san-pham/detail/${id}`);
 
 const postAddCTSP = (idSp, idSize, soLuongTon, trangThai, soLuong) =>
   custom.post(`/chi-tiet-san-pham/add/${soLuong}`, {
@@ -25,4 +27,29 @@ const putUpdateCTSP = (idCtsp, idSize, idSp, soLuongTon, trangThai) =>
     trangThai,
   });
 
-export { fetchAllCTSP, postAddCTSP, deleteCTSP, putUpdateCTSP, findCtspById };
+const addColorAndSize = (idSp, idMs, idSize) =>
+  custom.post(`/chi-tiet-san-pham/addColorAndSize/${idSp}/${idMs}/${idSize}`, {
+    idSp,
+    idMs,
+    idSize,
+  });
+
+const updateNumber = (idCtsp, giaNhap, giaBan, soLuongTon, trangThai) =>
+  custom.put(`/chi-tiet-san-pham/updateNumber/${idCtsp}/${giaNhap}/${giaBan}/${soLuongTon}/${trangThai}`, {
+    idCtsp,
+    giaNhap,
+    giaBan,
+    soLuongTon,
+    trangThai,
+  });
+
+export {
+  fetchAllCTSP,
+  postAddCTSP,
+  deleteCTSP,
+  putUpdateCTSP,
+  findCtspById,
+  addColorAndSize,
+  updateNumber,
+  detailCTSP,
+};

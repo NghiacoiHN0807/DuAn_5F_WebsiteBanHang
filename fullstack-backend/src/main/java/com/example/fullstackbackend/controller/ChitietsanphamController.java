@@ -1,7 +1,6 @@
 package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
-import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.services.ChitietsanphamService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,7 +104,7 @@ public class ChitietsanphamController {
         return chitietsanphamSevice.addColorAndSize(idSp, idMs, idSize);
     }
 
-    @PutMapping("updateNumber/{idCtsp}/{giaNhap}/{giaBan}/{soLuongTon}")
+    @PutMapping("updateNumber/{idCtsp}/{giaNhap}/{giaBan}/{soLuongTon}/{trangThai}")
     public ChiTietSanPham updateNumber(@PathVariable("idCtsp") Integer idCtsp,
                                        @PathVariable("giaNhap") BigDecimal giaNhap,
                                        @PathVariable("giaBan") BigDecimal giaBan,

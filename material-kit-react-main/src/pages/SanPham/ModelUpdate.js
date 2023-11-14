@@ -46,7 +46,7 @@ import {
 } from '@mui/material';
 import Iconify from '../../components/iconify';
 import { putUpdateSanPham, detailSP } from '../../service/SanPhamService';
-import { findCtspById } from '../../service/ChiTietSPService';
+import { findCtspById, addColorAndSize, updateNumber, detailCTSP } from '../../service/ChiTietSPService';
 import { deleteAnh, fetchAnh } from '../../service/AnhService';
 import { postAddCloud, deleteCloud } from '../../service/CloudinaryService';
 
@@ -65,7 +65,7 @@ function mapTrangThai(trangThai) {
     : trangThai === 10
     ? 'Ngừng kinh doanh'
     : trangThai === 1
-    ? 'Không khả dụng'
+    ? 'Đang cập nhật'
     : 'Unknown status';
 }
 
@@ -80,8 +80,15 @@ export default function UpdateSanPham() {
   const [xuatXu, setXuatXu] = useState('');
   const [tayAo, setTayAo] = useState('');
   const [coAo, setCoAo] = useState('');
+
   const [mauSac, setMauSac] = useState('');
   const [size, setSize] = useState('');
+
+  const [idCtsp, setIdCtsp] = useState('');
+  const [giaNhap, setGiaNhap] = useState('');
+  const [giaBan, setGiaBan] = useState('');
+  const [soLuongTon, setSoLuongTon] = useState('');
+  const [statusAtt, setStatusAtt] = useState('');
 
   const [listCL, setListCL] = useState([]);
   const [listLSP, setListLSP] = useState([]);
@@ -168,13 +175,39 @@ export default function UpdateSanPham() {
     setOpenColorAndSize(false);
   };
 
+  // edit attributes
   const [openEditAtt, setOpenEditAtt] = useState(false);
 
-  const handleClickEditAtt = () => {
+  const getCtspNumber = async (id) => {
+    try {
+      const res = await detailCTSP(id);
+      setIdCtsp(res.idCtsp);
+      if (res.giaNhap == null || res.giaBan == null || res.soLuongTon == null) {
+        setGiaNhap('');
+        setGiaBan('');
+        setSoLuongTon('');
+      } else {
+        setGiaNhap(res.giaNhap);
+        setGiaBan(res.giaBan);
+        setSoLuongTon(res.soLuongTon);
+      }
+
+      setStatusAtt(res.trangThai);
+    } catch (error) {
+      console.log('error: ', error);
+    }
+  };
+
+  const handleClickEditAtt = (id) => {
+    // setIdCtsp(id);
+    getCtspNumber(id);
     setOpenEditAtt(true);
+    setOpenColorAndSize(false);
+    setOpenDulicateUpdate(false);
   };
 
   const handleClostEditAtt = () => {
+    getListData();
     setOpenEditAtt(false);
   };
 
@@ -305,10 +338,53 @@ export default function UpdateSanPham() {
     getAnhData();
   };
 
-  // radio
-
+  // radio change size
   const handleChangeSize = (event, newAlignment) => {
     setSize(newAlignment);
+  };
+
+  // add color and size
+  const hanldeAddColorAndSize = async () => {
+    const res = await addColorAndSize(idSpHttp, mauSac, size);
+    console.log('Check res: ', res);
+    if (res && res.idCtsp) {
+      if (res.trangThai === 1) {
+        handleAlertClick('Thêm thành công!', 'success');
+        handleClickEditAtt(res.idCtsp);
+        handleCloseColorAndSize();
+      } else {
+        handleOpenDulicateUpdate();
+        setIdCtsp(res.idCtsp);
+      }
+    } else {
+      handleAlertClick('Cập nhật thất bại!', 'danger');
+      handleCloseColorAndSize();
+    }
+  };
+
+  // update number
+
+  const handlUpdateNumber = async () => {
+    const res = await updateNumber(idCtsp, giaNhap, giaBan, soLuongTon, statusAtt);
+    console.log('Check res: ', res);
+    if (res && res.idCtsp) {
+      handleAlertClick('Cập nhật thành công!', 'success');
+      handleClostEditAtt();
+    } else {
+      handleAlertClick('Cập nhật thất bại!', 'danger');
+      handleClostEditAtt();
+    }
+  };
+
+  // comfirm update
+  const [openDulicateUpdate, setOpenDulicateUpdate] = useState(false);
+
+  const handleOpenDulicateUpdate = () => {
+    setOpenDulicateUpdate(true);
+  };
+
+  const handleCloseDulicateUpdate = () => {
+    setOpenDulicateUpdate(false);
   };
 
   return (
@@ -531,7 +607,7 @@ export default function UpdateSanPham() {
                         <TableCell>{row.soLuongTon}</TableCell>
                         <TableCell>{mapTrangThai(row.trangThai)}</TableCell>
                         <TableCell>
-                          <IconButton aria-label="add an alarm" onClick={() => handleClickEditAtt()}>
+                          <IconButton aria-label="add an alarm" onClick={() => handleClickEditAtt(row.idCtsp)}>
                             <EditIcon />
                           </IconButton>
                         </TableCell>
@@ -581,7 +657,6 @@ export default function UpdateSanPham() {
                           <AddPhotoAlternateIcon sx={{ fontSize: 40 }} /> Kéo hoặc thả ảnh vô đây, hoặc click để chọn
                           ảnh
                         </p>
-                        <p>(Ảnh tải lên có thể mất khoảng 10-15s để load ảnh, xin hãy đợi 1 chút)</p>
                       </div>
                     </Card>
                   </Grid>
@@ -660,7 +735,7 @@ export default function UpdateSanPham() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleCloseColorAndSize()}>Canel</Button>
-          <Button onClick={() => handleSave()} autoFocus>
+          <Button onClick={() => hanldeAddColorAndSize()} autoFocus>
             Ok
           </Button>
         </DialogActions>
@@ -683,6 +758,8 @@ export default function UpdateSanPham() {
                 shrink: true,
               }}
               fullWidth
+              value={giaNhap}
+              onChange={(event) => setGiaNhap(event.target.value)}
             />
           </div>
           <div className="editAtt">
@@ -694,6 +771,8 @@ export default function UpdateSanPham() {
                 shrink: true,
               }}
               fullWidth
+              value={giaBan}
+              onChange={(event) => setGiaBan(event.target.value)}
             />
           </div>
           <div className="editAtt">
@@ -705,22 +784,49 @@ export default function UpdateSanPham() {
                 shrink: true,
               }}
               fullWidth
+              value={soLuongTon}
+              onChange={(event) => setSoLuongTon(event.target.value)}
             />
           </div>
           <div className="editAtt">
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">Trạng thái</FormLabel>
-              <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={statusAtt}
+                onChange={(event) => setStatusAtt(event.target.value)}
+              >
                 <FormControlLabel value="0" control={<Radio />} label="Còn bán" />
-                <FormControlLabel value="1" control={<Radio />} label="Ngừng kinh doanh" />
-                <FormControlLabel value="10" control={<Radio />} label="Không khả dụng" />
+                <FormControlLabel value="10" control={<Radio />} label="Ngừng kinh doanh" />
               </RadioGroup>
             </FormControl>
           </div>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handleClostEditAtt()}>Canel</Button>
-          <Button onClick={() => handleSave()} autoFocus>
+          <Button onClick={() => handlUpdateNumber()} autoFocus>
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog
+        open={openDulicateUpdate}
+        onClose={handleCloseDulicateUpdate}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{'Thuộc tính đã tồn tại!'}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có muốn chuyển đến trang cập nhật thuộc tính?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleCloseDulicateUpdate()}>Canel</Button>
+          <Button onClick={() => handleClickEditAtt(idCtsp)} autoFocus>
             Ok
           </Button>
         </DialogActions>

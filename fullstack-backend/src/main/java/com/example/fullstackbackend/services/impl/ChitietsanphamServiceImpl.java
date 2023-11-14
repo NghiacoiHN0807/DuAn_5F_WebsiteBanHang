@@ -107,13 +107,14 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
 
     @Override
     public ChiTietSanPham addColorAndSize(Integer idSp, Integer idMs, Integer idSize) {
-        if(chitietsanphamRepository.existsBySpAndMsAndSize(idSp, idMs, idSize) == 1){
-            return null;
+        if(chitietsanphamRepository.existsBySpAndMsAndSize(idSp, idMs, idSize).size() > 0){
+            return chitietsanphamRepository.existsBySpAndMsAndSize(idSp, idMs, idSize).get(0);
         }else {
             ChiTietSanPham ctsp = new ChiTietSanPham();
             ctsp.setIdSp(spRepo.findById(idSp).orElse(null));
             ctsp.setIdMs(msRepo.findById(idMs).orElse(null));
             ctsp.setIdSize(sizeRepo.findById(idSize).orElse(null));
+            ctsp.setTrangThai(1);
             return chitietsanphamRepository.save(ctsp);
         }
     }
@@ -124,18 +125,11 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
         BigDecimal giaB = ctsp.getGiaBan();
         BigDecimal giaTT = ctsp.getGiaThucTe();
         ctsp.setGiaNhap(giaNhap);
-        if(giaB == giaTT || giaB == null){
-            ctsp.setGiaBan(giaBan);
-            ctsp.setGiaThucTe(giaBan);
-        }
-        if(giaB.compareTo(giaTT) == 1){
-            BigDecimal phanTramGG = giaB.divide(giaTT);
-            ctsp.setGiaBan(giaBan);
-            ctsp.setGiaThucTe(giaBan.divide(phanTramGG));
-        }
+        ctsp.setGiaBan(giaBan);
+        ctsp.setGiaThucTe(giaBan);
         ctsp.setSoLuongTon(soLuongTon);
         ctsp.setTrangThai(trangThai);
-        return ctsp;
+        return chitietsanphamRepository.save(ctsp);
     }
 
 
