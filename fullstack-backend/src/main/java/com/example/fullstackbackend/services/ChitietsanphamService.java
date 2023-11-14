@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ChitietsanphamService {
     Page<ChiTietSanPham> chiTietSP(Integer pageNo, Integer size);
 
-    Page<Object[]> getSanPhamsWithSizes(Integer pageNo, Integer size);
+    List<Object[]> getSanPhamsWithSizes();
 
     List<ChiTietSanPham> findByProductName(String name);
 

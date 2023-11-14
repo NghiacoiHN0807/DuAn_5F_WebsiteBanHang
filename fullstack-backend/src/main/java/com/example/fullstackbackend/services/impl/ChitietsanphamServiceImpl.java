@@ -38,9 +38,8 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
     }
 
     @Override
-    public Page<Object[]> getSanPhamsWithSizes(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return chitietsanphamRepository.getSanPhamWithSizes(pageable);
+    public List<Object[]> getSanPhamsWithSizes() {
+        return chitietsanphamRepository.getSanPhamWithSizes();
     }
 
     @Override

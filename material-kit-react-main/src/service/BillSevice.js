@@ -7,9 +7,9 @@ const detailBill = (idHd) => custom.get(`/hoa-don/detail/${idHd}`);
 
 const findByMaHD = (mahd) => custom.get(`/hoa-don/findByMaHD/${mahd}`);
 const deleteHD = (idhd) => custom.put(`/hoa-don/delete/${idhd}`);
-const selectAllImgProduct = (page) => custom.get(`/images/view-all?p=${page}`);
+const selectAllImgProduct = () => custom.get(`/images/view-all`);
 const selectClassify = (nameSP) => custom.get(`chi-tiet-san-pham/select-Classify/${nameSP}`);
-const fetchAllCTSPBySize = (page) => custom.get(`/chi-tiet-san-pham/view-all-ctsp?p=${page}`);
+const fetchAllCTSPBySize = () => custom.get(`/chi-tiet-san-pham/view-all-ctsp`);
 const findByProductNameAndSize = (name, size, ms) =>
   custom.get(`/chi-tiet-san-pham/get-one-ctsp/${name}/${size}/${ms}`);
 const findById = (idSp) => custom.get(`/chi-tiet-san-pham/select-ctsp-byId/${idSp}`);

@@ -72,17 +72,14 @@ const OrderManagementTimeline = ({ classes }) => {
   }, [getListData]);
 
   const [DataCart, setDataCart] = useState([]);
-  const [numberPages, setNumberPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
 
   const selectDataCart = useCallback(
     async (page) => {
       try {
         const res = await finByProductOnCart(page, idHdParam);
-        if (res && res.content) {
+        if (res) {
           console.log('Check DataCart: ', res);
-          setDataCart(res.content);
-          setNumberPages(res.totalPages);
+          setDataCart(res);
         }
       } catch (error) {
         console.error(error);
@@ -91,14 +88,8 @@ const OrderManagementTimeline = ({ classes }) => {
     [idHdParam]
   );
   useEffect(() => {
-    selectDataCart(currentPage);
-  }, [currentPage, selectDataCart]);
-
-  const handlePageClick = (page) => {
-    setCurrentPage(page);
-    selectDataCart(page);
-  };
-
+    selectDataCart();
+  }, [selectDataCart]);
   // Handle delete
 
   const [openDelete, setOpenDelete] = useState(false);
@@ -355,13 +346,7 @@ const OrderManagementTimeline = ({ classes }) => {
       </div>
       <div className="row-order-management-timeline">
         <div className="row row-top">
-          <Stack
-            sx={{ marginLeft: 2, marginRight: 2 }}
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            mb={5}
-          >
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
             <Typography variant="h6" gutterBottom>
               Thông Tin Khách Hàng{' '}
             </Typography>
@@ -370,18 +355,28 @@ const OrderManagementTimeline = ({ classes }) => {
             </Button>
           </Stack>
         </div>
-        <Grid sx={{ paddingLeft: 2 }} container>
+        <Grid sx={{ paddingLeft: 2, paddingTop: 2 }} container>
           {listData.length > 0 && (
             <>
               <Grid item xs={12} sm={6} md={6}>
-                <h3>Mã Hóa Đơn: {listData[0].idHd.maHd}</h3>
-                <h3>Trạng Thái Hóa Đơn: {renderTrangThai(activeIndex)}</h3>
-                <h3>Kiểu Hóa Đơn: {renderKieuHoaDon(listData[0].idHd.kieuHoaDon)}</h3>
+                <h6>Mã Hóa Đơn: {listData[0].idHd.maHd}</h6>
+                <h6>Trạng Thái Hóa Đơn: {renderTrangThai(activeIndex)}</h6>
+                <h6>Kiểu Hóa Đơn: {renderKieuHoaDon(listData[0].idHd.kieuHoaDon)}</h6>
               </Grid>
               <Grid item xs={12} sm={6} md={6}>
-                <h4>Tên Khách Hàng: {listData[0].idHd.tenKh}</h4>
-                <h4>Số Điện Thoại: {listData[0].idHd.sdtKh}</h4>
-                <h4>Địa Chỉ: {listData[0].idHd.diaChi}</h4>
+                {listData[0].idHd.tenKh ? (
+                  <>
+                    <h6>Tên Khách Hàng: {listData[0].idHd.tenKh}</h6>
+                    <h6>Số Điện Thoại: {listData[0].idHd.sdtKh}</h6>
+                    <h6>Địa Chỉ: {listData[0].idHd.diaChi}</h6>
+                  </>
+                ) : (
+                  <>
+                    <h6>
+                      Tên Khách Hàng: <Chip label="Khách Lẻ" color="primary" />
+                    </h6>
+                  </>
+                )}
               </Grid>
             </>
           )}
@@ -389,13 +384,7 @@ const OrderManagementTimeline = ({ classes }) => {
       </div>
       <div className="row-order-management-timeline">
         <div className="row row-top">
-          <Stack
-            sx={{ marginLeft: 2, marginRight: 2 }}
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            mb={5}
-          >
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
             <Typography variant="h6" gutterBottom>
               Lịch Sử Thanh Toán{' '}
             </Typography>
@@ -448,13 +437,7 @@ const OrderManagementTimeline = ({ classes }) => {
       </div>
       <div className="row-order-management-timeline">
         <div className="row row-top">
-          <Stack
-            sx={{ marginLeft: 2, marginRight: 2 }}
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            mb={5}
-          >
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
             <Typography variant="h6" gutterBottom>
               Giỏ Hàng{' '}
             </Typography>
@@ -531,9 +514,6 @@ const OrderManagementTimeline = ({ classes }) => {
               </Typography>
             )}
           </TableContainer>
-          <Stack direction="row" spacing={2} justify="center" alignItems="center">
-            <Pagination onChange={(event, page) => handlePageClick(page - 1)} count={numberPages} variant="outlined" />
-          </Stack>
           {/* Modal Payment */}
           {listData.length > 0 && (
             <>
@@ -552,7 +532,6 @@ const OrderManagementTimeline = ({ classes }) => {
                 handleClose={handleCloseModalDelelte}
                 itemDelete={itemDelete}
                 selectDataCart={selectDataCart}
-                currentPage={currentPage}
               />
               <ModalUpdateProductOnCart
                 show={showModalsUpdate}
@@ -560,7 +539,6 @@ const OrderManagementTimeline = ({ classes }) => {
                 itemUpdateClassify={itemUpdateClassify}
                 selectDataCart={selectDataCart}
                 itemUpdate={itemUpdate}
-                currentPage={currentPage}
               />
             </>
           )}
@@ -570,7 +548,6 @@ const OrderManagementTimeline = ({ classes }) => {
             selectDataCart={selectDataCart}
             handleClose={handleClose2}
             DataCart={DataCart}
-            currentPage1={currentPage}
           />
           {/* Modal update status */}
           <ModalUpdateStatus

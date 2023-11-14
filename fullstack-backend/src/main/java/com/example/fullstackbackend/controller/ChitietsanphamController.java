@@ -37,11 +37,9 @@ public class ChitietsanphamController {
     }
 
     @GetMapping("view-all-ctsp")
-    public Page<Object[]> getSanPhamsWithSizes(@RequestParam(defaultValue = "0") Integer page,
-                                                     @RequestParam(defaultValue = "15") Integer size,
-                                                     @RequestParam("p") Optional<Integer> p) {
-        Page<Object[]> chiTietSP = chitietsanphamSevice.getSanPhamsWithSizes(p.orElse(page), size);
-        return chiTietSP;
+    public List<Object[]> getSanPhamsWithSizes() {
+        return chitietsanphamSevice.getSanPhamsWithSizes();
+
     }
 
     @GetMapping("select-ctsp-byId/{id}")
