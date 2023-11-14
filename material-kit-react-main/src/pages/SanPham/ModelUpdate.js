@@ -7,6 +7,7 @@ import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import EditIcon from '@mui/icons-material/Edit';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import CircularProgress from '@mui/material/CircularProgress';
 import { CardGroup } from 'react-bootstrap';
 import { useDropzone } from 'react-dropzone';
 import {
@@ -43,6 +44,7 @@ import {
   Box,
   IconButton,
   FormLabel,
+  Backdrop,
 } from '@mui/material';
 import Iconify from '../../components/iconify';
 import { putUpdateSanPham, detailSP } from '../../service/SanPhamService';
@@ -321,6 +323,7 @@ export default function UpdateSanPham() {
   const onDrop = useCallback((acceptedFiles) => {
     const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
     setSelectedImages(imageFiles);
+    handleOpenBD();
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -386,6 +389,19 @@ export default function UpdateSanPham() {
   const handleCloseDulicateUpdate = () => {
     setOpenDulicateUpdate(false);
   };
+
+  // backdrop
+  const [openBD, setOpenBD] = useState(false);
+  const handleCloseBD = () => {
+    setOpenBD(false);
+  };
+  const handleOpenBD = () => {
+    setOpenBD(true);
+  };
+
+  useEffect(() => {
+    handleCloseBD();
+  }, [listImg]);
 
   return (
     <>
@@ -648,6 +664,7 @@ export default function UpdateSanPham() {
                       </Card>
                     </Grid>
                   ))}
+
                 {listImg.length < 10 && (
                   <Grid item xs={2.3}>
                     <Card sx={{ width: 200, marginRight: 5, marginBottom: 5, padding: 2 }}>
@@ -844,6 +861,14 @@ export default function UpdateSanPham() {
           </Alert>
         </Snackbar>
       </Stack>
+
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={openBD}
+        onClick={() => handleCloseBD()}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </>
   );
 }
