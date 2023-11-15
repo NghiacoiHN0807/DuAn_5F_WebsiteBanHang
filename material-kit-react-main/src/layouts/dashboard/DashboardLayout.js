@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
+import {ToastContainer} from "react-toastify";
+
 //
 import Header from './header';
 import Nav from './nav';
@@ -37,6 +39,22 @@ export default function DashboardLayout() {
 
   return (
     <StyledRoot>
+      <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          containerId="toast-container"
+          style={{
+            width: "auto",
+            maxHeight: "100px",
+          }}
+      />
       <Header onOpenNav={() => setOpen(true)} />
 
       <Nav openNav={open} onCloseNav={() => setOpen(false)} />

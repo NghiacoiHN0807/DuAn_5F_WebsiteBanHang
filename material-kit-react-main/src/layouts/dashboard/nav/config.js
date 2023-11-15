@@ -37,6 +37,11 @@ const navConfig = [
     icon: icon('ic_user'),
   },
   {
+    title: 'Địa Chỉ',
+    path: '/dashboard/address',
+    icon: icon('ic_user'),
+  },
+  {
     title: 'Nhân Viên',
     path: '/dashboard/staff',
     icon: icon('ic_lock'),

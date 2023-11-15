@@ -24,7 +24,7 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
 
     @Override
     public List<TaiKhoan> getAll() {
-        return TaiKhoanKhachHangRepository.findAll();
+        return TaiKhoanKhachHangRepository.findAllKhachHang();
     }
 
     @Override

@@ -7,9 +7,6 @@ import com.example.fullstackbackend.repository.HoadonchitietRepository;
 import com.example.fullstackbackend.repository.LichSuHoaDonRepository;
 import com.example.fullstackbackend.services.HoadonchitietSevice;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -32,20 +29,18 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     @Override
-    public Page<HoaDonChiTiet> chatlieuPage(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return hoadonchitietRepository.findAll(pageable);
+    public List<HoaDonChiTiet> chatlieuPage() {
+        return hoadonchitietRepository.findAll();
     }
 
     @Override
-    public Page<Object[]> getListProductOncart(Integer pageNo, Integer size, Integer idHd) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return hoadonchitietRepository.getListProductOncart(pageable, idHd);
+    public List<Object[]> getListProductOncart(Integer idHd) {
+        return hoadonchitietRepository.getListProductOncart(idHd);
     }
 
     @Override
     public HoaDonChiTiet add(HoaDonChiTiet add) {
-        if (add.getTrangThai() >= 0 || add.getTrangThai() < 8) {
+        if (add.getTrangThai() < 8) {
             addLS(add, 1);
             return hoadonchitietRepository.save(add);
         } else {

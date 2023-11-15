@@ -28,7 +28,7 @@ import {
     InputLabel,
     MenuItem,
     Paper,
-    Select,
+    Select, TextField,
     Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
@@ -44,7 +44,6 @@ const AddressByClient = () => {
     const param = useParams();
     const idTK = param.id;
     const [listData, setListData] = useState([]);
-    const [numberPages, setNumberPages] = useState(0);
     const [searchKeyword, setSearchKeyword] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("Tất cả");
     const [selectedLoaiDiaChi, setSelectedLoaiDiaChi] = useState("Tất cả");
@@ -58,9 +57,8 @@ const AddressByClient = () => {
     const getListData = async (idTK, page) => {
         try {
             const res = await fetchDiaChiByTK(idTK, page);
-            setListData(res.content);
-            setNumberPages(Math.ceil(res.totalPages));
-            setOriginalListData(res.content);
+            setListData(res);
+            setOriginalListData(res);
         } catch (error) {
             console.error(error);
         }
@@ -322,27 +320,19 @@ const AddressByClient = () => {
                     Tạo Địa Chỉ Mới
                 </Button>
             </Stack>
-            <Card sx={{display: 'flex', alignItems: 'center'}}>
-                <Paper
-                    component="form"
-                    sx={{
-                        p: '2px 4px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        width: 400,
-                    }}
-                    onChange={(e) => setSearchKeyword(e.target.value)}
-                >
-                    <InputBase
-                        sx={{ml: 1, flex: 1}}
-                        placeholder="Tìm Kiếm"
-                        inputProps={{'aria-label': 'Tìm Kiếm'}}
-                    />
-                    <IconButton type="button" sx={{p: '10px'}} aria-label="search">
-                        <SearchIcon/>
-                    </IconButton>
-                </Paper>
-            </Card>
+            <TextField
+                variant="outlined"
+                sx={{ml: 1, flex: 1}}
+                placeholder="Tìm Kiếm"
+                InputProps={{
+                    startAdornment: (
+                        <IconButton type="button" sx={{p: '10px'}} aria-label="search">
+                            <SearchIcon/>
+                        </IconButton>
+                    ),
+                }}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+            />
 
             <DataGrid
                 rows={rows}
@@ -359,13 +349,7 @@ const AddressByClient = () => {
                 })}
                 pageSizeOptions={[5, 10, 15]}
             />
-            <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
-                <Pagination
-                    onChange={(event, page) => handlePageClick(page - 1)}
-                    count={numberPages}
-                    variant="outlined"
-                />
-            </Stack>
+
 
         </Container>
         <Dialog

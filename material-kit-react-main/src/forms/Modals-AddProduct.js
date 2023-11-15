@@ -1,14 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Pagination,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
 import { sample } from 'lodash';
 import PropTypes from 'prop-types';
 // import ModalDetailProduct from './Modal-Detail-SanPham';
@@ -23,20 +14,16 @@ const ModalAddProduct = (props) => {
     handleClose: PropTypes.func.isRequired,
     selectDataCart: PropTypes.func.isRequired,
     DataCart: PropTypes.array.isRequired,
-    currentPage1: PropTypes.number.isRequired,
   };
-  const { show, handleClose, selectDataCart, DataCart, currentPage1 } = props;
+  const { show, handleClose, selectDataCart, DataCart } = props;
   const [listData, setListData] = useState([]);
-  const [numberPages, setNumberPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
 
   const getAllData = useCallback(async (page) => {
     try {
       const getData = await fetchAllCTSPBySize(page);
-      console.log('getData.content: ', getData.content);
-      if (getData && getData.content) {
-        setListData(getData.content);
-        setNumberPages(getData.totalPages);
+      console.log('getData: ', getData);
+      if (getData) {
+        setListData(getData);
       }
     } catch (error) {
       console.error(error);
@@ -44,19 +31,8 @@ const ModalAddProduct = (props) => {
   }, []);
 
   useEffect(() => {
-    getAllData(currentPage);
-  }, [currentPage, getAllData]);
-
-  const handlePageClick = (page) => {
-    getAllData(page);
-    setCurrentPage(page);
-  };
-
-  // const handleChoose = async (id, cover) => {
-  //   console.log('idSp: ', id);
-  //   console.log('imgs: ', cover);
-
-  // };
+    getAllData();
+  }, [getAllData]);
 
   //   Select card product
   const [openFilter, setOpenFilter] = useState(false);
@@ -100,7 +76,6 @@ const ModalAddProduct = (props) => {
       status: sample(['sale', 'new', '', '']),
       selectDataCart,
       DataCart,
-      currentPage1,
     };
   });
 
@@ -124,17 +99,7 @@ const ModalAddProduct = (props) => {
                 <ProductSort />
               </Stack>
             </Stack>
-
             <ProductListADM products={PRODUCTS} />
-            {/* <ProductCartWidget /> */}
-
-            <Stack direction="row" spacing={2} justify="center" alignItems="center">
-              <Pagination
-                onChange={(event, page) => handlePageClick(page - 1)}
-                count={numberPages}
-                variant="outlined"
-              />
-            </Stack>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Hủy</Button>

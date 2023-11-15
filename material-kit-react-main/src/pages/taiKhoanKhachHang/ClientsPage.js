@@ -29,7 +29,7 @@ import {
     Pagination,
     Paper,
     Select,
-    Stack,
+    Stack, TextField,
     Typography
 } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
@@ -43,7 +43,7 @@ import Iconify from "../../components/iconify";
 
 const ClientPage = () => {
     const [listData, setListData] = useState([]);
-    const [numberPages, setNumberPages] = useState(0);
+
     const [searchKeyword, setSearchKeyword] = useState("");
     const [selectedStatus, setSelectedStatus] = useState("Tất cả");
     const [originalListData, setOriginalListData] = useState([]);
@@ -51,11 +51,9 @@ const ClientPage = () => {
     const getListData = async (page, query) => {
         try {
             const res = await fetchAllTKKH(page, query);
-            setListData(res.content);
-            setNumberPages(Math.ceil(res.totalPages));
-            setOriginalListData(res.content);
-            setListData(res.content);
-            setNumberPages(Math.ceil(res.totalPages));
+            setListData(res);
+            setOriginalListData(res);
+            setListData(res);
 
         } catch (error) {
             console.error(error);
@@ -112,21 +110,21 @@ const ClientPage = () => {
             renderCell: (params) => {
                 const {row} = params;
                 return [
-                        <GridActionsCellItem
-                            color="info"
-                            onClick={() => handlClickRow(row)}
-                            icon={<EditIcon/>}
-                        />,
-                        <GridActionsCellItem
-                            color="inherit"
-                            icon={<AddLocationAltIcon/>}
-                            onClick={() => handAddDiaChi(row)}
-                        />,
-                        <GridActionsCellItem
-                            color="error"
-                            icon={<DeleteIcon/>}
-                            onClick={() => handleClickOpenDelete(row)}
-                        />
+                    <GridActionsCellItem
+                        color="info"
+                        onClick={() => handlClickRow(row)}
+                        icon={<EditIcon/>}
+                    />,
+                    <GridActionsCellItem
+                        color="inherit"
+                        icon={<AddLocationAltIcon/>}
+                        onClick={() => handAddDiaChi(row)}
+                    />,
+                    <GridActionsCellItem
+                        color="error"
+                        icon={<DeleteIcon/>}
+                        onClick={() => handleClickOpenDelete(row)}
+                    />
                 ];
             },
         },
@@ -258,27 +256,21 @@ const ClientPage = () => {
                         Tài Khoản Mới
                     </Button>
                 </Stack>
-                <Card sx={{display: 'flex', alignItems: 'center'}}>
-                    <Paper
-                        component="form"
-                        sx={{
-                            p: '2px 4px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            width: 400,
-                        }}
-                        onChange={(e) => setSearchKeyword(e.target.value)}
-                    >
-                        <InputBase
-                            sx={{ml: 1, flex: 1}}
-                            placeholder="Tìm Kiếm"
-                            inputProps={{'aria-label': 'Tìm Kiếm'}}
-                        />
-                        <IconButton type="button" sx={{p: '10px'}} aria-label="search">
-                            <SearchIcon/>
-                        </IconButton>
-                    </Paper>
-                </Card>
+
+                <TextField
+                    variant="outlined"
+                    sx={{ml: 1, flex: 1}}
+                    placeholder="Tìm Kiếm"
+                    InputProps={{
+                        startAdornment: (
+                            <IconButton type="button" sx={{p: '10px'}} aria-label="search">
+                                <SearchIcon/>
+                            </IconButton>
+                        ),
+                    }}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
+                />
+
 
                 <DataGrid
                     rows={rows}
@@ -295,18 +287,7 @@ const ClientPage = () => {
                     })}
                     pageSizeOptions={[5, 10, 15]}
                 />
-                <Stack
-                    direction="row"
-                    spacing={2}
-                    justifyContent="center"
-                    alignItems="center"
-                >
-                    <Pagination
-                        onChange={(event, page) => handlePageClick(page - 1)} // Subtract 1 from page value
-                        count={numberPages}
-                        variant="outlined"
-                    />
-                </Stack>
+
             </Container>
             <Dialog
                 open={open}
@@ -327,8 +308,6 @@ const ClientPage = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-
-
 
 
         </>

@@ -19,9 +19,8 @@ export default function ModalDeleteProductOnCart(props) {
     handleClose: PropTypes.func.isRequired,
     itemDelete: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     selectDataCart: PropTypes.func.isRequired,
-    currentPage: PropTypes.number.isRequired,
   };
-  const { open, handleClose, itemDelete, selectDataCart, currentPage } = props;
+  const { open, handleClose, itemDelete, selectDataCart } = props;
 
   // Set maHd using useState
 
@@ -46,7 +45,7 @@ export default function ModalDeleteProductOnCart(props) {
   // Handle Delete
   const handleDelete = async () => {
     await deleteProductOnCart(itemDelete[1]);
-    selectDataCart(currentPage);
+    selectDataCart();
     setAlertContent({
       type: 'success',
       message: 'Xóa Sản Phẩm Thành Công',

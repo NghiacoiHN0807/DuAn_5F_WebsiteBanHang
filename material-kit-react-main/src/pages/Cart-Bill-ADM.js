@@ -201,16 +201,15 @@ const CartBillADM = () => {
 
   // Select Product On Cart
   const [DataCart, setDataCart] = useState([]);
-  const [numberPages, setNumberPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  // const [numberPages, setNumberPages] = useState(0);
+  // const [currentPage, setCurrentPage] = useState(0);
 
   const selectDataCart = useCallback(
     async (page) => {
       try {
         const res = await finByProductOnCart(page, idHdParam);
-        if (res && res.content) {
-          setDataCart(res.content);
-          setNumberPages(res.totalPages);
+        if (res) {
+          setDataCart(res);
         }
       } catch (error) {
         console.error(error);
@@ -219,13 +218,13 @@ const CartBillADM = () => {
     [idHdParam]
   );
   useEffect(() => {
-    selectDataCart(currentPage);
-  }, [currentPage, selectDataCart]);
+    selectDataCart();
+  }, [selectDataCart]);
 
-  const handlePageClick = (page) => {
-    selectDataCart(page);
-    setCurrentPage(page);
-  };
+  // const handlePageClick = (page) => {
+  //   selectDataCart(page);
+  //   setCurrentPage(page);
+  // };
   // Add Product
   const [showModalsAdd, setShowModalAdd] = useState(false);
   const handleAddProduct = () => {
@@ -536,13 +535,13 @@ const CartBillADM = () => {
                 </Button>
               </div>
               <div className="col-2">
-                <Stack direction="row" spacing={2} justify="center" alignItems="center">
+                {/* <Stack direction="row" spacing={2} justify="center" alignItems="center">
                   <Pagination
                     onChange={(event, page) => handlePageClick(page - 1)}
                     count={numberPages}
                     variant="outlined"
                   />
-                </Stack>
+                </Stack> */}
               </div>
             </div>
             <div className="row customer-information">
@@ -735,9 +734,8 @@ const CartBillADM = () => {
                     <div className="text-information">
                       <div>
                         <h5>
-                          {' '}
                           <AccountBoxIcon />
-                          Thông Tin Thanh Toán
+                          Thông Tin Khách Hàng
                         </h5>
                       </div>
                       <TextField
@@ -766,55 +764,43 @@ const CartBillADM = () => {
                   )}
                 </Grid>
                 <Grid item xs={12} md={6} lg={4}>
-                  <div className="col-5">
-                    <h5>
-                      <AccountBalanceWalletIcon />
-                      THÔNG TIN THANH TOÁN
-                    </h5>
-                    <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Giao Hàng" />
-                    <br />
-                    <div className="row">
-                      <Stack
-                        sx={{ marginTop: 3 }}
-                        direction="row"
-                        alignItems="center"
-                        justifyContent="space-between"
-                        mb={5}
-                      >
-                        <Typography variant="h6" gutterBottom>
-                          Tiền Hàng{' '}
-                        </Typography>
-                        <Typography variant="h6" gutterBottom>
-                          {thanhTien}{' '}
-                        </Typography>
-                      </Stack>
-                      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                        <Typography variant="h6" gutterBottom>
-                          Giảm Giá{' '}
-                        </Typography>
-                        <Typography variant="h6" gutterBottom>
-                          {thanhTien}{' '}
-                        </Typography>
-                      </Stack>
-                      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                        <Typography variant="h6" gutterBottom>
-                          Tổng{' '}
-                        </Typography>
-                        <Typography variant="h6" gutterBottom>
-                          {thanhTien}{' '}
-                        </Typography>
-                      </Stack>
-                      {/* <div className="col-6">
-                        <p>Tiền Hàng</p>
-                        <p>Giảm Giá</p>
-                        <p>TỔNG: </p>
-                      </div>
-                      <div className="col-6">
-                        <p>{thanhTien}</p>
-                        <p>GIAM GIA</p>
-                        <p>{thanhTien}</p>
-                      </div> */}
-                    </div>
+                  <h5>
+                    <AccountBalanceWalletIcon />
+                    THÔNG TIN THANH TOÁN
+                  </h5>
+                  <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Giao Hàng" />
+                  <br />
+                  <div className="row">
+                    <Stack
+                      sx={{ marginTop: 5 }}
+                      direction="row"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      mb={3}
+                    >
+                      <Typography variant="h6" gutterBottom>
+                        Tiền Hàng{' '}
+                      </Typography>
+                      <Typography variant="h6" gutterBottom>
+                        {thanhTien}{' '}
+                      </Typography>
+                    </Stack>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+                      <Typography variant="h6" gutterBottom>
+                        Giảm Giá{' '}
+                      </Typography>
+                      <Typography variant="h6" gutterBottom>
+                        {thanhTien}{' '}
+                      </Typography>
+                    </Stack>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+                      <Typography variant="h6" gutterBottom>
+                        Tổng{' '}
+                      </Typography>
+                      <Typography variant="h6" gutterBottom>
+                        {thanhTien}{' '}
+                      </Typography>
+                    </Stack>
                   </div>
                 </Grid>
               </Grid>
@@ -840,7 +826,6 @@ const CartBillADM = () => {
               selectDataCart={selectDataCart}
               handleClose={handleClose}
               DataCart={DataCart}
-              currentPage1={currentPage}
             />
             {/* Modal Update Product */}
             <ModalUpdateProductOnCart
@@ -849,7 +834,6 @@ const CartBillADM = () => {
               itemUpdateClassify={itemUpdateClassify}
               selectDataCart={selectDataCart}
               itemUpdate={itemUpdate}
-              currentPage={currentPage}
             />
             {/* Modal Delete Product  */}
             <ModalDeleteProductOnCart
@@ -857,7 +841,6 @@ const CartBillADM = () => {
               handleClose={handleCloseModalDelelte}
               itemDelete={itemDelete}
               selectDataCart={selectDataCart}
-              currentPage={currentPage}
             />
             {/* Modal Delete Product  */}
             <ModalDeleteAllProductOnCart

@@ -12,5 +12,4 @@ public class FullstackBackendApplication {
         SpringApplication.run(FullstackBackendApplication.class, args);
     }
 
-
 }
