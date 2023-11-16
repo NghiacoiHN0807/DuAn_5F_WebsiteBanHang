@@ -7,7 +7,7 @@ import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
-import ProductsPage from './pages/ProductsPage';
+import ProductsPage from './pages/client/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import Sales from './pages/DirectSale-ADM';
 import CartBillADM from './pages/Cart-Bill-ADM';
@@ -15,6 +15,11 @@ import OrderManagement from './pages/OrderManagement';
 import OrderManagementTimeline from './pages/OrderManagement-Timeline';
 import Home from './pages/client/Home';
 import DashboardLayoutClient from './layouts/dashboard/DashboardLayout-Client';
+
+// san pham
+import ProductMain from './pages/SanPham/SanPhamMain';
+import ProductAdd from './pages/SanPham/ModelAdd';
+import ProductUpdate from './pages/SanPham/ModelUpdate';
 
 // ----------------------------------------------------------------------
 
@@ -40,12 +45,15 @@ export default function Router() {
               { path: 'sales/card-bill/:id', element: <CartBillADM /> },
               { path: 'clients', element: <UserPage /> },
               { path: 'staff', element: <UserPage /> },
-              { path: 'products', element: <ProductsPage /> },
+              { path: 'products', element: <ProductMain /> },
+              { path: 'products/add', element: <ProductAdd /> },
+              { path: 'products/update/:id', element: <ProductUpdate /> },
               { path: 'discounts', element: <BlogPage /> },
             ]
           : [
               { element: <Navigate to="/client/home" />, index: true },
               { path: 'home', element: <Home /> },
+              { path: 'products', element: <ProductsPage /> },
             ],
     },
     {

@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.services.impl;
 
+import com.example.fullstackbackend.DTO.SanPhamClientDTO;
 import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.DTO.SanPhamDTO;;
 import com.example.fullstackbackend.entity.SanPham;
@@ -50,6 +51,23 @@ public class SanphamServiceImpl implements SanPhamService {
             spCustom.setUrl((String) row[5]);
             spCustom.setGiaMin((BigDecimal) row[6]);
             spCustom.setGiaMax((BigDecimal) row[7]);
+            dtos.add(spCustom);
+        }
+
+        return dtos;
+    }
+
+    @Override
+    public List<SanPhamClientDTO> sanPhamForClient() {
+        List<SanPhamClientDTO> dtos = new ArrayList<>();
+        for (Object[] row : sanphamRepository.getSpForClient()) {
+            SanPhamClientDTO spCustom = new SanPhamClientDTO();
+            spCustom.setTenSp((String) row[0]);
+            spCustom.setTrangThai((Integer) row[1]);
+            spCustom.setUrl((String) row[2]);
+            spCustom.setGiaMin((BigDecimal) row[3]);
+            spCustom.setGiaMax((BigDecimal) row[4]);
+            spCustom.setGiaThucTe((BigDecimal) row[5]);
             dtos.add(spCustom);
         }
 

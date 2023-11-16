@@ -45,6 +45,7 @@ import {
   IconButton,
   FormLabel,
   Backdrop,
+  Chip,
 } from '@mui/material';
 import Iconify from '../../components/iconify';
 import { putUpdateSanPham, detailSP } from '../../service/SanPhamService';
@@ -61,14 +62,42 @@ import { fetchMS } from '../../service/MauSacService';
 import { fetchSize } from '../../service/SizeService';
 import '../../scss/UpdateSp.scss';
 
-function mapTrangThai(trangThai) {
-  return trangThai === 0
-    ? 'Còn bán'
-    : trangThai === 10
-    ? 'Ngừng kinh doanh'
-    : trangThai === 1
-    ? 'Đang cập nhật'
-    : 'Unknown status';
+function renderTrangThai(trangThai) {
+  let badgeVariant;
+  let statusText;
+
+  switch (trangThai) {
+    case 0:
+      badgeVariant = 'success';
+      statusText = 'Còn bán';
+      break;
+    case 1:
+      badgeVariant = 'warning';
+      statusText = 'Đang cập nhật';
+      break;
+    case 10:
+      badgeVariant = 'error';
+      statusText = 'Ngừng kinh doanh';
+      break;
+    default:
+      badgeVariant = 'default';
+      statusText = 'Unknown status';
+      break;
+  }
+
+  return <Chip label={statusText} color={badgeVariant} />;
+}
+
+function formatCurrency(price) {
+  if (!price) return '0';
+
+  const formatter = new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+    minimumFractionDigits: 0,
+  });
+
+  return formatter.format(price);
 }
 
 export default function UpdateSanPham() {
@@ -341,11 +370,6 @@ export default function UpdateSanPham() {
     getAnhData();
   };
 
-  // radio change size
-  const handleChangeSize = (event, newAlignment) => {
-    setSize(newAlignment);
-  };
-
   // add color and size
   const hanldeAddColorAndSize = async () => {
     const res = await addColorAndSize(idSpHttp, mauSac, size);
@@ -402,6 +426,19 @@ export default function UpdateSanPham() {
   useEffect(() => {
     handleCloseBD();
   }, [listImg]);
+
+  // set size
+  const [isSizeSelected, setIsSizeSelected] = useState(false);
+
+  const handleShowSize = (item) => {
+    if (isSizeSelected && size === item) {
+      setSize('');
+      setIsSizeSelected(false);
+    } else {
+      setSize(item);
+      setIsSizeSelected(true);
+    }
+  };
 
   return (
     <>
@@ -618,10 +655,10 @@ export default function UpdateSanPham() {
                           {row.idMs.tenMs}
                         </TableCell>
                         <TableCell>{row.idSize.tenSize}</TableCell>
-                        <TableCell>{row.giaNhap}</TableCell>
-                        <TableCell>{row.giaBan}</TableCell>
+                        <TableCell>{formatCurrency(row.giaNhap)}</TableCell>
+                        <TableCell>{formatCurrency(row.giaBan)}</TableCell>
                         <TableCell>{row.soLuongTon}</TableCell>
-                        <TableCell>{mapTrangThai(row.trangThai)}</TableCell>
+                        <TableCell>{renderTrangThai(row.trangThai)}</TableCell>
                         <TableCell>
                           <IconButton aria-label="add an alarm" onClick={() => handleClickEditAtt(row.idCtsp)}>
                             <EditIcon />
@@ -732,22 +769,26 @@ export default function UpdateSanPham() {
             )}
           </div>
           <div className="listSize">
-            <span>Size: </span>
-            {listSize.length > 0 && (
-              <ToggleButtonGroup
-                color="success"
-                value={size}
-                exclusive
-                onChange={handleChangeSize}
-                aria-label="Platform"
-              >
-                {listSize.map((item, index) => (
-                  <ToggleButton value={item.idSize} key={index}>
+            <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
+              <div>
+                Size:{' '}
+                {listSize.map((item, itemIndex) => (
+                  <Button
+                    style={{
+                      marginRight: '4px',
+                      marginBottom: '4px',
+                    }}
+                    key={`size-button-${itemIndex}`}
+                    onClick={() => handleShowSize(item.idSize)}
+                    variant={size === item.idSize ? 'contained' : 'outlined'}
+                    value={size}
+                    size="small"
+                  >
                     {item.tenSize}
-                  </ToggleButton>
+                  </Button>
                 ))}
-              </ToggleButtonGroup>
-            )}
+              </div>
+            </Box>
           </div>
         </DialogContent>
         <DialogActions>

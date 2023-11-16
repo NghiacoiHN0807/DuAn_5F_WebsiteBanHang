@@ -95,4 +95,10 @@ public class SanPhamController {
         List<SanPhamCustom> pageSp = sanPhamService.sanPhamCustom();
         return ResponseEntity.ok(pageSp);
     }
+
+    @GetMapping("getSpWithImg")
+    public ResponseEntity<List<SanPhamCustom>> getSanPhamDetails() {
+        List<SanPhamCustom> pageSp = sanPhamService.sanPhamCustom();
+        return ResponseEntity.ok(pageSp);
+    }
 }

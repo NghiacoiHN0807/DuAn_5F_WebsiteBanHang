@@ -29,6 +29,7 @@ import {
   DialogActions,
   Snackbar,
   Alert,
+  Chip,
 } from '@mui/material';
 // components
 import Iconify from '../../components/iconify';
@@ -80,12 +81,44 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-function mapTrangThai(trangThai) {
-  return trangThai === 0 ? 'Còn bán' : trangThai === 10 ? 'Ngừng kinh doanh' : 'Unknown status';
+function renderTrangThai(trangThai) {
+  let badgeVariant;
+  let statusText;
+
+  switch (trangThai) {
+    case 0:
+      badgeVariant = 'success';
+      statusText = 'Còn bán';
+      break;
+    case 10:
+      badgeVariant = 'error';
+      statusText = 'Ngừng kinh doanh';
+      break;
+    default:
+      badgeVariant = 'default';
+      statusText = 'Unknown status';
+      break;
+  }
+
+  return <Chip label={statusText} color={badgeVariant} />;
 }
 
 function getGia(giaMin, giaMax) {
-  return giaMin === giaMax ? giaMin : String(giaMin) + String(' - ') + String(giaMax);
+  return giaMin === giaMax
+    ? formatCurrency(giaMin)
+    : String(formatCurrency(giaMin)) + String(' - ') + String(formatCurrency(giaMax));
+}
+
+function formatCurrency(price) {
+  if (!price) return '0';
+
+  const formatter = new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+    minimumFractionDigits: 0,
+  });
+
+  return formatter.format(price);
 }
 
 export default function UserPage() {
@@ -280,13 +313,13 @@ export default function UserPage() {
                         </TableCell>
 
                         <TableCell align="left">
-                          <img src={url} alt="Mô tả hình ảnh" width="50" height="50" />
+                          <img src={url} alt="Mô tả hình ảnh" width="100" height="100" />
                         </TableCell>
                         <TableCell align="left">{maSp}</TableCell>
                         <TableCell align="left">{tenSp}</TableCell>
                         <TableCell align="left">{getGia(giaMin, giaMax)}</TableCell>
                         <TableCell align="left">{moTa}</TableCell>
-                        <TableCell align="left">{mapTrangThai(trangThai)}</TableCell>
+                        <TableCell align="left">{renderTrangThai(trangThai)}</TableCell>
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, idSp)}>
                             <Iconify icon={'eva:more-vertical-fill'} />

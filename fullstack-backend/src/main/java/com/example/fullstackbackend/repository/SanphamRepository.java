@@ -61,4 +61,20 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             ") ctsp ON sp.id_sp = ctsp.id_sp;\n", nativeQuery = true)
     List<Object[]> getSpWithImg();
 
+    @Query(value = "SELECT\n" +
+            "sp.ten_sp,\n" +
+            "sp.trang_thai,\n" +
+            "(SELECT img.images FROM images img WHERE img.id_sp = sp.id_sp ORDER BY img.id_images LIMIT 1) AS first_image,\n" +
+            "ctsp.min_gia_ban,\n" +
+            "ctsp.max_gia_ban,\n" +
+            "ctsp.giam_gia\n" +
+            "FROM san_pham sp\n" +
+            "LEFT JOIN (\n" +
+            "SELECT id_sp, MIN(gia_ban) as min_gia_ban, max(gia_ban) as max_gia_ban, min(gia_thuc_te) as giam_gia\n" +
+            "FROM chi_tiet_san_pham\n" +
+            "GROUP BY id_sp)\n" +
+            "ctsp ON sp.id_sp = ctsp.id_sp\n" +
+            "where sp.trang_thai = 0 or sp.trang_thai = 1", nativeQuery = true)
+    List<Object[]> getSpForClient();
+
 }

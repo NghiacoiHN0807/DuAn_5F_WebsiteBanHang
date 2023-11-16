@@ -25,15 +25,19 @@ ShopProductCard.propTypes = {
 };
 
 export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale } = product;
+  const { idSp, url, maSp, tenSp, giaMin, giaMax, moTa, trangThai } = product;
+
+  const hanldeDetail = (idSp, maSp, moTa) => {
+    console.log(idSp, maSp, moTa);
+  };
 
   return (
-    <Card>
+    <Card onClick={() => hanldeDetail(idSp, maSp, moTa)}>
       <Box sx={{ pt: '100%', position: 'relative' }}>
-        {status && (
+        {trangThai && (
           <Label
             variant="filled"
-            color={(status === 'sale' && 'error') || 'info'}
+            color={(trangThai === '2' && '10') || 'info'}
             sx={{
               zIndex: 9,
               top: 16,
@@ -42,21 +46,21 @@ export default function ShopProductCard({ product }) {
               textTransform: 'uppercase',
             }}
           >
-            {status}
+            {trangThai}
           </Label>
         )}
-        <StyledProductImg alt={name} src={cover} />
+        <StyledProductImg alt={tenSp} src={url} />
       </Box>
 
       <Stack spacing={2} sx={{ p: 3 }}>
         <Link color="inherit" underline="hover">
           <Typography variant="subtitle2" noWrap>
-            {name}
+            {tenSp}
           </Typography>
         </Link>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <ColorPreview colors={colors} />
+          {/* <ColorPreview colors={colors} /> */}
           <Typography variant="subtitle1">
             <Typography
               component="span"
@@ -66,10 +70,10 @@ export default function ShopProductCard({ product }) {
                 textDecoration: 'line-through',
               }}
             >
-              {priceSale && fCurrency(priceSale)}
+              {giaMin && fCurrency(giaMax)}
             </Typography>
             &nbsp;
-            {fCurrency(price)}
+            {fCurrency(giaMin)}
           </Typography>
         </Stack>
       </Stack>

@@ -100,19 +100,7 @@ export default function AddSanPham() {
   const navigate = useNavigate();
 
   const showToast = () => {
-    // toast.success('Thêm thành công!', {
-    //   position: 'bottom-right',
-    //   autoClose: 5000,
-    //   hideProgressBar: false,
-    //   closeOnClick: true,
-    //   pauseOnHover: true,
-    //   draggable: true,
-    //   progress: undefined,
-    //   theme: 'light',
-    // });
     toast.success('Thêm thành công!');
-
-    navigate(`/dashboard/products/update/6`);
   };
 
   const handleSave = async () => {
@@ -139,7 +127,8 @@ export default function AddSanPham() {
     if (res && res.idSp) {
       handleAlertClick('Thêm thành công!', 'success');
       handleClose();
-      // navigate(`/quan-ly-san-pham/san-pham/sua-san-pham/${res.idSp}`);
+      navigate(`/dashboard/products/update/${res.idSp}`);
+      showToast();
     } else {
       handleAlertClick('Thêm thất bại!', 'danger');
       handleClose();
@@ -273,10 +262,9 @@ export default function AddSanPham() {
             </Grid>
           </Grid>
           <div>
-            {/* <Button variant="contained" fullWidth sx={{ marginTop: '25px' }} onClick={() => handleClickOpenAdd()}>
+            <Button variant="contained" fullWidth sx={{ marginTop: '25px' }} onClick={() => handleClickOpenAdd()}>
               Thêm
-            </Button> */}
-            <Button onClick={() => showToast()}>Hiển thị toast</Button>
+            </Button>
 
             {/* Đây là container để hiển thị toast */}
           </div>

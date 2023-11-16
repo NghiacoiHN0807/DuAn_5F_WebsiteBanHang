@@ -50,8 +50,8 @@ const Header = () => (
             <NavLink to="/" className={'nav-link'}>
               Sale
             </NavLink>
-            <NavLink to="/table-xuatXu" className={'nav-link'}>
-              Table Xuat Xu
+            <NavLink to="/client/products" className={'nav-link'}>
+              Sản phẩm
             </NavLink>
           </Nav>
           <Nav>

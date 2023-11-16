@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.services;
 
+import com.example.fullstackbackend.DTO.SanPhamClientDTO;
 import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.entity.SanPham;
@@ -14,6 +15,8 @@ public interface SanPhamService {
     Page<SanPham> sanPhamPage(Integer pageNo, Integer size);
 
     List<SanPhamCustom> sanPhamCustom();
+
+    List<SanPhamClientDTO> sanPhamForClient();
 
     SanPham add(SanPham add);
 
