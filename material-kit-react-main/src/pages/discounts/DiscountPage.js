@@ -254,14 +254,13 @@ export default function DiscountPage() {
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
-
+  
     const dateTime = new Date(dateString);
-    const hours = dateTime.getUTCHours().toString().padStart(2, '0');
-    const minutes = dateTime.getUTCMinutes().toString().padStart(2, '0');
-    const [year, month, day] = dateTime.toISOString().split('T')[0].split('-');
-
-    return `${hours}:${minutes} ${day}/${month}/${year}`;
+    const formattedEndDate = format(dateTime, 'HH:mm dd/MM/yyyy');
+  
+    return formattedEndDate;
   };
+  
 
   return (
     <>

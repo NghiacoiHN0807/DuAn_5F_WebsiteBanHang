@@ -2,12 +2,12 @@ import * as React from 'react';
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate, useParams } from "react-router-dom";
-import { Alert, Button, Checkbox, Chip, Grid, Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
-import { Col, Image, Table } from 'react-bootstrap';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { Alert, Button, Checkbox, Chip, Grid, Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
+import { Col, Image, Table } from 'react-bootstrap';
 import { detail, getAllSanPham, update } from "../../service/giamGiaService";
 import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
@@ -60,9 +60,9 @@ const ModelUpdateGiamGia = (props) => {
   const [selected, setSelected] = useState("");
   const getAllSp = async () => {
     if (mucGiamPhanTram !== null) {
-      setSelected("mucGiam");
-    } else if (mucGiamTienMat !== null) {
       setSelected("phanTram");
+    } else if (mucGiamTienMat !== null) {
+      setSelected("mucGiam");
     }
     try {
       const res = await getAllSanPham();
@@ -361,6 +361,7 @@ const ModelUpdateGiamGia = (props) => {
       </Modal.Header>
       <div className="d-flex justify-content-around">
         <div className="content-left">
+          <p className='text-center info-discount'>Thông tin giảm giá</p>
           <Modal.Body>
             <div className="body-add-new">
               <form>
@@ -493,6 +494,7 @@ const ModelUpdateGiamGia = (props) => {
         </div>
 
         <div className="content-right">
+          <p className='text-center info-discount'>Chọn sản phẩm cần giảm giá</p>
           <div>
             <Grid container spacing={2} justifyContent="center" alignItems="center">
               <Grid item>

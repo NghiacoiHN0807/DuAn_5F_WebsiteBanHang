@@ -9,9 +9,6 @@ import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
 import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
-import UserStaff from './pages/Staff/Modal-User-Staff';
-import AddTKNV from './pages/Staff/Modal-Add-Staff';
-import UpdateTkNV from './pages/Staff/Modal-Update-Staff';
 import Sales from './pages/DirectSale-ADM';
 import CartBillADM from './pages/Cart-Bill-ADM';
 import OrderManagement from './pages/OrderManagement';
@@ -21,6 +18,7 @@ import DashboardLayoutClient from './layouts/dashboard/DashboardLayout-Client';
 import DiscountPage from './pages/discounts/DiscountPage';
 import ModelAddNewGiamGia from './pages/discounts/ModalsAddNewGiamGia';
 import ModelUpdateGiamGia from './pages/discounts/ModalsUpdateGiamGia';
+import DetailProduct from './pages/client/Detail-product';
 
 // ----------------------------------------------------------------------
 
@@ -45,17 +43,16 @@ export default function Router() {
               { path: 'sales', element: <Sales /> },
               { path: 'sales/card-bill/:id', element: <CartBillADM /> },
               { path: 'clients', element: <UserPage /> },
+              { path: 'staff', element: <UserPage /> },
               { path: 'products', element: <ProductsPage /> },
               { path: 'discounts', element: <DiscountPage /> },
               { path: 'discount/add', element: <ModelAddNewGiamGia /> },
               { path: 'discount/update/:id', element: <ModelUpdateGiamGia /> },
-              { path: 'staff', element: <UserStaff /> },
-              { path: "addNewTKNV", element: <AddTKNV /> },
-              { path: "detail/:id", element: <UpdateTkNV /> },
             ]
           : [
               { element: <Navigate to="/client/home" />, index: true },
               { path: 'home', element: <Home /> },
+              { path: 'detail', element: <DetailProduct /> },
             ],
     },
     {

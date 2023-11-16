@@ -241,7 +241,7 @@ const ModelAddNewGiamGia = () => {
     }
 
     const checkDateValidity = () => {
-      return !ngayKetThuc.isBefore(ngayBatDau);
+      return ngayKetThuc.isAfter(ngayBatDau);
     };
 
     if (!checkDateValidity()) {
@@ -325,6 +325,7 @@ const ModelAddNewGiamGia = () => {
       </Modal.Header>
       <div className="d-flex justify-content-around">
         <div className="content-left">
+          <p className='text-center info-discount'>Thông tin giảm giá</p>
           <Modal.Body>
             <div className="body-add-new">
               <form>
@@ -459,6 +460,7 @@ const ModelAddNewGiamGia = () => {
         </div>
 
         <div className="content-right">
+          <p className='text-center info-discount'>Chọn sản phẩm cần giảm giá</p>
           <div>
             <Grid container spacing={2} justifyContent="center" alignItems="center">
               <Grid item>
