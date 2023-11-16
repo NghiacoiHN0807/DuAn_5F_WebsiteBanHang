@@ -360,18 +360,18 @@ const ModelAddNewGiamGia = () => {
                 </div>
 
                 <div className="mb-3">
-                  <p className="form-label">Thiết lập giảm giá</p>
+                  <p className="form-label">Mức Giảm</p>
                   <div>
                     <div className="form-check">
                       <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="form-check-label" value={"mucGiam"} checked={selected === "mucGiam"} />
                       <p className="form-check-label">
-                        Mức giảm
+                      Tiền Mặt
                       </p>
                     </div>
                     <div className="form-check">
                       <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="form-check-label1" value={"phanTram"} checked={selected === "phanTram"} />
                       <p className="form-check-label1">
-                        Theo %
+                      Phần Trăm
                       </p>
                     </div>
                   </div>

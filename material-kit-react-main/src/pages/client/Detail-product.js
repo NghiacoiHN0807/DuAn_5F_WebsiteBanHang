@@ -39,8 +39,8 @@ const DetailProduct = () => {
     const button = event.currentTarget;
     button.classList.toggle('active');
   }
-  
-  
+
+
   return (
     <div id="main">
       <div id="header">
@@ -143,9 +143,9 @@ const DetailProduct = () => {
               <div className="soluong-block">
                 <div className="soluong-number-btn">
                   <button className="soluong-btn" onClick={handleDecreaseQuantity}>-</button>
-                  <input type="text" className="soluong-number" 
-              value={quantity}
-              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10)) || 1)}/>
+                  <input type="text" className="soluong-number"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10)) || 1)} />
                   <button className="soluong-btn" onClick={handleIncreaseQuantity}>+</button>
                   <span className="soluong-text">7079 sản phẩm có sẵn</span>
                 </div>

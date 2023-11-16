@@ -59,16 +59,16 @@ const ModelUpdateGiamGia = (props) => {
 
   const [selected, setSelected] = useState("");
   const getAllSp = async () => {
-    if (mucGiamPhanTram !== null) {
-      setSelected("phanTram");
-    } else if (mucGiamTienMat !== null) {
-      setSelected("mucGiam");
-    }
     try {
       const res = await getAllSanPham();
       const resDetail = await detail(id);
       console.log("data: ", res);
       console.log("resDetail: ", resDetail.data.idGiamGia);
+      if (resDetail.data.idGiamGia.mucGiamPhanTram !== null) {
+        setSelected("phanTram");
+      } else if (resDetail.data.idGiamGia.mucGiamTienMat !== null) {
+        setSelected("mucGiam");
+      }
       setGiamGia(resDetail.data.idGiamGia);
       setLeft(res);
 
@@ -226,6 +226,18 @@ const ModelUpdateGiamGia = (props) => {
 
   const changeHandler = e => {
     setSelected(e.target.value);
+    // Clear the values based on the selected radio button
+    if (e.target.value === 'phanTram') {
+      setGiamGia({
+        ...giamGia,
+        mucGiamTienMat: null
+      });
+    } else if (e.target.value === 'mucGiam') {
+      setGiamGia({
+        ...giamGia,
+        mucGiamPhanTram: null
+      });
+    }
   };
   console.log(selected);
 
@@ -396,18 +408,18 @@ const ModelUpdateGiamGia = (props) => {
                 </div>
 
                 <div className="mb-3">
-                  <p className="form-label">Thiết lập giảm giá</p>
+                  <p className="form-label">Mức Giảm</p>
                   <div>
                     <div className="form-check">
                       <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="form-check-label" value={"mucGiam"} checked={selected === "mucGiam"} />
                       <p className="form-check-label">
-                        Mức giảm
+                        Tiền Mặt
                       </p>
                     </div>
                     <div className="form-check">
                       <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="form-check-label1" value={"phanTram"} checked={selected === "phanTram"} />
                       <p className="form-check-label1">
-                        Theo %
+                        Phần Trăm
                       </p>
                     </div>
                   </div>
