@@ -12,7 +12,7 @@ const AddClients = () => {
     const [ten, setTen] = useState("");
     const [sdt, setSdt] = useState("");
     const [email, setEmail] = useState("");
-    const [matKhau] = useState("");
+    const [matKhau] = useState(null);
     const [trangThai] = useState("0");
 
     // chuyen trang

@@ -23,6 +23,13 @@ public interface TaiKhoanKhachHangRepository extends JpaRepository<TaiKhoan, Int
     @Query("select t from TaiKhoan t where  t.maTaiKhoan = ?1 order by t.idTaiKhoan DESC")
     Optional<TaiKhoan> findByMaTaiKhoanOrderByIdTaiKhoanDesc(String maTaiKhoan);
 
+
+
+    @Query("select (count(t) > 0) from TaiKhoan t where upper(t.email) = upper(?1)")
+    boolean existsByEmailAllIgnoreCase(String email);
+
+
+
     @Transactional
     @Modifying
     @Query("update TaiKhoan t set t.trangThai = 10 where t.idTaiKhoan = ?1")

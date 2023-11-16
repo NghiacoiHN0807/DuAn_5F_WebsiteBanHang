@@ -132,6 +132,7 @@ const UpdateClients = () => {
                         onChange={(event) => setTen(event.target.value)}
                     />
                     <TextField
+                        disabled
                         error={!!validationErrors.email}
                         helperText={validationErrors.email}
                         fullWidth
