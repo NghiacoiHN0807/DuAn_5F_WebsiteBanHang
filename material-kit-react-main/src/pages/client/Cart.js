@@ -60,23 +60,20 @@ export default function Cart() {
         {/* cart + summary */}
         <section className="bg-light my-5">
           <div className="container">
-            <div className="row">
               {/* cart */}
-              <div className="col-lg-9">
-                <div className="card border shadow-0">
                   <div className="m-4">
                     <h4 className="card-title mb-4">Giỏ hàng của bạn</h4>
-                    <div className="row gy-3 mb-4 d-flex align-items-center line-hieht">
+                    {/* <div className="row gy-3 mb-4 d-flex align-items-center line-hieht">
                       {productOnCart.length > 0 &&
                         productOnCart.map((item, index) => (
                           <div key={index} className="row mb-3">
                             <div className="col-lg-5">
                               <div className="me-lg-5">
-                                <div className="d-flex align-items-center">
+                                <div className="d-flex align-items-center ">
                                   {images[index] && ( // Checking if images[index] exists before rendering
-                                    <Box sx={{ pt: '50%', position: 'relative' }}>
+                                    <Box sx={{position: 'relative' }}>
                                       <StyledProductImg
-                                        sx={{ pt: '50%', position: 'relative' }}
+                                        sx={{position: 'relative', width: '140px', height: '180px' }}
                                         key={index}
                                         alt={images[index][0].url}
                                         src={images[index][0].url}
@@ -123,6 +120,114 @@ export default function Cart() {
                             </div>
                           </div>
                         ))}
+                    </div> */}
+                    <div id="container w-100">
+                      <div className="mpvt">
+                        <i className="fa-solid fa-truck-fast truck-icon" />
+                        Nhấn vào mục Mã giảm giá ở cuối trang để hưởng miễn phí vận chuyển bạn nhé!
+                      </div>
+                      <div className="container-title box-shadow">
+                        <div className="container-title-left">
+                          <input type="checkbox" className="container-title-checkbox checkboxAll" />
+                          <span className="container-title-checkbox-text">Chọn Tất Cả</span>
+                        </div>
+                        <div className="container-title-right">
+                          <span className="container-title-right-title">Đơn Giá</span>
+                          <span className="container-title-right-title">Số Lượng</span>
+                          <span className="container-title-right-title">Số Tiền</span>
+                          <span className="container-title-right-title">Thao Tác</span>
+                        </div>
+                      </div>
+                      <div className="container-product-carts" id="add-cart-js">
+                        <div className="container-product-cart box-shadow">
+                          <div className="container-title">
+                            <div className="container-title-left">
+                              {/* <input type="checkbox" className="container-title-checkbox" />
+                              <a href="#" className="hanghiem-link">
+                                Phụ kiện hàng hiếm
+                                <i className="fa-thin fa-comment-lines" />
+                              </a> */}
+                            </div>
+                          </div>
+                          <div className="container-product-block">
+                            <input type="checkbox" className="container-product-checkbox container-title-checkbox" />
+                            <div className="container-product-info">
+                              <a href="#">
+                                <img src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png" alt="" className="container-product-img" />
+                              </a>
+                              <a href="#" className="container-product-link">
+                                ${'{'}changeTitle{'}'}
+                              </a>
+                            </div>
+                            <div className="container-product-phanloai">
+                              <span className="container-product-phanloai-title">
+                                Phân Loại Hàng:
+                              </span>
+                              <br />
+                              <span className="container-product-phanloai-discription">
+                                N.Y ĐEN CHỮ,Size 36
+                              </span>
+                            </div>
+                            <span className="container-product-price">
+                              ${'{'}getPriceProduct{'}'}
+                            </span>
+                            <div className="soluong-block ml-90">
+                              <div className="soluong-number-btn d-flex justify-content-center align-items-center">
+                                <Button className="soluong-btn" onClick={handleDecreaseQuantity}>
+                                  -
+                                </Button>
+                                <input
+                                  type="text"
+                                  className="soluong-number"
+                                  value={1}
+                                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10)) || 1)}
+                                />
+                                <Button className="soluong-btn" onClick={handleIncreaseQuantity}>
+                                  +
+                                </Button>
+                              </div>
+                            </div>
+                            <span className="container-product-sotien">
+                              ${'{'}getPriceProduct{'}'}
+                            </span>
+                            <button className="delete-product-btn" id="delete-product" >Xóa</button>
+                          </div>
+                          {/* <div className="giampvt">
+                            <i className="fa-solid fa-truck-fast truck-icon" />
+                            <span className="giampvt-text">
+                              Giảm ₫25.000 phí vận chuyển đơn tối thiểu ₫50.000
+                            </span>
+                            <a href="#" className="timhieuthem-link">
+                              Tìm hiểu thêm
+                            </a>
+                          </div> */}
+                        </div>
+                      </div>
+                      <div className="container-buy-block box-shadow">
+                        <div className="container-voucher-block">
+                          <div className="container-voucher">
+                            <i className="fa-solid fa-clipboard-list voucher-icon" />
+                            Shopee Voucher
+                          </div>
+                          <span className="container-voucher-text">
+                            Áp Dụng Mã Giảm Giá Ngay!
+                          </span>
+                        </div>
+                        <div className="container-buy-blockok">
+                          <div className="container-buy-block-left">
+                            Lưu vào mục Đã thích
+                          </div>
+                          <div className="container-buy-block-right">
+                            <span className="tongthanhtoan">
+                              Tổng thanh toán:
+                            </span>
+                            <span className="tongtien">
+                              ₫0
+                            </span>
+                            <button className="delete-product-btn width-90">Mua hàng</button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div className="border-top pt-4 mx-4 mb-4">
@@ -135,11 +240,9 @@ export default function Cart() {
                       nisi ut aliquip
                     </p>
                   </div>
-                </div>
-              </div>
               {/* cart */}
               {/* summary */}
-              <div className="col-lg-3">
+              {/* <div className="col-lg-3">
                 <div className="card mb-3 border shadow-0">
                   <div className="card-body">
                     <form>
@@ -189,9 +292,8 @@ export default function Cart() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
               {/* summary */}
-            </div>
           </div>
         </section>
         {/* cart + summary */}

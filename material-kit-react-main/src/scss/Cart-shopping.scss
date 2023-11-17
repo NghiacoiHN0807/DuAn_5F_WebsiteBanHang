@@ -19,3 +19,14 @@
 .soluong-number-btn {
     padding-right: 15px;
 }
+
+#root {
+    position: relative;
+}
+
+.container-buy-block {
+    width: 1068px;
+    position: fixed;
+    z-index: 2;
+    bottom: 0;
+}

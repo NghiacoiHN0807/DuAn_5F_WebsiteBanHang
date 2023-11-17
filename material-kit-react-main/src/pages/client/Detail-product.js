@@ -24,6 +24,7 @@ const DetailProduct = () => {
   const [isMSSelected, setIsMSSelected] = useState(false);
   const [availableColors, setAvailableColors] = useState([]);
   const [selectSoLuongTon, setSelectSoLuongTon] = useState([]);
+  const [uniqueSizesHi, setUniqueSizes] = useState([]);
 
   // Select detail product
   const param = useParams();
@@ -45,6 +46,12 @@ const DetailProduct = () => {
   useEffect(() => {
     getDetail();
   }, [getDetail]);
+
+  useEffect(() => {
+    // Extract unique sizes from the API response
+    const sizes = detailProduct.map((size) => size.idSize.tenSize);
+    setUniqueSizes([...new Set(sizes)]);
+  }, [detailProduct]);
 
   // Set select one MS and Size
   const uniqueSizes = [...new Set(detailProduct.map((size) => size.idSize.tenSize))];
@@ -133,8 +140,12 @@ const DetailProduct = () => {
             </div>
           </div>
           <div className="info-product-right">
-            <Typography component="div" variant="h5">
-              Tên Sản Phẩm: {detailProduct.length > 0 && detailProduct[0].idSp.tenSp}
+            <Typography component="div" variant="h5"
+            sx={{
+              marginLeft: '50px'
+            }}
+            >
+              {detailProduct.length > 0 && detailProduct[0].idSp.tenSp}
             </Typography>
             {/* <div className="info-sp">
                         <div className="danhgia">
@@ -155,6 +166,8 @@ const DetailProduct = () => {
                   sx={{
                     color: 'text.disabled',
                     textDecoration: 'line-through',
+                    fontSize: '14px',
+                    marginRight: '15px'
                   }}
                 >
                   {detailProduct.length > 0 && detailProduct[0].giaBan && fCurrency(detailProduct[0].giaBan)}
@@ -188,15 +201,17 @@ const DetailProduct = () => {
                             </div>
                         </div>
                     </div> */}
-            <div className="vanchuyen">
+            <div className="vanchuyen d-block">
               <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
+                  <div className='vanchuyen-text h-100'>Kích Cỡ:</div>
                 <div>
-                  Kích Cỡ:{' '}
                   {uniqueSizes.map((size, sizeIndex) => (
                     <Button
                       style={{
                         marginRight: '4px',
                         marginBottom: '4px',
+                        marginLeft: '10px',
+                        height: '25px',
                       }}
                       key={`size-button-${sizeIndex}`}
                       onClick={() => handleShowSize(size)}
@@ -209,44 +224,48 @@ const DetailProduct = () => {
                 </div>
               </Box>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <div className='vanchuyen-text h-100'>Màu Sắc:</div>
                 <div>
-                  Màu Sắc:{' '}
                   {availableColors.length > 0
                     ? // Hiển thị danh sách màu sắc từ availableColors
-                      availableColors.map((mauSac, msIndex) => (
-                        <Button
-                          style={{
-                            marginRight: '4px',
-                            marginBottom: '4px',
-                          }}
-                          key={`size-button-${msIndex}`}
-                          onClick={() => handleShowMS(mauSac)}
-                          variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
-                          size="small"
-                        >
-                          {mauSac}
-                        </Button>
-                      ))
+                    availableColors.map((mauSac, msIndex) => (
+                      <Button
+                        style={{
+                          marginRight: '4px',
+                          marginBottom: '4px',
+                          marginLeft: '10px',
+                          height: '25px',
+                        }}
+                        key={`size-button-${msIndex}`}
+                        onClick={() => handleShowMS(mauSac)}
+                        variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
+                        size="small"
+                      >
+                        {mauSac}
+                      </Button>
+                    ))
                     : // Hiển thị dữ liệu từ dataDetail
-                      uniqueMS.map((item, index) => (
-                        <Button
-                          style={{
-                            marginRight: '4px',
-                            marginBottom: '4px',
-                          }}
-                          key={`size-button-${index}`}
-                          onClick={() => handleShowMS(item)}
-                          variant={selectedMauSac === item ? 'contained' : 'outlined'}
-                          size="small"
-                        >
-                          {item}
-                        </Button>
-                      ))}
+                    uniqueMS.map((item, index) => (
+                      <Button
+                        style={{
+                          marginLeft: '10px',
+                          height: '25px',
+                          marginRight: '4px',
+                          marginBottom: '4px',
+                        }}
+                        key={`size-button-${index}`}
+                        onClick={() => handleShowMS(item)}
+                        variant={selectedMauSac === item ? 'contained' : 'outlined'}
+                        size="small"
+                      >
+                        {item}
+                      </Button>
+                    ))}
                 </div>
               </Box>
             </div>
-            <div className="vanchuyen">
-              <p className="vanchuyen-text">Số Lượng</p>
+            <div className="vanchuyen d-flex align-items-center">
+              <div className="vanchuyen-text d-contents h-100">Số Lượng</div>
               <div className="soluong-block">
                 <div className="soluong-number-btn">
                   <Button className="soluong-btn" onClick={handleDecreaseQuantity}>
@@ -275,11 +294,11 @@ const DetailProduct = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div >
 
       <div id="cription">
         <h2>THÔNG SỐ ÁO:</h2>
-        <p>- Size áo: M/L/XL</p>
+        <p>- Size áo: {uniqueSizesHi.join('/')}</p>
 
         <h2>✅ HƯỚNG DẪN CHỌN SIZE:</h2>
         <p>Size 1 (40-55kg)</p>
@@ -317,7 +336,241 @@ const DetailProduct = () => {
           hãy nhắn cho shop liền nha 3 shop rất biết ơn nếu bạn làm điều đó ạ 3
         </p>
       </div>
+      <div className="container d-flex justify-content-center mt-50 mb-50">
+  <div className="row">
+    <div className="col-md-4 mt-2">
+      <div className="card">
+        <div className="card-body">
+          <div className="card-img-actions">
+            <img
+              src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
+              className="card-img img-fluid"
+              width={96}
+              height={350}
+              alt=""
+            />
+          </div>
+        </div>
+        <div className="card-body bg-light text-center">
+          <div className="mb-2">
+            <h6 className="font-weight-semibold mb-2">
+              <a href="#" className="text-default mb-2" data-abc="true">
+                Toshiba Notebook with 500GB HDD &amp; 8GB RAM
+              </a>
+            </h6>
+            <a href="#" className="text-muted" data-abc="true">
+              Laptops &amp; Notebooks
+            </a>
+          </div>
+          <h3 className="mb-0 font-weight-semibold">$250.99</h3>
+          <div>
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+          </div>
+          <div className="text-muted mb-3">34 reviews</div>
+          <button type="button" className="btn bg-cart">
+            <i className="fa fa-cart-plus mr-2" /><div className="buy">Mua ngay</div>
+          </button>
+        </div>
+      </div>
     </div>
+    <div className="col-md-4 mt-2">
+      <div className="card">
+        <div className="card-body">
+          <div className="card-img-actions">
+            <img
+              src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
+              className="card-img img-fluid"
+              width={96}
+              height={350}
+              alt=""
+            />
+          </div>
+        </div>
+        <div className="card-body bg-light text-center">
+          <div className="mb-2">
+            <h6 className="font-weight-semibold mb-2">
+              <a href="#" className="text-default mb-2" data-abc="true">
+                Toshiba Notebook with 500GB HDD &amp; 8GB RAM
+              </a>
+            </h6>
+            <a href="#" className="text-muted" data-abc="true">
+              Laptops &amp; Notebooks
+            </a>
+          </div>
+          <h3 className="mb-0 font-weight-semibold">$250.99</h3>
+          <div>
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+          </div>
+          <div className="text-muted mb-3">34 reviews</div>
+          <button type="button" className="btn bg-cart">
+            <i className="fa fa-cart-plus mr-2" /><div className="buy">Mua ngay</div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div className="col-md-4 mt-2">
+      <div className="card">
+        <div className="card-body">
+          <div className="card-img-actions">
+            <img
+              src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
+              className="card-img img-fluid"
+              width={96}
+              height={350}
+              alt=""
+            />
+          </div>
+        </div>
+        <div className="card-body bg-light text-center">
+          <div className="mb-2">
+            <h6 className="font-weight-semibold mb-2">
+              <a href="#" className="text-default mb-2" data-abc="true">
+                Toshiba Notebook with 500GB HDD &amp; 8GB RAM
+              </a>
+            </h6>
+            <a href="#" className="text-muted" data-abc="true">
+              Laptops &amp; Notebooks
+            </a>
+          </div>
+          <h3 className="mb-0 font-weight-semibold">$250.99</h3>
+          <div>
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+          </div>
+          <div className="text-muted mb-3">34 reviews</div>
+          <button type="button" className="btn bg-cart">
+            <i className="fa fa-cart-plus mr-2" /><div className="buy">Mua ngay</div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div className="col-md-4 mt-2">
+      <div className="card">
+        <div className="card-body">
+          <div className="card-img-actions">
+            <img
+              src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
+              className="card-img img-fluid"
+              width={96}
+              height={350}
+              alt=""
+            />
+          </div>
+        </div>
+        <div className="card-body bg-light text-center">
+          <div className="mb-2">
+            <h6 className="font-weight-semibold mb-2">
+              <a href="#" className="text-default mb-2" data-abc="true">
+                Toshiba Notebook with 500GB HDD &amp; 8GB RAM
+              </a>
+            </h6>
+            <a href="#" className="text-muted" data-abc="true">
+              Laptops &amp; Notebooks
+            </a>
+          </div>
+          <h3 className="mb-0 font-weight-semibold">$250.99</h3>
+          <div>
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+          </div>
+          <div className="text-muted mb-3">34 reviews</div>
+          <button type="button" className="btn bg-cart">
+            <i className="fa fa-cart-plus mr-2" /><div className="buy">Mua ngay</div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div className="col-md-4 mt-2">
+      <div className="card">
+        <div className="card-body">
+          <div className="card-img-actions">
+            <img
+              src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
+              className="card-img img-fluid"
+              width={96}
+              height={350}
+              alt=""
+            />
+          </div>
+        </div>
+        <div className="card-body bg-light text-center">
+          <div className="mb-2">
+            <h6 className="font-weight-semibold mb-2">
+              <a href="#" className="text-default mb-2" data-abc="true">
+                Toshiba Notebook with 500GB HDD &amp; 8GB RAM
+              </a>
+            </h6>
+            <a href="#" className="text-muted" data-abc="true">
+              Laptops &amp; Notebooks
+            </a>
+          </div>
+          <h3 className="mb-0 font-weight-semibold">$250.99</h3>
+          <div>
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+          </div>
+          <div className="text-muted mb-3">34 reviews</div>
+          <button type="button" className="btn bg-cart">
+            <i className="fa fa-cart-plus mr-2" /><div className="buy">Mua ngay</div>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div className="col-md-4 mt-2">
+      <div className="card">
+        <div className="card-body">
+          <div className="card-img-actions">
+            <img
+              src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
+              className="card-img img-fluid"
+              width={96}
+              height={350}
+              alt=""
+            />
+          </div>
+        </div>
+        <div className="card-body bg-light text-center">
+          <div className="mb-2">
+            <h6 className="font-weight-semibold mb-2">
+              <a href="#" className="text-default mb-2" data-abc="true">
+                Toshiba Notebook with 500GB HDD &amp; 8GB RAM
+              </a>
+            </h6>
+            <a href="#" className="text-muted" data-abc="true">
+              Laptops &amp; Notebooks
+            </a>
+          </div>
+          <h3 className="mb-0 font-weight-semibold">$250.99</h3>
+          <div>
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+            <i className="fa fa-star star" />
+          </div>
+          <div className="text-muted mb-3">34 reviews</div>
+          <button type="button" className="btn bg-cart">
+            <i className="fa fa-cart-plus mr-2" /><div className="buy">Mua ngay</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div >
+    
   );
 };
 
