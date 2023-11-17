@@ -76,6 +76,8 @@ const putUpdateSanPham = (
   });
 };
 
+
+
 export {
   fetchAllSP,
   fetchSP,
@@ -84,4 +86,5 @@ export {
   deleteSanPham,
   putUpdateSanPham,
   fetchSpWithImg,
+  
 };

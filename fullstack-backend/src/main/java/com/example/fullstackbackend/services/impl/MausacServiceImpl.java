@@ -42,7 +42,7 @@ public class MausacServiceImpl implements MausacService {
 
     @Override
     public MauSac update(MauSac update) {
-         return mausacRepository.save(update);
+        return mausacRepository.save(update);
     }
 
     @Override

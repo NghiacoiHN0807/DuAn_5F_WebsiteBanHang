@@ -63,7 +63,9 @@ public class HoaDonController {
 
     @GetMapping("view-all-offline-invoice")
     public List<HoaDon> viewOffline() {
-        return hoadonSevice.hoaDonOffline();
+        List<HoaDon> hoaDons = hoadonSevice.hoaDonOffline();
+
+        return hoaDons;
     }
 
     @GetMapping("view-all-invoice-waiting")
@@ -314,6 +316,8 @@ public class HoaDonController {
 
     }
 
+
+
     @PutMapping("delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
         if (!hoadonSevice.checkExists(id)) {
@@ -334,5 +338,28 @@ public class HoaDonController {
         }
     }
 
+    @GetMapping("/total-revenue")
+    public Double getTotalTongTien() {
+        return hoadonSevice.calculateTotalTongTien();
+    }
 
+    @GetMapping("/total-invoices")
+    public long getTotalInvoices() {
+        return hoadonSevice.totalInvoice();
+    }
+
+    @GetMapping("/total-revenue-by-day")
+    public List<Object[]> getTotalRevenueByDay() {
+        return hoadonSevice.getTotalRevenueByDay();
+    }
+
+    @GetMapping("/ty-le-tra-hang")
+    public Double getTyLeTraHang() {
+        return hoadonSevice.getTyLeTraHang();
+    }
+
+    @GetMapping("/tong-sp-da-ban")
+    public Long getSpDaBan() {
+        return hoadonSevice.tongSpDaban();
+    }
 }

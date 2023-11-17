@@ -15,6 +15,11 @@ import OrderManagement from './pages/OrderManagement';
 import OrderManagementTimeline from './pages/OrderManagement-Timeline';
 import Home from './pages/client/Home';
 import DashboardLayoutClient from './layouts/dashboard/DashboardLayout-Client';
+import DiscountPage from './pages/discounts/DiscountPage';
+import ModelAddNewGiamGia from './pages/discounts/ModalsAddNewGiamGia';
+import ModelUpdateGiamGia from './pages/discounts/ModalsUpdateGiamGia';
+import DetailProduct from './pages/client/Detail-product';
+import Cart from './pages/client/Cart';
 
 // ----------------------------------------------------------------------
 
@@ -41,11 +46,15 @@ export default function Router() {
               { path: 'clients', element: <UserPage /> },
               { path: 'staff', element: <UserPage /> },
               { path: 'products', element: <ProductsPage /> },
-              { path: 'discounts', element: <BlogPage /> },
+              { path: 'discounts', element: <DiscountPage /> },
+              { path: 'discount/add', element: <ModelAddNewGiamGia /> },
+              { path: 'discount/update/:id', element: <ModelUpdateGiamGia /> },
             ]
           : [
               { element: <Navigate to="/client/home" />, index: true },
               { path: 'home', element: <Home /> },
+              { path: 'detail', element: <DetailProduct /> },
+              { path: 'cart', element: <Cart /> },
             ],
     },
     {
