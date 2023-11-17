@@ -5,11 +5,28 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { MenuItem } from '@mui/material';
-import { faCartShopping, faHeart, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+
+// Icon styles
+import IconButton from '@mui/material/IconButton';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import Badge from '@mui/material/Badge';
+import { styled } from '@mui/material/styles';
+import MailIcon from '@mui/icons-material/Mail';
+
 import logo5F from '../../assets/logo_5F.png';
+
 // mocks_
 import account from '../../_mock/account';
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    // right: -3,
+    // top: 13,
+    border: `2px solid ${theme.palette.background.paper}`,
+    // padding: '0 4px',
+  },
+}));
 
 const Header = () => {
   const navigate = useNavigate();
@@ -75,12 +92,20 @@ const Header = () => {
                   <FontAwesomeIcon icon={faMagnifyingGlass} size="xs" />
                 </Button>
               </Form>
-              <NavLink to="/table-xuatXu" className={'nav-link'}>
-                <FontAwesomeIcon icon={faHeart} size="lg" />
-              </NavLink>
-              <NavLink to="/table-xuatXu" className={'nav-link'}>
-                <FontAwesomeIcon icon={faCartShopping} size="lg" />{' '}
-              </NavLink>
+              {/* <NavLink to="/table-xuatXu" className={'nav-link'}> */}
+              <IconButton aria-label="cart">
+                <StyledBadge badgeContent={4} color="secondary">
+                  <MailIcon />
+                </StyledBadge>
+              </IconButton>
+              {/* </NavLink> */}
+              {/* <NavLink to="/table-xuatXu" className={'nav-link'}> */}
+              <IconButton aria-label="cart">
+                <StyledBadge badgeContent={4} color="secondary">
+                  <ShoppingCartIcon />
+                </StyledBadge>
+              </IconButton>
+              {/* </NavLink> */}
             </Nav>
           </Navbar.Collapse>
         </Container>

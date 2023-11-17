@@ -115,7 +115,7 @@ const Home = () => {
                       {product.status && (
                         <Label
                           variant="filled"
-                          color={(product.status === 'sale' && 'error') || 'info'}
+                          color={(product.status === 'hot' && 'error') || 'info'}
                           sx={{
                             zIndex: 9,
                             top: 16,

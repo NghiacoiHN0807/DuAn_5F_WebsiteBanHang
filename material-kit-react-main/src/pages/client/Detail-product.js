@@ -13,7 +13,7 @@ import { findById } from '../../service/BillSevice';
 
 const DetailProduct = () => {
   const [quantity, setQuantity] = useState(1);
-  const [selectedSizes, setSelectedSizes] = useState([]);
+  // const [selectedSizes, setSelectedSizes] = useState([]);
   const [detailProduct, setDetailProduct] = useState([]);
   const [detailImg, setDetailImg] = useState([]);
 
@@ -91,21 +91,6 @@ const DetailProduct = () => {
     }
   };
 
-  const handleAddCart = () => {
-    // Implement the add to cart logic here, considering the selected quantity
-    console.log(`Added ${quantity} to cart`);
-  };
-
-  const handleLogin = () => {
-    // Implement the login logic here
-    console.log('Login');
-  };
-
-  const checkForm = () => {
-    // Implement the form validation logic here, considering the selected quantity
-    console.log(`Form validation for ${quantity} items`);
-  };
-
   const handleDecreaseQuantity = () => {
     if (quantity > 1) {
       setQuantity(quantity - 1);
@@ -117,14 +102,9 @@ const DetailProduct = () => {
     setQuantity(quantity + 1);
   };
 
-  const handleSizeChange = (sizes) => {
-    setSelectedSizes(sizes);
-  };
-
-  function toggleButton(event) {
-    const button = event.currentTarget;
-    button.classList.toggle('active');
-  }
+  // const handleSizeChange = (sizes) => {
+  //   setSelectedSizes(sizes);
+  // };
 
   return (
     <div id="main">
