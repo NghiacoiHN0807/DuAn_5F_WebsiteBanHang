@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 // @mui
 import { Grid } from '@mui/material';
-import ShopProductCard from './ProductCard';
+import ShopProductCard from './ProductCardAll';
 import { findById } from '../../../service/BillSevice';
 import ModalDetailProduct from '../../../forms/Modal-Detail-SanPham';
 

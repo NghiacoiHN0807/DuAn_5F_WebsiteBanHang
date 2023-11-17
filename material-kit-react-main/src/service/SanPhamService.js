@@ -37,4 +37,15 @@ const putUpdateSanPham = (idSp, maSp, tenSp, idCl, idLsp, idXx, idCoAo, idTayAo,
     trangThai,
   });
 
-export { fetchAllSP, fetchSP, detailSP, postAddSanPham, deleteSanPham, putUpdateSanPham, fetchSpWithImg };
+const fetchSpForClient = () => custom.get(`/san-pham/getSpForClient`);
+
+export {
+  fetchAllSP,
+  fetchSP,
+  detailSP,
+  postAddSanPham,
+  deleteSanPham,
+  putUpdateSanPham,
+  fetchSpWithImg,
+  fetchSpForClient,
+};

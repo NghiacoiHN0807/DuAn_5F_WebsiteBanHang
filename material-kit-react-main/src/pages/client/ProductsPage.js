@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react';
 // @mui
 import { Container, Stack, Typography } from '@mui/material';
 // components
-import { ProductSort, ProductList, ProductCartWidget, ProductFilterSidebar } from '../../sections/@dashboard/products';
+import { ProductSort, ProductListAll, ProductfilterSB } from '../../sections/@dashboard/products';
 // mock
 
 //
-import { fetchSpWithImg } from '../../service/SanPhamService';
+import { fetchSpForClient } from '../../service/SanPhamService';
 
 // ----------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ export default function ProductsPage() {
 
   const getListData = async () => {
     try {
-      const res = await fetchSpWithImg();
+      const res = await fetchSpForClient();
       console.log('Check res: ', res);
       setListSP(res);
     } catch (error) {
@@ -50,7 +50,7 @@ export default function ProductsPage() {
 
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
           <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-            <ProductFilterSidebar
+            <ProductfilterSB
               openFilter={openFilter}
               onOpenFilter={handleOpenFilter}
               onCloseFilter={handleCloseFilter}
@@ -59,8 +59,7 @@ export default function ProductsPage() {
           </Stack>
         </Stack>
 
-        <ProductList products={listSP} />
-        <ProductCartWidget />
+        <ProductListAll products={listSP} />
       </Container>
     </>
   );

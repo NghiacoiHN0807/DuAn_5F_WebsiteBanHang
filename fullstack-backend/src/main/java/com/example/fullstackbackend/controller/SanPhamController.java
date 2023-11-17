@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.controller;
 
+import com.example.fullstackbackend.DTO.SanPhamClientDTO;
 import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.DTO.SanPhamWithMinImageDTO;
 import com.example.fullstackbackend.DTO.SanPhamCustom;
@@ -96,9 +97,9 @@ public class SanPhamController {
         return ResponseEntity.ok(pageSp);
     }
 
-    @GetMapping("getSpWithImg")
-    public ResponseEntity<List<SanPhamCustom>> getSanPhamDetails() {
-        List<SanPhamCustom> pageSp = sanPhamService.sanPhamCustom();
+    @GetMapping("getSpForClient")
+    public ResponseEntity<List<SanPhamClientDTO>> getSpForClient() {
+        List<SanPhamClientDTO> pageSp = sanPhamService.sanPhamForClient();
         return ResponseEntity.ok(pageSp);
     }
 }

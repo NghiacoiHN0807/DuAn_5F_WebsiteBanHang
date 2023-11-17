@@ -3,10 +3,8 @@ import PropTypes from 'prop-types';
 import { Box, Card, Link, Typography, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
 // utils
-import { fCurrency } from '../../../utils/formatNumber';
 // components
 import Label from '../../../components/label';
-import { ColorPreview } from '../../../components/color-utils';
 
 // ----------------------------------------------------------------------
 
@@ -24,16 +22,34 @@ ShopProductCard.propTypes = {
   product: PropTypes.object,
 };
 
+function getGia(giaMin, giaMax) {
+  return giaMin === giaMax
+    ? formatCurrency(giaMin)
+    : String(formatCurrency(giaMin)) + String(' - ') + String(formatCurrency(giaMax));
+}
+
+function formatCurrency(price) {
+  if (!price) return '0';
+
+  const formatter = new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+    minimumFractionDigits: 0,
+  });
+
+  return formatter.format(price);
+}
+
 export default function ShopProductCard({ product }) {
-  const { name, cover, price, colors, status, priceSale } = product;
+  const { tenSp, trangThai, url, giaMin, giaMax, giaThucTe } = product;
 
   return (
     <Card>
       <Box sx={{ pt: '100%', position: 'relative' }}>
-        {status && (
+        {trangThai === 1 && (
           <Label
             variant="filled"
-            color={(status === 'sale' && 'error') || 'info'}
+            color="error"
             sx={{
               zIndex: 9,
               top: 16,
@@ -42,35 +58,40 @@ export default function ShopProductCard({ product }) {
               textTransform: 'uppercase',
             }}
           >
-            {status}
+            Sale
           </Label>
         )}
-        <StyledProductImg alt={name} src={cover} />
+        <StyledProductImg alt={tenSp} src={url} sx={{ height: '250px' }} />
       </Box>
 
       <Stack spacing={2} sx={{ p: 3 }}>
         <Link color="inherit" underline="hover">
           <Typography variant="subtitle2" noWrap>
-            {name}
+            {tenSp}
           </Typography>
         </Link>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between">
-          <ColorPreview colors={colors} />
-          <Typography variant="subtitle1">
-            <Typography
-              component="span"
-              variant="body1"
-              sx={{
-                color: 'text.disabled',
-                textDecoration: 'line-through',
-              }}
-            >
-              {priceSale && fCurrency(priceSale)}
+          {trangThai === 1 ? (
+            <Typography variant="subtitle1">
+              <Typography
+                component="span"
+                variant="body1"
+                sx={{
+                  color: 'text.disabled',
+                  textDecoration: 'line-through',
+                }}
+              >
+                {formatCurrency(giaThucTe)}
+              </Typography>
+              <Typography component="span" variant="subtitle1">
+                {' '}
+                {formatCurrency(giaMin)}
+              </Typography>
             </Typography>
-            &nbsp;
-            {fCurrency(price)}
-          </Typography>
+          ) : (
+            <Typography variant="subtitle1">{getGia(giaMin, giaMax)}</Typography>
+          )}
         </Stack>
       </Stack>
     </Card>
