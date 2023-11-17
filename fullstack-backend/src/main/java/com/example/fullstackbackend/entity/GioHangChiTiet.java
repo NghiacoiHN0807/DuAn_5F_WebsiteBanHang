@@ -27,7 +27,7 @@ public class GioHangChiTiet {
     private Integer idGhct;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_gh", referencedColumnName = "id_gh")
+    @JoinColumn(name = "id_gh", referencedColumnName = "id_gio_hang")
     private GioHang idGh;
 
     @ManyToOne(fetch = FetchType.EAGER)

@@ -40,7 +40,7 @@ const DetailProduct = () => {
     } catch (e) {
       console.error(e);
     }
-  }, [idHdParam, setDetailProduct]); // Assuming 'findById' and 'setDetailProduct' are dependencies
+  }, [idHdParam, setDetailProduct]);
 
   useEffect(() => {
     getDetail();
