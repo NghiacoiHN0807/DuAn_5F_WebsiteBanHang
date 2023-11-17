@@ -70,12 +70,12 @@ export default function LoginPage() {
         <Container maxWidth="sm">
           <StyledContent>
             <Typography variant="h4" gutterBottom>
-              Sign in to 5F Store
+              Đăng ký 5F Store
             </Typography>
 
             <Typography variant="body2" sx={{ mb: 5 }}>
-              Don’t have an account? {''}
-              <Link variant="subtitle2">Get started</Link>
+              Chưa có tài khoản? {''}
+              <Link variant="subtitle2" href="/signUp" >Get started</Link>
             </Typography>
 
             <Stack direction="row" spacing={2}>

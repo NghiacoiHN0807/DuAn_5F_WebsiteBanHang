@@ -82,7 +82,7 @@ const AddClients = () => {
                         fullWidth
                         margin={"dense"}
                         label="Họ"
-                        id="fullWidth"
+
                         onChange={(event) => setHo(event.target.value)}
                     />
                     <TextField
@@ -91,7 +91,7 @@ const AddClients = () => {
                         fullWidth
                         margin={"dense"}
                         label="Tên"
-                        id="fullWidth"
+
                         onChange={(event) => setTen(event.target.value)}
                     />
                     <TextField
@@ -100,7 +100,7 @@ const AddClients = () => {
                         fullWidth
                         margin={"dense"}
                         label="Email"
-                        id="fullWidth"
+
                         onChange={(event) => setEmail(event.target.value)}
                     />
                     <TextField
@@ -109,7 +109,6 @@ const AddClients = () => {
                         fullWidth
                         margin={"dense"}
                         label="Số Điện Thoại"
-                        id="fullWidth"
                         inputProps={{ maxLength: 10 }}
                         onChange={(event) => setSdt(event.target.value)}
                     />

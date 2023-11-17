@@ -24,6 +24,7 @@ import AllAddress from "./pages/diaChi/AllAddress";
 import AddressByClient from "./pages/diaChi/AddressByClient";
 import AddAddress from "./pages/diaChi/AddAddress";
 import UpdateAddress from "./pages/diaChi/UpdateAddress";
+import SignUp from "./pages/client/SignUp";
 
 
 // ----------------------------------------------------------------------
@@ -67,6 +68,9 @@ export default function Router() {
         {
             path: 'login',
             element: <LoginPage/>,
+        }, {
+            path: 'signUp',
+            element: <SignUp/>,
         },
         {
             element: <SimpleLayout/>,
