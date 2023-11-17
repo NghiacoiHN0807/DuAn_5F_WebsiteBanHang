@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+// import { useState } from 'react';
 // @mui
 import { Grid } from '@mui/material';
 import ShopProductCard from './ProductCard';
-import { findById } from '../../../service/BillSevice';
-import ModalDetailProduct from '../../../forms/Modal-Detail-SanPham';
+// import { findById } from '../../../service/BillSevice';
+// import ModalDetailProduct from '../../../forms/Modal-Detail-SanPham';
 
 // ----------------------------------------------------------------------
 
@@ -13,19 +13,20 @@ ProductListClient.propTypes = {
 };
 
 export default function ProductListClient({ products, ...other }) {
-  const [listImages, setListImages] = useState([]);
-  const [dataDetail, setDataDetail] = useState([]);
-  const [showModalDetail, setShowModalDetail] = useState(false);
+  // const [listImages, setListImages] = useState([]);
+  // const [dataDetail, setDataDetail] = useState([]);
+  // const [showModalDetail, setShowModalDetail] = useState(false);
 
   const handleChoose = async (id, cover) => {
-    const getOneSP = await findById(id);
-    setListImages(cover);
-    setDataDetail(getOneSP);
-    setShowModalDetail(true);
+    console.log('HIHIHI', cover, id);
+    // const getOneSP = await findById(id);
+    // setListImages(cover);
+    // setDataDetail(getOneSP);
+    // setShowModalDetail(true);
   };
-  const handleCloseDetail = () => {
-    setShowModalDetail(false);
-  };
+  // const handleCloseDetail = () => {
+  //   setShowModalDetail(false);
+  // };
   return (
     <>
       <Grid container spacing={3} {...other}>

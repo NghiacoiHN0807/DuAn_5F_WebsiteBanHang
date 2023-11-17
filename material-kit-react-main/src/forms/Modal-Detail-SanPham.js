@@ -23,9 +23,8 @@ const ModalDetailProduct = (props) => {
     selectDataCart: PropTypes.func.isRequired,
     DataCart: PropTypes.array.isRequired,
     listImages: PropTypes.string.isRequired,
-    currentPage1: PropTypes.number.isRequired,
   };
-  const { show, handleCloseDetai, dataDetail, selectDataCart, DataCart, listImages, currentPage1 } = props;
+  const { show, handleCloseDetai, dataDetail, selectDataCart, DataCart, listImages } = props;
 
   //   Insert product
   //   Get Name Of Size And Number
@@ -124,7 +123,7 @@ const ModalDetailProduct = (props) => {
         handleCloseDetai();
         setQuantity(1);
         //   Load new data on cart
-        selectDataCart(currentPage1);
+        selectDataCart();
         setAlertContent({
           type: 'warning',
           message: 'Sản phẩm đã có trong giỏ hàng. Chúng tôi đã cộng thêm số lượng vào sản phẩm',
@@ -138,7 +137,7 @@ const ModalDetailProduct = (props) => {
         handleCloseDetai();
         setQuantity(1);
         //   Load new data on cart
-        selectDataCart(currentPage1);
+        selectDataCart();
         setAlertContent({
           type: 'success',
           message: 'Thêm sản phẩm thành công',

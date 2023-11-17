@@ -1,17 +1,31 @@
 // react
 import { useCallback, useEffect, useState } from 'react';
 import { sample } from 'lodash';
-import { Card, DialogContent, Stack } from '@mui/material';
+import { Box, Card, CardActionArea, Link, Stack, Typography } from '@mui/material';
 import { Container } from '@mui/system';
 import { Carousel, Col, Row } from 'react-bootstrap';
+import { styled } from '@mui/material/styles';
+// utils
+import { useNavigate } from 'react-router-dom';
+import { fCurrency } from '../../utils/formatNumber';
 // import
 import anh1 from '../../assets/slider_2.jpg';
 import anh2 from '../../assets/banner-thoi-trang-nam.jpg';
 import anh3 from '../../assets/banner-thoi-trang-the-thao-cho-nam_113858272.jpg';
 import '../../scss/Home.scss';
 import { fetchAllCTSPBySize } from '../../service/BillSevice';
+
 // @mui
-import { ProductSort, ProductListClient, ProductFilterSidebar } from '../../sections/@dashboard/products';
+import Label from '../../components/label';
+import { ColorPreview } from '../../components/color-utils';
+
+const StyledProductImg = styled('img')({
+  top: 0,
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  position: 'absolute',
+});
 
 const Home = () => {
   const [listData, setListData] = useState([]);
@@ -32,14 +46,11 @@ const Home = () => {
     getAllData();
   }, [getAllData]);
 
-  const [openFilter, setOpenFilter] = useState(false);
+  const navigate = useNavigate();
 
-  const handleOpenFilter = () => {
-    setOpenFilter(true);
-  };
-
-  const handleCloseFilter = () => {
-    setOpenFilter(false);
+  const handleChoose = async (id, cover) => {
+    console.log('HIHIHI', cover, id);
+    navigate(`/client/detail/${id}`);
   };
 
   const PRODUCTS = listData.map((item, index) => {
@@ -80,39 +91,89 @@ const Home = () => {
 
   const slides = [];
   for (let i = 0; i < numSlides; i += 1) {
-    const startIndex = i * itemsPerSlide;
-    const endIndex = Math.min(startIndex + itemsPerSlide, PRODUCTS.length);
-
-    const slideProducts = PRODUCTS.slice(startIndex, endIndex);
-
     const slide = (
       <Carousel.Item key={i}>
         <Container>
           <Row>
-            {slideProducts.map((product, index) => (
+            {/* {PRODUCTS.map((product, index) => (
               <Col key={index}>
                 <Card sx={{ maxWidth: 345 }}>
-                  <DialogContent>
-                    <Stack
-                      direction="row"
-                      flexWrap="wrap-reverse"
-                      alignItems="center"
-                      justifyContent="flex-end"
-                      sx={{ mb: 5 }}
-                    >
-                      <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-                        <ProductFilterSidebar
-                          openFilter={openFilter}
-                          onOpenFilter={handleOpenFilter}
-                          onCloseFilter={handleCloseFilter}
-                        />
-                        <ProductSort />
-                      </Stack>
-                    </Stack>
-                    <ProductListClient products={PRODUCTS} />
-                  </DialogContent>
+                  <CardActionArea>
+                    <DialogContent>
+                      <ProductListClient products={[product]} />
+                    </DialogContent>
+                  </CardActionArea>
                 </Card>
               </Col>
+            ))} */}
+            {PRODUCTS.map((product, index) => (
+              <Col key={index}>
+                <Card sx={{ height: 350, width: '70%' }}>
+                  <CardActionArea onClick={() => handleChoose(product.id, product.cover)}>
+                    {/* <DialogContent> */}
+                    <Box sx={{ pt: '100%', position: 'relative' }}>
+                      {product.status && (
+                        <Label
+                          variant="filled"
+                          color={(product.status === 'hot' && 'error') || 'info'}
+                          sx={{
+                            zIndex: 9,
+                            top: 16,
+                            right: 16,
+                            position: 'absolute',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          {product.status}
+                        </Label>
+                      )}
+                      <StyledProductImg alt={product.name} src={product.cover} />
+                    </Box>
+
+                    <Stack spacing={2} sx={{ p: 3 }}>
+                      <Link color="inherit" underline="hover">
+                        <Typography variant="subtitle2" noWrap>
+                          {product.name}
+                        </Typography>
+                      </Link>
+
+                      <Stack direction="row" alignItems="center" justifyContent="space-between">
+                        <ColorPreview colors={product.colors} />
+                        <Typography variant="subtitle1">
+                          <Typography
+                            component="span"
+                            variant="body1"
+                            sx={{
+                              color: 'text.disabled',
+                              textDecoration: 'line-through',
+                            }}
+                          >
+                            {product.priceSale && fCurrency(product.priceSale)}
+                          </Typography>
+                          &nbsp;
+                          {fCurrency(product.price)}
+                        </Typography>
+                      </Stack>
+                    </Stack>
+                    {/* </DialogContent> */}
+                  </CardActionArea>
+                </Card>
+              </Col>
+              // <Col key={index}>
+              //   <Card sx={{ maxWidth: 345 }}>
+              //     <CardActionArea>
+              //       <CardMedia component="img" height="140" image={product.cover} alt={product.cover} />
+              //       <CardContent>
+              //         <Typography gutterBottom variant="h5" component="div">
+              //           {product.name}
+              //         </Typography>
+              //         <Typography variant="body2" color="text.secondary">
+              //           {product.price}
+              //         </Typography>
+              //       </CardContent>
+              //     </CardActionArea>
+              //   </Card>
+              // </Col>
             ))}
           </Row>
         </Container>
