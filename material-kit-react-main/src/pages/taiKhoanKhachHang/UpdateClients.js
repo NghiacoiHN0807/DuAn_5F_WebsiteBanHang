@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useState} from "react";
 import {Helmet} from "react-helmet-async";
 import {Visibility, VisibilityOff} from "@mui/icons-material";
-import {toast} from "react-toastify";
+// import {toast} from "react-toastify";
 import {
     Box,
     Button,
@@ -81,10 +81,10 @@ const UpdateClients = () => {
             return;
         }
         if (res && res.idTaiKhoan) {
-            toast.success("Cập Nhập Tài Khoản Thành Công!");
+            // toast.success("Cập Nhập Tài Khoản Thành Công!");
             navigate("/dashboard/clients");
         } else {
-            toast.error("Cập Nhập Tài Khoản Thất Bại");
+            // toast.error("Cập Nhập Tài Khoản Thất Bại");
         }
 
     };

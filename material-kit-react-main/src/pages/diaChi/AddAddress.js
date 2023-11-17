@@ -1,4 +1,4 @@
-import {toast} from "react-toastify";
+// import {toast} from "react-toastify";
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {Helmet} from "react-helmet-async";
@@ -22,6 +22,7 @@ import {
 import {postAddDiaChi} from "../../service/diaChiSevice";
 import {getDetailOneTK} from "../../service/taiKhoanKhachHangSevice";
 import {getPhuongXa, getQuanHuyen, getTinhThanhPho} from "../../service/apiDiaChi";
+import {useAlert} from "../../layouts/dashboard/AlertContext";
 
 
 const AddAddress = () => {
@@ -44,6 +45,7 @@ const AddAddress = () => {
         // chuyen trang
         const navigate = useNavigate();
 
+        const {showAlert} = useAlert();
 
         useEffect(() => {
             getListTP();
@@ -110,10 +112,11 @@ const AddAddress = () => {
             }
 
             if (res && res.taiKhoan) {
-                toast.success("Thêm Địa Chỉ Thành Công");
+                showAlert('success', 'Thêm Địa Chỉ thành công');
                 navigate(`/dashboard/address/${idTK}`);
             } else {
-                toast.error("Thêm Địa Chỉ Thất Bại!");
+                showAlert('warning', 'Thêm Địa Chỉ Thất Bại !');
+
             }
 
         };

@@ -1,10 +1,8 @@
 import {Navigate, useRoutes} from 'react-router-dom';
 // layouts
-
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
-import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
@@ -16,6 +14,11 @@ import OrderManagement from './pages/OrderManagement';
 import OrderManagementTimeline from './pages/OrderManagement-Timeline';
 import Home from './pages/client/Home';
 import DashboardLayoutClient from './layouts/dashboard/DashboardLayout-Client';
+import DiscountPage from './pages/discounts/DiscountPage';
+import ModelAddNewGiamGia from './pages/discounts/ModalsAddNewGiamGia';
+import ModelUpdateGiamGia from './pages/discounts/ModalsUpdateGiamGia';
+import DetailProduct from './pages/client/Detail-product';
+import Cart from './pages/client/Cart';
 
 import ClientsPage from "./pages/taiKhoanKhachHang/ClientsPage";
 import AddClients from "./pages/taiKhoanKhachHang/AddClients";
@@ -58,17 +61,21 @@ export default function Router() {
                         {path: 'address/detail/:id', element: <UpdateAddress/>},
                         {path: 'staff', element: <UserPage/>},
                         {path: 'products', element: <ProductsPage/>},
-                        {path: 'discounts', element: <BlogPage/>},
+                        {path: 'discounts', element: <DiscountPage/>},
+                        {path: 'discount/add', element: <ModelAddNewGiamGia/>},
+                        {path: 'discount/update/:id', element: <ModelUpdateGiamGia/>},
                     ]
                     : [
                         {element: <Navigate to="/client/home"/>, index: true},
                         {path: 'home', element: <Home/>},
+                        {path: 'detail/:id', element: <DetailProduct/>},
+                        {path: 'cart', element: <Cart/>},
                     ],
         },
         {
             path: 'login',
             element: <LoginPage/>,
-        }, {
+        },{
             path: 'signUp',
             element: <SignUp/>,
         },

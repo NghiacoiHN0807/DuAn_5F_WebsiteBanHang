@@ -286,7 +286,7 @@ const CartBillADM = () => {
   }, []);
 
   // Get API Provinces
-  const host = 'https://provinces.open-api.vn/api/';
+  // const host = 'https://online-gateway.ghn.vn/shiip/public-api/master-data/province';
 
   const [provinces, setProvinces] = useState([]);
   const [selectedProvince, setSelectedProvince] = useState('');
@@ -297,56 +297,106 @@ const CartBillADM = () => {
 
   const [result, setResult] = useState('');
 
-  useEffect(() => {
-    fetchProvinces();
-  }, []);
-
   const fetchProvinces = async () => {
     try {
-      const response = await axios.get(host);
-      setProvinces(response.data);
+      const response = await axios.get('https://online-gateway.ghn.vn/shiip/public-api/master-data/province', {
+        headers: {
+          token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
+        },
+      });
+      console.log('response: ', response.data.data);
+      setProvinces(response.data.data);
     } catch (error) {
       console.error('Error fetching provinces:', error);
     }
   };
+  useEffect(() => {
+    fetchProvinces();
+  }, []);
 
-  const callApiDistrict = async (api) => {
+  const callApiDistrict = useCallback(async () => {
     try {
-      const response = await axios.get(api);
-      setDistricts(response.data.districts);
+      const response = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district`, {
+        params: { province_id: selectedProvince },
+        headers: {
+          token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
+        },
+      });
+      console.log('Quận/Huyện: ', response.data);
+      setDistricts(response.data.data);
     } catch (error) {
       console.error('Error fetching districts:', error);
-    }
-  };
-
-  const callApiWard = async (api) => {
-    try {
-      const response = await axios.get(api);
-      setWards(response.data.wards);
-    } catch (error) {
-      console.error('Error fetching wards:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (selectedProvince) {
-      callApiDistrict(`${host}p/${selectedProvince}?depth=2`);
     }
   }, [selectedProvince]);
 
   useEffect(() => {
-    if (selectedDistrict) {
-      callApiWard(`${host}d/${selectedDistrict}?depth=2`);
+    if (selectedProvince) {
+      console.log('selectedProvince: ', selectedProvince);
+      callApiDistrict();
+    }
+  }, [selectedProvince, callApiDistrict]);
+
+  const callApiWard = useCallback(async () => {
+    try {
+      const response = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/ward`, {
+        params: { district_id: selectedDistrict },
+        headers: {
+          token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
+        },
+      });
+      setWards(response.data.data);
+    } catch (error) {
+      console.error('Error fetching wards:', error);
+    }
+  }, [selectedDistrict]);
+
+  // API gets service pack information
+  const [tienShip, getTienShip] = useState(0);
+
+  const getSevice = useCallback(async () => {
+    try {
+      const response = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee`, {
+        params: {
+          service_type_id: 2,
+          insurance_value: 500000,
+          coupon: null,
+          from_district_id: 1542,
+          to_district_id: selectedDistrict,
+          height: 15,
+          length: 15,
+          weight: 1000,
+          width: 15,
+        },
+        headers: {
+          token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
+          shop_id: 4699724,
+        },
+      });
+      const totalShip = response.data?.data?.total || 0;
+      console.log('getSevice: ', response);
+      getTienShip(totalShip);
+    } catch (error) {
+      console.error('Error get service:', error);
     }
   }, [selectedDistrict]);
 
   useEffect(() => {
+    if (selectedDistrict) {
+      console.log('selectedProvince: ', selectedDistrict);
+      callApiWard();
+      getSevice();
+    }
+  }, [getSevice, selectedDistrict, callApiWard]);
+
+  useEffect(() => {
     if (selectedDistrict && selectedProvince && selectedWard) {
-      const selectedProvinceName = provinces.find((province) => province.code === selectedProvince)?.name || '';
+      const selectedProvinceName =
+        provinces.find((province) => province.ProvinceID === selectedProvince)?.ProvinceName || '';
 
-      const selectedDistrictName = districts.find((district) => district.code === selectedDistrict)?.name || '';
+      const selectedDistrictName =
+        districts.find((district) => district.DistrictID === selectedDistrict)?.DistrictName || '';
 
-      const selectedWardName = wards.find((ward) => ward.code === selectedWard)?.name || '';
+      const selectedWardName = wards.find((ward) => ward.WardCode === selectedWard)?.WardName || '';
 
       setResult(`${selectedProvinceName}, ${selectedDistrictName}, ${selectedWardName}, ${diachiCuThe}`);
     }
@@ -354,24 +404,26 @@ const CartBillADM = () => {
 
   // Show thanhTien
   const [thanhTien, setThanhTien] = useState();
+  const [tongTien, setTongTien] = useState();
 
   useEffect(() => {
     const calculateTotalPrice = async () => {
       // let total = 0;
       const total = DataCart.reduce((accumulator, item) => accumulator + item[9], 0);
-
-      setThanhTien(total);
-      await updateTongTien(idHdParam, thanhTien);
+      // Set Tong Tien
+      setTongTien(total);
+      // Set Tien Ship
+      console.log('getDataShip: ', listHD.tienShip);
+      const totalShip = tienShip === 0 && listHD && listHD.tienShip ? listHD.tienShip : tienShip;
+      // Set Thanh Tien
+      setThanhTien(total + totalShip);
+      await updateTongTien(idHdParam, total, totalShip);
     };
 
     calculateTotalPrice();
-  }, [DataCart, idHdParam, thanhTien]);
+  }, [DataCart, idHdParam, tienShip, listHD]);
 
-  // Add Khach Hang
-  // const [selectedCustomerName, setSelectedCustomerName] = useState('');
-  // const [selectedMaTK, setSelectedMaTk] = useState('');
-  // const [selectedCustomerEmail, setSelectedCustomerEmail] = useState('');
-
+  // Modal add KH
   const [showModalsKH, setShowModalKH] = useState(false);
   const handleAddKH = () => {
     setShowModalKH(true);
@@ -668,8 +720,8 @@ const CartBillADM = () => {
                               <em>Chọn Tỉnh/Thành Phố</em>
                             </MenuItem>
                             {provinces.map((province) => (
-                              <MenuItem key={province.code} value={province.code}>
-                                {province.name}
+                              <MenuItem key={province.ProvinceID} value={province.ProvinceID}>
+                                {province.ProvinceName}
                               </MenuItem>
                             ))}
                           </Select>
@@ -687,8 +739,8 @@ const CartBillADM = () => {
                               <em>Chọn Quận/Huyện</em>
                             </MenuItem>
                             {districts.map((district) => (
-                              <MenuItem key={district.code} value={district.code}>
-                                {district.name}
+                              <MenuItem key={district.DistrictID} value={district.DistrictID}>
+                                {district.DistrictName}
                               </MenuItem>
                             ))}
                           </Select>
@@ -706,8 +758,8 @@ const CartBillADM = () => {
                               <em>Chọn Phường/Xã</em>
                             </MenuItem>
                             {wards.map((ward) => (
-                              <MenuItem key={ward.code} value={ward.code}>
-                                {ward.name}
+                              <MenuItem key={ward.WardCode} value={ward.WardCode}>
+                                {ward.WardName}
                               </MenuItem>
                             ))}
                           </Select>
@@ -782,20 +834,20 @@ const CartBillADM = () => {
                         Tiền Hàng{' '}
                       </Typography>
                       <Typography variant="h6" gutterBottom>
-                        {thanhTien}{' '}
+                        {tongTien}{' '}
                       </Typography>
                     </Stack>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
                       <Typography variant="h6" gutterBottom>
-                        Giảm Giá{' '}
+                        Tiền Ship{' '}
                       </Typography>
                       <Typography variant="h6" gutterBottom>
-                        {thanhTien}{' '}
+                        {tienShip === 0 ? listHD.tienShip : tienShip}{' '}
                       </Typography>
                     </Stack>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
                       <Typography variant="h6" gutterBottom>
-                        Tổng{' '}
+                        Thành Tiền{' '}
                       </Typography>
                       <Typography variant="h6" gutterBottom>
                         {thanhTien}{' '}

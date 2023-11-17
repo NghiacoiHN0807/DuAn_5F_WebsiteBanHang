@@ -1,10 +1,5 @@
 package com.example.fullstackbackend.DTO;
 
-import com.example.fullstackbackend.entity.ChatLieu;
-import com.example.fullstackbackend.entity.LoaiCoAo;
-import com.example.fullstackbackend.entity.MauSac;
-import com.example.fullstackbackend.entity.OngTayAo;
-import com.example.fullstackbackend.entity.XuatXu;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

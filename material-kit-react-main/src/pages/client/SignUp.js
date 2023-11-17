@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import {toast} from "react-toastify";
+// import {toast} from "react-toastify";
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -59,10 +59,10 @@ const SignUp = () => {
         }
 
         if (res && res.idTaiKhoan) {
-            toast.success("Thêm Thành Công");
+            // toast.success("Thêm Thành Công");
             navigate("/client/home");
         } else {
-            toast.error("Thêm Thất Bại!");
+            // toast.error("Thêm Thất Bại!");
         }
 
     };

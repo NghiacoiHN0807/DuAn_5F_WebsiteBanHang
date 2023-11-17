@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 // @mui
 import { styled } from '@mui/material/styles';
-import {ToastContainer} from "react-toastify";
+// import {ToastContainer} from "react-toastify";
 
 //
 import Header from './header';
 import Nav from './nav';
+import {AlertProvider} from "./AlertContext";
+import AlertSnackbar from "./AlertSnackbar";
 
 // ----------------------------------------------------------------------
 
@@ -39,29 +41,15 @@ export default function DashboardLayout() {
 
   return (
     <StyledRoot>
-      <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          containerId="toast-container"
-          style={{
-            width: "auto",
-            maxHeight: "100px",
-          }}
-      />
+        <AlertProvider>
       <Header onOpenNav={() => setOpen(true)} />
-
+            <AlertSnackbar />
       <Nav openNav={open} onCloseNav={() => setOpen(false)} />
 
       <Main>
         <Outlet />
       </Main>
+        </AlertProvider>
     </StyledRoot>
   );
 }

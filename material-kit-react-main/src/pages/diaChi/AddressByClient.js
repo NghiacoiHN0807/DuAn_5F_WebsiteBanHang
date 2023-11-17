@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {Helmet} from "react-helmet-async";
 import Badge from "react-bootstrap/Badge";
-import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import {
     DataGrid,
@@ -15,7 +14,6 @@ import {
 } from "@mui/x-data-grid";
 import {
     Button,
-    Card,
     Container,
     Dialog,
     DialogActions,
@@ -24,20 +22,20 @@ import {
     DialogTitle,
     FormControl,
     IconButton,
-    InputBase,
     InputLabel,
     MenuItem,
-    Paper,
-    Select, TextField,
+    Select,
+    TextField,
     Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
-import {toast, ToastContainer} from "react-toastify";
+// import {toast, ToastContainer} from "react-toastify";
 import {deleteDiaChi, fetchDiaChiByTK} from "../../service/diaChiSevice";
 import {getPhuongXa, getQuanHuyen, getTinhThanhPho} from "../../service/apiDiaChi";
 import Iconify from "../../components/iconify";
+import {useAlert} from "../../layouts/dashboard/AlertContext";
 
 
 const AddressByClient = () => {
@@ -53,6 +51,8 @@ const AddressByClient = () => {
     const [listTP, setListTP] = useState([]);
     const [listQH, setListQH] = useState([]);
     const [listPX, setListPX] = useState([]);
+
+    const {showAlert} = useAlert();
 
     const getListData = async (idTK, page) => {
         try {
@@ -236,11 +236,11 @@ const AddressByClient = () => {
         const res = await deleteDiaChi(item.id);
         console.log("Check res: ", res);
         if (res) {
-            toast.success("Xóa thành công!");
+            showAlert('success', 'Chuyển trang thêm Thành Công');
             handleClose();
             fetchUpdatedData(0);
         } else {
-            toast.error("Xóa thất bại!");
+            showAlert('warning', 'Thêm Địa Chỉ Thất Bại !');
             handleClose();
         }
     };

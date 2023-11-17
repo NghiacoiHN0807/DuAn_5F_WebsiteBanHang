@@ -27,6 +27,7 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import {getPhuongXa, getQuanHuyen, getTinhThanhPho} from "../../service/apiDiaChi";
 import {fetchAllDiaChi} from "../../service/diaChiSevice";
+import AlertSnackbar from "../../layouts/dashboard/AlertSnackbar";
 
 
 const AllAddress = () => {
@@ -320,6 +321,7 @@ const AllAddress = () => {
                     onRowClick={(params) => handlClickRow(params.row)}
                 />
             </Container>
+            <AlertSnackbar />
         </>
     );
 };

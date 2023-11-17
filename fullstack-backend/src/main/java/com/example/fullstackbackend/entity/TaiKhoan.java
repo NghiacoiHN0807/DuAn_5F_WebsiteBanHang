@@ -1,5 +1,7 @@
 package com.example.fullstackbackend.entity;
 
+import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Size;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -10,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import org.springframework.security.core.GrantedAuthority;
 
 import java.security.SecureRandom;
@@ -62,7 +65,7 @@ public class TaiKhoan {
     private String soCanCuoc;
 
     @Column(name = "trang_thai")
-    private Integer trangThai;
+    private Integer trangThai = 1;
 
     public TaiKhoan(String username, String password, List<GrantedAuthority> authorities) {
     }

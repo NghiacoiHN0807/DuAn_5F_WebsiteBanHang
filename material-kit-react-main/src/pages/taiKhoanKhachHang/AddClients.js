@@ -1,10 +1,11 @@
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {toast} from "react-toastify";
+// import {toast} from "react-toastify";
 import {Helmet} from "react-helmet-async";
 import {Box, Button, Container, Stack, TextField, Typography} from "@mui/material";
 import {postAddTaiKhoanKhachHang} from "../../service/taiKhoanKhachHangSevice";
 import Iconify from "../../components/iconify";
+import {useAlert} from "../../layouts/dashboard/AlertContext";
 
 const AddClients = () => {
     const [maTaiKhoan] = useState(null);
@@ -19,6 +20,9 @@ const AddClients = () => {
     const navigate = useNavigate();
 
     const [validationErrors, setValidationErrors] = useState("");
+    const {showAlert} = useAlert();
+
+
     const handleSave = async () => {
 
             let res;
@@ -44,10 +48,10 @@ const AddClients = () => {
             }
 
             if (res && res.idTaiKhoan) {
-                toast.success("Thêm Thành Công");
+                showAlert('success', 'Thêm Thành Công');
                 navigate("/dashboard/clients");
             } else {
-                toast.error("Thêm Thất Bại!");
+                showAlert('warning', 'Thêm Thất Bại');
             }
 
     };
@@ -122,6 +126,7 @@ const AddClients = () => {
                         Thêm Tài Khoản Khách Hàng Mới
                     </Button>
                 </Box>
+
             </Container>
 
 

@@ -202,8 +202,6 @@ const TableTKNhanVien = () => {
     navigate(`/tai-khoan/detail/${item.idTaiKhoan}`);
   };
 
-  
-
   return (
     <>
       <div className="row row-order-management">

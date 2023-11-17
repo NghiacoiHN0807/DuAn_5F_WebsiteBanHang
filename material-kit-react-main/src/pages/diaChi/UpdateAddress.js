@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {toast} from "react-toastify";
+// import {toast} from "react-toastify";
 import {Helmet} from "react-helmet-async";
 import {
     Box,
@@ -21,6 +21,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
 import {getPhuongXa, getQuanHuyen, getTinhThanhPho} from "../../service/apiDiaChi";
 import {getDiaChiById, postUpdateDiaChi} from "../../service/diaChiSevice";
+import {useAlert} from "../../layouts/dashboard/AlertContext";
 
 const UpdateAddress = () => {
         const param = useParams();
@@ -42,6 +43,7 @@ const UpdateAddress = () => {
 
         // chuyen trang
         const navigate = useNavigate();
+        const {showAlert} = useAlert();
         useEffect(() => {
             getDiaChi(idDc);
         }, [idDc]);
@@ -113,10 +115,10 @@ const UpdateAddress = () => {
                 return;
             }
             if (res && res.id) {
-                toast.success("Cập nhập địa chỉ Thành Công");
+                showAlert('success', 'Cập nhập tài khoản Thành Công');
                 navigate(`/dashboard/address/${taiKhoan.maTaiKhoan}`);
             } else {
-                toast.error("Cập Nhập địa chỉ Thất Bại!");
+                showAlert('warning', 'Cập nhập thất bại');
             }
 
         };

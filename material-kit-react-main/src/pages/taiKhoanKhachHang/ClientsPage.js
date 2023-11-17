@@ -14,7 +14,6 @@ import Badge from "react-bootstrap/Badge";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
     Button,
-    Card,
     Container,
     Dialog,
     DialogActions,
@@ -23,22 +22,21 @@ import {
     DialogTitle,
     FormControl,
     IconButton,
-    InputBase,
     InputLabel,
     MenuItem,
-    Pagination,
-    Paper,
     Select,
-    Stack, TextField,
+    Stack,
+    TextField,
     Typography
 } from "@mui/material";
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from "@mui/icons-material/Search";
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
-import {toast, ToastContainer} from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
+
 import {deleteTaiKhoanKH, fetchAllTKKH} from "../../service/taiKhoanKhachHangSevice";
 import Iconify from "../../components/iconify";
+import {useAlert} from "../../layouts/dashboard/AlertContext";
 
 
 const ClientPage = () => {
@@ -48,6 +46,9 @@ const ClientPage = () => {
     const [selectedStatus, setSelectedStatus] = useState("Tất cả");
     const [originalListData, setOriginalListData] = useState([]);
     const navigate = useNavigate();
+
+    const {showAlert} = useAlert();
+
     const getListData = async (page, query) => {
         try {
             const res = await fetchAllTKKH(page, query);
@@ -165,19 +166,17 @@ const ClientPage = () => {
 
 
     const handAdd = () => {
-        toast.success('Chuyển Trang Thêm thành công!');
+        showAlert('success', 'Chuyển trang thêm Thành Công');
         navigate("/dashboard/clients/add");
+
     };
     const handAddDiaChi = (item) => {
-        toast.success('Chuyển Trang Địa Chỉ thành công!');
-
+        showAlert('success', 'Chuyển trang địa chỉ Thành Công');
         navigate(`/dashboard/address/${item.maTaiKhoan}`);
     };
 
     const handlClickRow = (item) => {
-        console.log("Check click: ", item);
-        toast.success('Chi tiết  thành công!');
-
+        showAlert('success', 'Chuyển trang update Thành Công');
         navigate(`/dashboard/clients/detail/${item.idTaiKhoan}`);
 
     };
@@ -187,11 +186,11 @@ const ClientPage = () => {
         const res = await deleteTaiKhoanKH(item.id);
         console.log("Check res: ", res);
         if (res) {
-            toast.success('Xóa thành công!');
+            showAlert('success', 'Xóa Thành Công');
             handleClose();
             handlePageClick(0);
         } else {
-            toast.error('Xóa thất bại!');
+            showAlert('warning', 'Xóa Thất Bại');
             handleClose();
         }
     };
@@ -308,7 +307,6 @@ const ClientPage = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-
 
         </>
     );

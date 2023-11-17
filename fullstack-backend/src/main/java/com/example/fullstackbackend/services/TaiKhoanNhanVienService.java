@@ -9,9 +9,9 @@ import java.util.Optional;
 public interface TaiKhoanNhanVienService {
     List<TaiKhoan> getAll();
 
-    Page<TaiKhoan> phanTrang(Integer pageNo, Integer size);
+//    Page<TaiKhoan> phanTrang(Integer pageNo, Integer size);
 
-    Page<TaiKhoan> phanTrang(Integer pageNo, Integer size, Integer trangThai);
+    Page<TaiKhoan> phanTrang(Integer pageNo, Integer size);
 
     TaiKhoan add(TaiKhoan taiKhoan);
 
