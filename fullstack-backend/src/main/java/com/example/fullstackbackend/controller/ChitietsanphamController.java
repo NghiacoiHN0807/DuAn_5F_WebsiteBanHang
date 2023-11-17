@@ -39,7 +39,6 @@ public class ChitietsanphamController {
     @GetMapping("view-all-ctsp")
     public List<Object[]> getSanPhamsWithSizes() {
         return chitietsanphamSevice.getSanPhamsWithSizes();
-
     }
 
     @GetMapping("select-ctsp-byId/{id}")

@@ -1,7 +1,10 @@
 package com.example.fullstackbackend.controller;
 
+import com.example.fullstackbackend.DTO.GiamGiaDTO;
+import com.example.fullstackbackend.entity.GiamGia;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
 import com.example.fullstackbackend.services.GiamGiaChiTietService;
+import com.example.fullstackbackend.services.GiamGiaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,30 +32,23 @@ public class GiamGiaChiTietController {
     @Autowired
     private GiamGiaChiTietService giamGiaChiTietService;
 
-    @GetMapping("view-all")
-    Page<GiamGiaChiTiet> getAll(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
-                                @RequestParam(value = "size", defaultValue = "5") Integer size) {
-        return giamGiaChiTietService.getAll(pageNo, size);
-    }
+    @Autowired
+    private GiamGiaService giamGiaService;
 
-    @GetMapping("search")
-    Page<GiamGiaChiTiet> search(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
-                                @RequestParam(value = "size", defaultValue = "5") Integer size,
-                                @RequestParam("value") String value) {
-        return giamGiaChiTietService.search(pageNo, size, value);
+    @GetMapping("view-all")
+    List<GiamGiaChiTiet> getAll() {
+        return giamGiaChiTietService.getAll();
     }
 
     @GetMapping("filter-date")
-    Page<GiamGiaChiTiet> filterDate(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
-                                    @RequestParam(value = "size", defaultValue = "5") Integer size,
-                                    @RequestParam("first") LocalDate first,
+    List<GiamGiaChiTiet> filterDate(@RequestParam("first") LocalDate first,
                                     @RequestParam("last") LocalDate last) {
-        return giamGiaChiTietService.getAllByDate(pageNo, size, first, last);
+        return giamGiaChiTietService.getAllByDate(first, last);
     }
 
     @GetMapping("views")
-    Page<GiamGiaChiTiet> getAll(@RequestParam(value = "page", defaultValue = "0") Integer pageNo, @RequestParam(value = "size", defaultValue = "5") Integer size, @RequestParam(value = "trangThai", defaultValue = "0") Integer trangThai) {
-        return giamGiaChiTietService.getAllByTrangThai(pageNo, size, trangThai);
+    List<GiamGiaChiTiet> getAll(@RequestParam(value = "page", defaultValue = "0") Integer pageNo, @RequestParam(value = "size", defaultValue = "5") Integer size, @RequestParam(value = "trangThai", defaultValue = "0") Integer trangThai) {
+        return giamGiaChiTietService.getAllByTrangThai(trangThai);
     }
 
     @GetMapping("detail/{id}")
@@ -99,8 +96,36 @@ public class GiamGiaChiTietController {
         );
     }
 
-    @GetMapping("getidGiamGiaByIdggct/{id}")
-    Integer findByIdGiamGia_IdGiamGia(@PathVariable("id") Integer id) {
-        return giamGiaChiTietService.findByIdGiamGia_IdGiamGia(id);
+    @PostMapping("insert-dto")
+    ResponseEntity<?> insertDto(@RequestBody GiamGiaDTO giamGiaDTO) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ReponObject("Ok!", "Add success id: ", giamGiaChiTietService.insert(giamGiaDTO))
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ReponObject("Failed!", "Not found id: ", "")
+            );
+        }
+    }
+
+    @PutMapping("update-dto/{id}")
+    ResponseEntity<?> updateDto(@RequestBody GiamGiaDTO giamGiaDTO, @PathVariable("id") Integer id) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new ReponObject("Ok!", "Add success id: ", giamGiaChiTietService.updateDto(giamGiaDTO, id))
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ReponObject("Failed!", "Not found id: ", "")
+            );
+        }
+    }
+
+    @GetMapping("test/{id}")
+    ResponseEntity<?> testApi(@PathVariable("id") Integer id) {
+        return ResponseEntity.ok(giamGiaChiTietService.mucGiam(id));
     }
 }

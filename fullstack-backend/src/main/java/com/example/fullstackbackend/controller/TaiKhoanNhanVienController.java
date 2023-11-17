@@ -9,6 +9,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,17 +30,16 @@ public class TaiKhoanNhanVienController {
     private TaiKhoanNhanVienService taiKhoanNhanVienService;
 
     @GetMapping("view-all")
-    public Page<TaiKhoan> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                  @RequestParam(defaultValue = "15") Integer size,
+    public Page<TaiKhoan> viewAll(@RequestParam(defaultValue = "0", value = "size1") Integer page,
+                                  @RequestParam(defaultValue = "15", value = "size2") Integer size,
                                   @RequestParam("p") Optional<Integer> p) {
         return taiKhoanNhanVienService.chucVu(p.orElse(page), size);
     }
 
     @GetMapping("view-alls")
-    public Page<TaiKhoan> viewAlll(@RequestParam(defaultValue = "0", value = "page") Integer page,
-                                   @RequestParam(defaultValue = "15") Integer size,
-                                   @RequestParam("trangThai") Integer trangThai) {
-        return taiKhoanNhanVienService.phanTrang(page, size, trangThai);
+    public List<TaiKhoan> viewAlll() {
+        return taiKhoanNhanVienService.getAll();
+
     }
 
     @PostMapping("add")
@@ -57,7 +58,7 @@ public class TaiKhoanNhanVienController {
         return taiKhoanNhanVienService.detail(id);
     }
 
-    @PutMapping("delete/{id}")
+    @PatchMapping("delete/{id}")
     public TaiKhoan delete(@PathVariable("id") Integer id
     ) {
         return taiKhoanNhanVienService.delete(id);

@@ -14,6 +14,7 @@ import ScrollToTop from './components/scroll-to-top';
 // SCSS
 import './scss/App.scss';
 import './scss/Home.scss';
+// import './scss/detail-client.scss';
 // ----------------------------------------------------------------------
 
 export default function App() {
