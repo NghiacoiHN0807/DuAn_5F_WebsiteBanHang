@@ -56,7 +56,7 @@ public class MySecurityConfiguration {
         return http.authorizeHttpRequests(
                         req ->
                                 req
-                                        .requestMatchers("/", "/add", "/api/**", "san-pham/**", "chi-tiet-san-pham/**").permitAll()
+                                        .requestMatchers("/","/anh/**", "/add", "/api/**", "san-pham/**", "chi-tiet-san-pham/**").permitAll()
                                         .requestMatchers("/**").hasRole("ADMIN")
                                         .requestMatchers("/tai-khoan/view-all").hasRole("STAFF")
                                         .requestMatchers("/hoa-don/view-all").hasRole("CUSTOMER")

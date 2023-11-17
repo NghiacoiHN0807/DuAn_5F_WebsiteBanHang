@@ -6,6 +6,7 @@ import { Container } from '@mui/system';
 import { Carousel, Col, Row } from 'react-bootstrap';
 import { styled } from '@mui/material/styles';
 // utils
+import { useNavigate } from 'react-router-dom';
 import { fCurrency } from '../../utils/formatNumber';
 // import
 import anh1 from '../../assets/slider_2.jpg';
@@ -44,6 +45,13 @@ const Home = () => {
   useEffect(() => {
     getAllData();
   }, [getAllData]);
+
+  const navigate = useNavigate();
+
+  const handleChoose = async (id, cover) => {
+    console.log('HIHIHI', cover, id);
+    navigate(`/client/detail/${id}`);
+  };
 
   const PRODUCTS = listData.map((item, index) => {
     const setIndex = index + 1;
@@ -101,7 +109,7 @@ const Home = () => {
             {PRODUCTS.map((product, index) => (
               <Col key={index}>
                 <Card sx={{ height: 350, width: '70%' }}>
-                  <CardActionArea>
+                  <CardActionArea onClick={() => handleChoose(product.id, product.cover)}>
                     {/* <DialogContent> */}
                     <Box sx={{ pt: '100%', position: 'relative' }}>
                       {product.status && (
