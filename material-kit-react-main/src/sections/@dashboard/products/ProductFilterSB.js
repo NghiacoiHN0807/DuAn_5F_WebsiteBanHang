@@ -15,6 +15,7 @@ import {
   Typography,
   RadioGroup,
   FormControlLabel,
+  FormControl,
 } from '@mui/material';
 // components
 import Iconify from '../../../components/iconify';
@@ -64,6 +65,15 @@ ShopFilterSidebar.propTypes = {
 };
 
 export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter }) {
+  const [chatLieu, setChatLieu] = useState('');
+  const [loaiSP, setLoaiSP] = useState('');
+  const [xuatXu, setXuatXu] = useState('');
+  const [tayAo, setTayAo] = useState('');
+  const [coAo, setCoAo] = useState('');
+
+  const [mauSac, setMauSac] = useState('');
+  const [size, setSize] = useState('');
+
   const [listCL, setListCL] = useState([]);
   const [listLSP, setListLSP] = useState([]);
   const [listXX, setListXX] = useState([]);
@@ -115,7 +125,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
       >
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ px: 1, py: 2 }}>
           <Typography variant="subtitle1" sx={{ ml: 1 }}>
-            Filters
+            Lọc
           </Typography>
           <IconButton onClick={onCloseFilter}>
             <Iconify icon="eva:close-fill" />
@@ -128,27 +138,97 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
           <Stack spacing={3} sx={{ p: 3 }}>
             <div>
               <Typography variant="subtitle1" gutterBottom>
-                Category
+                Loại sản phẩm
               </Typography>
-              <RadioGroup>
-                {listLSP.map((item, index) => (
-                  <FormControlLabel key={index} value={item.idCl} control={<Radio />} label={item.tenCl} />
-                ))}
-              </RadioGroup>
+              {listLSP.length > 0 && (
+                <FormControl>
+                  <RadioGroup
+                    aria-labelledby="demo-radio-buttons-group-label"
+                    name="radio-buttons-group"
+                    value={loaiSP}
+                    onChange={(event) => setLoaiSP(event.target.value)}
+                  >
+                    <FormControlLabel value={'all'} control={<Radio defaultChecked />} label="Tất cả" />
+                    {listLSP.map((item, index) => (
+                      <FormControlLabel key={index} value={item.idLoaisp} control={<Radio />} label={item.tenLsp} />
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+              )}
             </div>
 
             <div>
               <Typography variant="subtitle1" gutterBottom>
-                Gender
+                Chất liệu
               </Typography>
-              <FormGroup>
-                {FILTER_GENDER_OPTIONS.map((item) => (
-                  <FormControlLabel key={item} control={<Checkbox />} label={item} />
-                ))}
-              </FormGroup>
+
+              {listCL.length > 0 && (
+                <FormGroup>
+                  {listCL.map((item, index) => (
+                    <FormControlLabel key={index} value={item.idCl} control={<Checkbox />} label={item.tenCl} />
+                  ))}
+                </FormGroup>
+              )}
             </div>
 
             <div>
+              <Typography variant="subtitle1" gutterBottom>
+                Xuất xứ
+              </Typography>
+
+              {listXX.length > 0 && (
+                <FormGroup>
+                  {listXX.map((item, index) => (
+                    <FormControlLabel key={index} value={item.idXx} control={<Checkbox />} label={item.tenNuoc} />
+                  ))}
+                </FormGroup>
+              )}
+            </div>
+
+            <div>
+              <Typography variant="subtitle1" gutterBottom>
+                Tay áo
+              </Typography>
+
+              {listTayAo.length > 0 && (
+                <FormGroup>
+                  {listTayAo.map((item, index) => (
+                    <FormControlLabel key={index} value={item.idTayAo} control={<Checkbox />} label={item.loaiTayAo} />
+                  ))}
+                </FormGroup>
+              )}
+            </div>
+
+            <div>
+              <Typography variant="subtitle1" gutterBottom>
+                Cổ áo
+              </Typography>
+
+              {listCoAo.length > 0 && (
+                <FormGroup>
+                  {listCoAo.map((item, index) => (
+                    <FormControlLabel key={index} value={item.idCoAo} control={<Checkbox />} label={item.loaiCoAo} />
+                  ))}
+                </FormGroup>
+              )}
+            </div>
+
+            <div>
+              <Typography variant="subtitle1" gutterBottom>
+                Màu sắc
+              </Typography>
+
+              {listMS.length > 0 && (
+                <FormGroup>
+                  {listMS.map((item, index) => (
+                    <FormControlLabel key={index} value={item.idMs} control={<Checkbox />} label={item.tenMs} />
+                  ))}
+                </FormGroup>
+              )}
+            </div>
+
+            {/* Mau sac real :v */}
+            {/* <div>
               <Typography variant="subtitle1" gutterBottom>
                 Colors
               </Typography>
@@ -159,19 +239,39 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
                 onChangeColor={(color) => [].includes(color)}
                 sx={{ maxWidth: 38 * 4 }}
               />
+            </div> */}
+
+            <div>
+              <Typography variant="subtitle1" gutterBottom>
+                Size
+              </Typography>
+
+              {listSize.length > 0 && (
+                <FormGroup>
+                  {listSize.map((item, index) => (
+                    <FormControlLabel key={index} value={item.idSize} control={<Checkbox />} label={item.tenSize} />
+                  ))}
+                </FormGroup>
+              )}
             </div>
 
             <div>
               <Typography variant="subtitle1" gutterBottom>
-                Price
+                Giá
               </Typography>
-              <RadioGroup>
-                {FILTER_PRICE_OPTIONS.map((item) => (
-                  <FormControlLabel key={item.value} value={item.value} control={<Radio />} label={item.label} />
-                ))}
+              <RadioGroup
+                aria-labelledby="demo-radio-buttons-group-label"
+                name="radio-buttons-group"
+                defaultValue="all"
+              >
+                <FormControlLabel value="all" control={<Radio defaultChecked />} label="Tất cả" />
+                <FormControlLabel value="below" control={<Radio />} label="Dưới 250.000đ" />
+                <FormControlLabel value="between" control={<Radio />} label="Từ 250.000đ - 750.000đ" />
+                <FormControlLabel value="above" control={<Radio />} label="Trên 750.000đ" />
               </RadioGroup>
             </div>
 
+            {/* Rating
             <div>
               <Typography variant="subtitle1" gutterBottom>
                 Rating
@@ -201,7 +301,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
                   />
                 ))}
               </RadioGroup>
-            </div>
+            </div> */}
           </Stack>
         </Scrollbar>
 

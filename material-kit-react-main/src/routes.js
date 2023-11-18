@@ -7,7 +7,7 @@ import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
-import ProductsPage from './pages/ProductsPage';
+// import ProductsPage from './pages/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import Sales from './pages/DirectSale-ADM';
 import CartBillADM from './pages/Cart-Bill-ADM';
@@ -25,6 +25,7 @@ import Cart from './pages/client/Cart';
 import ProductMain from './pages/SanPham/SanPhamMain';
 import ProductAdd from './pages/SanPham/ModelAdd';
 import ProductUpdate from './pages/SanPham/ModelUpdate';
+import ProductsPage from './pages/client/ProductsPage';
 
 // ----------------------------------------------------------------------
 
@@ -56,7 +57,6 @@ export default function Router() {
               { path: 'products', element: <ProductMain /> },
               { path: 'products/add', element: <ProductAdd /> },
               { path: 'products/update/:id', element: <ProductUpdate /> },
-
             ]
           : [
               { element: <Navigate to="/client/home" />, index: true },
