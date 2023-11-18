@@ -7,9 +7,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -34,16 +36,19 @@ public class GioHangChiTiet {
     @JoinColumn(name = "id_ctsp", referencedColumnName = "id_ctsp")
     private ChiTietSanPham idCtsp;
 
-
+    @NotBlank(message = "Không Được Để Trống")
     @Column(name = "so_luong")
     private Integer soLuong;
 
+    @NotBlank(message = "Không Được Để Trống")
     @Column(name = "don_gia")
     private BigDecimal donGia;
 
+    @NotBlank(message = "Không Được Để Trống")
     @Column(name = "don_gia_sau_giam")
     private BigDecimal donGiaSauGiam;
 
+    @NotBlank(message = "Không Được Để Trống")
     @Column(name = "trang_thai")
     private Integer trangThai;
 
