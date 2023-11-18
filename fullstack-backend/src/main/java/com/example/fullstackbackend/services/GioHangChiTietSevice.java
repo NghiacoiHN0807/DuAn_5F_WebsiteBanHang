@@ -7,4 +7,10 @@ import java.util.List;
 public interface GioHangChiTietSevice {
     List<GioHangChiTiet> getAll(Integer idKh);
 
+    void addGHCT(Integer idKH, GioHangChiTiet gioHangChiTiet);
+
+    void updateGHCT(Integer id, GioHangChiTiet gioHangChiTiet);
+
+    void deleteGHCT(Integer idGHCT);
+
 }

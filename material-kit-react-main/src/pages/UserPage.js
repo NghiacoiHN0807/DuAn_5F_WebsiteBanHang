@@ -7,8 +7,6 @@ import {
   Card,
   Table,
   Stack,
-  Paper,
-  Avatar,
   Button,
   Popover,
   Checkbox,
@@ -18,12 +16,10 @@ import {
   TableCell,
   Container,
   Typography,
-  IconButton,
   TableContainer,
   TablePagination,
 } from '@mui/material';
 // components
-import Label from '../components/label';
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
