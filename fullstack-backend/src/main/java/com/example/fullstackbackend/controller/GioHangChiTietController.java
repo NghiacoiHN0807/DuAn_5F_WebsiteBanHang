@@ -1,10 +1,7 @@
 package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.GioHangChiTiet;
-import com.example.fullstackbackend.entity.HoaDonChiTiet;
-import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.GioHangChiTietSevice;
-import com.example.fullstackbackend.services.HoadonchitietSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,24 +30,33 @@ public class GioHangChiTietController {
         return gioHangChiTietSevice.getAll(id);
     }
 
-    @PostMapping("add/{id}")
-    public ResponseEntity<?> addGHCT(@Valid @RequestBody GioHangChiTiet updateGHCT, BindingResult result){
+    @PostMapping("add/{idKH}")
+    public ResponseEntity<?> addGHCT(@PathVariable("idKH") Integer id, @Valid @RequestBody GioHangChiTiet addGHCT, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.ok("Không Được Để Trống");
-        }else {
-            gioHangChiTietSevice.addGHCT( updateGHCT);
-            return ResponseEntity.ok("Update Thành Công");
+        } else {
+            gioHangChiTietSevice.addGHCT(id, addGHCT);
+            return ResponseEntity.ok("Thêm Thành Công");
         }
     }
 
     @PutMapping("update/{id}")
-    public ResponseEntity<?> updateGHCT(@PathVariable("id") Integer id, @Valid @RequestBody GioHangChiTiet updateGHCT, BindingResult result){
+    public ResponseEntity<?> updateGHCT(@PathVariable("id") Integer id, @Valid @RequestBody GioHangChiTiet updateGHCT, BindingResult result) {
         if (result.hasErrors()) {
             return ResponseEntity.ok("Không Được Để Trống");
-        }else {
+        } else {
             gioHangChiTietSevice.updateGHCT(id, updateGHCT);
             return ResponseEntity.ok("Update Thành Công");
         }
     }
 
+    @DeleteMapping("delete/{id}")
+    public ResponseEntity<?> deleteGHCT(@PathVariable("id") Integer id) {
+        if (id == null) {
+            return ResponseEntity.ok("Xóa Sản Phẩm Thất Bại!!!");
+        } else {
+            gioHangChiTietSevice.deleteGHCT(id);
+            return ResponseEntity.ok("Xóa Sản Phẩm Thành Công!!!");
+        }
+    }
 }
