@@ -2,9 +2,11 @@ package com.example.fullstackbackend.config;
 
 import com.example.fullstackbackend.entity.GiamGia;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
+import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.repository.GiamGiaChiTietRepository;
 import com.example.fullstackbackend.repository.GiamGiaRepository;
 import com.example.fullstackbackend.services.GiamGiaChiTietService;
+import com.example.fullstackbackend.services.SanPhamService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -25,6 +27,8 @@ public class DiscountUpdater {
 
     private final GiamGiaChiTietService giamGiaChiTietService;
 
+    private final SanPhamService sanPhamService;
+
     @Scheduled(cron = "0 0 * * * *", zone = "Asia/Ho_Chi_Minh")
     @Transactional
     public void updateDiscount() {
@@ -39,6 +43,10 @@ public class DiscountUpdater {
                 List<GiamGiaChiTiet> giamGiaChiTietList = giamGiaChiTietRepository.findByIdGiamGia(giamGia.getIdGiamGia());
 
                 for (GiamGiaChiTiet giamGiaChiTiet : giamGiaChiTietList) {
+                    Integer idSp = giamGiaChiTiet.getIdSp().getIdSp();
+                    SanPham sanPham = sanPhamService.detail(idSp).orElseThrow();
+                    sanPham.setTrangThai(0);
+                    sanPhamService.add(sanPham);
                     giamGiaChiTietRepository.updateCtsp(giamGiaChiTiet.getIdSp().getIdSp());
                     giamGiaChiTietRepository.updateTrangThaiGiamGia(10, giamGia.getIdGiamGia());
                     giamGiaChiTietRepository.updateTrangThaiGiamGiaChiTiet(10, giamGia.getIdGiamGia());

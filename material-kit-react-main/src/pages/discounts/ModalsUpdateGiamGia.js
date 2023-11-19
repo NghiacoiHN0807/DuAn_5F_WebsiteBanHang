@@ -2,12 +2,12 @@ import * as React from 'react';
 import { useState } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate, useParams } from "react-router-dom";
-import { Alert, Button, Checkbox, Chip, Grid, Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
-import { Col, Image, Table } from 'react-bootstrap';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { Alert, Button, Checkbox, Chip, Grid, Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
+import { Col, Image, Table } from 'react-bootstrap';
 import { detail, getAllSanPham, update } from "../../service/giamGiaService";
 import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
@@ -59,16 +59,16 @@ const ModelUpdateGiamGia = (props) => {
 
   const [selected, setSelected] = useState("");
   const getAllSp = async () => {
-    if (mucGiamPhanTram !== null) {
-      setSelected("mucGiam");
-    } else if (mucGiamTienMat !== null) {
-      setSelected("phanTram");
-    }
     try {
       const res = await getAllSanPham();
       const resDetail = await detail(id);
       console.log("data: ", res);
       console.log("resDetail: ", resDetail.data.idGiamGia);
+      if (resDetail.data.idGiamGia.mucGiamPhanTram !== null) {
+        setSelected("phanTram");
+      } else if (resDetail.data.idGiamGia.mucGiamTienMat !== null) {
+        setSelected("mucGiam");
+      }
       setGiamGia(resDetail.data.idGiamGia);
       setLeft(res);
 
@@ -226,6 +226,18 @@ const ModelUpdateGiamGia = (props) => {
 
   const changeHandler = e => {
     setSelected(e.target.value);
+    // Clear the values based on the selected radio button
+    if (e.target.value === 'phanTram') {
+      setGiamGia({
+        ...giamGia,
+        mucGiamTienMat: null
+      });
+    } else if (e.target.value === 'mucGiam') {
+      setGiamGia({
+        ...giamGia,
+        mucGiamPhanTram: null
+      });
+    }
   };
   console.log(selected);
 
@@ -361,6 +373,7 @@ const ModelUpdateGiamGia = (props) => {
       </Modal.Header>
       <div className="d-flex justify-content-around">
         <div className="content-left">
+          <p className='text-center info-discount'>Thông tin giảm giá</p>
           <Modal.Body>
             <div className="body-add-new">
               <form>
@@ -395,18 +408,18 @@ const ModelUpdateGiamGia = (props) => {
                 </div>
 
                 <div className="mb-3">
-                  <p className="form-label">Thiết lập giảm giá</p>
+                  <p className="form-label">Mức Giảm</p>
                   <div>
                     <div className="form-check">
                       <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="form-check-label" value={"mucGiam"} checked={selected === "mucGiam"} />
                       <p className="form-check-label">
-                        Mức giảm
+                        Tiền Mặt
                       </p>
                     </div>
                     <div className="form-check">
                       <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="form-check-label1" value={"phanTram"} checked={selected === "phanTram"} />
                       <p className="form-check-label1">
-                        Theo %
+                        Phần Trăm
                       </p>
                     </div>
                   </div>
@@ -493,6 +506,7 @@ const ModelUpdateGiamGia = (props) => {
         </div>
 
         <div className="content-right">
+          <p className='text-center info-discount'>Chọn sản phẩm cần giảm giá</p>
           <div>
             <Grid container spacing={2} justifyContent="center" alignItems="center">
               <Grid item>

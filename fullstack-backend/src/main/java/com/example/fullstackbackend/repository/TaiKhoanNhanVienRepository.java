@@ -8,14 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 @Repository
 public interface TaiKhoanNhanVienRepository extends JpaRepository<TaiKhoan, Integer> {
     @Query("SELECT g FROM TaiKhoan g ")
-    Page<TaiKhoan> findAllByTrangThai( Pageable pageable);
+    List<TaiKhoan> findAllByTrangThai();
 
     @Query("SELECT g FROM TaiKhoan g WHERE g.idChucVu.idCv = 1 or g.idChucVu.idCv = 2")
-    Page<TaiKhoan> chucVu( Pageable pageable);
+    List<TaiKhoan> chucVu();
 
 
 }

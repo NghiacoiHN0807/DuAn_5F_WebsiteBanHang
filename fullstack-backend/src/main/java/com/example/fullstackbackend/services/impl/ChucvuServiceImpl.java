@@ -24,9 +24,8 @@ public class ChucvuServiceImpl implements ChucvuService {
     }
 
     @Override
-    public Page<ChucVu> phanTrang(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return chucvuRepository.findAll(pageable);
+    public List<ChucVu> phanTrang() {
+        return chucvuRepository.findAll();
     }
 
     @Override
@@ -53,5 +52,10 @@ public class ChucvuServiceImpl implements ChucvuService {
     public Optional<ChucVu> detail(Integer id) {
         Optional<ChucVu> chucVu = chucvuRepository.findById(id);
         return chucVu;
+    }
+
+    @Override
+    public ChucVu detailTen(String tenCv) {
+        return chucvuRepository.findChucVuByTenCv(tenCv);
     }
 }

@@ -4,14 +4,7 @@ import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.repository.TaiKhoanNhanVienRepository;
 import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,28 +20,24 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
         return taiKhoanRepository.findAll();
     }
 
-//    @Override
-//    public Page<TaiKhoan> phanTrang(Integer pageNo, Integer size) {
-//        Pageable pageable = PageRequest.of(pageNo, size);
-//        return taiKhoanRepository.findAll(pageable);
-//    }
 
     @Override
-    public Page<TaiKhoan> phanTrang(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return taiKhoanRepository.findAllByTrangThai(pageable);
+    public List<TaiKhoan> phanTrang() {
+        return taiKhoanRepository.findAllByTrangThai();
+    }
+
+    // Mã hóa mật khẩu
+    public static String hashPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     @Override
     public TaiKhoan add(TaiKhoan taiKhoan) {
-//        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-//        String encodedPassword = encoder.encode(taiKhoan.getMatKhau());
-//        System.out.println("Encoded password: " + encodedPassword);
-//        taiKhoan.setMatKhau(encodedPassword); // Gán mật khẩu đã mã hóa vào tài khoản
+        taiKhoan.setMatKhau(hashPassword(taiKhoan.getMatKhau()));
         TaiKhoan savedTaiKhoan = taiKhoanRepository.save(taiKhoan);
+
         return savedTaiKhoan;
     }
-
 
 
     @Override
@@ -66,6 +55,7 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
 
     @Override
     public TaiKhoan update(TaiKhoan taiKhoan, Integer id) {
+        taiKhoan.setMatKhau(hashPassword(taiKhoan.getMatKhau()));
         taiKhoan.setIdTaiKhoan(id);
         return taiKhoanRepository.save(taiKhoan);
     }
@@ -82,8 +72,7 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
     }
 
     @Override
-    public Page<TaiKhoan> chucVu(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return taiKhoanRepository.chucVu(pageable);
+    public List<TaiKhoan> chucVu() {
+        return taiKhoanRepository.chucVu();
     }
 }

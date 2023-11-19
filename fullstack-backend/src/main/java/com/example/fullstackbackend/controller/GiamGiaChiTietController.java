@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -35,29 +36,19 @@ public class GiamGiaChiTietController {
     private GiamGiaService giamGiaService;
 
     @GetMapping("view-all")
-    Page<GiamGiaChiTiet> getAll(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
-                                @RequestParam(value = "size", defaultValue = "5") Integer size) {
-        return giamGiaChiTietService.getAll(pageNo, size);
+    List<GiamGiaChiTiet> getAll() {
+        return giamGiaChiTietService.getAll();
     }
 
-//    @GetMapping("search")
-//    Page<GiamGiaChiTiet> search(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
-//                                @RequestParam(value = "size", defaultValue = "5") Integer size,
-//                                @RequestParam("value") String value) {
-//        return giamGiaChiTietService.search(pageNo, size, value);
-//    }
-
     @GetMapping("filter-date")
-    Page<GiamGiaChiTiet> filterDate(@RequestParam(value = "page", defaultValue = "0") Integer pageNo,
-                                    @RequestParam(value = "size", defaultValue = "5") Integer size,
-                                    @RequestParam("first") LocalDate first,
+    List<GiamGiaChiTiet> filterDate(@RequestParam("first") LocalDate first,
                                     @RequestParam("last") LocalDate last) {
-        return giamGiaChiTietService.getAllByDate(pageNo, size, first, last);
+        return giamGiaChiTietService.getAllByDate(first, last);
     }
 
     @GetMapping("views")
-    Page<GiamGiaChiTiet> getAll(@RequestParam(value = "page", defaultValue = "0") Integer pageNo, @RequestParam(value = "size", defaultValue = "5") Integer size, @RequestParam(value = "trangThai", defaultValue = "0") Integer trangThai) {
-        return giamGiaChiTietService.getAllByTrangThai(pageNo, size, trangThai);
+    List<GiamGiaChiTiet> getAll(@RequestParam(value = "page", defaultValue = "0") Integer pageNo, @RequestParam(value = "size", defaultValue = "5") Integer size, @RequestParam(value = "trangThai", defaultValue = "0") Integer trangThai) {
+        return giamGiaChiTietService.getAllByTrangThai(trangThai);
     }
 
     @GetMapping("detail/{id}")
@@ -103,11 +94,6 @@ public class GiamGiaChiTietController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
                 new ReponObject("Failed!", "Not found id: " + id, "")
         );
-    }
-
-    @GetMapping("getidGiamGiaByIdggct/{id}")
-    Integer findByIdGiamGia_IdGiamGia(@PathVariable("id") Integer id) {
-        return giamGiaChiTietService.findByIdGiamGia_IdGiamGia(id);
     }
 
     @PostMapping("insert-dto")

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../scss/OrderManagement-Timeline.scss';
-import { Button, Chip, Grid, IconButton, Pagination, Stack, Typography } from '@mui/material';
+import { Button, Chip, Grid, IconButton, Stack, Typography } from '@mui/material';
 import { Image } from 'react-bootstrap';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';

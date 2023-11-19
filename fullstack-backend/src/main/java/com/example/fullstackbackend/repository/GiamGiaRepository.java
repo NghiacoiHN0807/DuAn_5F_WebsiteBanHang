@@ -15,7 +15,7 @@ public interface GiamGiaRepository extends JpaRepository<GiamGia, Integer> {
     List<GiamGia> findByMaGiamGia(String ma);
 
     @Query("SELECT g FROM GiamGia g WHERE g.trangThai = :trangThai")
-    Page<GiamGia> findAllByTrangThai(@Param("trangThai") Integer trangThai, Pageable pageable);
+    List<GiamGia> findAllByTrangThai(@Param("trangThai") Integer trangThai);
 
 
 

@@ -64,7 +64,6 @@ public class HoaDonController {
     @GetMapping("view-all-offline-invoice")
     public List<HoaDon> viewOffline() {
         List<HoaDon> hoaDons = hoadonSevice.hoaDonOffline();
-
         return hoaDons;
     }
 
@@ -220,9 +219,10 @@ public class HoaDonController {
     @PutMapping("update-tong-tien/{id}")
     public HoaDon updateTongTien(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
         return hoadonSevice.detail(id).map(hoaDon -> {
-//            BigDecimal thanhTien =  newHD.getTongTien().subtract(newHD.getSoTienGiamGia()).add(newHD.getTienShip());
+            BigDecimal thanhTien =  newHD.getTongTien().add(newHD.getTienShip());
             hoaDon.setTongTien(newHD.getTongTien());
-            hoaDon.setThanhTien(newHD.getTongTien());
+            hoaDon.setTienShip(newHD.getTienShip());
+            hoaDon.setThanhTien(thanhTien);
             return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
     }

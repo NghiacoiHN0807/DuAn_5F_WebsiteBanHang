@@ -57,10 +57,10 @@ public class MySecurityConfiguration {
 
                         req ->
                                 req
-                                        .requestMatchers("/", "/add", "/api/**","san-pham/**", "chi-tiet-san-pham/**").permitAll()
+                                        .requestMatchers("/","/anh/**","/gio-hang-chi-tiet/**", "/add", "/api/**", "/san-pham/**", "chi-tiet-san-pham/**","/hoa-don/**", "/hoa-don-chi-tiet/**").permitAll()
                                         .requestMatchers("/**").hasRole("ADMIN")
-                                        .requestMatchers("/tai-khoan/view-all").hasRole("STAFF")
-                                        .requestMatchers("/hoa-don/view-all").hasRole("CUSTOMER")
+                                        .requestMatchers("/**").hasRole("STAFF")
+                                        .requestMatchers("/hoa-don/**", "/gio-hang-chi-tiet/**","/gio-hang/**", "/hoa-don-chi-tiet/**","/san-pham/**", "chi-tiet-san-pham/**").hasRole("CUSTOMER")
                                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())

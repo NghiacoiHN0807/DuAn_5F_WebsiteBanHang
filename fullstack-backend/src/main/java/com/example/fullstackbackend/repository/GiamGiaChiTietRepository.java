@@ -1,11 +1,8 @@
 package com.example.fullstackbackend.repository;
 
-import com.example.fullstackbackend.DTO.MucGiamDTO;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,8 +16,11 @@ import java.util.List;
 @Repository
 public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, Integer> {
 
+    @Query(value = "SELECT count(*) FROM giam_gia_chi_tiet WHERE id_sp =:idSp", nativeQuery = true)
+    Integer existsByIdSp_IdSp(@Param("idSp") Integer idSp);
+
     @Query("SELECT g FROM GiamGiaChiTiet g WHERE g.trangThai = :trangThai")
-    Page<GiamGiaChiTiet> findAllByTrangThai(@Param("trangThai") Integer trangThai, Pageable pageable);
+    List<GiamGiaChiTiet> findAllByTrangThai(@Param("trangThai") Integer trangThai);
 
 //    @Query("SELECT g FROM GiamGiaChiTiet g WHERE g.idGiamGia.tenChuongTrinh = :value " +
 //            "OR g.idSp.tenSp = :value " +
@@ -29,10 +29,7 @@ public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, 
 //    Page<GiamGiaChiTiet> findAllByValue(@Param("value") String value, Pageable pageable);
 
     @Query("SELECT g FROM GiamGiaChiTiet g WHERE g.idGiamGia.ngayBatDau = :ngayBatDau AND g.idGiamGia.ngayKetThuc = :ngayKetThuc")
-    Page<GiamGiaChiTiet> findAllByDate(@Param("ngayBatDau") LocalDate ngayBatDau, @Param("ngayKetThuc") LocalDate ngayKetThuc, Pageable pageable);
-
-    @Query("SELECT g.idGiamGia.idGiamGia FROM GiamGiaChiTiet g WHERE g.idGgct = :id")
-    Integer findByIdGiamGia_IdGiamGia(@Param("id") Integer id);
+    List<GiamGiaChiTiet> findAllByDate(@Param("ngayBatDau") LocalDate ngayBatDau, @Param("ngayKetThuc") LocalDate ngayKetThuc);
 
     @Modifying
     @Query(value = "UPDATE chi_tiet_san_pham " +
@@ -66,7 +63,7 @@ public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, 
     @Query(value = "DELETE FROM giam_gia_chi_tiet WHERE giam_gia_chi_tiet.id_sp = :idSp", nativeQuery = true)
     void deleteGgctByidSp(@Param(("idSp")) Integer idSp);
 
-    Boolean existsByIdSp_IdSp(Integer idSp);
+//    @Query(value = "SELECT g FROM GiamGiaChiTiet g where g.idSp.idSp = :idSp")
 
     @Modifying
     @Query(value = "update chi_tiet_san_pham set gia_thuc_te = gia_ban where id_sp = :idSp", nativeQuery = true)

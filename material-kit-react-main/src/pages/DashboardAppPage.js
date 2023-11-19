@@ -87,19 +87,19 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={<FontAwesomeIcon icon={faAppleAlt} />} />
+            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={'ant-design:android-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng Đơn Hàng" total={invoieces} color="info" icon={<FontAwesomeIcon icon={faShoppingBag} />} />
+            <AppWidgetSummary title="Tổng Đơn Hàng" total={invoieces} color="info" icon={'ant-design:apple-filled'}/>
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng sản phẩm đã bán" total={allSp} color="warning" icon={<FontAwesomeIcon icon={faBoxOpen} />} />
+            <AppWidgetSummary title="Tổng sản phẩm đã bán" total={allSp} color="warning" icon={'ant-design:windows-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tỷ Lệ Trả Hàng (%)" total={rate} color="error" icon={<FontAwesomeIcon icon={faBug} />} />
+            <AppWidgetSummary title="Tỷ Lệ Trả Hàng (%)" total={rate} color="error" icon={'ant-design:bug-filled'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>

@@ -29,8 +29,8 @@ public class GiamGiaController {
     private GiamGiaService giamGiaService;
 
     @GetMapping("view")
-    Page<GiamGia> view(@RequestParam(value = "page", defaultValue = "0") Integer pageNo, @RequestParam(value = "size", defaultValue = "5") Integer size, @RequestParam(value = "trangThai", defaultValue = "0") Integer trangThai) {
-        return giamGiaService.getAll(pageNo, size, trangThai);
+    List<GiamGia> view(@RequestParam(value = "trangThai", defaultValue = "0") Integer trangThai) {
+        return giamGiaService.getAll(trangThai);
     }
 
     @GetMapping("detail/{id}")

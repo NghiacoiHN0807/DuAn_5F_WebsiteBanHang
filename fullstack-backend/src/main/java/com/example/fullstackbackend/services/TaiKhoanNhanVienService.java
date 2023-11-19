@@ -11,7 +11,7 @@ public interface TaiKhoanNhanVienService {
 
 //    Page<TaiKhoan> phanTrang(Integer pageNo, Integer size);
 
-    Page<TaiKhoan> phanTrang(Integer pageNo, Integer size);
+    List<TaiKhoan> phanTrang();
 
     TaiKhoan add(TaiKhoan taiKhoan);
 
@@ -25,5 +25,5 @@ public interface TaiKhoanNhanVienService {
 
     Optional<TaiKhoan> detail(Integer id);
 
-    Page<TaiKhoan> chucVu(Integer pageNo, Integer size);
+    List<TaiKhoan> chucVu();
 }

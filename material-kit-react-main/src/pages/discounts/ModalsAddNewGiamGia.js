@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { useState } from "react";
-import { format } from 'date-fns';
 import { vi } from 'date-fns/locale'; // Import locale cho tiếng Việt
 import Modal from "react-bootstrap/Modal";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Alert, Button, Checkbox, Chip, Grid, Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
 import { Col, Image, Table } from 'react-bootstrap';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { add, getAllSanPham, getImgByIdSp } from "../../service/giamGiaService";
+import { add, getAllSanPham } from "../../service/giamGiaService";
 import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
 
@@ -40,7 +39,6 @@ const ModelAddNewGiamGia = () => {
   const [rightRowsPerPage, setRightRowsPerPage] = React.useState(5);
   const [chiTietList, setchiTietList] = React.useState([]);
   const [image, setImage] = useState([]);
-  const [images, setImages] = useState({});
   const [alertContent, setAlertContent] = useState(null);
 
   const getAllSp = async () => {
@@ -241,7 +239,7 @@ const ModelAddNewGiamGia = () => {
     }
 
     const checkDateValidity = () => {
-      return !ngayKetThuc.isBefore(ngayBatDau);
+      return ngayKetThuc.isAfter(ngayBatDau);
     };
 
     if (!checkDateValidity()) {
@@ -325,6 +323,7 @@ const ModelAddNewGiamGia = () => {
       </Modal.Header>
       <div className="d-flex justify-content-around">
         <div className="content-left">
+          <p className='text-center info-discount'>Thông tin giảm giá</p>
           <Modal.Body>
             <div className="body-add-new">
               <form>
@@ -359,18 +358,18 @@ const ModelAddNewGiamGia = () => {
                 </div>
 
                 <div className="mb-3">
-                  <p className="form-label">Thiết lập giảm giá</p>
+                  <p className="form-label">Mức Giảm</p>
                   <div>
                     <div className="form-check">
                       <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="form-check-label" value={"mucGiam"} checked={selected === "mucGiam"} />
                       <p className="form-check-label">
-                        Mức giảm
+                      Tiền Mặt
                       </p>
                     </div>
                     <div className="form-check">
                       <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="form-check-label1" value={"phanTram"} checked={selected === "phanTram"} />
                       <p className="form-check-label1">
-                        Theo %
+                      Phần Trăm
                       </p>
                     </div>
                   </div>
@@ -459,6 +458,7 @@ const ModelAddNewGiamGia = () => {
         </div>
 
         <div className="content-right">
+          <p className='text-center info-discount'>Chọn sản phẩm cần giảm giá</p>
           <div>
             <Grid container spacing={2} justifyContent="center" alignItems="center">
               <Grid item>
