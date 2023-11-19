@@ -24,11 +24,12 @@ import lombok.Setter;
 public class Images {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_images")
     private Integer idImages;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_ctsp", referencedColumnName = "id_ctsp")
-    private ChiTietSanPham idCtsp;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_sp", referencedColumnName = "id_sp")
+    private SanPham idSp;
 
     @Column(name = "images")
     private String images;

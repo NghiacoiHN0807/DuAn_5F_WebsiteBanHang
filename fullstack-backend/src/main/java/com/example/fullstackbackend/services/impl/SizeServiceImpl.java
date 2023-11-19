@@ -2,7 +2,7 @@ package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.entity.Size;
 import com.example.fullstackbackend.repository.SizeRepository;
-import com.example.fullstackbackend.services.SizeSevice;
+import com.example.fullstackbackend.services.SizeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class SizeServiceImpl implements SizeSevice {
+public class SizeServiceImpl implements SizeService {
 
     @Autowired
     private SizeRepository sizeRepository;
@@ -24,14 +24,14 @@ public class SizeServiceImpl implements SizeSevice {
     }
 
     @Override
-    public Page<Size> chatlieuPage(Integer pageNo, Integer size) {
+    public Page<Size> sizePage(Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return sizeRepository.findAll(pageable);
     }
 
     @Override
-    public void add(Size add) {
-        sizeRepository.save(add);
+    public Size add(Size add) {
+        return sizeRepository.save(add);
     }
 
     @Override
@@ -40,13 +40,17 @@ public class SizeServiceImpl implements SizeSevice {
     }
 
     @Override
-    public void update(Size update) {
-        sizeRepository.save(update);
+    public Size update(Size update) {
+        return sizeRepository.save(update);
     }
 
     @Override
     public Optional<Size> detail(Integer id) {
-        Optional<Size> xuatxu = sizeRepository.findById(id);
-        return xuatxu;
+        return sizeRepository.findById(id);
+    }
+
+    @Override
+    public Boolean checkExists(Integer id) {
+        return sizeRepository.existsById(id);
     }
 }

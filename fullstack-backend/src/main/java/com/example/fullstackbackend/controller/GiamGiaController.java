@@ -29,8 +29,8 @@ public class GiamGiaController {
     private GiamGiaService giamGiaService;
 
     @GetMapping("view")
-    Page<GiamGia> view(@RequestParam(value = "page", defaultValue = "0") Integer pageNo, @RequestParam(value = "size", defaultValue = "5") Integer size, @RequestParam(value = "trangThai", defaultValue = "0") Integer trangThai) {
-        return giamGiaService.getAll(pageNo, size, trangThai);
+    List<GiamGia> view(@RequestParam(value = "trangThai", defaultValue = "0") Integer trangThai) {
+        return giamGiaService.getAll(trangThai);
     }
 
     @GetMapping("detail/{id}")
@@ -87,4 +87,13 @@ public class GiamGiaController {
         );
     }
 
+//    @PostMapping("addGiamGiaWithChiTiet")
+//    public ResponseEntity<String> addGiamGiaWithChiTiet(@RequestBody GiamGiaWithChiTietDTO request) {
+//        try {
+//            giamGiaService.addGiamGiaWithChiTiet(request);
+//            return ResponseEntity.status(HttpStatus.CREATED).body("Thêm giảm giá và chi tiết thành công");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi khi thêm giảm giá và chi tiết");
+//        }
+//    }
 }

@@ -1,6 +1,8 @@
 package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.entity.GiamGia;
+import com.example.fullstackbackend.repository.ChitietsanphamRepository;
+import com.example.fullstackbackend.repository.GiamGiaChiTietRepository;
 import com.example.fullstackbackend.repository.GiamGiaRepository;
 import com.example.fullstackbackend.services.GiamGiaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +21,8 @@ public class GiamGiaServiceImpl implements GiamGiaService {
     private GiamGiaRepository giamGiaRepository;
 
     @Override
-    public Page<GiamGia> getAll(Integer pageNo, Integer size, Integer trangThai) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return giamGiaRepository.findAllByTrangThai(trangThai, pageable);
+    public List<GiamGia> getAll(Integer trangThai) {
+        return giamGiaRepository.findAllByTrangThai(trangThai);
     }
 
     @Override
@@ -55,4 +56,5 @@ public class GiamGiaServiceImpl implements GiamGiaService {
         giamGia.setTrangThai(10);
         giamGiaRepository.save(giamGia);
     }
+
 }

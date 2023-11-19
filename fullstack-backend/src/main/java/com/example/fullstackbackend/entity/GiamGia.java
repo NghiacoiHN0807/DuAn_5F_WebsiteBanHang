@@ -1,6 +1,7 @@
 package com.example.fullstackbackend.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @AllArgsConstructor
@@ -34,10 +35,12 @@ public class GiamGia {
     private String tenChuongTrinh;
 
     @Column(name = "ngay_bat_dau")
-    private LocalDate ngayBatDau;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
+    Date ngayBatDau;
 
     @Column(name = "ngay_ket_thuc")
-    private LocalDate ngayKetThuc;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
+    Date ngayKetThuc;
 
     @Column(name = "muc_giam_phan_tram")
     private BigDecimal mucGiamPhanTram;

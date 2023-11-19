@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface GiamGiaService {
 
-    Page<GiamGia> getAll(Integer pageNo, Integer size, Integer trangThai);
+    List<GiamGia> getAll(Integer trangThai);
 
     List<GiamGia> getByMa(String ma);
 
@@ -21,5 +21,7 @@ public interface GiamGiaService {
     Boolean existsById(Integer id);
 
     void remove(Integer id);
+
+//    void addGiamGiaWithChiTiet(GiamGiaWithChiTietDTO request);
 
 }

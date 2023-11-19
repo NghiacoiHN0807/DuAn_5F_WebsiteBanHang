@@ -35,7 +35,7 @@ public class XuatXu {
     private String tenNuoc;
 
     @NotNull(message = "Not Blank")
-    @Column(name = "tinh_trang")
-    private Integer tinhTrang;
+    @Column(name = "trang_thai")
+    private Integer trangThai;
 
 }
