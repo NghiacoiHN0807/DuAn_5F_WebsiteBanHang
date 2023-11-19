@@ -6,6 +6,8 @@ import com.example.fullstackbackend.entity.GioHangChiTiet;
 import com.example.fullstackbackend.repository.ChitietsanphamRepository;
 import com.example.fullstackbackend.repository.GioHangChiTietReponsitory;
 import com.example.fullstackbackend.repository.GioHangReponsitory;
+import com.example.fullstackbackend.repository.HoadonRepository;
+import com.example.fullstackbackend.repository.HoadonchitietRepository;
 import com.example.fullstackbackend.services.GioHangChiTietSevice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,10 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietSevice {
     private final ChitietsanphamRepository chitietsanphamRepository;
 
     private final GioHangReponsitory gioHangReponsitory;
+
+    private final HoadonchitietRepository hoadonchitietRepository;
+
+    private final HoadonRepository hoadonRepository;
 
     @Override
     public List<GioHangChiTiet> getAll(Integer idKh) {
@@ -86,5 +92,13 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietSevice {
     @Override
     public void deleteGHCT(Integer idGHCT) {
         gioHangChiTietReponsitory.deleteById(idGHCT);
+    }
+
+    @Override
+    public void transferHDCT(Integer idHd, ChiTietSanPham chiTietSanPham) {
+        // Create New Bill
+
+        // Add product on detail invoice
+//        hoadonchitietRepository.save()
     }
 }

@@ -55,7 +55,7 @@ export default function Router() {
               { path: 'home', element: <Home /> },
               { path: 'detail/:id', element: <DetailProduct /> },
               { path: 'cart', element: <Cart /> },
-              { path: 'payment', element: <PaymentPage /> },
+              { path: 'payment/:id', element: <PaymentPage /> },
             ],
     },
     {

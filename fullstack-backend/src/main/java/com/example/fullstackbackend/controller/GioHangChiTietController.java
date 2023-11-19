@@ -1,7 +1,12 @@
 package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.GioHangChiTiet;
+import com.example.fullstackbackend.entity.HoaDon;
+import com.example.fullstackbackend.entity.HoaDonChiTiet;
+import com.example.fullstackbackend.repository.HoadonRepository;
 import com.example.fullstackbackend.services.GioHangChiTietSevice;
+import com.example.fullstackbackend.services.HoadonSevice;
+import com.example.fullstackbackend.services.HoadonchitietSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/gio-hang-chi-tiet/")
@@ -24,6 +30,12 @@ import java.util.List;
 public class GioHangChiTietController {
     @Autowired
     private GioHangChiTietSevice gioHangChiTietSevice;
+
+    @Autowired
+    private HoadonchitietSevice hoadonchitietSevice;
+
+    @Autowired
+    private HoadonRepository hoadonSevice;
 
     @GetMapping("view-all/{id}")
     public List<GioHangChiTiet> viewAll(@PathVariable("id") Integer id) {
@@ -59,4 +71,25 @@ public class GioHangChiTietController {
             return ResponseEntity.ok("Xóa Sản Phẩm Thành Công!!!");
         }
     }
+
+    @PostMapping("add-to-hdct/{id}")
+    public ResponseEntity<?> addToHDCT(@PathVariable("id") Integer idHD,
+                                       @RequestBody GioHangChiTiet newHDCT){
+        // Detail HoaDon
+        HoaDon hoaDon = hoadonSevice.findById(idHD).orElseThrow();
+        // Set HDCT
+        System.out.println("newHDCT: "+ newHDCT.getIdCtsp());
+
+        HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
+        hoaDonChiTiet.setIdHd(hoaDon);
+        hoaDonChiTiet.setIdCtsp(newHDCT.getIdCtsp());
+        hoaDonChiTiet.setSoLuong(newHDCT.getSoLuong());
+        hoaDonChiTiet.setDonGia(newHDCT.getDonGia());
+        hoaDonChiTiet.setTrangThai(0);
+        hoadonchitietSevice.add1(hoaDonChiTiet);
+        // Delete product on cart
+        gioHangChiTietSevice.deleteGHCT(newHDCT.getIdGhct());
+        return ResponseEntity.ok("Tạo Hóa Đơn Thành Công!!!");
+    }
+
 }

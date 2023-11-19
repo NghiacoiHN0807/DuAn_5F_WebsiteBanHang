@@ -51,6 +51,11 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     @Override
+    public HoaDonChiTiet add1(HoaDonChiTiet add) {
+        return hoadonchitietRepository.save(add);
+    }
+
+    @Override
     public void delete(Integer id) {
         Optional<HoaDonChiTiet> detailHDCT = detail(id);
         if (detailHDCT.get().getTrangThai() >= 0 || detailHDCT.get().getTrangThai() < 8) {
@@ -73,6 +78,7 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 
     @Override
     public LichSuHoaDon addLS(HoaDonChiTiet addLS, int status) {
+
         // Get datetime now
         java.util.Date currentDate = new java.util.Date();
         Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
