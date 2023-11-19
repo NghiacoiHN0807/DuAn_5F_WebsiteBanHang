@@ -30,8 +30,8 @@ public class LoaiSpController {
 
     @GetMapping("view-all")
     public Page<LoaiSp> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                  @RequestParam(defaultValue = "5") Integer size,
-                                  @RequestParam("p") Optional<Integer> p) {
+                                @RequestParam(defaultValue = "5") Integer size,
+                                @RequestParam("p") Optional<Integer> p) {
         return loaispService.loaiSpPage(p.orElse(page), size);
     }
 
@@ -42,7 +42,7 @@ public class LoaiSpController {
 
     @PostMapping("add")
     public LoaiSp add(@Valid @RequestBody LoaiSp loaiSp,
-                        BindingResult bindingResult) {
+                      BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {

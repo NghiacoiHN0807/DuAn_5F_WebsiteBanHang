@@ -47,7 +47,7 @@ public class XuatxuServiceImpl implements XuatxuService {
 
     @Override
     public XuatXu update(XuatXu update) {
-       return xuatxuRepository.save(update);
+        return xuatxuRepository.save(update);
     }
 
     @Override

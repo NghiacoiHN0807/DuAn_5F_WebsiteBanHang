@@ -21,9 +21,8 @@ public class GiamGiaServiceImpl implements GiamGiaService {
     private GiamGiaRepository giamGiaRepository;
 
     @Override
-    public Page<GiamGia> getAll(Integer pageNo, Integer size, Integer trangThai) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        return giamGiaRepository.findAllByTrangThai(trangThai, pageable);
+    public List<GiamGia> getAll(Integer trangThai) {
+        return giamGiaRepository.findAllByTrangThai(trangThai);
     }
 
     @Override

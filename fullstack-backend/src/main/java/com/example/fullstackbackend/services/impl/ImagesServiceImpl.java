@@ -52,7 +52,7 @@ public class ImagesServiceImpl implements ImagesSevice {
 
     @Override
     public Images update(Images update) {
-       return imagesRepository.save(update);
+        return imagesRepository.save(update);
     }
 
     @Override
