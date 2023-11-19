@@ -3,11 +3,13 @@ package com.example.fullstackbackend.config;
 
 import com.example.fullstackbackend.config.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +23,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class MySecurityConfiguration {
+
+    @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     private final UserService userService;
 
@@ -61,10 +66,14 @@ public class MySecurityConfiguration {
                                         .requestMatchers("/**").hasRole("STAFF")
                                         .requestMatchers("/hoa-don/**", "/gio-hang-chi-tiet/**","gio-hang/**").hasRole("CUSTOMER")
                                         .anyRequest().authenticated())
+                .oauth2Login(oath2 -> {
+                    oath2.successHandler(oAuth2LoginSuccessHandler);
+                })
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())
                 .cors(a -> a.configure(http))
                 .build();
     }
+
 
 }
