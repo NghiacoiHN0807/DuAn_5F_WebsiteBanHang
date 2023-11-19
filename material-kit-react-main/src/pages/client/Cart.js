@@ -20,6 +20,9 @@ export default function Cart() {
   // Select detail product
   const [images, setImages] = useState({});
   const [productOnCart, setProductOnCart] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [totalPayment, setTotalPayment] = useState(0);
+  const [selectAll, setSelectAll] = useState(false);
 
   const getDetail = useCallback(async () => {
     try {
@@ -109,6 +112,58 @@ export default function Cart() {
     return formatter.format(price);
   }
 
+  const handleCheckboxChange = (item) => {
+  const isSelected = selectedItems.includes(item.idGhct);
+  let newSelectedItems;
+
+  if (isSelected) {
+    // Item is already selected, remove it
+    newSelectedItems = selectedItems.filter((selectedItem) => selectedItem !== item.idGhct);
+  } else {
+    // Item is not selected, add it
+    newSelectedItems = [...selectedItems, item.idGhct];
+  }
+
+  setSelectedItems(newSelectedItems);
+  updateTotalPayment(newSelectedItems);
+
+  // Check if all items are selected
+  const allItemsSelected = newSelectedItems.length === productOnCart.length;
+  setSelectAll(allItemsSelected);
+};
+
+const updateTotalPayment = (selectedItems) => {
+  const newTotalPayment = productOnCart.reduce((total, item) => {
+    if (selectedItems.includes(item.idGhct)) {
+      total += item.donGia;
+    }
+    return total;
+  }, 0);
+
+  setTotalPayment(newTotalPayment);
+};
+
+const handleSelectAllChange = () => {
+  const newSelectAll = !selectAll;
+  setSelectAll(newSelectAll);
+
+  let newSelectedItems;
+
+  if (newSelectAll) {
+    // If selecting all, set allItemIds as selected items
+    newSelectedItems = productOnCart.map((item) => item.idGhct);
+  } else {
+    // If deselecting all, clear the selected items
+    newSelectedItems = [];
+  }
+
+  setSelectedItems(newSelectedItems);
+  updateTotalPayment(newSelectedItems);
+};
+
+  
+  
+
   return (
     <>
       <div>
@@ -125,7 +180,7 @@ export default function Cart() {
                 </div>
                 <div className="container-title box-shadow">
                   <div className="container-title-left">
-                    <input type="checkbox" className="container-title-checkbox checkboxAll" />
+                    <input type="checkbox" className="container-title-checkbox checkboxAll" checked={selectAll} onChange={handleSelectAllChange}/>
                     <span className="container-title-checkbox-text">Chọn Tất Cả</span>
                   </div>
                   <div className="container-title-right">
@@ -150,8 +205,8 @@ export default function Cart() {
                       productOnCart.map((item, index) => (
                         <>
                           <div key={index} className="container-title margin-product-cart">
-                            <input type="checkbox" className="container-product-checkbox container-title-checkbox" />
-                            <div className="container-product-info  container-title-left">
+                            <input type="checkbox" className="container-product-checkbox container-title-checkbox" checked={selectedItems.includes(item.idGhct)} onChange={() => handleCheckboxChange(item)}/>
+                            <div className="container-product-info  container-title-left w-45">
                               <a href="#">
                                 {images[index] && ( // Checking if images[index] exists before rendering
                                   <Box sx={{ position: 'relative' }}>
@@ -173,24 +228,26 @@ export default function Cart() {
                                 <span className="container-product-phanloai-discription">
                                   <Button
                                     style={{
-                                      
+                                      fontSize: '12px'
                                     }}
                                     key={`size-button-${item.idCtsp.idMs.idMs}`}
                                     // onClick={() => handleShowMS(item.idCtsp.idMs)}
                                     // variant={selectedMauSac === item.idCtsp.idMs ? 'contained' : 'outlined'}
                                     size="small"
+                                    className='boder-button'
                                   >
                                     {item.idCtsp.idMs.tenMs}
                                   </Button>
                                   ,
                                   <Button
                                     style={{
-                                      
+                                      fontSize: '12px'
                                     }}
                                     key={`size-button-${index}`}
                                     // onClick={() => handleShowMS(item.idCtsp.idSize)}
                                     // variant={selectedMauSac === item.idCtsp.idSize ? 'contained' : 'outlined'}
                                     size="small"
+                                    className='boder-button'
                                   >
                                     {item.idCtsp.idSize.tenSize}
                                   </Button>
@@ -225,6 +282,7 @@ export default function Cart() {
                               </Button>
                             </div>
                           </div>
+                            <hr className="product-divider" />
                         </>
                       ))}
                   </div>
@@ -241,8 +299,8 @@ export default function Cart() {
                     <div className="container-buy-block-left">Lưu vào mục Đã thích</div>
                     <div className="container-buy-block-right">
                       <span className="tongthanhtoan">Tổng thanh toán:</span>
-                      <span className="tongtien">₫0</span>
-                      <Button className="delete-product-btn width-90">Mua hàng</Button>
+                      <span className="tongtien">{formatCurrency(totalPayment)}</span>
+                      <Button className="delete-product-btn width-90 ml-15">Mua hàng</Button>
                     </div>
                   </div>
                 </div>
