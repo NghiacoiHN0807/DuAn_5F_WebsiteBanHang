@@ -13,6 +13,22 @@ import java.math.BigDecimal;
 @Setter
 public class SanPhamClientDTO {
 
+    private Integer idSp;
+
+    private String chatLieus;
+
+    private String loaiSPs;
+
+    private String xuatXus;
+
+    private String tayAos;
+
+    private String coAos;
+
+    private String sizes;
+
+    private String mauSacs;
+
     private String tenSp;
 
     private Integer trangThai;

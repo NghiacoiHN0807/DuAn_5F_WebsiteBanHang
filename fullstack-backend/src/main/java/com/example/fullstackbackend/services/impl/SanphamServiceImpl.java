@@ -66,12 +66,21 @@ public class SanphamServiceImpl implements SanPhamService {
         List<SanPhamClientDTO> dtos = new ArrayList<>();
         for (Object[] row : sanphamRepository.getSpForClient()) {
             SanPhamClientDTO spCustom = new SanPhamClientDTO();
-            spCustom.setTenSp((String) row[0]);
-            spCustom.setTrangThai((Integer) row[1]);
-            spCustom.setUrl((String) row[2]);
-            spCustom.setGiaMin((BigDecimal) row[3]);
-            spCustom.setGiaMax((BigDecimal) row[4]);
-            spCustom.setGiaThucTe((BigDecimal) row[5]);
+            spCustom.setIdSp((Integer) row[0]);
+            spCustom.setChatLieus((String) row[1]);
+            spCustom.setLoaiSPs((String) row[2]);
+            spCustom.setXuatXus((String) row[3]);
+            spCustom.setTayAos((String) row[4]);
+            spCustom.setCoAos((String) row[5]);
+            spCustom.setSizes((String) row[6]);
+            spCustom.setMauSacs((String) row[7]);
+
+            spCustom.setTenSp((String) row[8]);
+            spCustom.setTrangThai((Integer) row[9]);
+            spCustom.setUrl((String) row[10]);
+            spCustom.setGiaMin((BigDecimal) row[11]);
+            spCustom.setGiaMax((BigDecimal) row[12]);
+            spCustom.setGiaThucTe((BigDecimal) row[13]);
             dtos.add(spCustom);
         }
 

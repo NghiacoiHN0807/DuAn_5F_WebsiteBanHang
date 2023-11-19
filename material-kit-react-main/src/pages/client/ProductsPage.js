@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 // @mui
 import { Container, Stack, Typography } from '@mui/material';
 // components
@@ -37,6 +37,11 @@ export default function ProductsPage() {
     getListData();
   }, []);
 
+  // filter
+  // const listLoc = listSP.filter((sp) => sp.chatLieus.includes('12'));
+
+  const [filteredList, setFilteredList] = useState([]);
+
   return (
     <>
       <Helmet>
@@ -54,6 +59,11 @@ export default function ProductsPage() {
               openFilter={openFilter}
               onOpenFilter={handleOpenFilter}
               onCloseFilter={handleCloseFilter}
+              listSP={listSP}
+              // onFilter={(filteredList) => {
+              //   // Lấy kết quả đã lọc từ ProductFilterSB
+              //   setFilteredList(filteredList);
+              // }}
             />
             <ProductSort />
           </Stack>
