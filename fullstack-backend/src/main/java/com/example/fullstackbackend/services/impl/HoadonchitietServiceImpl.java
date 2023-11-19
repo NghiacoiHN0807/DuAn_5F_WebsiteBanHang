@@ -58,7 +58,7 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     @Override
     public void delete(Integer id) {
         Optional<HoaDonChiTiet> detailHDCT = detail(id);
-        if (detailHDCT.get().getTrangThai() >= 0 || detailHDCT.get().getTrangThai() < 8) {
+        if (detailHDCT.get().getTrangThai() < 8) {
             addLS(detailHDCT.get(), 2);
             hoadonchitietRepository.deleteById(id);
         } else {
