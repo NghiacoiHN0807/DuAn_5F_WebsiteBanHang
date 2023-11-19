@@ -6,7 +6,6 @@ import { Carousel } from 'react-bootstrap';
 import CardMedia from '@mui/material/CardMedia';
 import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
 // utils
-import { fCurrency } from '../../utils/formatNumber';
 // Service
 import { listImg } from '../../service/client/Detail-Product';
 import { findById } from '../../service/BillSevice';
@@ -139,6 +138,18 @@ const DetailProduct = () => {
     setAlertContent(null);
   };
 
+  function formatCurrency(price) {
+    if (!price) return "0";
+
+    const formatter = new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
+
   return (
     <div id="main">
       <div id="header">{/* ... (header content) ... */}</div>
@@ -198,10 +209,10 @@ const DetailProduct = () => {
                     marginRight: '15px',
                   }}
                 >
-                  {detailProduct.length > 0 && detailProduct[0].giaBan && fCurrency(detailProduct[0].giaBan)}
+                  {detailProduct.length > 0 && detailProduct[0].giaBan && formatCurrency(detailProduct[0].giaBan)}
                 </Typography>
                 &nbsp;
-                {detailProduct.length > 0 && fCurrency(detailProduct[0].giaBan)}
+                {detailProduct.length > 0 && formatCurrency(detailProduct[0].giaBan)}
               </Typography>
             </div>
             <div className="vanchuyen d-block">
@@ -243,6 +254,7 @@ const DetailProduct = () => {
                           onClick={() => handleShowMS(mauSac)}
                           variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
                           size="small"
+                          className=''
                         >
                           {mauSac}
                         </Button>
