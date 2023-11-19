@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // Icon styles
 import IconButton from '@mui/material/IconButton';
@@ -31,22 +31,23 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 const Header = () => {
-  const [productOnCart, setProductOnCart] = useState([]);
-
-  const getDetail = useCallback(async () => {
-    try {
-      const getLocalStore = localStorage.getItem('userFormToken');
-      const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
-      const getOneSP = await listProductOnCart(authorities.idTaiKhoan);
-      setProductOnCart(getOneSP);
-    } catch (e) {
-      console.error(e);
-    }
-  }, []);
+  const [listData, setListData] = useState([]);
 
   useEffect(() => {
-    getDetail();
-  }, [getDetail]);
+    const fetchData = async () => {
+      try {
+        const getLocalStore = localStorage.getItem('userFormToken');
+        const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
+        const getData = await listProductOnCart(authorities.idTaiKhoan);
+        setListData(getData || []);
+      } catch (error) {
+        console.error(error);
+        setListData([]);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -124,7 +125,7 @@ const Header = () => {
               {/* </NavLink> */}
               <Link to="/client/cart" className={'nav-link'}>
                 {/* <IconButton aria-label="cart"> */}
-                <StyledBadge badgeContent={productOnCart && productOnCart.length} color="secondary">
+                <StyledBadge badgeContent={listData && listData.length} color="secondary">
                   <ShoppingCartIcon />
                 </StyledBadge>
                 {/* </IconButton> */}

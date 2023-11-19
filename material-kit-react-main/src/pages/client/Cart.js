@@ -3,10 +3,17 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, Box, Button, Snackbar } from '@mui/material';
 import '../../scss/Cart-shopping.scss';
 import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 
 // Service
 import { listImg } from '../../service/client/Detail-Product';
-import { deleteProductOnCart, listProductOnCart, upadteProductOnCart } from '../../service/client/Detail-Cart';
+import {
+  deleteProductOnCart,
+  listProductOnCart,
+  upadteProductOnCart,
+  postAddBillAddBill,
+  postAddDirectClient,
+} from '../../service/client/Detail-Cart';
 
 const StyledProductImg = styled('img')({
   top: 0,
@@ -23,6 +30,8 @@ export default function Cart() {
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalPayment, setTotalPayment] = useState(0);
   const [selectAll, setSelectAll] = useState(false);
+
+  const navigate = useNavigate();
 
   const getDetail = useCallback(async () => {
     try {
@@ -101,11 +110,11 @@ export default function Cart() {
   };
 
   function formatCurrency(price) {
-    if (!price) return "0";
+    if (!price) return '0';
 
-    const formatter = new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
       minimumFractionDigits: 0,
     });
 
@@ -113,56 +122,76 @@ export default function Cart() {
   }
 
   const handleCheckboxChange = (item) => {
-  const isSelected = selectedItems.includes(item.idGhct);
-  let newSelectedItems;
+    const isSelected = selectedItems.includes(item);
+    let newSelectedItems;
 
-  if (isSelected) {
-    // Item is already selected, remove it
-    newSelectedItems = selectedItems.filter((selectedItem) => selectedItem !== item.idGhct);
-  } else {
-    // Item is not selected, add it
-    newSelectedItems = [...selectedItems, item.idGhct];
-  }
-
-  setSelectedItems(newSelectedItems);
-  updateTotalPayment(newSelectedItems);
-
-  // Check if all items are selected
-  const allItemsSelected = newSelectedItems.length === productOnCart.length;
-  setSelectAll(allItemsSelected);
-};
-
-const updateTotalPayment = (selectedItems) => {
-  const newTotalPayment = productOnCart.reduce((total, item) => {
-    if (selectedItems.includes(item.idGhct)) {
-      total += item.donGia;
+    if (isSelected) {
+      // Item is already selected, remove it
+      newSelectedItems = selectedItems.filter((selectedItem) => selectedItem !== item);
+    } else {
+      // Item is not selected, add it
+      newSelectedItems = [...selectedItems, item];
     }
-    return total;
-  }, 0);
+    setSelectedItems(newSelectedItems);
+    updateTotalPayment(newSelectedItems);
 
-  setTotalPayment(newTotalPayment);
-};
+    // Check if all items are selected
+    const allItemsSelected = newSelectedItems.length === productOnCart.length;
+    setSelectAll(allItemsSelected);
+  };
 
-const handleSelectAllChange = () => {
-  const newSelectAll = !selectAll;
-  setSelectAll(newSelectAll);
+  const updateTotalPayment = (selectedItems) => {
+    const newTotalPayment = productOnCart.reduce((total, item) => {
+      if (selectedItems.includes(item)) {
+        total += item.donGia;
+      }
+      return total;
+    }, 0);
 
-  let newSelectedItems;
+    setTotalPayment(newTotalPayment);
+  };
 
-  if (newSelectAll) {
-    // If selecting all, set allItemIds as selected items
-    newSelectedItems = productOnCart.map((item) => item.idGhct);
-  } else {
-    // If deselecting all, clear the selected items
-    newSelectedItems = [];
-  }
+  const handleSelectAllChange = () => {
+    const newSelectAll = !selectAll;
+    setSelectAll(newSelectAll);
 
-  setSelectedItems(newSelectedItems);
-  updateTotalPayment(newSelectedItems);
-};
+    let newSelectedItems;
 
-  
-  
+    if (newSelectAll) {
+      // If selecting all, set allItemIds as selected items
+      newSelectedItems = productOnCart.map((item) => item);
+    } else {
+      // If deselecting all, clear the selected items
+      newSelectedItems = [];
+    }
+
+    setSelectedItems(newSelectedItems);
+    updateTotalPayment(newSelectedItems);
+  };
+
+  const handleBuy = async () => {
+    // Create a new bill
+    if (totalPayment <= 0) {
+      setAlertContent({
+        type: 'error',
+        message: 'Vui Lòng Chọn Sản Phẩm',
+      });
+    } else {
+      const res = await postAddBillAddBill(2, 0);
+      for (let i = 0; i < selectedItems.length; i += 1) {
+        (async () => {
+          await postAddDirectClient(res.idHd, selectedItems[i]);
+        })();
+      }
+      console.log('selectedItems: ', selectedItems);
+
+      setAlertContent({
+        type: 'success',
+        message: 'Tạo thành công hóa đơn',
+      });
+      navigate(`/client/payment/${res.idHd}`);
+    }
+  };
 
   return (
     <>
@@ -180,7 +209,12 @@ const handleSelectAllChange = () => {
                 </div>
                 <div className="container-title box-shadow">
                   <div className="container-title-left">
-                    <input type="checkbox" className="container-title-checkbox checkboxAll" checked={selectAll} onChange={handleSelectAllChange}/>
+                    <input
+                      type="checkbox"
+                      className="container-title-checkbox checkboxAll"
+                      checked={selectAll}
+                      onChange={handleSelectAllChange}
+                    />
                     <span className="container-title-checkbox-text">Chọn Tất Cả</span>
                   </div>
                   <div className="container-title-right">
@@ -205,7 +239,12 @@ const handleSelectAllChange = () => {
                       productOnCart.map((item, index) => (
                         <>
                           <div key={index} className="container-title margin-product-cart">
-                            <input type="checkbox" className="container-product-checkbox container-title-checkbox" checked={selectedItems.includes(item.idGhct)} onChange={() => handleCheckboxChange(item)}/>
+                            <input
+                              type="checkbox"
+                              className="container-product-checkbox container-title-checkbox"
+                              checked={selectedItems.includes(item)}
+                              onChange={() => handleCheckboxChange(item)}
+                            />
                             <div className="container-product-info  container-title-left w-45">
                               <a href="#">
                                 {images[index] && ( // Checking if images[index] exists before rendering
@@ -228,33 +267,33 @@ const handleSelectAllChange = () => {
                                 <span className="container-product-phanloai-discription">
                                   <Button
                                     style={{
-                                      fontSize: '12px'
+                                      fontSize: '12px',
                                     }}
                                     key={`size-button-${item.idCtsp.idMs.idMs}`}
                                     // onClick={() => handleShowMS(item.idCtsp.idMs)}
                                     // variant={selectedMauSac === item.idCtsp.idMs ? 'contained' : 'outlined'}
                                     size="small"
-                                    className='ms-size'
+                                    className="ms-size"
                                   >
                                     {item.idCtsp.idMs.tenMs}
                                   </Button>
                                   ,
                                   <Button
                                     style={{
-                                      fontSize: '12px'
+                                      fontSize: '12px',
                                     }}
                                     key={`size-button-${index}`}
                                     // onClick={() => handleShowMS(item.idCtsp.idSize)}
                                     // variant={selectedMauSac === item.idCtsp.idSize ? 'contained' : 'outlined'}
                                     size="small"
-                                    className='ms-size'
+                                    className="ms-size"
                                   >
                                     {item.idCtsp.idSize.tenSize}
                                   </Button>
                                 </span>
                               </div>
                             </div>
-                            <div className='container-title-right'>
+                            <div className="container-title-right">
                               <span className="container-product-price">{formatCurrency(item.idCtsp.giaThucTe)}</span>
                               <div className="soluong-block">
                                 <div className="soluong-number-btn d-flex justify-content-center align-items-center">
@@ -282,7 +321,7 @@ const handleSelectAllChange = () => {
                               </Button>
                             </div>
                           </div>
-                            <hr className="product-divider" />
+                          <hr className="product-divider" />
                         </>
                       ))}
                   </div>
@@ -300,7 +339,9 @@ const handleSelectAllChange = () => {
                     <div className="container-buy-block-right">
                       <span className="tongthanhtoan">Tổng thanh toán:</span>
                       <span className="tongtien">{formatCurrency(totalPayment)}</span>
-                      <Button className="delete-product-btn width-90 ml-15">Mua hàng</Button>
+                      <Button onClick={() => handleBuy()} className="delete-product-btn width-90 ml-15">
+                        Mua hàng
+                      </Button>
                     </div>
                   </div>
                 </div>

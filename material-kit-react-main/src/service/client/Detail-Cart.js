@@ -5,5 +5,14 @@ const listProductOnCart = (idSp) => custom.get(`/gio-hang-chi-tiet/view-all/${id
 const addProductOnCart = (idKH, idCtsp, soLuong) => custom.post(`/gio-hang-chi-tiet/add/${idKH}`, { idCtsp, soLuong });
 const upadteProductOnCart = (idSp, soLuong) => custom.put(`/gio-hang-chi-tiet/update/${idSp}`, { soLuong });
 const deleteProductOnCart = (idGHCT) => custom.delete(`/gio-hang-chi-tiet/delete/${idGHCT}`);
-
-export { listProductOnCart, deleteProductOnCart, addProductOnCart, upadteProductOnCart };
+// Add Bill
+const postAddBillAddBill = (kieuHoaDon, trangThai) => custom.post('/hoa-don/add', { kieuHoaDon, trangThai });
+const postAddDirectClient = (idHd, newHDCT) => custom.post(`/gio-hang-chi-tiet/add-to-hdct/${idHd}`, newHDCT);
+export {
+  postAddDirectClient,
+  listProductOnCart,
+  postAddBillAddBill,
+  deleteProductOnCart,
+  addProductOnCart,
+  upadteProductOnCart,
+};

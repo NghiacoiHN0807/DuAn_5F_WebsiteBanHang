@@ -146,3 +146,4 @@ export default function LoginForm() {
     </>
   );
 }
+export const accessToken = localStorage.getItem('accessToken');
