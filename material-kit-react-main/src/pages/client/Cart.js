@@ -97,6 +97,18 @@ export default function Cart() {
     setAlertContent(null);
   };
 
+  function formatCurrency(price) {
+    if (!price) return "0";
+
+    const formatter = new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
+
   return (
     <>
       <div>
@@ -137,14 +149,14 @@ export default function Cart() {
                     {productOnCart.length > 0 &&
                       productOnCart.map((item, index) => (
                         <>
-                          <div key={index} className="container-product-block">
+                          <div key={index} className="container-title margin-product-cart">
                             <input type="checkbox" className="container-product-checkbox container-title-checkbox" />
-                            <div className="container-product-info">
+                            <div className="container-product-info  container-title-left">
                               <a href="#">
                                 {images[index] && ( // Checking if images[index] exists before rendering
                                   <Box sx={{ position: 'relative' }}>
                                     <StyledProductImg
-                                      sx={{ position: 'relative', width: '140px', height: '180px' }}
+                                      sx={{ position: 'relative', width: '140px', height: '180px', marginLeft: '14px' }}
                                       key={index}
                                       alt={images[index][0].url}
                                       src={images[index][0].url}
@@ -155,39 +167,63 @@ export default function Cart() {
                               <a href="#" className="container-product-link">
                                 {item.idCtsp.idSp.tenSp}
                               </a>
-                            </div>
-                            <div className="container-product-phanloai">
-                              <span className="container-product-phanloai-title">Phân Loại Hàng:</span>
-                              <br />
-                              <span className="container-product-phanloai-discription">
-                                {item.idCtsp.idMs.tenMs},{item.idCtsp.idSize.tenSize}
-                              </span>
-                            </div>
-                            <span className="container-product-price">{item.idCtsp.giaThucTe}</span>
-                            <div className="soluong-block ml-90">
-                              <div className="soluong-number-btn d-flex justify-content-center align-items-center">
-                                <Button className="soluong-btn" onClick={() => handleDecreaseQuantity(item)}>
-                                  -
-                                </Button>
-                                <input
-                                  type="text"
-                                  className="soluong-number"
-                                  value={item.soLuong}
-                                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10)) || 1)}
-                                />
-                                <Button className="soluong-btn" onClick={() => handleIncreaseQuantity(item)}>
-                                  +
-                                </Button>
+                              <div className="container-product-phanloai">
+                                <span className="container-product-phanloai-title">Phân Loại Hàng:</span>
+                                <br />
+                                <span className="container-product-phanloai-discription">
+                                  <Button
+                                    style={{
+                                      
+                                    }}
+                                    key={`size-button-${item.idCtsp.idMs.idMs}`}
+                                    // onClick={() => handleShowMS(item.idCtsp.idMs)}
+                                    // variant={selectedMauSac === item.idCtsp.idMs ? 'contained' : 'outlined'}
+                                    size="small"
+                                  >
+                                    {item.idCtsp.idMs.tenMs}
+                                  </Button>
+                                  ,
+                                  <Button
+                                    style={{
+                                      
+                                    }}
+                                    key={`size-button-${index}`}
+                                    // onClick={() => handleShowMS(item.idCtsp.idSize)}
+                                    // variant={selectedMauSac === item.idCtsp.idSize ? 'contained' : 'outlined'}
+                                    size="small"
+                                  >
+                                    {item.idCtsp.idSize.tenSize}
+                                  </Button>
+                                </span>
                               </div>
                             </div>
-                            <span className="container-product-sotien">{item.donGia}</span>
-                            <Button
-                              onClick={() => handleDeleteProduct(item)}
-                              className="delete-product-btn"
-                              id="delete-product"
-                            >
-                              Xóa
-                            </Button>
+                            <div className='container-title-right'>
+                              <span className="container-product-price">{formatCurrency(item.idCtsp.giaThucTe)}</span>
+                              <div className="soluong-block">
+                                <div className="soluong-number-btn d-flex justify-content-center align-items-center">
+                                  <Button className="soluong-btn" onClick={() => handleDecreaseQuantity(item)}>
+                                    -
+                                  </Button>
+                                  <input
+                                    type="text"
+                                    className="soluong-number"
+                                    value={item.soLuong}
+                                    onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value, 10)) || 1)}
+                                  />
+                                  <Button className="soluong-btn" onClick={() => handleIncreaseQuantity(item)}>
+                                    +
+                                  </Button>
+                                </div>
+                              </div>
+                              <span className="container-product-sotien mr-45">{formatCurrency(item.donGia)}</span>
+                              <Button
+                                onClick={() => handleDeleteProduct(item)}
+                                className="delete-product-btn"
+                                id="delete-product"
+                              >
+                                Xóa
+                              </Button>
+                            </div>
                           </div>
                         </>
                       ))}
