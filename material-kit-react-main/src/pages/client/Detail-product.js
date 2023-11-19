@@ -289,7 +289,7 @@ const DetailProduct = () => {
             </div>
 
             <div className="vanchuyen pt-30">
-              <Button className="soluong-btn" onClick={handleAddProduct}>
+              <Button className="add-cart" onClick={handleAddProduct}>
                 Thêm Vào Giỏ Hàng
               </Button>
               <div className="buy">Mua ngay</div>
