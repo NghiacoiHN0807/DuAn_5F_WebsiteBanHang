@@ -3,8 +3,9 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // Icon styles
 import IconButton from '@mui/material/IconButton';
@@ -18,6 +19,7 @@ import logo5F from '../../assets/logo_5F.png';
 
 // mocks_
 import account from '../../_mock/account';
+import { listProductOnCart } from '../../service/client/Detail-Cart';
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
@@ -29,6 +31,24 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 const Header = () => {
+  const [listData, setListData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const getLocalStore = localStorage.getItem('userFormToken');
+        const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
+        const getData = await listProductOnCart(authorities.idTaiKhoan);
+        setListData(getData || []);
+      } catch (error) {
+        console.error(error);
+        setListData([]);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -74,13 +94,17 @@ const Header = () => {
       <Navbar collapseOnSelect expand="lg" bg="while" variant="while">
         <Container>
           <img src={logo5F} alt="logo_5F" height={'50px'} />
-          <Navbar.Brand href="#home">Home</Navbar.Brand>
+          <Navbar.Brand href="#home">
+            <Link to="/client/home" className={'nav-link'}>
+              Home
+            </Link>
+          </Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="me-auto">
-              <NavLink to="/" className={'nav-link'}>
+              <Link to="/" className={'nav-link'}>
                 Shope
-              </NavLink>
+              </Link>
               <NavLink to="/" className={'nav-link'}>
                 Sale
               </NavLink>
@@ -102,13 +126,13 @@ const Header = () => {
                 </StyledBadge>
               </IconButton>
               {/* </NavLink> */}
-              {/* <NavLink to="/table-xuatXu" className={'nav-link'}> */}
-              <IconButton aria-label="cart">
-                <StyledBadge badgeContent={4} color="secondary">
+              <Link to="/client/cart" className={'nav-link'}>
+                {/* <IconButton aria-label="cart"> */}
+                <StyledBadge badgeContent={listData && listData.length} color="secondary">
                   <ShoppingCartIcon />
                 </StyledBadge>
-              </IconButton>
-              {/* </NavLink> */}
+                {/* </IconButton> */}
+              </Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

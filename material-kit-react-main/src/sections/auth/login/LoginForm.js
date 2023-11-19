@@ -47,6 +47,7 @@ export default function LoginForm() {
         console.log('response: ', response);
         const authorities = response.data.authorities[0].authority;
         navigate(authorities === 'ROLE_ADMIN' || authorities === 'ROLE_STAFF' ? '/dashboard/app' : '/client/home');
+        window.location.reload();
       } else {
         throw Error(response.status);
       }
@@ -145,3 +146,4 @@ export default function LoginForm() {
     </>
   );
 }
+export const accessToken = localStorage.getItem('accessToken');

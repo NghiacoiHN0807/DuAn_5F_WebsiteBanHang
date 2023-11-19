@@ -56,10 +56,10 @@ public class MySecurityConfiguration {
         return http.authorizeHttpRequests(
                         req ->
                                 req
-                                        .requestMatchers("/","/anh/**","/gio-hang-chi-tiet/**", "/add", "/api/**", "/san-pham/**", "/chi-tiet-san-pham/**", "/chat-lieu/**", "/loai-sp/**", "/xuat-xu/**", "/loai-co-ao/**", "/ong-tay-ao/**", "/mau-sac/**", "/size/**").permitAll()
+                                        .requestMatchers("/","/anh/**","/gio-hang-chi-tiet/**", "/add", "/api/**", "/san-pham/**", "/chi-tiet-san-pham/**","/hoa-don/**", "/hoa-don-chi-tiet/**", "/chat-lieu/**", "/loai-sp/**", "/xuat-xu/**", "/loai-co-ao/**", "/ong-tay-ao/**", "/mau-sac/**", "/size/**").permitAll()
                                         .requestMatchers("/**").hasRole("ADMIN")
                                         .requestMatchers("/**").hasRole("STAFF")
-                                        .requestMatchers("/hoa-don/**", "/gio-hang-chi-tiet/**","gio-hang/**").hasRole("CUSTOMER")
+                                        .requestMatchers("/hoa-don/**", "/gio-hang-chi-tiet/**","/gio-hang/**", "/hoa-don-chi-tiet/**","/san-pham/**", "chi-tiet-san-pham/**").hasRole("CUSTOMER")
                                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())

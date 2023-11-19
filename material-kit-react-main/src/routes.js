@@ -20,6 +20,7 @@ import ModelAddNewGiamGia from './pages/discounts/ModalsAddNewGiamGia';
 import ModelUpdateGiamGia from './pages/discounts/ModalsUpdateGiamGia';
 import DetailProduct from './pages/client/Detail-product';
 import Cart from './pages/client/Cart';
+import PaymentPage from './pages/client/Payment-Page';
 
 // san pham
 import ProductMain from './pages/SanPham/SanPhamMain';
@@ -63,6 +64,7 @@ export default function Router() {
               { path: 'home', element: <Home /> },
               { path: 'detail/:id', element: <DetailProduct /> },
               { path: 'cart', element: <Cart /> },
+              { path: 'payment/:id', element: <PaymentPage /> },
               { path: 'products', element: <ProductsPage /> },
             ],
     },
