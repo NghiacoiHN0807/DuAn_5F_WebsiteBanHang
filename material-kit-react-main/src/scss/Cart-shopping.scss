@@ -20,6 +20,10 @@
     padding-right: 15px;
 }
 
+.soluong-number {
+    border-radius: 20px;
+}
+
 #root {
     position: relative;
 }
@@ -34,6 +38,10 @@
 .delete-product-btn,
 .container-product-price {
     margin: 0;
+}
+
+.container-product-link {
+    width: 180px;
 }
 
 .soluong-number-btn {
@@ -79,5 +87,18 @@
 
 .w-45 {
     width: 45%;
+}
+
+.ms-size {
+    border: 1px solid #212529;
+    color: #212529;
+    border-radius: 10px;
+}
+
+.ms-size:hover {
+    background-color: #000;
+    opacity: 0.6;
+    color: #fff;
+    border: 1px solid #000;
 }
   

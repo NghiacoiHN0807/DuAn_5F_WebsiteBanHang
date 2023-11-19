@@ -254,6 +254,7 @@ const DetailProduct = () => {
                           onClick={() => handleShowMS(mauSac)}
                           variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
                           size="small"
+                          className=''
                         >
                           {mauSac}
                         </Button>

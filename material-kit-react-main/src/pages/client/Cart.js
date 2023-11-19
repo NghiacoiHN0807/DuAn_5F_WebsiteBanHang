@@ -234,7 +234,7 @@ const handleSelectAllChange = () => {
                                     // onClick={() => handleShowMS(item.idCtsp.idMs)}
                                     // variant={selectedMauSac === item.idCtsp.idMs ? 'contained' : 'outlined'}
                                     size="small"
-                                    className='boder-button'
+                                    className='ms-size'
                                   >
                                     {item.idCtsp.idMs.tenMs}
                                   </Button>
@@ -247,7 +247,7 @@ const handleSelectAllChange = () => {
                                     // onClick={() => handleShowMS(item.idCtsp.idSize)}
                                     // variant={selectedMauSac === item.idCtsp.idSize ? 'contained' : 'outlined'}
                                     size="small"
-                                    className='boder-button'
+                                    className='ms-size'
                                   >
                                     {item.idCtsp.idSize.tenSize}
                                   </Button>
