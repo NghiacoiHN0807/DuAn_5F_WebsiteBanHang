@@ -108,6 +108,9 @@ const Header = () => {
               <NavLink to="/" className={'nav-link'}>
                 Sale
               </NavLink>
+              <NavLink to="/client/products" className={'nav-link'}>
+                Sản phẩm
+              </NavLink>
             </Nav>
             <Nav>
               <Form className="d-flex search-form">

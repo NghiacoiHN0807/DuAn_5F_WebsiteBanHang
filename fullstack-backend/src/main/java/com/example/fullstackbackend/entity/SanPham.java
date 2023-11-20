@@ -9,11 +9,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
@@ -59,4 +62,21 @@ public class SanPham {
     @Column(name = "trang_thai")
     private Integer trangThai;
 
+    @PrePersist
+    public void prePersist() {
+        // Tạo mã tài khoản ngẫu nhiên không trùng nhau
+        if (maSp == null) {
+            maSp = generateMaSP();
+        }
+    }
+    private String generateMaSP() {
+        // Tạo một UUID mới
+        UUID uuid = UUID.randomUUID();
+
+        // Chuyển UUID thành chuỗi và loại bỏ các ký tự '-'
+        String uuidString = uuid.toString().replace("-", "");
+
+        // Lấy 6 ký tự đầu của chuỗi UUID
+        return "SP" + uuidString.toUpperCase().substring(0, 9);
+    }
 }
