@@ -35,6 +35,7 @@ public class MySecurityConfiguration {
         return auth.getAuthenticationManager();
     }
 
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         // Password encoder, for Spring Security to use to encrypt user passwords
