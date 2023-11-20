@@ -3,6 +3,7 @@ package com.example.fullstackbackend.config;
 
 import com.example.fullstackbackend.config.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -21,6 +22,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class MySecurityConfiguration {
+
+    @Autowired
+    private OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     private final UserService userService;
 
@@ -55,14 +59,15 @@ public class MySecurityConfiguration {
     protected SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
         System.out.println("http: " + http);
         return http.authorizeHttpRequests(
-
                         req ->
-                                req
-                                        .requestMatchers("/","/anh/**","/gio-hang-chi-tiet/**", "/add", "/api/**", "/san-pham/**", "chi-tiet-san-pham/**","/hoa-don/**", "/hoa-don-chi-tiet/**").permitAll()
+                                req.requestMatchers("/", "/anh/**", "/gio-hang-chi-tiet/**", "/add", "/api/**", "/san-pham/**", "chi-tiet-san-pham/**", "/hoa-don/**", "/hoa-don-chi-tiet/**", "/tai-khoan-khach-hang/**", "/chat-lieu/**", "/loai-sp/**", "/xuat-xu/**", "/loai-co-ao/**", "/ong-tay-ao/**", "/mau-sac/**", "/size/**").permitAll()
                                         .requestMatchers("/**").hasRole("ADMIN")
                                         .requestMatchers("/**").hasRole("STAFF")
-                                        .requestMatchers("/hoa-don/**", "/gio-hang-chi-tiet/**","/gio-hang/**", "/hoa-don-chi-tiet/**","/san-pham/**", "chi-tiet-san-pham/**").hasRole("CUSTOMER")
+                                        .requestMatchers("/tai-khoan-khach-hang/**", "/hoa-don/**", "/gio-hang-chi-tiet/**", "/gio-hang/**", "/hoa-don-chi-tiet/**", "/san-pham/**", "chi-tiet-san-pham/**").hasRole("CUSTOMER")
                                         .anyRequest().authenticated())
+                .oauth2Login(oath2 -> {
+                    oath2.successHandler(oAuth2LoginSuccessHandler);
+                })
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())
                 .cors(a -> a.configure(http))

@@ -20,6 +20,8 @@ public interface TaiKhoanKhachHangSevice {
 
     Boolean checkExists(Integer id);
 
+    Boolean checkMailExists(String email);
+
     TaiKhoan update(TaiKhoan update);
 
     Optional<TaiKhoan> detail(String idOrMa);

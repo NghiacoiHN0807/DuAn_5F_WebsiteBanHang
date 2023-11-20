@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import ViewChucVu from "./components/ViewChucVu";
 import TableTKNhanVien from "./components/TableTKNhanVien";
 import XuatXuMain from "./components/XuatXu/XuatXuMain";
@@ -17,20 +18,29 @@ import TableGiamGia from "./components/TableGiamGia";
 import { Routes, Route, Link } from "react-router-dom";
 import Home from "./components/web-online/Home";
 =======
+=======
+>>>>>>> c6b89cf1 (push-new)
 import TableXuatXu from "./components/TableXuatXu";
 import Container from "react-bootstrap/Container";
 import { Routes, Route } from "react-router-dom";
 import QLSP from "./components/QuanLySanPham";
+<<<<<<< HEAD
 >>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e
+=======
+>>>>>>> c6b89cf1 (push-new)
 import { ToastContainer } from "react-toastify";
 import HeaderADM from "./layout/Header-ADM";
 import FooterADM from "./layout/Footer-ADM";
 import "./scss/App-ADM.scss";
+<<<<<<< HEAD
 import TableGiamGia from './components/TableGiamGia'
+=======
+>>>>>>> c6b89cf1 (push-new)
 
 function AppADM() {
   return (
     <>
+<<<<<<< HEAD
 <<<<<<< HEAD
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
@@ -162,6 +172,8 @@ function AppADM() {
       </Box>
 
 =======
+=======
+>>>>>>> c6b89cf1 (push-new)
       <div className="app-container">
         <div className="row">
           <div className="col-2">
@@ -172,8 +184,12 @@ function AppADM() {
               <HeaderADM />
               <div className="my-3">
                 <Routes>
+<<<<<<< HEAD
                   <Route path="/admin-giam-gia" element={<TableGiamGia />} />
                   <Route path="/home" element={<QLSP />} />
+=======
+                  <Route path="/" element={<QLSP />} />
+>>>>>>> c6b89cf1 (push-new)
                   <Route path="/table-xuatXu" element={<TableXuatXu />} />
                 </Routes>
               </div>
@@ -181,7 +197,10 @@ function AppADM() {
           </div>
         </div>
       </div>
+<<<<<<< HEAD
 >>>>>>> 937f5ef96df61b780fe720386fbef1fa220fcb3e
+=======
+>>>>>>> c6b89cf1 (push-new)
       <ToastContainer
         position="top-right"
         autoClose={2000}
