@@ -2,8 +2,7 @@ import { Helmet } from 'react-helmet-async';
 import { filter } from 'lodash';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 // @mui
 import {
   Card,
@@ -223,10 +222,6 @@ export default function UserPage() {
     console.log('Check res: ', res);
     if (res && res.idSp) {
       // handleAlertClick('Xóa thành công!', 'success');
-      toast.success('Xóa thành công!', {
-        position: 'top-right',
-        autoClose: 3000, // Thời gian tự động đóng (miligiây)
-      });
       getListData();
       handleClose();
     } else {

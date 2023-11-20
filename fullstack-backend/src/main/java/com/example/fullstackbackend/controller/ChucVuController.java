@@ -29,11 +29,8 @@ public class ChucVuController {
     private ChucvuService chucvuService;
 
     @GetMapping("view-all")
-    public Page<ChucVu> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                @RequestParam(defaultValue = "15") Integer size,
-                                @RequestParam("p") Optional<Integer> p) {
-
-        return chucvuService.phanTrang(p.orElse(page), size);
+    public List<ChucVu> viewAlll() {
+        return chucvuService.phanTrang();
     }
 
     @GetMapping("list-chuc-vu")
@@ -78,5 +75,10 @@ public class ChucVuController {
 
             return chucvuService.update(chucVu);
         }
+    }
+
+    @GetMapping("detailTen")
+    public ChucVu dettailTen(@RequestParam("tenCv") String tenCv){
+        return chucvuService.detailTen(tenCv);
     }
 }

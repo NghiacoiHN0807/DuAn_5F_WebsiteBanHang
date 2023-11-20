@@ -31,17 +31,17 @@ public class TaiKhoanKhachHangController {
     @Autowired
     private TaiKhoanKhachHangSevice TaiKhoanKhachHangKHSevice;
 
+//    @GetMapping("view-all")
+//    public Page<TaiKhoan> viewAll(@RequestParam(defaultValue = "0") Integer page,
+//                                  @RequestParam(defaultValue = "15") Integer size,
+//                                  @RequestParam("p") Optional<Integer> p) {
+//
+//        return TaiKhoanKhachHangKHSevice.Page(p.orElse(page), size);
+//    }
+
     @GetMapping("view-all")
-    public Page<TaiKhoan> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                  @RequestParam(defaultValue = "15") Integer size,
-                                  @RequestParam("p") Optional<Integer> p) {
-
-        return TaiKhoanKhachHangKHSevice.Page(p.orElse(page), size);
-    }
-
-    @GetMapping("view-all-kh")
-    public List<TaiKhoan> viewAllKH() {
-        return TaiKhoanKhachHangKHSevice.PageKhachHang();
+    public List<TaiKhoan> viewAll() {
+        return TaiKhoanKhachHangKHSevice.getAll();
     }
 
     @PostMapping("add")
@@ -57,6 +57,14 @@ public class TaiKhoanKhachHangController {
 
             return ResponseEntity.badRequest().body(errorMap);
         } else {
+
+            String email = taiKhoankh.getEmail();
+            if (TaiKhoanKhachHangKHSevice.checkMailExists(email)) {
+                Map<String, String> errorMap = new HashMap<>();
+                errorMap.put("email", "Email đã tồn tại");
+                return ResponseEntity.badRequest().body(errorMap);
+            }
+
             TaiKhoan addTK = TaiKhoanKhachHangKHSevice.add(taiKhoankh);
             return ResponseEntity.ok(addTK);
         }

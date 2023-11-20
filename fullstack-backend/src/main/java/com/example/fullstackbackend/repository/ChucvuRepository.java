@@ -11,4 +11,6 @@ public interface ChucvuRepository extends JpaRepository<ChucVu, Integer> {
 
     List<ChucVu> findAllByMaCv(String ma);
 
+    ChucVu findChucVuByTenCv(String tenCv);
+
 }

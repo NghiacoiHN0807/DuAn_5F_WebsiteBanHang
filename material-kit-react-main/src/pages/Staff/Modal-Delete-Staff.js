@@ -29,7 +29,7 @@ export default function ModalDeleteDiscount(props) {
 
   const handleDelete = async () => {
     // Kiểm tra trạng thái trước khi xóa
-    if (information.trangThai === 1) {
+    if (information.trangThai === 0) {
       // Thay đổi trạng thái thành 10
       information.trangThai = 10;
 

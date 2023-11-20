@@ -1,6 +1,5 @@
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
-import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import {
   Card,
@@ -99,10 +98,6 @@ export default function AddSanPham() {
 
   const navigate = useNavigate();
 
-  const showToast = () => {
-    toast.success('Thêm thành công!');
-  };
-
   const handleSave = async () => {
     // get object all\
     const getObjChatLieu = await detailCL(chatLieu);
@@ -128,7 +123,6 @@ export default function AddSanPham() {
       handleAlertClick('Thêm thành công!', 'success');
       handleClose();
       navigate(`/dashboard/products/update/${res.idSp}`);
-      showToast();
     } else {
       handleAlertClick('Thêm thất bại!', 'danger');
       handleClose();
@@ -265,8 +259,6 @@ export default function AddSanPham() {
             <Button variant="contained" fullWidth sx={{ marginTop: '25px' }} onClick={() => handleClickOpenAdd()}>
               Thêm
             </Button>
-
-            {/* Đây là container để hiển thị toast */}
           </div>
         </Card>
       </Container>

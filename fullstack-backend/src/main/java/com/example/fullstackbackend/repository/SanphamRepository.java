@@ -136,7 +136,7 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "HAVING sp.trang_thai = 0 OR sp.trang_thai = 1;", nativeQuery = true)
     List<Object[]> getSpForClient();
 
-    @Query(value = "select  so_luong,  ten_sp from duan_5f.san_pham sp , duan_5f.chi_tiet_san_pham  ctsp , duan_5f.hoa_don_chi_tiet hdct\n" +
+    @Query(value = "select distinct so_luong,  ten_sp from duan_5f.san_pham sp , duan_5f.chi_tiet_san_pham  ctsp , duan_5f.hoa_don_chi_tiet hdct\n" +
             "where sp.id_sp = ctsp.id_sp\n" +
             "and ctsp.id_ctsp = hdct.id_ctsp\n" +
             "order by so_luong desc\n" +
