@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.controller;
 
+import com.example.fullstackbackend.DTO.SanPhamClientDTO;
 import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.DTO.SanPhamIgDTO;
@@ -9,10 +10,7 @@ import com.example.fullstackbackend.services.SanPhamService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -107,10 +105,14 @@ public class SanPhamController {
     }
 
     @GetMapping("getSpWithImg")
-    public ResponseEntity<Page<SanPhamCustom>> getSanPhamDetails(@RequestParam(defaultValue = "0") Integer page,
-                                                                 @RequestParam(defaultValue = "15") Integer size,
-                                                                 @RequestParam("p") Optional<Integer> p) {
-        Page<SanPhamCustom> pageSp = sanPhamService.sanPhamCustom(p.orElse(page), size);
+    public ResponseEntity<List<SanPhamCustom>> getSanPhamDetail()  {
+        List<SanPhamCustom> pageSp = sanPhamService.sanPhamCustom();
+        return ResponseEntity.ok(pageSp);
+    }
+
+    @GetMapping("getSpForClient")
+    public ResponseEntity<List<SanPhamClientDTO>> getSpForClient() {
+        List<SanPhamClientDTO> pageSp = sanPhamService.sanPhamForClient();
         return ResponseEntity.ok(pageSp);
     }
 

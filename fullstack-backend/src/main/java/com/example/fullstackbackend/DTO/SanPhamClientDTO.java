@@ -11,15 +11,25 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Getter
 @Setter
-public class SanPhamCustom {
+public class SanPhamClientDTO {
 
     private Integer idSp;
 
-    private String maSp;
+    private String chatLieus;
+
+    private String loaiSPs;
+
+    private String xuatXus;
+
+    private String tayAos;
+
+    private String coAos;
+
+    private String sizes;
+
+    private String mauSacs;
 
     private String tenSp;
-
-    private String moTa;
 
     private Integer trangThai;
 
@@ -28,4 +38,7 @@ public class SanPhamCustom {
     private BigDecimal giaMin;
 
     private BigDecimal giaMax;
+
+    private BigDecimal giaThucTe;
+
 }

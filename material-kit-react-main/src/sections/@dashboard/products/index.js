@@ -5,3 +5,8 @@ export { default as ProductListClient } from './ProductList-Client';
 export { default as ProductSort } from './ProductSort';
 export { default as ProductCartWidget } from './ProductCartWidget';
 export { default as ProductFilterSidebar } from './ProductFilterSidebar';
+
+// export for product page
+export { default as ProductCardAll } from './ProductCardAll';
+export { default as ProductListAll } from './ProductListAll';
+export { default as ProductfilterSB } from './ProductFilterSB';

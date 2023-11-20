@@ -3,10 +3,11 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
+import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
-import ProductsPage from './pages/ProductsPage';
+import ProductsPage from './pages/client/ProductsPage';
 import DashboardAppPage from './pages/DashboardAppPage';
 import Sales from './pages/DirectSale-ADM';
 import CartBillADM from './pages/Cart-Bill-ADM';
@@ -14,7 +15,6 @@ import OrderManagement from './pages/OrderManagement';
 import OrderManagementTimeline from './pages/OrderManagement-Timeline';
 import Home from './pages/client/Home';
 import DashboardLayoutClient from './layouts/dashboard/DashboardLayout-Client';
-import BlogPage from './pages/BlogPage';
 import DiscountPage from './pages/discounts/DiscountPage';
 import ModelAddNewGiamGia from './pages/discounts/ModalsAddNewGiamGia';
 import ModelUpdateGiamGia from './pages/discounts/ModalsUpdateGiamGia';
@@ -25,6 +25,11 @@ import AddTKNV from './pages/Staff/Modal-Add-Staff';
 import UpdateTkNV from './pages/Staff/Modal-Update-Staff';
 import Contact from './pages/client/Contact';
 import PaymentPage from './pages/client/Payment-Page';
+
+// san pham
+import ProductMain from './pages/SanPham/SanPhamMain';
+import ProductAdd from './pages/SanPham/ModelAdd';
+import ProductUpdate from './pages/SanPham/ModelUpdate';
 
 import ClientsPage from './pages/taiKhoanKhachHang/ClientsPage';
 import AddClients from './pages/taiKhoanKhachHang/AddClients';
@@ -60,9 +65,7 @@ export default function Router() {
               { path: 'staff', element: <UserStaff /> },
               { path: 'addNewTKNV', element: <AddTKNV /> },
               { path: 'detail/:id', element: <UpdateTkNV /> },
-              { path: 'clients', element: <UserPage /> },
               { path: 'staff', element: <UserPage /> },
-              { path: 'products', element: <ProductsPage /> },
               { path: 'discounts', element: <DiscountPage /> },
               { path: 'discount/add', element: <ModelAddNewGiamGia /> },
               { path: 'discount/update/:id', element: <ModelUpdateGiamGia /> },
@@ -73,6 +76,9 @@ export default function Router() {
               { path: 'address/:id', element: <AddressByClient /> },
               { path: 'address/add/:id', element: <AddAddress /> },
               { path: 'address/detail/:id', element: <UpdateAddress /> },
+              { path: 'products', element: <ProductMain /> },
+              { path: 'products/add', element: <ProductAdd /> },
+              { path: 'products/update/:id', element: <ProductUpdate /> },
             ]
           : [
               { element: <Navigate to="/client/home" />, index: true },
@@ -81,6 +87,7 @@ export default function Router() {
               { path: 'cart', element: <Cart /> },
               { path: 'payment/:id', element: <PaymentPage /> },
               { path: 'contact', element: <Contact /> },
+              { path: 'products', element: <ProductsPage /> },
             ],
     },
     {
