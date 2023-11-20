@@ -26,6 +26,15 @@ import UpdateTkNV from './pages/Staff/Modal-Update-Staff';
 import Contact from './pages/client/Contact';
 import PaymentPage from './pages/client/Payment-Page';
 
+import ClientsPage from './pages/taiKhoanKhachHang/ClientsPage';
+import AddClients from './pages/taiKhoanKhachHang/AddClients';
+import UpdateClients from './pages/taiKhoanKhachHang/UpdateClients';
+import AllAddress from './pages/diaChi/AllAddress';
+import AddressByClient from './pages/diaChi/AddressByClient';
+import AddAddress from './pages/diaChi/AddAddress';
+import UpdateAddress from './pages/diaChi/UpdateAddress';
+import SignUp from './pages/client/SignUp';
+
 // ----------------------------------------------------------------------
 
 export default function Router() {
@@ -42,22 +51,29 @@ export default function Router() {
       children:
         authorities === 'ROLE_ADMIN' || authorities === 'ROLE_STAFF'
           ? [
-            { element: <Navigate to="/dashboard/app" />, index: true },
-            { path: 'app', element: <DashboardAppPage /> },
-            { path: 'bills', element: <OrderManagement /> },
-            { path: 'bills/time-line/:id', element: <OrderManagementTimeline /> },
-            { path: 'sales', element: <Sales /> },
-            { path: 'sales/card-bill/:id', element: <CartBillADM /> },
-            { path: 'staff', element: <UserStaff /> },
-            { path: "addNewTKNV", element: <AddTKNV /> },
-            { path: "detail/:id", element: <UpdateTkNV /> },
-            { path: 'clients', element: <UserPage /> },
-            { path: 'staff', element: <UserPage /> },
-            { path: 'products', element: <ProductsPage /> },
-            { path: 'discounts', element: <DiscountPage /> },
-            { path: 'discount/add', element: <ModelAddNewGiamGia /> },
-            { path: 'discount/update/:id', element: <ModelUpdateGiamGia /> },
-          ]
+              { element: <Navigate to="/dashboard/app" />, index: true },
+              { path: 'app', element: <DashboardAppPage /> },
+              { path: 'bills', element: <OrderManagement /> },
+              { path: 'bills/time-line/:id', element: <OrderManagementTimeline /> },
+              { path: 'sales', element: <Sales /> },
+              { path: 'sales/card-bill/:id', element: <CartBillADM /> },
+              { path: 'staff', element: <UserStaff /> },
+              { path: 'addNewTKNV', element: <AddTKNV /> },
+              { path: 'detail/:id', element: <UpdateTkNV /> },
+              { path: 'clients', element: <UserPage /> },
+              { path: 'staff', element: <UserPage /> },
+              { path: 'products', element: <ProductsPage /> },
+              { path: 'discounts', element: <DiscountPage /> },
+              { path: 'discount/add', element: <ModelAddNewGiamGia /> },
+              { path: 'discount/update/:id', element: <ModelUpdateGiamGia /> },
+              { path: 'clients', element: <ClientsPage /> },
+              { path: 'clients/add', element: <AddClients /> },
+              { path: 'clients/detail/:id', element: <UpdateClients /> },
+              { path: 'address', element: <AllAddress /> },
+              { path: 'address/:id', element: <AddressByClient /> },
+              { path: 'address/add/:id', element: <AddAddress /> },
+              { path: 'address/detail/:id', element: <UpdateAddress /> },
+            ]
           : [
               { element: <Navigate to="/client/home" />, index: true },
               { path: 'home', element: <Home /> },
@@ -70,6 +86,10 @@ export default function Router() {
     {
       path: 'login',
       element: <LoginPage />,
+    },
+    {
+      path: 'signUp',
+      element: <SignUp />,
     },
     {
       element: <SimpleLayout />,

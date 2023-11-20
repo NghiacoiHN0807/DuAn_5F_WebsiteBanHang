@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import "./scss/App.scss";
 import "./scss/Home.scss";
-=======
-import "./css/App.scss";
-import "./css/Home.scss";
->>>>>>> c6b89cf1 (push-new)
 import Header from "./layout/Header";
 import TableXuatXu from "./components/TableXuatXu";
 import Container from "react-bootstrap/Container";
@@ -12,11 +7,10 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import { ToastContainer } from "react-toastify";
 import Footer from "./layout/Footer";
-<<<<<<< HEAD
-// import View from "./components/View";
-// import ViewClient from "./components/ViewClient";
-=======
->>>>>>> c6b89cf1 (push-new)
+import TableTKKhachHang from "./components/TaiKhoanKhachHang/TableTKKhachHang";
+import Login from "./components/web-online/Login";
+import SignUp from "./components/web-online/SignUp";
+
 
 function App() {
   return (
@@ -27,7 +21,11 @@ function App() {
           <div className="my-3">
             <Routes>
               <Route path="/home" element={<Home />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signUp" element={<SignUp />} />
               <Route path="/table-xuatXu" element={<TableXuatXu />} />
+              <Route path="/tai-Khoan-KH" element={<TableTKKhachHang />} />
             </Routes>
           </div>
         </Container>

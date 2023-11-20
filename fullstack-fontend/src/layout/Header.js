@@ -35,7 +35,7 @@ const Header = (props) => {
               <span className="nav-separator">|</span>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link eventKey="link-2" className="nav-links">
+              <Nav.Link eventKey="link-2" className="nav-links" href={"/login"}>
                 Login
               </Nav.Link>
             </Nav.Item>

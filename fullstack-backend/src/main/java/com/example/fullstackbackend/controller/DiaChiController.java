@@ -33,18 +33,14 @@ public class DiaChiController {
     private DiaChiSevice diaChiSevice;
 
     @GetMapping("/view-all")
-    public Page<DiaChi> viewAll(@RequestParam(defaultValue = "0") Integer page,
-                                @RequestParam(defaultValue = "15") Integer size,
-                                @RequestParam("p") Optional<Integer> p) {
-        return diaChiSevice.getAll(p.orElse(page), size);
+    public List<DiaChi> viewAll() {
+        return diaChiSevice.getAll();
     }
 
     @GetMapping("/tai-khoan/")
-    public Page<DiaChi> viewAllByTK(@RequestParam("m") String maTaiKhoan,
-                                    @RequestParam(defaultValue = "0") Integer page,
-                                    @RequestParam(defaultValue = "15") Integer size,
-                                    @RequestParam("p") Optional<Integer> p) {
-        return diaChiSevice.getAllByTK(maTaiKhoan, p.orElse(page), size);
+    public List<DiaChi> viewAllByTK(@RequestParam("m") String maTaiKhoan
+                                  ) {
+        return diaChiSevice.getAllByTK(maTaiKhoan);
     }
 
     @PostMapping("add")

@@ -1,28 +1,28 @@
-import custom from './custom-axios';
+import custom from "./custom-axios";
 
-const fetchAllTKKH = (page, keyword) => custom.get(`/tai-khoan-khach-hang/view-all?p=${page}&keyword=${keyword}`);
+const fetchAllTKKH = (page, keyword) => custom.get(`/tai-khoan-khach-hang/view-all?p=${page}&keyword=${keyword}`); // Call API
 
-// const postAddTaiKhoanKhachHang = (maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) => {
-//     return custom.post("/tai-khoan-khach-hang/add", {maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai});
-// };
-// const postUpdateTaiKhoanKhachHang = (idTaiKhoan, maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) => {
-//     return custom.post("/tai-khoan-khach-hang/update", {
-//         idTaiKhoan,
-//         maTaiKhoan,
-//         ho,
-//         ten,
-//         sdt,
-//         email,
-//         matKhau,
-//         trangThai
-//     });
-// };
-// const getDetailOneTK = (idTaiKhoan) => {
-//     return custom.get(`/tai-khoan-khach-hang/detail/${idTaiKhoan}`);
-// };
+const postAddTaiKhoanKhachHang = (maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) =>
+    custom.post("/tai-khoan-khach-hang/add", {maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai});
 
-// const deleteTaiKhoanKH = (id) => {
-//     return custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
-// };
+const postUpdateTaiKhoanKhachHang = (idTaiKhoan, maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) =>
+    custom.post("/tai-khoan-khach-hang/update", {
+        idTaiKhoan,
+        maTaiKhoan,
+        ho,
+        ten,
+        sdt,
+        email,
+        matKhau,
+        trangThai
+    });
 
-export { fetchAllTKKH };
+const getDetailOneTK = (idTaiKhoan) =>
+    custom.get(`/tai-khoan-khach-hang/detail/${idTaiKhoan}`);
+
+
+const deleteTaiKhoanKH = (id) =>
+    custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
+
+
+export {fetchAllTKKH, postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoanKH, getDetailOneTK};

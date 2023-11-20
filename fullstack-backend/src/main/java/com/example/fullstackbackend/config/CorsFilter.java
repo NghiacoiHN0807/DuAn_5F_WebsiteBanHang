@@ -7,18 +7,29 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 
 @WebFilter("/*")
 public class CorsFilter implements Filter {
+
+    @Value("${fontend.url}")
+    private String url;
+
+    @Value("${fontend.allowed-methods}")
+    private String methods;
+
+    @Value("${fontend.allowed-headers}")
+    private String type;
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         // Add CORS headers to the response
         HttpServletResponse httpResponse = (HttpServletResponse) response;
-        httpResponse.addHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-        httpResponse.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-        httpResponse.addHeader("Access-Control-Allow-Headers", "Content-Type");
+        httpResponse.addHeader("Access-Control-Allow-Origin", url);
+        httpResponse.addHeader("Access-Control-Allow-Methods", methods);
+        httpResponse.addHeader("Access-Control-Allow-Headers", type);
 
         // Continue with the chain
         chain.doFilter(request, response);
