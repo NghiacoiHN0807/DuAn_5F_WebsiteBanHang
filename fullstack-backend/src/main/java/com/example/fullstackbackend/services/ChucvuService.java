@@ -10,14 +10,17 @@ import java.util.Optional;
 public interface ChucvuService {
     List<ChucVu> getAll();
 
-    Page<ChucVu> phanTrang(Integer pageNo, Integer size);
+    List<ChucVu> phanTrang();
 
     ChucVu add(ChucVu chucVu);
 
     void delete(Integer id);
 
     ChucVu update(ChucVu chucVu);
+
     Boolean existsById(Integer id);
 
     Optional<ChucVu> detail(Integer id);
+
+    ChucVu detailTen(String tenCv);
 }

@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
-
-
 import {
-    Alert,
+  Alert,
   Box,
   Button,
   FormControl,
@@ -18,8 +16,8 @@ import {
   TextField,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import {  detailTaiKhoan, postUpdateTaiKhoan,} from "../../service/taiKhoanNhanVienService";
-import { chucVu3 } from "../../service/chucVuService";
+import { detailTaiKhoan, postUpdateTaiKhoan, } from "../../service/taiKhoanNhanVienService";
+import { chucVu3 ,detailTen} from "../../service/chucVuService";
 
 
 const UpdateTkNV = (props) => {
@@ -52,13 +50,14 @@ const UpdateTkNV = (props) => {
   useEffect(() => {
     getAllChucVu();
   }, []);
+
   // chuyen trang
   const navigate = useNavigate();
   const getListData = useCallback(async () => {
     try {
-        const res = await detailTaiKhoan(idNV);
+      const res = await detailTaiKhoan(idNV);
       setData(res);
-      setChucVu(res.idChucVu);
+      setChucVu(res.idChucVu.tenCv);
       setHo(res.ho);
       setTen(res.ten);
       setEmail(res.email);
@@ -82,17 +81,18 @@ const UpdateTkNV = (props) => {
       email === "" ||
       sdt === "" ||
       matKhau === "" ||
-      soCanCuoc === "" 
+      soCanCuoc === ""
     ) {
-        setAlertContent({
-            type: 'warning',
-            message: 'Một số trường đang trống!',
-          });
+      setAlertContent({
+        type: 'warning',
+        message: 'Một số trường đang trống!',
+      });
     } else {
-        const res = await postUpdateTaiKhoan(
+      const tenCv = await detailTen({ tenCv: chucVu });
+      const res = await postUpdateTaiKhoan(
         Data.idTaiKhoan,
         Data.maTaiKhoan,
-        chucVu,
+        tenCv,
         ho,
         ten,
         sdt,
@@ -111,9 +111,9 @@ const UpdateTkNV = (props) => {
         navigate('/dashboard/staff');
       } else {
         setAlertContent({
-            type: 'error',
-            message: 'Cập Nhập tài khoản thất bại!',
-          });
+          type: 'error',
+          message: 'Cập Nhập tài khoản thất bại!',
+        });
       }
     }
   };
@@ -124,7 +124,8 @@ const UpdateTkNV = (props) => {
           className="title"
           style={{ textAlign: "center", margin: "20px 0" }}
         >
-          <h4>Cập Nhập Tài Khoản Nhân Viên Mã: {Data.maTaiKhoan}</h4>
+          <h4>Cập Nhập Tài Khoản</h4>
+          <h5>Mã tài khoản: {Data.maTaiKhoan}</h5>
         </div>
         <Box
           component="form"
@@ -142,14 +143,18 @@ const UpdateTkNV = (props) => {
               onChange={(event) => setChucVu(event.target.value)}
             >
               {myChucVu
-              .filter((item) => item.idCv === 1 || item.idCv === 8) // Lọc theo idCv
-              .map((item, index) => (
-                <MenuItem key={index} value={item}>
-                  {item.tenCv}
-                </MenuItem>
-              ))}
+                .filter((item) => item.idCv === 1 || item.idCv === 8) // Lọc theo idCv
+                .map((item, index) => (
+                  <MenuItem
+                    key={index}
+                    value={item.tenCv}
+                  >
+                    {item.tenCv}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
+
           <TextField
             fullWidth
             label="Họ"
@@ -182,7 +187,7 @@ const UpdateTkNV = (props) => {
             fullWidth
             id="outlined-basic"
             label="Mật Khẩu"
-            value={matKhau}
+            // value={matKhau}
             onChange={(event) => setMatKhau(event.target.value)}
           />
           <TextField
@@ -204,7 +209,7 @@ const UpdateTkNV = (props) => {
               onChange={(event) => setTrangThai(event.target.value)}
             >
               <FormControlLabel
-                value="1"
+                value="0"
                 control={<Radio />}
                 label="Đang Hoạt Động"
               />
@@ -223,24 +228,25 @@ const UpdateTkNV = (props) => {
             color="success"
             onClick={() => handleSave()}
           >
-            Sửa
+            Cập Nhập
           </Button>
         </div>
         {alertContent && (
-        <Snackbar
-          open
-          autoHideDuration={3000}
-          onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
-            {alertContent.message}
-          </Alert>
-        </Snackbar>
-      )}
+          <Snackbar
+            open
+            autoHideDuration={3000}
+            onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+              {alertContent.message}
+            </Alert>
+          </Snackbar>
+        )}
       </div>
-      
+
     </>
   );
 };
 export default UpdateTkNV;
+

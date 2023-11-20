@@ -33,13 +33,13 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
 
 
     @Query(value = "SELECT SUM(tong_tien) AS total_revenue \n" +
-            "FROM hoa_don where trang_thai = 4;", nativeQuery = true)
+            "FROM hoa_don where trang_thai = 9 or trang_thai = 5;", nativeQuery = true)
     Double calculateTotalTongTien();
 
 
     @Query(value = "SELECT COUNT(*) AS total_invoice\n" +
             "\tFROM hoa_don\n" +
-            "\tWHERE trang_thai = 4;", nativeQuery = true)
+            "\tWHERE trang_thai = 9 or trang_thai = 5;", nativeQuery = true)
     long totalInvoice();
 
     @Query(value = "SELECT DATE(ngay_thanh_toan) AS Ngay, SUM(thanh_tien) AS TongDoanhThu\n" +
@@ -57,12 +57,14 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
             "LEFT JOIN \n" +
             "    duan_5f.lich_su_giam_gia lsgg ON hd.id_hd = lsgg.id_hd\n" +
             "WHERE \n" +
-            "    hd.trang_thai = 1\n" +
+            "    hd.trang_thai = 9 or hd.trang_thai = 5\n" +
             "GROUP BY \n" +
             "    hd.id_tai_khoan", nativeQuery = true)
     Double getTyLeTraHang();
 
     @Query(value = "SELECT SUM(so_luong) AS tong_so_luong_da_ban\n" +
-            "FROM duan_5f.hoa_don_chi_tiet;", nativeQuery = true)
+            "FROM duan_5f.hoa_don_chi_tiet  hdct\n" +
+            "join duan_5f.hoa_don hd on hdct.id_hd = hd.id_hd\n" +
+            "where hd.trang_thai = 9 or hd.trang_thai = 5;", nativeQuery = true)
     long getTongSpBan();
 }

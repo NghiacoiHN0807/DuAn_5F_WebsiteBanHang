@@ -14,7 +14,8 @@ const AddTKNV = () => {
   const [sdt, setSdt] = useState('');
   const [email, setEmail] = useState('');
   const [soCanCuoc, setSoCanCuoc] = useState('');
-  const [trangThai, setTrangThai] = useState(1);
+  const [matKhau, setMatKhau] = useState('');
+  const [trangThai, setTrangThai] = useState(0);
   const [alertContent, setAlertContent] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState('No result');
@@ -29,13 +30,13 @@ const AddTKNV = () => {
   };
 
   const handleSave = async () => {
-    if (!chucVuId || !ho || !ten || !email || !sdt || !soCanCuoc) {
+    if (!chucVuId || !ho || !ten || !email || !sdt || !soCanCuoc || !matKhau) {
       setAlertContent({
         type: 'warning',
         message: 'Vui lòng nhập đầy đủ thông tin nhân viên!',
       });
     } else {
-      const res = await postAddTaiKhoan(maTaiKhoan, chucVuId, ho, ten, sdt, email, soCanCuoc, trangThai);
+      const res = await postAddTaiKhoan(maTaiKhoan, chucVuId, ho, ten, sdt, email, soCanCuoc, matKhau, trangThai);
       if (res && res.idTaiKhoan) {
         const successMessage = {
           type: 'success',
@@ -56,7 +57,7 @@ const AddTKNV = () => {
 
   const getAllChucVu = async () => {
     const rs = await chucVu(0);
-    setMyChucVu(rs.content);
+    setMyChucVu(rs);
   };
 
   useEffect(() => {
@@ -99,7 +100,7 @@ const AddTKNV = () => {
   return (
     <div>
       <div style={{ textAlign: 'center', margin: '20px 0' }}>
-        <h4>THÊM Tài Khoản Nhân Viên</h4>
+        <h4>Thêm</h4>
       </div>
 
       <div>
@@ -144,13 +145,15 @@ const AddTKNV = () => {
               ))}
           </Select>
         </FormControl>
+
         <TextField fullWidth margin="dense" label="Họ" value={ho} onChange={(event) => setHo(event.target.value)} />
         <TextField fullWidth margin="dense" label="Tên" value={ten} onChange={(event) => setTen(event.target.value)} />
+        <TextField fullWidth margin="dense" label="Mật Khẩu" value={matKhau} onChange={(event) => setMatKhau(event.target.value)} />
         <TextField fullWidth margin="dense" label="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
         <TextField fullWidth margin="dense" label="Số Điện Thoại" onChange={(event) => setSdt(event.target.value)} />
         <TextField fullWidth margin="dense" label="Số Căn Cước" value={soCanCuoc} onChange={(event) => setSoCanCuoc(event.target.value)} />
         <Button size="large" variant="contained" color="success" onClick={handleSave} style={{ marginTop: '20px' }}>
-          Thêm Tài Khoản Nhân Viên Mới
+          Thêm tài khoản nhân viên mới
         </Button>
       </Box>
       {alertContent && (

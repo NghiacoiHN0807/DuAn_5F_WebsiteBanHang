@@ -74,7 +74,7 @@ public class TaiKhoan {
     private String soCanCuoc;
 
     @Column(name = "trang_thai")
-    private Integer trangThai = 1;
+    private Integer trangThai = 0;
 
     public TaiKhoan(String username, String password, List<GrantedAuthority> authorities) {
     }

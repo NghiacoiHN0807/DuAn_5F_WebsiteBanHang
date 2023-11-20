@@ -19,6 +19,7 @@ public class UserService implements UserDetailsService {
         // Check taiKhoan
 
         TaiKhoanUser taiKhoan = userRepository.findByEmail(username);
+        System.out.println("taiKhoan: " + taiKhoan);
         if (username == null) {
             throw new UsernameNotFoundException(username);
         }

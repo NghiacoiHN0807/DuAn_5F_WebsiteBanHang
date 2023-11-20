@@ -73,7 +73,8 @@
     "react-scripts": "^5.0.1",
     "sass": "^1.49.10",
     "simplebar-react": "^3.2.1",
-    "web-vitals": "^3.1.1"
+    "web-vitals": "^3.1.1",
+    "react-qr-scanner": "^1.0.0-alpha.11"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
