@@ -1,39 +1,29 @@
-import { useState, useEffect, useCallback } from "react";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Pagination,
-  Stack,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material";
-import { Image } from "react-bootstrap";
-import ModalDetailProduct from "./Modal-Detail-SanPham";
-import { fetchAllCTSPBySize, findById } from "../services/BillSevice";
+import { useState, useEffect, useCallback } from 'react';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
+import { sample } from 'lodash';
+import PropTypes from 'prop-types';
+// import ModalDetailProduct from './Modal-Detail-SanPham';
+import { fetchAllCTSPBySize } from '../service/BillSevice';
+// @mui
+import { ProductSort, ProductListADM, ProductFilterSidebar } from '../sections/@dashboard/products';
 
 const ModalAddProduct = (props) => {
-  const { show, handleClose, selectDataCart, DataCart, currentPage1 } = props;
+  // Get Props
+  ModalAddProduct.propTypes = {
+    show: PropTypes.bool.isRequired,
+    handleClose: PropTypes.func.isRequired,
+    selectDataCart: PropTypes.func.isRequired,
+    DataCart: PropTypes.array.isRequired,
+  };
+  const { show, handleClose, selectDataCart, DataCart } = props;
   const [listData, setListData] = useState([]);
-  const [numberPages, setNumberPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [dataDetail, setDataDetail] = useState([]);
-  const [listImages, setListImages] = useState([]);
-  const [showModalDetail, setShowModalDetail] = useState(false);
 
   const getAllData = useCallback(async (page) => {
     try {
-      let getData = await fetchAllCTSPBySize(page);
-      if (getData && getData.content) {
-        setListData(getData.content);
-        setNumberPages(getData.totalPages);
+      const getData = await fetchAllCTSPBySize(page);
+      console.log('getData: ', getData);
+      if (getData) {
+        setListData(getData);
       }
     } catch (error) {
       console.error(error);
@@ -41,144 +31,75 @@ const ModalAddProduct = (props) => {
   }, []);
 
   useEffect(() => {
-    getAllData(currentPage);
-  }, [currentPage, getAllData]);
+    getAllData();
+  }, [getAllData]);
 
-  const handlePageClick = (page) => {
-    getAllData(page);
-    setCurrentPage(page);
+  //   Select card product
+  const [openFilter, setOpenFilter] = useState(false);
+
+  const handleOpenFilter = () => {
+    setOpenFilter(true);
   };
 
-  const handleChoose = async (idSp, imgs) => {
-    let getOneSP = await findById(idSp);
-    setListImages(imgs[0]);
-    setDataDetail(getOneSP);
-    setShowModalDetail(true);
+  const handleCloseFilter = () => {
+    setOpenFilter(false);
   };
 
-  const handleCloseDetail = () => {
-    setShowModalDetail(false);
-  };
+  const PRODUCTS = listData.map((item, index) => {
+    const setIndex = index + 1;
+    const imagesArray = item[0].split(',');
+    const firstImage = imagesArray[0];
+    const arrayPrice = item[4].split(',');
+    const price = arrayPrice.map((price) => parseFloat(price));
+    // find max and min of price
+    const minPrice = Math.min(...price);
+    const maxPrice = Math.max(...price);
+    // Select price
+    const priceRange = minPrice === maxPrice ? minPrice : `${minPrice} ${maxPrice}`;
+
+    const PRODUCT_COLOR = ['#00AB55', '#000000', '#FFFFFF', '#FFC0CB', '#FF4842', '#1890FF', '#94D82D', '#FFC107'];
+
+    return {
+      id: item[1],
+      cover: firstImage,
+      name: item[3],
+      price: priceRange,
+      priceSale: item[2],
+      colors:
+        (setIndex === 1 && PRODUCT_COLOR.slice(0, 2)) ||
+        (setIndex === 2 && PRODUCT_COLOR.slice(1, 3)) ||
+        (setIndex === 3 && PRODUCT_COLOR.slice(2, 4)) ||
+        (setIndex === 4 && PRODUCT_COLOR.slice(3, 6)) ||
+        (setIndex === 23 && PRODUCT_COLOR.slice(4, 6)) ||
+        (setIndex === 24 && PRODUCT_COLOR.slice(5, 6)) ||
+        PRODUCT_COLOR,
+      status: sample(['sale', 'new', '', '']),
+      selectDataCart,
+      DataCart,
+    };
+  });
 
   return (
     <>
       <div>
         <Dialog open={show} onClose={handleClose} maxWidth="xl" fullWidth>
-          <DialogTitle>DANH SÁCH SẢN PHẨM</DialogTitle>
+          <DialogTitle>
+            <Typography variant="h4" sx={{ mb: 5 }}>
+              Danh Sách Sản Phẩm
+            </Typography>
+          </DialogTitle>
           <DialogContent>
-            <TableContainer
-              sx={{ marginTop: 2, marginBottom: 2 }}
-              component={Paper}
-            >
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Ảnh</TableCell>
-                    <TableCell>Mã Sản Phẩm</TableCell>
-                    <TableCell align="right">Tên Sản Phẩm</TableCell>
-                    <TableCell align="right">Giá</TableCell>
-                    <TableCell align="right">Thao Tác</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {listData && listData.length > 0 ? (
-                    listData.map((item, index) => {
-                      const imagesArray = item[0].split(","); // Tách chuỗi thành mảng
-                      const firstImage = imagesArray[0];
-                      return (
-                        <TableRow
-                          key={index}
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
-                          }}
-                        >
-                          <TableCell component="th" scope="row">
-                            <Image
-                              rounded
-                              style={{ width: "150px", height: "auto" }}
-                              src={firstImage}
-                            />
-                          </TableCell>
-                          <TableCell component="th" scope="row">
-                            {item[2]}
-                          </TableCell>
-                          <TableCell align="right">{item[3]}</TableCell>
-
-                          <TableCell align="right">{item[4]}</TableCell>
-                          <TableCell align="right">
-                            <Button
-                              variant="outlined"
-                              size="small"
-                              onClick={() => handleChoose(item[1], imagesArray)}
-                            >
-                              Chọn
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
-                  ) : (
-                    <TableRow>
-                      <TableCell align="right" colSpan={8}>
-                        KHÔNG CÓ DỮ LIỆU
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
-            {/* <Table className="table-Cart" striped hover borderless>
-              <thead>
-                <tr>
-                  <th>Ảnh</th>
-                  <th>Mã Sản Phẩm</th>
-                  <th>Tên Sản Phẩm</th>
-                  <th>Giá Sản Phẩm</th>
-                  <th>Thao Tác</th>
-                </tr>
-              </thead>
-              <thead>
-                {listData.map((item, index) => {
-                  const imagesArray = item[0].split(","); // Tách chuỗi thành mảng
-                  const firstImage = imagesArray[0];
-                  return (
-                    <tr key={`images-${index}`}>
-                      <th>
-                        <Image
-                          rounded
-                          style={{ width: "150px", height: "auto" }}
-                          src={firstImage}
-                        />
-                      </th>
-                      <th>{item[2]}</th>
-                      <th>{item[3]}</th>
-                      <th>{item[4]}</th>
-                      <th>
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          onClick={() => handleChoose(item[1], imagesArray)}
-                        >
-                          Chọn
-                        </Button>
-                      </th>
-                    </tr>
-                  );
-                })}
-              </thead>
-            </Table> */}
-            <Stack
-              direction="row"
-              spacing={2}
-              justify="center"
-              alignItems="center"
-            >
-              <Pagination
-                onChange={(event, page) => handlePageClick(page - 1)}
-                count={numberPages}
-                variant="outlined"
-              />
+            <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
+              <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
+                <ProductFilterSidebar
+                  openFilter={openFilter}
+                  onOpenFilter={handleOpenFilter}
+                  onCloseFilter={handleCloseFilter}
+                />
+                <ProductSort />
+              </Stack>
             </Stack>
+            <ProductListADM products={PRODUCTS} />
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Hủy</Button>
@@ -186,15 +107,6 @@ const ModalAddProduct = (props) => {
           </DialogActions>
         </Dialog>
       </div>
-      <ModalDetailProduct
-        show={showModalDetail}
-        handleCloseDetai={handleCloseDetail}
-        dataDetail={dataDetail}
-        selectDataCart={selectDataCart}
-        DataCart={DataCart}
-        listImages={listImages}
-        currentPage1={currentPage1}
-      />
     </>
   );
 };

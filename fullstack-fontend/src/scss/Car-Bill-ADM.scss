@@ -1,5 +1,5 @@
 .class-add-product {
-  padding-top: 10px;
+  // padding-top: 10px;
   margin-bottom: 20px;
   text-align: right;
   .button-checkout {
@@ -10,15 +10,16 @@
   border: 1px solid white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 10px;
   margin-bottom: 20px;
   .row {
-    margin: 0;
-    padding: 0;
+    // margin: 0;
+    // padding: 0;
+    padding-bottom: -20px;
     border-bottom: 1px solid #000;
     h6 {
       margin-top: 5px;
-      font-size: 18px;
+      font-size: 20px;
     }
 
     .button-list-personal {
@@ -83,7 +84,7 @@
   .section-information {
     margin-top: 10px;
     .address {
-      margin-top: 20px;
+      margin-top: 200px;
     }
   }
 }
