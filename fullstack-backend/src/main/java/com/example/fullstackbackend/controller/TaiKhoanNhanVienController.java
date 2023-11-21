@@ -30,10 +30,8 @@ public class TaiKhoanNhanVienController {
     private TaiKhoanNhanVienService taiKhoanNhanVienService;
 
     @GetMapping("view-all")
-    public Page<TaiKhoan> viewAll(@RequestParam(defaultValue = "0", value = "size1") Integer page,
-                                  @RequestParam(defaultValue = "15", value = "size2") Integer size,
-                                  @RequestParam("p") Optional<Integer> p) {
-        return taiKhoanNhanVienService.chucVu(p.orElse(page), size);
+    public List<TaiKhoan> viewAll() {
+        return taiKhoanNhanVienService.chucVu();
     }
 
     @GetMapping("view-alls")
@@ -67,7 +65,6 @@ public class TaiKhoanNhanVienController {
 
     @PutMapping("update/{id}")
     public TaiKhoan update(@PathVariable("id") Integer id, @RequestBody TaiKhoan taiKhoan, BindingResult bindingResult) {
-//        taiKhoanNhanVien.setIdTaiKhoan(id);
         if (bindingResult.hasErrors()) {
             return null;
         } else {

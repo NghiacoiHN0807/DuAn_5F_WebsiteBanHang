@@ -44,6 +44,7 @@ import ModalDeleteDiscount from './Modal-Delete-Staff';
 const TABLE_HEAD = [
   { id: 'maTaiKhoan', label: 'Mã Tài Khoản', alignRight: false },
   { id: 'ten', label: 'Tên', alignRight: false },
+  { id: 'chucVu', label: 'Chức Vụ', alignRight: false },
   { id: 'soCanCuoc', label: 'Số Căn Cước', alignRight: false },
   { id: 'email', label: 'Email', alignRight: false },
   { id: 'sdt', label: 'SĐT', alignRight: false },
@@ -165,11 +166,6 @@ export default function UserStaff() {
     setOpenDelete(true);
   };
 
-  // handleUpdate
-  const handlClickRow = (item) => {
-    // console.log("Check click: ", item);
-    Navigate(`/tai-khoan/detail/${item.idTaiKhoan}`);
-  };
 
   const handleClose = () => {
     setOpenDelete(false);
@@ -225,6 +221,7 @@ export default function UserStaff() {
     const filteredUsers = listData.filter((user) =>
       (user.maTaiKhoan && user.maTaiKhoan.toLowerCase().includes(query)) ||
       (user.ten && user.ten.toLowerCase().includes(query)) ||
+      (user.chuVu && user.chucVu.toLowerCase().includes(query)) ||
       (user.soCanCuoc && user.soCanCuoc.toLowerCase().includes(query)) ||
       (user.email && user.email.toLowerCase().includes(query)) ||
       (user.sdt && user.sdt.toLowerCase().includes(query)) ||
@@ -247,7 +244,7 @@ export default function UserStaff() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Tài Khoản Admin </title>
       </Helmet>
 
       <Container>
@@ -257,7 +254,7 @@ export default function UserStaff() {
           </Typography>
           <Link to="/dashboard/addNewTKNV">
             <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-              New User
+              Thêm Nhân Viên
             </Button>
           </Link>
         </Stack>
@@ -271,7 +268,6 @@ export default function UserStaff() {
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
-              {/* <h1>{listData.data.content.length}</h1> */}
               <Table>
                 <UserListHead
                   order={order}
@@ -296,16 +292,17 @@ export default function UserStaff() {
                       <TableCell align="left">
                         {row.ho} {row.ten}
                       </TableCell>
+                      <TableCell align="left">{row.idChucVu.tenCv}</TableCell>
                       <TableCell align="left">{row.soCanCuoc}</TableCell>
                       <TableCell align="left">{row.email}</TableCell>
                       <TableCell align="left">{row.sdt}</TableCell>
                       <TableCell align="left">
-                        {row.trangThai === 1 ? (
+                        {row.trangThai === 0 ? (
                           <Chip
                             label="Hoạt động"
                             color="primary"
                             variant="outlined"
-                            style={{ color: 'white', backgroundColor: 'green',border: 'none' }}
+                            style={{ color: 'white', backgroundColor: 'green', border: 'none' }}
                           />
 
                         ) : (
@@ -313,7 +310,7 @@ export default function UserStaff() {
                             label="Dừng hoạt động"
                             color="secondary"
                             variant="outlined"
-                            style={{ color: 'white', backgroundColor: 'red' ,border: 'none' }}
+                            style={{ color: 'white', backgroundColor: 'red', border: 'none' }}
                           />
 
                         )}
