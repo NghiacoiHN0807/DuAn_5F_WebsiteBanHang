@@ -1,50 +1,32 @@
-import "./scss/App.scss";
-import "./scss/Home.scss";
-import Header from "./layout/Header";
-import TableXuatXu from "./components/TableXuatXu";
-import Container from "react-bootstrap/Container";
-import { Routes, Route } from "react-router-dom";
-import Home from "./components/Home";
-import { ToastContainer } from "react-toastify";
-import Footer from "./layout/Footer";
-import TableTKKhachHang from "./components/TaiKhoanKhachHang/TableTKKhachHang";
-import Login from "./components/web-online/Login";
-import SignUp from "./components/web-online/SignUp";
+import { BrowserRouter } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
+// import Container from 'react-bootstrap/Container';
+// routes
+import Router from './routes';
+// import RouterClient from './routes-client';
+// theme
+import ThemeProvider from './theme';
+// components
+import { StyledChart } from './components/chart';
+import ScrollToTop from './components/scroll-to-top';
+// import Footer from './layouts/client/Footer';
+// import Header from './layouts/client/Header';
+// SCSS
+import './scss/App.scss';
+import './scss/Home.scss';
+// import './scss/detail-client.scss';
+// ----------------------------------------------------------------------
 
-
-function App() {
+export default function App() {
   return (
-    <>
-      <div className="app-container">
-        <Header />
-        <Container>
-          <div className="my-3">
-            <Routes>
-              <Route path="/home" element={<Home />} />
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signUp" element={<SignUp />} />
-              <Route path="/table-xuatXu" element={<TableXuatXu />} />
-              <Route path="/tai-Khoan-KH" element={<TableTKKhachHang />} />
-            </Routes>
-          </div>
-        </Container>
-        <Footer />
-      </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-    </>
+    <HelmetProvider>
+      <BrowserRouter>
+        <ThemeProvider>
+          <ScrollToTop />
+          <StyledChart />
+          <Router />
+        </ThemeProvider>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }
-
-export default App;
