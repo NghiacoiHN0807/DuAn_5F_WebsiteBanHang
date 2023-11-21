@@ -16,7 +16,9 @@ public interface TaiKhoanNhanVienRepository extends JpaRepository<TaiKhoan, Inte
     @Query("SELECT g FROM TaiKhoan g ")
     List<TaiKhoan> findAllByTrangThai();
 
-    @Query("SELECT g FROM TaiKhoan g WHERE g.idChucVu.idCv = 1 or g.idChucVu.idCv = 2")
+    @Query(value = "SELECT *\n" +
+            "FROM duan_5f.tai_khoan\n" +
+            "WHERE id_chuc_vu IN (1, 8);", nativeQuery = true)
     List<TaiKhoan> chucVu();
 
 

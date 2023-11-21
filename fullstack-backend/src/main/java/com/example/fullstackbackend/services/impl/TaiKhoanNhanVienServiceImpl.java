@@ -19,11 +19,9 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
     public List<TaiKhoan> getAll() {
         return taiKhoanRepository.findAll();
     }
-
-
     @Override
-    public List<TaiKhoan> phanTrang() {
-        return taiKhoanRepository.findAllByTrangThai();
+    public List<TaiKhoan> chucVu() {
+        return taiKhoanRepository.chucVu();
     }
 
     // Mã hóa mật khẩu
@@ -71,8 +69,5 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
         return taiKhoan;
     }
 
-    @Override
-    public List<TaiKhoan> chucVu() {
-        return taiKhoanRepository.chucVu();
-    }
+
 }
