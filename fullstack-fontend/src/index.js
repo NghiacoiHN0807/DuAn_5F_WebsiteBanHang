@@ -1,31 +1,21 @@
-import React from "react";
-import ReactDOM from "react-dom";
-<<<<<<< HEAD
-import App from "./App";
-// import AppADM from "./App-ADM";
-=======
-// import App from "./App";
-import AppADM from "./App-ADM";
->>>>>>> c6b89cf1 (push-new)
-import reportWebVitals from "./reportWebVitals";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css";
+import ReactDOM from 'react-dom/client';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <BrowserRouter>
-<<<<<<< HEAD
-      <App />
-      {/* <AppADM /> */}
-=======
-      {/* <App /> */}
-      <AppADM />
->>>>>>> c6b89cf1 (push-new)
-    </BrowserRouter>
-  </React.StrictMode>,
-  document.getElementById("root")
-);
-document.title = "5F STORE";
+//
+import App from './App';
+import * as serviceWorker from './serviceWorker';
+import reportWebVitals from './reportWebVitals';
+import 'bootstrap/scss/bootstrap.scss';
 
+// ----------------------------------------------------------------------
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+root.render(<App />);
+
+// If you want to enable client cache, register instead.
+serviceWorker.unregister();
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
