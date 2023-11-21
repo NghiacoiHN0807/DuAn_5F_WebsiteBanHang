@@ -18,7 +18,6 @@ code {
     justify-content: space-between;
   }
 }
-<<<<<<< HEAD
 //Box
 .box {
   background-color: rgb(251, 251, 251);
@@ -36,20 +35,6 @@ header {
   }
 }
 
-=======
-//Header
-.gray-background {
-  background-color: rgb(237, 237, 237);
-  .nav-links {
-    font-size: small;
-    color: black;
-  }
-  .nav-separator {
-    margin: 0 5px; /* Điều chỉnh khoảng cách giữa dấu "|" và các NavLink */
-    color: black; /* Màu sắc của dấu "|" */
-  }
-}
->>>>>>> c6b89cf1 (push-new)
 .search-form {
   margin-right: 30px;
   .search-form {
@@ -72,24 +57,4 @@ header {
     background-color: darkgray;
     color: white;
   }
-<<<<<<< HEAD
 }
-=======
-}
-
-//Footer
-footer {
-  background-color: rgb(201, 199, 199);
-  .nav-container-footer {
-    .col-2 {
-      .nav-link {
-        font-size: small;
-        color: white;
-      }
-    }
-  }
-  .link-footer {
-    color: black;
-  }
-}
->>>>>>> c6b89cf1 (push-new)
