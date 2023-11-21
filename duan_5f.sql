@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `duan_5f` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `duan_5f`;
 -- MySQL dump 10.13  Distrib 8.0.32, for Win64 (x86_64)
 --
 -- Host: localhost    Database: duan_5f
@@ -77,7 +75,7 @@ CREATE TABLE `chi_tiet_san_pham` (
 
 LOCK TABLES `chi_tiet_san_pham` WRITE;
 /*!40000 ALTER TABLE `chi_tiet_san_pham` DISABLE KEYS */;
-INSERT INTO `chi_tiet_san_pham` VALUES (14,5,5,4,500000.00,700000.00,700000.00,2619,0),(15,5,6,5,450000.00,580000.00,580000.00,289,0),(16,7,5,5,360000.00,566000.00,566000.00,9453,0),(17,6,7,4,780000.00,900000.00,900000.00,6822,0),(20,5,5,6,780000.00,780000.00,780000.00,765,0);
+INSERT INTO `chi_tiet_san_pham` VALUES (14,5,5,4,500000.00,700000.00,700000.00,2619,0),(15,5,6,5,450000.00,580000.00,580000.00,289,0),(16,7,5,5,360000.00,566000.00,546000.00,9453,0),(17,6,7,4,780000.00,900000.00,900000.00,6822,0),(20,5,5,6,780000.00,780000.00,780000.00,765,0);
 /*!40000 ALTER TABLE `chi_tiet_san_pham` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -106,6 +104,43 @@ LOCK TABLES `chuc_vu` WRITE;
 /*!40000 ALTER TABLE `chuc_vu` DISABLE KEYS */;
 INSERT INTO `chuc_vu` VALUES (1,'CV01','Quản Lý','2023-07-23',0),(8,'CV02','Nhân Viên','2023-07-23',0),(9,'CV03','Khách Hàng','2023-07-23',0);
 /*!40000 ALTER TABLE `chuc_vu` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `coupons`
+--
+
+DROP TABLE IF EXISTS `coupons`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `coupons` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `code` varchar(255) NOT NULL,
+  `mo_ta` varchar(255) NOT NULL,
+  `thoi_gian_ket_thuc` datetime NOT NULL,
+  `so_luong` int NOT NULL,
+  `hoa_don_id` int NOT NULL,
+  `discount` decimal(38,2) DEFAULT NULL,
+  `discount_percentage` int DEFAULT NULL,
+  `max_discount` decimal(38,2) NOT NULL,
+  `so_luong_hien_tai` int NOT NULL,
+  `thoi_gian_tao` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `thoi_gian_sua` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `trang_thai` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `pk_coupons_hoa_don` (`hoa_don_id`),
+  CONSTRAINT `pk_coupons_hoa_don` FOREIGN KEY (`hoa_don_id`) REFERENCES `hoa_don` (`id_hd`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `coupons`
+--
+
+LOCK TABLES `coupons` WRITE;
+/*!40000 ALTER TABLE `coupons` DISABLE KEYS */;
+/*!40000 ALTER TABLE `coupons` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -158,7 +193,7 @@ CREATE TABLE `giam_gia` (
   `muc_giam_tien_mat` decimal(38,2) DEFAULT NULL,
   `trang_thai` int DEFAULT '0',
   PRIMARY KEY (`id_giam_gia`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -167,6 +202,7 @@ CREATE TABLE `giam_gia` (
 
 LOCK TABLES `giam_gia` WRITE;
 /*!40000 ALTER TABLE `giam_gia` DISABLE KEYS */;
+INSERT INTO `giam_gia` VALUES (1,'hidfgd','dfgfd','2023-11-19 12:00:00','2023-11-19 23:20:00',NULL,20000.00,0);
 /*!40000 ALTER TABLE `giam_gia` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -187,7 +223,7 @@ CREATE TABLE `giam_gia_chi_tiet` (
   KEY `id_sp2_idx` (`id_sp`),
   CONSTRAINT `id_giam_gia` FOREIGN KEY (`id_giam_gia`) REFERENCES `giam_gia` (`id_giam_gia`),
   CONSTRAINT `id_sp2` FOREIGN KEY (`id_sp`) REFERENCES `san_pham` (`id_sp`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -196,6 +232,7 @@ CREATE TABLE `giam_gia_chi_tiet` (
 
 LOCK TABLES `giam_gia_chi_tiet` WRITE;
 /*!40000 ALTER TABLE `giam_gia_chi_tiet` DISABLE KEYS */;
+INSERT INTO `giam_gia_chi_tiet` VALUES (1,7,1,0);
 /*!40000 ALTER TABLE `giam_gia_chi_tiet` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -227,7 +264,7 @@ CREATE TABLE `gio_hang` (
 
 LOCK TABLES `gio_hang` WRITE;
 /*!40000 ALTER TABLE `gio_hang` DISABLE KEYS */;
-INSERT INTO `gio_hang` VALUES (1,2,'GH01','2023-10-28 20:25:25',NULL,NULL,NULL,0);
+INSERT INTO `gio_hang` VALUES (1,3,'GH01','2023-10-28 20:25:25',NULL,NULL,NULL,0);
 /*!40000 ALTER TABLE `gio_hang` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -251,7 +288,7 @@ CREATE TABLE `gio_hang_chi_tiet` (
   KEY `id_gh_idx` (`id_gh`),
   CONSTRAINT `id_ctsp1` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`),
   CONSTRAINT `id_gh` FOREIGN KEY (`id_gh`) REFERENCES `gio_hang` (`id_gio_hang`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -260,7 +297,6 @@ CREATE TABLE `gio_hang_chi_tiet` (
 
 LOCK TABLES `gio_hang_chi_tiet` WRITE;
 /*!40000 ALTER TABLE `gio_hang_chi_tiet` DISABLE KEYS */;
-INSERT INTO `gio_hang_chi_tiet` VALUES (1,1,14,1,700000.00,700000.00,0);
 /*!40000 ALTER TABLE `gio_hang_chi_tiet` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -323,13 +359,14 @@ CREATE TABLE `hoa_don` (
   `tien_thua` decimal(38,2) DEFAULT NULL,
   `tong_tien` decimal(38,2) DEFAULT NULL,
   `kieu_hoa_don` int DEFAULT NULL,
+  `ma_giam_gia` varchar(45) DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
   PRIMARY KEY (`id_hd`),
   KEY `id_tai_khoan_idx` (`id_tai_khoan`),
   KEY `id_khach_hang_idx` (`id_khach_hang`),
   CONSTRAINT `id_khach_hang` FOREIGN KEY (`id_khach_hang`) REFERENCES `tai_khoan` (`id_tai_khoan`),
   CONSTRAINT `id_tai_khoan` FOREIGN KEY (`id_tai_khoan`) REFERENCES `tai_khoan` (`id_tai_khoan`)
-) ENGINE=InnoDB AUTO_INCREMENT=197 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=199 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -338,7 +375,7 @@ CREATE TABLE `hoa_don` (
 
 LOCK TABLES `hoa_don` WRITE;
 /*!40000 ALTER TABLE `hoa_don` DISABLE KEYS */;
-INSERT INTO `hoa_don` VALUES (194,NULL,1,'HD000001',NULL,NULL,NULL,NULL,'2023-10-26','2023-10-26',NULL,NULL,NULL,NULL,NULL,1740000.00,1740000.00,NULL,NULL,1740000.00,1,9),(195,NULL,NULL,'HD000002',NULL,NULL,NULL,NULL,'2023-10-26',NULL,NULL,NULL,NULL,NULL,NULL,616500.00,NULL,36500.00,NULL,580000.00,1,8),(196,5,4,'HD000003','Tỉnh Thái Nguyên, Huyện Đồng Hỷ, Xã Cây Thị, Số 3',NULL,NULL,NULL,'2023-10-26','2023-10-28','0378255978',NULL,NULL,'Nguyen Hoang B',NULL,3900000.00,NULL,NULL,NULL,3900000.00,2,0);
+INSERT INTO `hoa_don` VALUES (194,NULL,1,'HD000001',NULL,NULL,NULL,NULL,'2023-10-26','2023-10-26',NULL,NULL,NULL,NULL,NULL,1740000.00,1740000.00,NULL,NULL,1740000.00,1,NULL,9),(195,NULL,NULL,'HD000002',NULL,NULL,NULL,NULL,'2023-10-26',NULL,NULL,NULL,NULL,NULL,NULL,616500.00,NULL,36500.00,NULL,580000.00,1,NULL,8),(196,5,4,'HD000003','Tỉnh Thái Nguyên, Huyện Đồng Hỷ, Xã Cây Thị, Số 3',NULL,NULL,NULL,'2023-10-26','2023-10-28','0378255978',NULL,NULL,'Nguyen Hoang B',NULL,3900000.00,NULL,NULL,NULL,3900000.00,2,NULL,0),(197,NULL,NULL,'HD000004',NULL,NULL,NULL,NULL,'2023-11-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,NULL,0),(198,NULL,NULL,'HD000005',NULL,NULL,NULL,NULL,'2023-11-19',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,2,NULL,0);
 /*!40000 ALTER TABLE `hoa_don` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -362,7 +399,7 @@ CREATE TABLE `hoa_don_chi_tiet` (
   KEY `id_ctsp_idx` (`id_ctsp`),
   CONSTRAINT `id_ctsp` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`),
   CONSTRAINT `id_hd` FOREIGN KEY (`id_hd`) REFERENCES `hoa_don` (`id_hd`)
-) ENGINE=InnoDB AUTO_INCREMENT=172 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=174 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -371,7 +408,7 @@ CREATE TABLE `hoa_don_chi_tiet` (
 
 LOCK TABLES `hoa_don_chi_tiet` WRITE;
 /*!40000 ALTER TABLE `hoa_don_chi_tiet` DISABLE KEYS */;
-INSERT INTO `hoa_don_chi_tiet` VALUES (165,15,194,3,1740000.00,NULL,0),(166,15,195,1,580000.00,NULL,0),(170,17,196,1,900000.00,NULL,0),(171,15,196,5,2900000.00,NULL,0);
+INSERT INTO `hoa_don_chi_tiet` VALUES (165,15,194,3,1740000.00,NULL,0),(166,15,195,1,580000.00,NULL,0),(170,17,196,1,900000.00,NULL,0),(171,15,196,5,2900000.00,NULL,0),(172,16,197,4,2264000.00,NULL,0),(173,14,198,1,700000.00,NULL,0);
 /*!40000 ALTER TABLE `hoa_don_chi_tiet` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -454,7 +491,7 @@ CREATE TABLE `lich_su_hoa_don` (
   KEY `id_tk_idx` (`id_tk`),
   CONSTRAINT `id_hd3` FOREIGN KEY (`id_hd`) REFERENCES `hoa_don` (`id_hd`),
   CONSTRAINT `id_tk` FOREIGN KEY (`id_tk`) REFERENCES `tai_khoan` (`id_tai_khoan`)
-) ENGINE=InnoDB AUTO_INCREMENT=118 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=120 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -463,7 +500,7 @@ CREATE TABLE `lich_su_hoa_don` (
 
 LOCK TABLES `lich_su_hoa_don` WRITE;
 /*!40000 ALTER TABLE `lich_su_hoa_don` DISABLE KEYS */;
-INSERT INTO `lich_su_hoa_don` VALUES (104,194,NULL,8,'Tạo Hóa Đơn Thành Công','2023-10-26 10:48:00'),(105,194,NULL,9,'Thanh Toán Thành Công','2023-10-26 10:55:19'),(106,195,NULL,8,'Tạo Hóa Đơn Thành Công','2023-10-26 16:10:51'),(107,196,NULL,8,'Tạo Hóa Đơn Thành Công','2023-10-26 16:56:37'),(111,196,5,0,'Tạo Đơn Hàng Ship Thành Công','2023-10-28 12:47:36'),(112,196,NULL,7,'Chỉnh sửa sản phẩm: Quan Lolicon','2023-10-28 19:29:20'),(113,196,NULL,7,'Chỉnh sửa sản phẩm: Ao Kakame','2023-10-28 19:30:21'),(114,196,NULL,7,'Xóa Sản Phẩm: Quan Lolicon','2023-10-28 20:19:30'),(115,196,NULL,7,'Xóa Sản Phẩm: Quan Lolicon','2023-10-28 20:20:49'),(116,196,NULL,7,'Xóa Sản Phẩm: Quan Lolicon','2023-10-28 20:20:52'),(117,196,NULL,7,'Chỉnh sửa sản phẩm: Quan Lolicon','2023-10-28 20:25:25');
+INSERT INTO `lich_su_hoa_don` VALUES (104,194,NULL,8,'Tạo Hóa Đơn Thành Công','2023-10-26 10:48:00'),(105,194,NULL,9,'Thanh Toán Thành Công','2023-10-26 10:55:19'),(106,195,NULL,8,'Tạo Hóa Đơn Thành Công','2023-10-26 16:10:51'),(107,196,NULL,8,'Tạo Hóa Đơn Thành Công','2023-10-26 16:56:37'),(111,196,5,0,'Tạo Đơn Hàng Ship Thành Công','2023-10-28 12:47:36'),(112,196,NULL,7,'Chỉnh sửa sản phẩm: Quan Lolicon','2023-10-28 19:29:20'),(113,196,NULL,7,'Chỉnh sửa sản phẩm: Ao Kakame','2023-10-28 19:30:21'),(114,196,NULL,7,'Xóa Sản Phẩm: Quan Lolicon','2023-10-28 20:19:30'),(115,196,NULL,7,'Xóa Sản Phẩm: Quan Lolicon','2023-10-28 20:20:49'),(116,196,NULL,7,'Xóa Sản Phẩm: Quan Lolicon','2023-10-28 20:20:52'),(117,196,NULL,7,'Chỉnh sửa sản phẩm: Quan Lolicon','2023-10-28 20:25:25'),(118,197,NULL,0,'Tạo Hóa Đơn Thành Công','2023-11-19 19:10:51'),(119,198,NULL,0,'Tạo Hóa Đơn Thành Công','2023-11-19 19:10:51');
 /*!40000 ALTER TABLE `lich_su_hoa_don` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -609,7 +646,7 @@ CREATE TABLE `san_pham` (
 
 LOCK TABLES `san_pham` WRITE;
 /*!40000 ALTER TABLE `san_pham` DISABLE KEYS */;
-INSERT INTO `san_pham` VALUES (5,'SP01','Quan Lolicon',11,4,17,1,1,'Xau',0),(6,'SP02','Ao Kakame',12,5,102,2,2,'Moi',0),(7,'SP03','Quan Hoho',13,4,105,1,1,'Haha',0);
+INSERT INTO `san_pham` VALUES (5,'SP01','Quan Lolicon',11,4,17,1,1,'Xau',0),(6,'SP02','Ao Kakame',12,5,102,2,2,'Moi',0),(7,'SP03','Quan Hoho',13,4,105,1,1,'Haha',2);
 /*!40000 ALTER TABLE `san_pham` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -708,4 +745,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-17 17:23:54
+-- Dump completed on 2023-11-21  9:58:48
