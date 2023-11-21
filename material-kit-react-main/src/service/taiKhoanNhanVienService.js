@@ -6,7 +6,7 @@ const taiKhoan = (page) => {
 const taiKhoan2 = (page, trangThai) => {
   return custom.get(`/tai-khoan/view-all?p=${page}&trangThai=${trangThai}`); // Call API
 };
-const postAddTaiKhoan = (maTaiKhoan, idChucVu, ho, ten, sdt, email, soCanCuoc, trangThai) => {
+const postAddTaiKhoan = (maTaiKhoan, idChucVu, ho, ten, sdt, email, soCanCuoc , matKhau, trangThai) => {
   return custom.post('/tai-khoan/add', {
     maTaiKhoan,
     idChucVu,
@@ -15,6 +15,7 @@ const postAddTaiKhoan = (maTaiKhoan, idChucVu, ho, ten, sdt, email, soCanCuoc, t
     sdt,
     email,
     soCanCuoc,
+    matKhau,
     trangThai,
   });
 };

@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.services.impl;
 
+import com.example.fullstackbackend.DTO.SanPhamClientDTO;
 import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.entity.SanPham;
@@ -42,31 +43,48 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
-    public Page<SanPhamCustom> sanPhamCustom(Integer pageNo, Integer size) {
-        Pageable pageable = PageRequest.of(pageNo, size);
-        Page<Object[]> result = sanphamRepository.getSpWithImg(pageable);
-
+    public List<SanPhamCustom> sanPhamCustom() {
         List<SanPhamCustom> dtos = new ArrayList<>();
-        for (Object[] row : result.getContent()) {
+        for (Object[] row : sanphamRepository.getSpWithImg()) {
             SanPhamCustom spCustom = new SanPhamCustom();
             spCustom.setIdSp((Integer) row[0]);
             spCustom.setMaSp((String) row[1]);
             spCustom.setTenSp((String) row[2]);
-            spCustom.setIdCl((Integer) row[3]);
-            spCustom.setIdMs((Integer) row[4]);
-            spCustom.setIdLsp((Integer) row[5]);
-            spCustom.setIdXx((Integer) row[6]);
-            spCustom.setIdTayAo((Integer) row[7]);
-            spCustom.setIdCoAo((Integer) row[8]);
-            spCustom.setMoTa((String) row[9]);
-            spCustom.setGiaBan((BigDecimal) row[10]);
-            spCustom.setTrangThai((Integer) row[11]);
-            spCustom.setUrl((String) row[12]);
-            spCustom.setSize((String) row[13]);
+            spCustom.setMoTa((String) row[3]);
+            spCustom.setTrangThai((Integer) row[4]);
+            spCustom.setUrl((String) row[5]);
+            spCustom.setGiaMin((BigDecimal) row[6]);
+            spCustom.setGiaMax((BigDecimal) row[7]);
             dtos.add(spCustom);
         }
 
-        return new PageImpl<>(dtos, pageable, result.getTotalElements());
+        return dtos;
+    }
+
+    @Override
+    public List<SanPhamClientDTO> sanPhamForClient() {
+        List<SanPhamClientDTO> dtos = new ArrayList<>();
+        for (Object[] row : sanphamRepository.getSpForClient()) {
+            SanPhamClientDTO spCustom = new SanPhamClientDTO();
+            spCustom.setIdSp((Integer) row[0]);
+            spCustom.setChatLieus((String) row[1]);
+            spCustom.setLoaiSPs((String) row[2]);
+            spCustom.setXuatXus((String) row[3]);
+            spCustom.setTayAos((String) row[4]);
+            spCustom.setCoAos((String) row[5]);
+            spCustom.setSizes((String) row[6]);
+            spCustom.setMauSacs((String) row[7]);
+
+            spCustom.setTenSp((String) row[8]);
+            spCustom.setTrangThai((Integer) row[9]);
+            spCustom.setUrl((String) row[10]);
+            spCustom.setGiaMin((BigDecimal) row[11]);
+            spCustom.setGiaMax((BigDecimal) row[12]);
+            spCustom.setGiaThucTe((BigDecimal) row[13]);
+            dtos.add(spCustom);
+        }
+
+        return dtos;
     }
 
     @Override

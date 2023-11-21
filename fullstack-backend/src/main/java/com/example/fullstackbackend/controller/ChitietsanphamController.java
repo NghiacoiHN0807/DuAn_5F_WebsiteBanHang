@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +42,7 @@ public class ChitietsanphamController {
     }
 
     @GetMapping("select-ctsp-byId/{id}")
-    public List<ChiTietSanPham> listCTSP(@PathVariable("id") Integer id) {
+    public List<ChiTietSanPham> getCtspById (@PathVariable("id") Integer id) {
         return chitietsanphamSevice.findByIdSp(id);
     }
 
@@ -91,6 +92,22 @@ public class ChitietsanphamController {
     @PutMapping("update")
     public ChiTietSanPham update(@RequestBody ChiTietSanPham chiTietSanPham) {
         return chitietsanphamSevice.update(chiTietSanPham);
+    }
+
+    @PostMapping("addColorAndSize/{idSp}/{idMs}/{idSize}")
+    public ChiTietSanPham addColorAndSize(@PathVariable("idSp") Integer idSp,
+                                          @PathVariable("idMs") Integer idMs,
+                                          @PathVariable("idSize") Integer idSize) {
+        return chitietsanphamSevice.addColorAndSize(idSp, idMs, idSize);
+    }
+
+    @PutMapping("updateNumber/{idCtsp}/{giaNhap}/{giaBan}/{soLuongTon}/{trangThai}")
+    public ChiTietSanPham updateNumber(@PathVariable("idCtsp") Integer idCtsp,
+                                       @PathVariable("giaNhap") BigDecimal giaNhap,
+                                       @PathVariable("giaBan") BigDecimal giaBan,
+                                       @PathVariable("soLuongTon") Integer soLuongTon,
+                                       @PathVariable("trangThai") Integer trangThai) {
+        return chitietsanphamSevice.updateNumber(idCtsp,giaNhap, giaBan, soLuongTon, trangThai);
     }
 
 }

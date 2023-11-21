@@ -17,6 +17,8 @@ public interface HoadonchitietSevice {
 
     HoaDonChiTiet add(HoaDonChiTiet add);
 
+    HoaDonChiTiet add1(HoaDonChiTiet add);
+
     void delete(Integer id);
 
     Boolean checkExists(Integer id);

@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { useState } from "react";
-import { format } from 'date-fns';
 import { vi } from 'date-fns/locale'; // Import locale cho tiếng Việt
 import Modal from "react-bootstrap/Modal";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Alert, Button, Checkbox, Chip, Grid, Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
 import { Col, Image, Table } from 'react-bootstrap';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { add, getAllSanPham, getImgByIdSp } from "../../service/giamGiaService";
+import { add, getAllSanPham } from "../../service/giamGiaService";
 import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
 
@@ -40,7 +39,6 @@ const ModelAddNewGiamGia = () => {
   const [rightRowsPerPage, setRightRowsPerPage] = React.useState(5);
   const [chiTietList, setchiTietList] = React.useState([]);
   const [image, setImage] = useState([]);
-  const [images, setImages] = useState({});
   const [alertContent, setAlertContent] = useState(null);
 
   const getAllSp = async () => {

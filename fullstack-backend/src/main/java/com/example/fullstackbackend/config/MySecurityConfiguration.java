@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -60,11 +59,10 @@ public class MySecurityConfiguration {
         System.out.println("http: " + http);
         return http.authorizeHttpRequests(
                         req ->
-                                req
-                                        .requestMatchers("/","/anh/**","/gio-hang-chi-tiet/**","/tai-khoan-khach-hang/add", "/add", "/api/**", "/san-pham/**", "chi-tiet-san-pham/**").permitAll()
+                                req.requestMatchers("/", "/anh/**", "/gio-hang-chi-tiet/**", "/add", "/api/**", "/san-pham/**", "chi-tiet-san-pham/**", "/hoa-don/**", "/hoa-don-chi-tiet/**", "/tai-khoan-khach-hang/**", "/chat-lieu/**", "/loai-sp/**", "/xuat-xu/**", "/loai-co-ao/**", "/ong-tay-ao/**", "/mau-sac/**", "/size/**").permitAll()
                                         .requestMatchers("/**").hasRole("ADMIN")
                                         .requestMatchers("/**").hasRole("STAFF")
-                                        .requestMatchers("/hoa-don/**", "/gio-hang-chi-tiet/**","gio-hang/**").hasRole("CUSTOMER")
+                                        .requestMatchers("/tai-khoan-khach-hang/**", "/hoa-don/**", "/gio-hang-chi-tiet/**", "/gio-hang/**", "/hoa-don-chi-tiet/**", "/san-pham/**", "chi-tiet-san-pham/**").hasRole("CUSTOMER")
                                         .anyRequest().authenticated())
                 .oauth2Login(oath2 -> {
                     oath2.successHandler(oAuth2LoginSuccessHandler);
@@ -74,6 +72,5 @@ public class MySecurityConfiguration {
                 .cors(a -> a.configure(http))
                 .build();
     }
-
 
 }
