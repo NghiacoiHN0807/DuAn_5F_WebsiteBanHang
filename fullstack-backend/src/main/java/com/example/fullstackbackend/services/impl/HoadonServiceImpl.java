@@ -48,6 +48,11 @@ public class HoadonServiceImpl implements HoadonSevice {
     }
 
     @Override
+    public List<HoaDon> findAllByIDKH(Integer idKH) {
+        return hoadonRepository.findAllByIdKH_IdTaiKhoan(idKH);
+    }
+
+    @Override
     public HoaDon add(HoaDon add) {
         List<HoaDon> allHoaDon = getAll();// Get datetime now
         LocalDate currentDate = LocalDate.now();
