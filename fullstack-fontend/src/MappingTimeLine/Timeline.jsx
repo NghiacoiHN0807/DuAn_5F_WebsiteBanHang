@@ -1,23 +1,20 @@
-import React, { Children, cloneElement, Component, Fragment } from "react";
-import clsx from "clsx";
-import PerfectScrollbar from "react-perfect-scrollbar";
-import Grid from "@material-ui/core/Grid";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import withStyles from "@material-ui/core/styles/withStyles";
-import {
-  Placeholder,
-  PlaceholderSimple,
-  PlaceholderSmall,
-} from "./Placeholder";
+import React, { Children, cloneElement, Component, Fragment } from 'react';
+import clsx from 'clsx';
+import PropTypes from 'prop-types';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import Grid from '@material-ui/core/Grid';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import withStyles from '@material-ui/core/styles/withStyles';
+import { Placeholder, PlaceholderSimple, PlaceholderSmall } from './Placeholder';
 
 const styles = {
   wrapper: {
-    position: "relative",
-    overflow: "auto",
+    position: 'relative',
+    overflow: 'auto',
   },
   container: {
-    display: "inline-flex",
-    flex: "1 1 auto",
+    display: 'inline-flex',
+    flex: '1 1 auto',
   },
   middle: {
     marginLeft: -10,
@@ -25,12 +22,7 @@ const styles = {
 };
 
 const renderPlaceholders = (props) => {
-  const {
-    classes,
-    difference: quantity,
-    variant = "default",
-    childrenWithProps,
-  } = props;
+  const { classes, difference: quantity, variant = 'default', childrenWithProps } = props;
 
   if (quantity) {
     const placeholders = [];
@@ -38,23 +30,11 @@ const renderPlaceholders = (props) => {
 
     while (index < quantity) {
       switch (variant) {
-        case "small":
-          placeholders.push(
-            <PlaceholderSmall
-              key={index}
-              first={index === 0}
-              quantity={childrenWithProps.length}
-            />
-          );
+        case 'small':
+          placeholders.push(<PlaceholderSmall key={index} first={index === 0} quantity={childrenWithProps.length} />);
           break;
-        case "simple":
-          placeholders.push(
-            <PlaceholderSimple
-              key={index}
-              first={index === 0}
-              quantity={childrenWithProps.length}
-            />
-          );
+        case 'simple':
+          placeholders.push(<PlaceholderSimple key={index} first={index === 0} quantity={childrenWithProps.length} />);
           break;
         default:
           placeholders.push(
@@ -65,16 +45,18 @@ const renderPlaceholders = (props) => {
           break;
       }
 
-      index++;
+      index += 1;
     }
 
     return placeholders;
   }
+
+  return null;
 };
 
 class Timeline extends Component {
   componentDidMount() {
-    const scrollbar = this.scrollbar;
+    const { scrollbar } = this;
     scrollbar.scrollLeft = scrollbar.offsetWidth;
   }
 
@@ -82,8 +64,8 @@ class Timeline extends Component {
     const {
       children,
       classes,
-      variant = "default",
-      height = variant === "small" ? 95 : variant === "simple" ? 135 : 265,
+      variant = 'default',
+      height = variant === 'small' ? 95 : variant === 'simple' ? 135 : 265,
       minEvents = 0,
       maxEvents = 0,
       placeholder,
@@ -109,50 +91,42 @@ class Timeline extends Component {
     return (
       <Grid className={classes.wrapper} style={{ height }}>
         <PerfectScrollbar
-          containerRef={(element) => (this.scrollbar = element)}
+          containerRef={(element) => {
+            this.scrollbar = element;
+          }}
           {...PerfectScrollbarProps}
         >
           <CssBaseline />
           <Grid className={classes.container}>
             {maxEvents ? (
-              <Fragment>
-                {childrenWithProps.map((child, index) => {
-                  return (
-                    <Fragment key={index}>
-                      {index < maxEvents && (
-                        <Grid
-                          className={clsx({
-                            [classes.middle]:
-                              variant === "default" &&
-                              index > 0 &&
-                              index < children.length,
-                          })}
-                        >
-                          {child}
-                        </Grid>
-                      )}
-                    </Fragment>
-                  );
-                })}
-              </Fragment>
+              <>
+                {childrenWithProps.map((child, index) => (
+                  <Fragment key={index}>
+                    {index < maxEvents && (
+                      <Grid
+                        className={clsx({
+                          [classes.middle]: variant === 'default' && index > 0 && index < children.length,
+                        })}
+                      >
+                        {child}
+                      </Grid>
+                    )}
+                  </Fragment>
+                ))}
+              </>
             ) : (
-              <Fragment>
-                {childrenWithProps.map((child, index) => {
-                  return (
-                    <Grid
-                      key={index}
-                      className={clsx({
-                        [classes.middle]:
-                          variant === "default" &&
-                          index > 0 &&
-                          index < children.length,
-                      })}
-                    >
-                      {child}
-                    </Grid>
-                  );
-                })}
-              </Fragment>
+              <>
+                {childrenWithProps.map((child, index) => (
+                  <Grid
+                    key={index}
+                    className={clsx({
+                      [classes.middle]: variant === 'default' && index > 0 && index < children.length,
+                    })}
+                  >
+                    {child}
+                  </Grid>
+                ))}
+              </>
             )}
             {minEvents > 0 && difference > 0 && placeholder && placeholders}
           </Grid>
@@ -161,5 +135,15 @@ class Timeline extends Component {
     );
   }
 }
+Timeline.propTypes = {
+  children: PropTypes.node,
+  classes: PropTypes.object,
+  variant: PropTypes.string,
+  height: PropTypes.number,
+  minEvents: PropTypes.number,
+  maxEvents: PropTypes.number,
+  placeholder: PropTypes.bool,
+  PerfectScrollbarProps: PropTypes.object,
+};
 
 export default withStyles(styles)(Timeline);

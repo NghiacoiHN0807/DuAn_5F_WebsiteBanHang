@@ -109,6 +109,43 @@ INSERT INTO `chuc_vu` VALUES (1,'CV01','Quản Lý','2023-07-23',0),(8,'CV02','N
 UNLOCK TABLES;
 
 --
+-- Table structure for table `coupons`
+--
+
+DROP TABLE IF EXISTS `coupons`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `coupons` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `hoa_don_id` int NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `code` varchar(255) NOT NULL,
+  `mo_ta` varchar(255) NOT NULL,
+  `thoi_gian_ket_thuc` datetime NOT NULL,
+  `so_luong` int NOT NULL,
+  `discount` decimal(38,2) DEFAULT NULL,
+  `discount_percentage` int DEFAULT NULL,
+  `max_discount` decimal(38,2) NOT NULL,
+  `so_luong_hien_tai` int NOT NULL,
+  `thoi_gian_tao` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `thoi_gian_sua` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `trang_thai` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `pk_coupons_hoa_don` (`hoa_don_id`),
+  CONSTRAINT `pk_coupons_hoa_don` FOREIGN KEY (`hoa_don_id`) REFERENCES `hoa_don` (`id_hd`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `coupons`
+--
+
+LOCK TABLES `coupons` WRITE;
+/*!40000 ALTER TABLE `coupons` DISABLE KEYS */;
+/*!40000 ALTER TABLE `coupons` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `dia_chi`
 --
 
@@ -314,6 +351,7 @@ CREATE TABLE `hoa_don` (
   `ngay_thanh_toan` date DEFAULT NULL,
   `sdt_kh` varchar(255) DEFAULT NULL,
   `sdt_ship` varchar(255) DEFAULT NULL,
+  `ma_giam_gia` varchar(45) DEFAULT NULL,
   `so_tien_giam_gia` decimal(38,2) DEFAULT NULL,
   `ten_kh` varchar(255) DEFAULT NULL,
   `ten_ship` varchar(255) DEFAULT NULL,
@@ -338,7 +376,7 @@ CREATE TABLE `hoa_don` (
 
 LOCK TABLES `hoa_don` WRITE;
 /*!40000 ALTER TABLE `hoa_don` DISABLE KEYS */;
-INSERT INTO `hoa_don` VALUES (194,NULL,1,'HD000001',NULL,NULL,NULL,NULL,'2023-10-26','2023-10-26',NULL,NULL,NULL,NULL,NULL,1740000.00,1740000.00,NULL,NULL,1740000.00,1,9),(195,NULL,NULL,'HD000002',NULL,NULL,NULL,NULL,'2023-10-26',NULL,NULL,NULL,NULL,NULL,NULL,616500.00,NULL,36500.00,NULL,580000.00,1,8),(196,5,4,'HD000003','Tỉnh Thái Nguyên, Huyện Đồng Hỷ, Xã Cây Thị, Số 3',NULL,NULL,NULL,'2023-10-26','2023-10-28','0378255978',NULL,NULL,'Nguyen Hoang B',NULL,3900000.00,NULL,NULL,NULL,3900000.00,2,0);
+INSERT INTO `hoa_don` VALUES (194,NULL,1,'HD000001',NULL,NULL,NULL,NULL,'2023-10-26','2023-10-26',NULL,NULL,NULL,NULL,NULL,NULL,1740000.00,1740000.00,NULL,NULL,1740000.00,1,9),(195,NULL,NULL,'HD000002',NULL,NULL,NULL,NULL,'2023-10-26',NULL,NULL,NULL,NULL,NULL,NULL,NULL,616500.00,NULL,36500.00,NULL,580000.00,1,8),(196,5,4,'HD000003','Tỉnh Thái Nguyên, Huyện Đồng Hỷ, Xã Cây Thị, Số 3',NULL,NULL,NULL,'2023-10-26','2023-10-28','0378255978',NULL,NULL,NULL,'Nguyen Hoang B',NULL,3900000.00,NULL,NULL,NULL,3900000.00,2,0);
 /*!40000 ALTER TABLE `hoa_don` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -708,4 +746,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-17 17:23:54
+-- Dump completed on 2023-11-21 10:06:48
