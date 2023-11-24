@@ -6,7 +6,12 @@ import axios from 'axios';
 import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Snackbar, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // components
+
+
+
+import {GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
 import Iconify from '../../../components/iconify';
+
 
 // ----------------------------------------------------------------------
 
@@ -48,6 +53,7 @@ export default function LoginForm() {
         const authorities = response.data.authorities[0].authority;
         navigate(authorities === 'ROLE_ADMIN' || authorities === 'ROLE_STAFF' ? '/dashboard/app' : '/client/home');
         window.location.reload();
+
       } else {
         throw Error(response.status);
       }
@@ -73,7 +79,7 @@ export default function LoginForm() {
       body: raw,
       redirect: 'follow',
     };
-
+    console.log("requestOptions:",requestOptions);
     try {
       const response = await fetch('http://localhost:8080/api/login', requestOptions);
 
@@ -97,10 +103,44 @@ export default function LoginForm() {
       });
     }
   };
+  const responseGoogle = async (credentialResponse ) => {
+
+    try {
+      const res = await axios.post('http://localhost:8080/google-login', credentialResponse.credential );
+
+      if (res) {
+        setAlertContent({
+          type: 'success',
+          message: 'Login Success',
+        });
+        localStorage.setItem('accessToken', res.data);
+        await fetchUserData();
+
+      } else {
+        throw new Error(res);
+      }
+    } catch (error) {
+      console.log('error', error);
+      setAlertContent({
+        type: 'error',
+        message: 'Login Failed',
+      });
+    }
+  }
 
   return (
     <>
       <Stack spacing={3}>
+        <GoogleOAuthProvider clientId="964666128031-58ftilgfcv1dtnn3ke442vv5qjmei4da.apps.googleusercontent.com">
+        <GoogleLogin
+
+            onSuccess={responseGoogle}
+            onFailure={responseGoogle}
+            cookiePolicy='single_host_origin'
+        />
+        </GoogleOAuthProvider>
+        
+
         <TextField name="email" label="Email address" value={params.email} onChange={(e) => getParam(e)} />
 
         <TextField
