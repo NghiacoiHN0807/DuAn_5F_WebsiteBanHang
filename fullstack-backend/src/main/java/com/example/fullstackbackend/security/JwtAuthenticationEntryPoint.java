@@ -1,4 +1,4 @@
-package com.example.fullstackbackend.config;
+package com.example.fullstackbackend.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

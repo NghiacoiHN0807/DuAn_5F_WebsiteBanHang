@@ -1,6 +1,7 @@
-package com.example.fullstackbackend.config;
+package com.example.fullstackbackend.security;
 
-import com.example.fullstackbackend.config.user.TaiKhoanUser;
+
+import com.example.fullstackbackend.security.user.TaiKhoanUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
