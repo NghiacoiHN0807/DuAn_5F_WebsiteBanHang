@@ -39,7 +39,7 @@ public class LoginController {
         this.jwtDecoder = jwtDecoder;
     }
 
-    @PostMapping("/add")
+    @PostMapping("/signUp")
     public ResponseEntity<?> add(@Valid @RequestBody TaiKhoan taiKhoankh,
                                  BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
