@@ -1,4 +1,3 @@
-
 import { Helmet } from 'react-helmet-async';
 import { faker } from '@faker-js/faker';
 // @mui
@@ -8,14 +7,11 @@ import React, { useState, useEffect } from 'react';
 
 // icon
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faAppleAlt, faBoxOpen, faBug, faCircleDollarToSlot, faSackDollar, faShoppingBag } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-
+import { faSackDollar } from '@fortawesome/free-solid-svg-icons';
 // components
 import Iconify from '../components/iconify';
-import { totalRevenue, totalInvoieces, totalTheoNgay, tyLeTraHang, tongSpDaBan } from '../service/bill-service'
-import { topSpTrending } from '../service/san-pham-service'
+import { totalRevenue, totalInvoieces, totalTheoNgay, tyLeTraHang, tongSpDaBan } from '../service/bill-service';
+import { topSpTrending } from '../service/san-pham-service';
 // sections
 import {
   AppTasks,
@@ -29,7 +25,6 @@ import {
   AppConversionRates,
 } from '../sections/@dashboard/app';
 
-
 // ----------------------------------------------------------------------
 library.add(faSackDollar);
 
@@ -38,7 +33,7 @@ export default function DashboardAppPage() {
   const [totalBill, setTotalBill] = useState(0);
   const [invoieces, setinvoieces] = useState(0);
   const [spTrending, setSpTrending] = useState([]);
-  const [hdNgay, setheoNgay] = useState([]);  // State for trending data
+  const [hdNgay, setheoNgay] = useState([]); // State for trending data
   const [rate, setRate] = useState(0); // State for
   const [allSp, setAllSp] = useState(0);
 
@@ -53,11 +48,9 @@ export default function DashboardAppPage() {
       const response = await totalTheoNgay();
       const allSpres = await tongSpDaBan();
 
-
-
       setTotalBill(Number(res));
       setinvoieces(Number(invoiecesResponse));
-      setSpTrending(trendingResponse);  // Set trending data
+      setSpTrending(trendingResponse); // Set trending data
       setRate(Number(rateResponse));
       setheoNgay(response);
       setAllSp(Number(allSpres));
@@ -66,10 +59,9 @@ export default function DashboardAppPage() {
     };
 
     fetchData();
-
   }, []);
 
-  const currentVisitsData = spTrending.map(item => ({
+  const currentVisitsData = spTrending.map((item) => ({
     label: item[1], // Tên quốc gia, ví dụ "Ao Kakame"
     value: item[0], // Số lượng lượt truy cập, ví dụ 5z`
   }));
@@ -91,11 +83,16 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng Đơn Hàng" total={invoieces} color="info" icon={'ant-design:apple-filled'}/>
+            <AppWidgetSummary title="Tổng Đơn Hàng" total={invoieces} color="info" icon={'ant-design:apple-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng sản phẩm đã bán" total={allSp} color="warning" icon={'ant-design:windows-filled'} />
+            <AppWidgetSummary
+              title="Tổng sản phẩm đã bán"
+              total={allSp}
+              color="warning"
+              icon={'ant-design:windows-filled'}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
@@ -106,19 +103,17 @@ export default function DashboardAppPage() {
             <AppWebsiteVisits
               title="Tổng Tiền Theo Ngày"
               subheader="Biểu đồ tổng tiền theo ngày"
-              chartLabels={hdNgay.map(item => item[0])} // Assuming the first element in each sub-array is the date
+              chartLabels={hdNgay.map((item) => item[0])} // Assuming the first element in each sub-array is the date
               chartData={[
                 {
                   name: 'Tổng Tiền',
                   type: 'line',
                   fill: 'solid',
-                  data: hdNgay.map(item => item[1]), // Assuming the second element in each sub-array is the total amount
+                  data: hdNgay.map((item) => item[1]), // Assuming the second element in each sub-array is the total amount
                 },
               ]}
             />
-
           </Grid>
-
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits

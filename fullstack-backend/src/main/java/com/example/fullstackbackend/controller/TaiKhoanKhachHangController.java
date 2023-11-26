@@ -5,8 +5,8 @@ import com.example.fullstackbackend.exception.TaiKhoanKHNotFoundException;
 import com.example.fullstackbackend.services.TaiKhoanKhachHangSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -27,6 +26,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/tai-khoan-khach-hang/")
 @CrossOrigin("http://localhost:3000/")
+
 public class TaiKhoanKhachHangController {
     @Autowired
     private TaiKhoanKhachHangSevice TaiKhoanKhachHangKHSevice;
@@ -39,6 +39,7 @@ public class TaiKhoanKhachHangController {
 //        return TaiKhoanKhachHangKHSevice.Page(p.orElse(page), size);
 //    }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("view-all")
     public List<TaiKhoan> viewAll() {
         return TaiKhoanKhachHangKHSevice.getAll();

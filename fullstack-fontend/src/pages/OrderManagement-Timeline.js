@@ -59,7 +59,11 @@ const OrderManagementTimeline = ({ classes }) => {
   const getListData = useCallback(async () => {
     try {
       const res = await getDetailOneHD(idHdParam);
+      console.log('res: ', res);
+
       const res1 = await viewAllHTTT(idHdParam);
+      console.log('res1: ', res1);
+
       setListData(res);
       setListHTTT(res1);
       setActiveIndex(res[0].idHd.trangThai);
@@ -73,20 +77,17 @@ const OrderManagementTimeline = ({ classes }) => {
 
   const [DataCart, setDataCart] = useState([]);
 
-  const selectDataCart = useCallback(
-    async (page) => {
-      try {
-        const res = await finByProductOnCart(page, idHdParam);
-        if (res) {
-          console.log('Check DataCart: ', res);
-          setDataCart(res);
-        }
-      } catch (error) {
-        console.error(error);
+  const selectDataCart = useCallback(async () => {
+    try {
+      const res = await finByProductOnCart(idHdParam);
+      if (res) {
+        console.log('Check DataCart: ', res);
+        setDataCart(res);
       }
-    },
-    [idHdParam]
-  );
+    } catch (error) {
+      console.error(error);
+    }
+  }, [idHdParam]);
   useEffect(() => {
     selectDataCart();
   }, [selectDataCart]);
@@ -284,7 +285,6 @@ const OrderManagementTimeline = ({ classes }) => {
   const [showModalsDelete, setShowModalDelete] = useState(false);
   const [itemDelete, setIntemDelete] = useState();
   const handleDelete = (item) => {
-    console.log('Check item', item);
     setShowModalDelete(true);
     setIntemDelete(item);
   };
@@ -555,6 +555,7 @@ const OrderManagementTimeline = ({ classes }) => {
             handleClose={handleCloseUpdate}
             activeIndex={activeIndex}
             getListData={getListData}
+            listHTTT={listHTTT}
           />
           {/* Dialog xác nhận xóa */}
           <ModalDeleteDirectSale open={openDelete} handleClose={handleClose1} information={information} />

@@ -33,10 +33,12 @@ export default function Cart() {
 
   const navigate = useNavigate();
 
+  // Get KH
+  const getLocalStore = localStorage.getItem('userFormToken');
+  const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
+
   const getDetail = useCallback(async () => {
     try {
-      const getLocalStore = localStorage.getItem('userFormToken');
-      const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
       const getOneSP = await listProductOnCart(authorities.idTaiKhoan);
       setProductOnCart(getOneSP);
       console.log('getOneSP: ', getOneSP);
@@ -48,7 +50,7 @@ export default function Cart() {
     } catch (e) {
       console.error(e);
     }
-  }, []);
+  }, [authorities.idTaiKhoan]);
 
   useEffect(() => {
     getDetail();
@@ -177,14 +179,12 @@ export default function Cart() {
         message: 'Vui Lòng Chọn Sản Phẩm',
       });
     } else {
-      const res = await postAddBillAddBill(2, 0);
+      const res = await postAddBillAddBill(authorities.idTaiKhoan, 2, 0);
       for (let i = 0; i < selectedItems.length; i += 1) {
         (async () => {
           await postAddDirectClient(res.idHd, selectedItems[i]);
         })();
       }
-      console.log('selectedItems: ', selectedItems);
-
       setAlertContent({
         type: 'success',
         message: 'Tạo thành công hóa đơn',

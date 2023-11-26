@@ -262,7 +262,7 @@ public class HoaDonController {
             hoaDonDTO1.setNgayThanhToan(LocalDate.now());
             hoaDonDTO1.setTienDua(realPrice);
             int setTrangThai;
-            if (getOne.getTrangThai() == 3) {
+            if (getOne.getTrangThai() <= 3) {
                 setTrangThai = 4;
             } else {
                 setTrangThai = 9;

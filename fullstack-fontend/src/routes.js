@@ -24,7 +24,7 @@ import UserStaff from './pages/Staff/Modal-User-Staff';
 import AddTKNV from './pages/Staff/Modal-Add-Staff';
 import UpdateTkNV from './pages/Staff/Modal-Update-Staff';
 import Contact from './pages/client/Contact';
-import PaymentPage from './pages/client/Payment-Page';
+import PaymentPage1 from './pages/client/Payment-Page1';
 
 // san pham
 import ProductMain from './pages/SanPham/SanPhamMain';
@@ -85,9 +85,10 @@ export default function Router() {
               { path: 'home', element: <Home /> },
               { path: 'detail/:id', element: <DetailProduct /> },
               { path: 'cart', element: <Cart /> },
-              { path: 'payment/:id', element: <PaymentPage /> },
+              { path: 'payment/:id', element: <PaymentPage1 /> },
               { path: 'contact', element: <Contact /> },
               { path: 'products', element: <ProductsPage /> },
+              { path: 'client-timeline/:id', element: <PaymentPage1 /> },
             ],
     },
     {
