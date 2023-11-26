@@ -1,4 +1,4 @@
-package com.example.fullstackbackend.config;
+package com.example.fullstackbackend.security;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;

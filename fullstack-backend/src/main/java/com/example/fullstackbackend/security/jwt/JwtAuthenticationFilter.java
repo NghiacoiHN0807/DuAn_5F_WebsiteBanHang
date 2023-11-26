@@ -1,6 +1,6 @@
-package com.example.fullstackbackend.config.jwt;
+package com.example.fullstackbackend.security.jwt;
 
-import com.example.fullstackbackend.config.UserService;
+import com.example.fullstackbackend.services.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,8 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String jwt = getJwtFromRequest(request);
 
             if (StringUtils.hasText(jwt) && jwtTokenProvider.validateToken(jwt)) {
-//        if (StringUtils.hasText(jwt)) {
-//                // Get id from JWT String
+
                 String userID = jwtTokenProvider.getUserIdFromJWT(jwt);
 
                 // Get information's user from id

@@ -70,29 +70,16 @@ export default function LoginPage() {
         <Container maxWidth="sm">
           <StyledContent>
             <Typography variant="h4" gutterBottom>
-              Đăng ký 5F Store
+              Đăng Nhập 5F Store
             </Typography>
 
-            <Typography variant="body2" sx={{ mb: 5 }}>
+            <Typography variant="body2" sx={{ mb: 1 }}>
               Chưa có tài khoản? {''}
-              <Link variant="subtitle2" href="/signUp" >Get started</Link>
+              <Link variant="subtitle2" href="/signUp" >Đăng Ký</Link>
             </Typography>
 
-            <Stack direction="row" spacing={2}>
-              <Button fullWidth size="large" color="inherit" variant="outlined">
-                <Iconify icon="eva:google-fill" color="#DF3E30" width={22} height={22} />
-              </Button>
 
-              <Button fullWidth size="large" color="inherit" variant="outlined">
-                <Iconify icon="eva:facebook-fill" color="#1877F2" width={22} height={22} />
-              </Button>
-
-              <Button fullWidth size="large" color="inherit" variant="outlined">
-                <Iconify icon="eva:twitter-fill" color="#1C9CEA" width={22} height={22} />
-              </Button>
-            </Stack>
-
-            <Divider sx={{ my: 3 }}>
+            <Divider sx={{ my: 1 }}>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 OR
               </Typography>

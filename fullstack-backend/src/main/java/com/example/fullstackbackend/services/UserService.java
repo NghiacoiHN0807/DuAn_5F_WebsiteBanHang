@@ -1,7 +1,9 @@
-package com.example.fullstackbackend.config;
+package com.example.fullstackbackend.services;
 
-import com.example.fullstackbackend.config.user.TaiKhoanUser;
-import com.example.fullstackbackend.config.user.UserRepository;
+
+import com.example.fullstackbackend.security.CustomUserDetails;
+import com.example.fullstackbackend.security.user.TaiKhoanUser;
+import com.example.fullstackbackend.security.user.UserRepository;
 import com.example.fullstackbackend.entity.ChucVu;
 import com.example.fullstackbackend.entity.TaiKhoan;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +51,7 @@ public class UserService implements UserDetailsService {
         message.setFrom(formMail);
         message.setTo(mail);
         message.setSubject("Mật khẩu Mới");
-        message.setText("Mật Khẩu: "+content);
-
+        message.setText("Mật Khẩu Để Đăng Nhập Tài Khoản Của 5F Store: "+content);
         mailSender.send(message);
     }
 
@@ -71,5 +72,8 @@ public class UserService implements UserDetailsService {
         return Optional.ofNullable(userRepository.findByEmail(email));
     }
 
+    public Boolean checkMailExists(String email) {
+        return userRepository.existsByEmailAllIgnoreCase(email);
+    }
 
 }

@@ -50,6 +50,7 @@
     "@mui/material": "^5.11.10",
     "@mui/x-data-grid": "^6.10.2",
     "@mui/x-date-pickers": "^6.18.1",
+    "@react-oauth/google": "^0.12.1",
     "apexcharts": "^3.37.0",
     "axios": "^1.6.1",
     "bootstrap": "^5.3.2",
@@ -71,12 +72,12 @@
     "react-hook-form": "^7.43.1",
     "react-icons": "^4.10.1",
     "react-perfect-scrollbar": "^1.5.8",
+    "react-qr-scanner": "^1.0.0-alpha.11",
     "react-router-dom": "^6.8.1",
     "react-scripts": "^5.0.1",
     "sass": "^1.49.10",
     "simplebar-react": "^3.2.1",
-    "web-vitals": "^3.1.1",
-    "react-qr-scanner": "^1.0.0-alpha.11"
+    "web-vitals": "^3.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
