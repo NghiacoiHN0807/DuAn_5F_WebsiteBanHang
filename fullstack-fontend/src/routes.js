@@ -3,7 +3,6 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
 //
-import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
@@ -39,6 +38,9 @@ import AddressByClient from './pages/diaChi/AddressByClient';
 import AddAddress from './pages/diaChi/AddAddress';
 import UpdateAddress from './pages/diaChi/UpdateAddress';
 import SignUp from './pages/client/SignUp';
+import AddCoupons from './pages/coupons/AddCoupons';
+import CouponsPage from './pages/coupons/CouponsPage';
+import UpdateCoupons from './pages/coupons/UpdateCoupons';
 
 // ----------------------------------------------------------------------
 
@@ -79,6 +81,9 @@ export default function Router() {
               { path: 'products', element: <ProductMain /> },
               { path: 'products/add', element: <ProductAdd /> },
               { path: 'products/update/:id', element: <ProductUpdate /> },
+              { path: 'coupons/add', element: <AddCoupons /> },
+              { path: 'coupons', element: <CouponsPage /> },
+              { path: 'coupons/update/:id', element: <UpdateCoupons /> },
             ]
           : [
               { element: <Navigate to="/client/home" />, index: true },

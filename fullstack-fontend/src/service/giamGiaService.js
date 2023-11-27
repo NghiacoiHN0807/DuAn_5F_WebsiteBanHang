@@ -19,6 +19,8 @@ const filerDate = (pageNo, size, first, last) =>
 
 const getAllSanPham = () => custom.get(`/san-pham/minimage`);
 
+const getDetailSanPhamById = (idSp) => custom.get(`/san-pham/minimage/${idSp}`);
+
 const getSanPhamDetails = () => custom.get(`/san-pham/dto`);
 
 const detail = (id) => custom.get(`/giam-gia-chi-tiet/api/detail/${id}`);
@@ -58,4 +60,5 @@ export {
   detailGiamGia,
   detailChiTietSanPham,
   getCtspByIdSp,
+  getDetailSanPhamById
 };

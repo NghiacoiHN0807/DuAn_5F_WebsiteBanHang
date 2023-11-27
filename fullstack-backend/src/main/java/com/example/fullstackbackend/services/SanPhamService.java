@@ -4,6 +4,7 @@ import com.example.fullstackbackend.DTO.SanPhamClientDTO;
 import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.DTO.SanPhamDTO;
+import com.example.fullstackbackend.DTO.SanPhamWithMinImageDTO;
 import com.example.fullstackbackend.entity.SanPham;
 import org.springframework.data.domain.Page;
 
@@ -34,6 +35,8 @@ public interface SanPhamService {
     Boolean checkExists(Integer id);
 
     List<Object[]> getSanPhamWithMinImageUrl();
+
+    SanPhamWithMinImageDTO getSanPhamWithMinImageUrlByIdSp(Integer idSp);
 
     Page<SanPhamDTO> getSanPhamDetails(Integer pageNo, Integer size);
 

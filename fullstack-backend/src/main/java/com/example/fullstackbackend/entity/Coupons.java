@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.util.Date;
 
 @Entity
 @AllArgsConstructor
@@ -35,7 +36,7 @@ public class Coupons {
     private Integer idCoupon;
 
     @Column(name = "name")
-    private String name;
+    private String tenChuongTrinh;
 
     @Column(name = "code")
     private String code;
@@ -45,13 +46,13 @@ public class Coupons {
 
     @Column(name = "thoi_gian_ket_thuc")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
-    private Instant thoiGianKetThuc;
+    private Date thoiGianKetThuc;
 
     @Column(name = "so_luong")
     private Integer soLuong;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "hoa_don", referencedColumnName = "id_hd")
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "hoa_don_id", referencedColumnName = "id_hd", nullable = true)
     private HoaDon hoaDon;
 
     @Column(name = "discount")
@@ -68,13 +69,19 @@ public class Coupons {
 
     @Column(name = "thoi_gian_tao")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
-    private Instant thoiGianTao;
+    private Date thoiGianTao;
 
     @Column(name = "thoi_gian_sua")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "Asia/Ho_Chi_Minh")
-    private Instant thoiGianSua;
+    private Date thoiGianSua;
 
     @Column(name = "trang_thai")
     private Integer trangThai = 0;
+
+    @PreUpdate
+    private void preUpdate() {
+        thoiGianSua = new Date();
+    }
+
 
 }

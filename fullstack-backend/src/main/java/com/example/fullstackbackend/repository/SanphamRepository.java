@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.repository;
 
+import com.example.fullstackbackend.DTO.SanPhamWithMinImageDTO;
 import com.example.fullstackbackend.entity.SanPham;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,23 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "GROUP BY \n" +
             "    sp.id_sp, sp.ten_sp;", nativeQuery = true)
     List<Object[]> getSanPhamWithMinImageUrl();
+
+    @Query(value = "SELECT  \n" +
+            "                sp.*,  \n" +
+            "                MIN(img.images), \n" +
+            "                MIN(ctsp.gia_ban) AS gia_ban_nho_nhat, \n" +
+            "                MAX(ctsp.gia_ban) AS gia_ban_lon_nhat \n" +
+            "            FROM  \n" +
+            "                san_pham sp \n" +
+            "            LEFT JOIN  \n" +
+            "                Images img ON sp.id_sp = img.id_sp \n" +
+            "            LEFT JOIN  \n" +
+            "                chi_tiet_san_pham ctsp ON sp.id_sp = ctsp.id_sp \n" +
+            "            WHERE  \n" +
+            "                sp.id_sp =:idSp\n" +
+            "            GROUP BY  \n" +
+            "                sp.id_sp, sp.ten_sp", nativeQuery = true)
+    List<Object[]> getSanPhamWithMinImageUrlByIdSp(@Param("idSp") Integer idSp);
 
     @Query(value =
             "SELECT \n" +

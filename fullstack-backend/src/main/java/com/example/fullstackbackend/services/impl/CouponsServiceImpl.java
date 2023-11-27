@@ -21,7 +21,10 @@ public class CouponsServiceImpl implements CouponsService {
 
     @Override
     public Coupons add(Coupons coupons) {
-        return couponsRepository.save(coupons);
+        coupons.setSoLuongHienTai(coupons.getSoLuong());
+        System.out.println("coupons.getThoiGianKetThuc(): " + coupons.getThoiGianKetThuc());
+        Coupons coupons1 = couponsRepository.save(coupons);
+        return coupons1;
     }
 
     @Override
