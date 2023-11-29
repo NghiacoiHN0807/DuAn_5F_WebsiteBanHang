@@ -7,7 +7,6 @@ import {
   Stack,
   Button,
   Drawer,
-  Rating,
   Divider,
   Checkbox,
   FormGroup,
@@ -16,7 +15,9 @@ import {
   RadioGroup,
   FormControlLabel,
   FormControl,
+  Grid,
 } from '@mui/material';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 // components
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
@@ -29,6 +30,8 @@ import { fetchTayAo } from '../../../service/OngTayAoService';
 import { fetchCoAo } from '../../../service/LoaiCoAoService';
 import { fetchMS } from '../../../service/MauSacService';
 import { fetchSize } from '../../../service/SizeService';
+import { fetchSpForClient } from '../../../service/SanPhamService';
+
 // ----------------------------------------------------------------------
 
 // export const SORT_BY_OPTIONS = [
@@ -62,20 +65,10 @@ ShopFilterSidebar.propTypes = {
   openFilter: PropTypes.bool,
   onOpenFilter: PropTypes.func,
   onCloseFilter: PropTypes.func,
-  listSP: PropTypes.array,
   onFilter: PropTypes.func,
 };
 
-export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter, listSP, onFilter }) {
-  const [chatLieu, setChatLieu] = useState('');
-  const [loaiSP, setLoaiSP] = useState('');
-  const [xuatXu, setXuatXu] = useState('');
-  const [tayAo, setTayAo] = useState('');
-  const [coAo, setCoAo] = useState('');
-
-  const [mauSac, setMauSac] = useState('');
-  const [size, setSize] = useState('');
-
+export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter, onFilter }) {
   const [listCL, setListCL] = useState([]);
   const [listLSP, setListLSP] = useState([]);
   const [listXX, setListXX] = useState([]);
@@ -83,6 +76,8 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
   const [listCoAo, setListCoAo] = useState([]);
   const [listMS, setListMS] = useState([]);
   const [listSize, setListSize] = useState([]);
+
+  const [listSP, setListSP] = useState([]);
 
   useEffect(() => {
     getAllList();
@@ -111,8 +106,78 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
     setListSize(resSize);
   };
 
-  // const filteredList = listSP.filter((sp) => sp.chatLieus.includes('12'));
-  // onFilter(filteredList);
+  const getListData = async () => {
+    try {
+      const res = await fetchSpForClient();
+      setListSP(res);
+    } catch (error) {
+      console.error('Error in list bill: ', error);
+    }
+  };
+  useEffect(() => {
+    getListData();
+  }, []);
+
+  // fiter
+
+  const handleFilter = (filteredProducts) => {
+    onFilter(filteredProducts);
+  };
+
+  const handleClear = () => {
+    setListLocCL([]);
+    setListLocXX([]);
+    setListLocTayAo([]);
+    setListLocCoAo([]);
+    setListLocMS([]);
+    setListLocSize([]);
+    onFilter(listSP);
+  };
+
+  // loc checkbox
+  const [listLocCL, setListLocCL] = useState([]);
+  const [listLocXX, setListLocXX] = useState([]);
+  const [listLocTayAo, setListLocTayAo] = useState([]);
+  const [listLocCoAo, setListLocCoAo] = useState([]);
+  const [listLocMS, setListLocMS] = useState([]);
+  const [listLocSize, setListLocSize] = useState([]);
+
+  const handleCheckBox = (material, listCheck, setListCheck) => {
+    const isSelected = listCheck.includes(material);
+    setListCheck((prevMaterials) =>
+      isSelected ? prevMaterials.filter((m) => m !== material) : [...prevMaterials, material]
+    );
+  };
+
+  const listLoc = useMemo(() => {
+    if (
+      listLocCL.length === 0 &&
+      listLocXX.length === 0 &&
+      listLocTayAo.length === 0 &&
+      listLocCoAo.length === 0 &&
+      listLocMS.length === 0 &&
+      listLocSize.length === 0
+    ) {
+      return listSP;
+    }
+
+    return listSP.filter((product) => {
+      const chatLieuMatched = listLocCL.length === 0 || listLocCL.some((check) => product.chatLieus.includes(check));
+
+      const xuatXuMatched = listLocXX.length === 0 || listLocXX.some((check) => product.xuatXus.includes(check));
+
+      const tayAoMatched = listLocTayAo.length === 0 || listLocTayAo.some((check) => product.tayAos.includes(check));
+
+      const coAoMatched = listLocCoAo.length === 0 || listLocCoAo.some((check) => product.coAos.includes(check));
+
+      const mauSacMatched = listLocMS.length === 0 || listLocMS.some((check) => product.mauSacs.includes(check));
+
+      const sizeMatched = listLocSize.length === 0 || listLocSize.some((check) => product.sizes.includes(check));
+
+      return chatLieuMatched && xuatXuMatched && tayAoMatched && coAoMatched && mauSacMatched && sizeMatched;
+    });
+  }, [listSP, listLocCL, listLocXX, listLocTayAo, listLocCoAo, listLocMS, listLocSize]);
+
   return (
     <>
       <Button disableRipple color="inherit" endIcon={<Iconify icon=" ic:round-filter-list" />} onClick={onOpenFilter}>
@@ -146,12 +211,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
               </Typography>
               {listLSP.length > 0 && (
                 <FormControl>
-                  <RadioGroup
-                    aria-labelledby="demo-radio-buttons-group-label"
-                    name="radio-buttons-group"
-                    value={loaiSP}
-                    onChange={(event) => setLoaiSP(event.target.value)}
-                  >
+                  <RadioGroup aria-labelledby="demo-radio-buttons-group-label" name="radio-buttons-group">
                     <FormControlLabel value={'all'} control={<Radio defaultChecked />} label="Tất cả" />
                     {listLSP.map((item, index) => (
                       <FormControlLabel key={index} value={item.idLoaisp} control={<Radio />} label={item.tenLsp} />
@@ -169,7 +229,14 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
               {listCL.length > 0 && (
                 <FormGroup>
                   {listCL.map((item, index) => (
-                    <FormControlLabel key={index} value={item.idCl} control={<Checkbox />} label={item.tenCl} />
+                    <FormControlLabel
+                      key={index}
+                      value={item.idCl}
+                      control={<Checkbox />}
+                      label={item.tenCl}
+                      checked={listLocCL.includes(item.idCl)}
+                      onChange={() => handleCheckBox(item.idCl, listLocCL, setListLocCL)}
+                    />
                   ))}
                 </FormGroup>
               )}
@@ -183,7 +250,14 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
               {listXX.length > 0 && (
                 <FormGroup>
                   {listXX.map((item, index) => (
-                    <FormControlLabel key={index} value={item.idXx} control={<Checkbox />} label={item.tenNuoc} />
+                    <FormControlLabel
+                      key={index}
+                      value={item.idXx}
+                      control={<Checkbox />}
+                      label={item.tenNuoc}
+                      checked={listLocXX.includes(item.idXx)}
+                      onChange={() => handleCheckBox(item.idXx, listLocXX, setListLocXX)}
+                    />
                   ))}
                 </FormGroup>
               )}
@@ -197,7 +271,14 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
               {listTayAo.length > 0 && (
                 <FormGroup>
                   {listTayAo.map((item, index) => (
-                    <FormControlLabel key={index} value={item.idTayAo} control={<Checkbox />} label={item.loaiTayAo} />
+                    <FormControlLabel
+                      key={index}
+                      value={item.idTayAo}
+                      control={<Checkbox />}
+                      label={item.loaiTayAo}
+                      checked={listLocTayAo.includes(item.idTayAo)}
+                      onChange={() => handleCheckBox(item.idTayAo, listLocTayAo, setListLocTayAo)}
+                    />
                   ))}
                 </FormGroup>
               )}
@@ -211,7 +292,14 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
               {listCoAo.length > 0 && (
                 <FormGroup>
                   {listCoAo.map((item, index) => (
-                    <FormControlLabel key={index} value={item.idCoAo} control={<Checkbox />} label={item.loaiCoAo} />
+                    <FormControlLabel
+                      key={index}
+                      value={item.idCoAo}
+                      control={<Checkbox />}
+                      label={item.loaiCoAo}
+                      checked={listLocCoAo.includes(item.idCoAo)}
+                      onChange={() => handleCheckBox(item.idCoAo, listLocCoAo, setListLocCoAo)}
+                    />
                   ))}
                 </FormGroup>
               )}
@@ -225,7 +313,14 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
               {listMS.length > 0 && (
                 <FormGroup>
                   {listMS.map((item, index) => (
-                    <FormControlLabel key={index} value={item.idMs} control={<Checkbox />} label={item.tenMs} />
+                    <FormControlLabel
+                      key={index}
+                      value={item.idMs}
+                      control={<Checkbox />}
+                      label={item.tenMs}
+                      checked={listLocMS.includes(item.idMs)}
+                      onChange={() => handleCheckBox(item.idMs, listLocMS, setListLocMS)}
+                    />
                   ))}
                 </FormGroup>
               )}
@@ -253,7 +348,14 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
               {listSize.length > 0 && (
                 <FormGroup>
                   {listSize.map((item, index) => (
-                    <FormControlLabel key={index} value={item.idSize} control={<Checkbox />} label={item.tenSize} />
+                    <FormControlLabel
+                      key={index}
+                      value={item.idSize}
+                      control={<Checkbox />}
+                      label={item.tenSize}
+                      checked={listLocSize.includes(item.idSize)}
+                      onChange={() => handleCheckBox(item.idSize, listLocSize, setListLocSize)}
+                    />
                   ))}
                 </FormGroup>
               )}
@@ -274,52 +376,36 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
                 <FormControlLabel value="above" control={<Radio />} label="Trên 750.000đ" />
               </RadioGroup>
             </div>
-
-            {/* Rating
-            <div>
-              <Typography variant="subtitle1" gutterBottom>
-                Rating
-              </Typography>
-              <RadioGroup>
-                {FILTER_RATING_OPTIONS.map((item, index) => (
-                  <FormControlLabel
-                    key={item}
-                    value={item}
-                    control={
-                      <Radio
-                        disableRipple
-                        color="default"
-                        icon={<Rating readOnly value={4 - index} />}
-                        checkedIcon={<Rating readOnly value={4 - index} />}
-                        sx={{
-                          '&:hover': { bgcolor: 'transparent' },
-                        }}
-                      />
-                    }
-                    label="& Up"
-                    sx={{
-                      my: 0.5,
-                      borderRadius: 1,
-                      '&:hover': { opacity: 0.48 },
-                    }}
-                  />
-                ))}
-              </RadioGroup>
-            </div> */}
           </Stack>
         </Scrollbar>
 
         <Box sx={{ p: 3 }}>
-          <Button
-            fullWidth
-            size="large"
-            type="submit"
-            color="inherit"
-            variant="outlined"
-            startIcon={<Iconify icon="ic:round-clear-all" />}
-          >
-            Clear All
-          </Button>
+          <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={6}>
+              <Button
+                size="large"
+                type="submit"
+                color="inherit"
+                variant="outlined"
+                startIcon={<FilterAltIcon />}
+                onClick={() => handleFilter(listLoc)}
+              >
+                Lọc
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button
+                size="large"
+                type="submit"
+                color="inherit"
+                variant="outlined"
+                startIcon={<Iconify icon="ic:round-clear-all" />}
+                onClick={() => handleClear()}
+              >
+                Clear
+              </Button>
+            </Grid>
+          </Grid>
         </Box>
       </Drawer>
     </>
