@@ -15,6 +15,8 @@ public interface HoadonchitietSevice {
 
     List<Object[]> getListProductOncart(Integer idHd);
 
+    List<HoaDonChiTiet> getListProductByIDKH(Integer idKH);
+
     HoaDonChiTiet add(HoaDonChiTiet add);
 
     HoaDonChiTiet add1(HoaDonChiTiet add);

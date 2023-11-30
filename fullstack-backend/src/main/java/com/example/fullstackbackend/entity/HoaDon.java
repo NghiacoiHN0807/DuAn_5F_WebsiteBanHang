@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.sql.Timestamp;
 
 @Entity
 @AllArgsConstructor
@@ -41,10 +41,10 @@ public class HoaDon {
     private String maHd;
 
     @Column(name = "ngay_tao")
-    private LocalDate ngayTao;
+    private Timestamp ngayTao;
 
     @Column(name = "ngay_thanh_toan")
-    private LocalDate ngayThanhToan;
+    private Timestamp ngayThanhToan;
 
     @Column(name = "so_tien_giam_gia")
     private BigDecimal soTienGiamGia;
@@ -80,13 +80,13 @@ public class HoaDon {
     private String diaChi;
 
     @Column(name = "ngay_du_tinh_nhan")
-    private LocalDate ngayDuTinhNhan;
+    private Timestamp ngayDuTinhNhan;
 
     @Column(name = "ngay_bat_dau_giao")
-    private LocalDate ngayBatDauGiao;
+    private Timestamp ngayBatDauGiao;
 
     @Column(name = "ngay_giao_thanh_cong")
-    private LocalDate ngayGiaoThanhCong;
+    private Timestamp ngayGiaoThanhCong;
 
     @Column(name = "kieu_hoa_don")
     private Integer kieuHoaDon;

@@ -75,11 +75,11 @@ public class GioHangChiTietController {
     @PostMapping("add-to-hdct/{id}")
     public ResponseEntity<?> addToHDCT(@PathVariable("id") Integer idHD,
                                        @RequestBody GioHangChiTiet newHDCT){
+
         // Detail HoaDon
         HoaDon hoaDon = hoadonSevice.findById(idHD).orElseThrow();
-        // Set HDCT
-        System.out.println("newHDCT: "+ newHDCT.getIdCtsp());
 
+        // Set HDCT
         HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
         hoaDonChiTiet.setIdHd(hoaDon);
         hoaDonChiTiet.setIdCtsp(newHDCT.getIdCtsp());

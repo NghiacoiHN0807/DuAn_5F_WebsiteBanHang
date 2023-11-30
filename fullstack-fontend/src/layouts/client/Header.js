@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState, Fragment } from 'react';
 
 // Icon styles
 import IconButton from '@mui/material/IconButton';
@@ -14,7 +14,8 @@ import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import MailIcon from '@mui/icons-material/Mail';
-
+import { Avatar, Box, Chip, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
+import { Logout, PersonAdd, Settings } from '@mui/icons-material';
 import logo5F from '../../assets/logo_5F.png';
 
 // mocks_
@@ -49,6 +50,17 @@ const Header = () => {
     fetchData();
   }, []);
 
+  // Handle select menu
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -56,6 +68,12 @@ const Header = () => {
     localStorage.removeItem('userFormToken');
     navigate('/');
   };
+
+  // Select All Bill
+  const handleSelectAllBill = () => {
+    navigate(`/client/select-bill-client/${account.user.idTaiKhoan}`);
+  };
+
   return (
     <>
       <div className="gray-background">
@@ -79,9 +97,82 @@ const Header = () => {
             </Nav.Item>
             <Nav.Item>
               {localStorage.getItem('userFormToken') ? (
-                <Nav.Link onClick={handleLogout} eventKey="link-2" className="nav-links">
-                  {account.displayName}
-                </Nav.Link>
+                <>
+                  <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+                    <Tooltip title="Account settings">
+                      <Chip
+                        avatar={<Avatar src="/static/images/avatar/1.jpg" />}
+                        label={account.displayName}
+                        onClick={handleClick}
+                      />
+                    </Tooltip>
+                  </Box>
+                  <Menu
+                    anchorEl={anchorEl}
+                    id="account-menu"
+                    open={open}
+                    onClose={handleClose}
+                    onClick={handleClose}
+                    PaperProps={{
+                      elevation: 0,
+                      sx: {
+                        overflow: 'visible',
+                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                        mt: 1.5,
+                        '& .MuiAvatar-root': {
+                          width: 32,
+                          height: 32,
+                          ml: -0.5,
+                          mr: 1,
+                        },
+                        '&:before': {
+                          content: '""',
+                          display: 'block',
+                          position: 'absolute',
+                          top: 0,
+                          right: 14,
+                          width: 10,
+                          height: 10,
+                          bgcolor: 'background.paper',
+                          transform: 'translateY(-50%) rotate(45deg)',
+                          zIndex: 0,
+                        },
+                      },
+                    }}
+                    transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                    anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                  >
+                    <MenuItem onClick={handleSelectAllBill}>
+                      <ListItemIcon>
+                        <PersonAdd fontSize="small" />
+                      </ListItemIcon>
+                      Hóa Đơn Của Tôi
+                    </MenuItem>
+                    <MenuItem onClick={handleClose}>
+                      <ListItemIcon>
+                        <Settings fontSize="small" />
+                      </ListItemIcon>
+                      Thông Tin
+                    </MenuItem>
+                    <MenuItem onClick={handleLogout}>
+                      <ListItemIcon>
+                        <Logout fontSize="small" />
+                      </ListItemIcon>
+                      Đăng Xuất
+                    </MenuItem>
+                  </Menu>
+                  {/* <Chip
+                    avatar={<Avatar src="/static/images/avatar/1.jpg" />}
+                    label={account.displayName}
+                    onClick={handleClick}
+                  />
+
+                  <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+                    <MenuItem onClick={handleClose}>Hóa Đơn</MenuItem>
+                    <MenuItem onClick={handleClose}>Thông Tin</MenuItem>
+                    <MenuItem onClick={handleLogout}>Đăng Xuất</MenuItem>
+                  </Menu> */}
+                </>
               ) : (
                 <Nav.Link href="/login" eventKey="link-2" className="nav-links">
                   Login
@@ -119,19 +210,15 @@ const Header = () => {
                   <FontAwesomeIcon icon={faMagnifyingGlass} size="xs" />
                 </Button>
               </Form>
-              {/* <NavLink to="/table-xuatXu" className={'nav-link'}> */}
               <IconButton aria-label="cart">
                 <StyledBadge badgeContent={4} color="secondary">
                   <MailIcon />
                 </StyledBadge>
               </IconButton>
-              {/* </NavLink> */}
               <Link to="/client/cart" className={'nav-link'}>
-                {/* <IconButton aria-label="cart"> */}
                 <StyledBadge badgeContent={listData && listData.length} color="secondary">
                   <ShoppingCartIcon />
                 </StyledBadge>
-                {/* </IconButton> */}
               </Link>
             </Nav>
           </Navbar.Collapse>

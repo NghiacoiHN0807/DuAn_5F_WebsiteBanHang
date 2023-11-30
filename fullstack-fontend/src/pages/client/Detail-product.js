@@ -121,6 +121,7 @@ const DetailProduct = () => {
     const getLocalStore = localStorage.getItem('userFormToken');
     const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
     try {
+      console.log('HIHI: ', authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
       await addProductOnCart(authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
       setAlertContent({
         type: 'success',
@@ -139,11 +140,11 @@ const DetailProduct = () => {
   };
 
   function formatCurrency(price) {
-    if (!price) return "0";
+    if (!price) return '0';
 
-    const formatter = new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
       minimumFractionDigits: 0,
     });
 
@@ -254,7 +255,7 @@ const DetailProduct = () => {
                           onClick={() => handleShowMS(mauSac)}
                           variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
                           size="small"
-                          className=''
+                          className=""
                         >
                           {mauSac}
                         </Button>
