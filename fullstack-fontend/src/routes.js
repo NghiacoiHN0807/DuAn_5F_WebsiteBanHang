@@ -1,9 +1,10 @@
 import { Navigate, useRoutes } from 'react-router-dom';
+
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
+
 //
-import BlogPage from './pages/BlogPage';
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
 import Page404 from './pages/Page404';
@@ -39,6 +40,8 @@ import AddressByClient from './pages/diaChi/AddressByClient';
 import AddAddress from './pages/diaChi/AddAddress';
 import UpdateAddress from './pages/diaChi/UpdateAddress';
 import SignUp from './pages/client/SignUp';
+import OrderClientTimeline from './pages/client/OrderClient-Timeline';
+import SelectAllBillOfClient from './pages/client/SelectAllBill';
 
 // ----------------------------------------------------------------------
 
@@ -88,7 +91,9 @@ export default function Router() {
               { path: 'payment/:id', element: <PaymentPage1 /> },
               { path: 'contact', element: <Contact /> },
               { path: 'products', element: <ProductsPage /> },
-              { path: 'client-timeline/:id', element: <PaymentPage1 /> },
+              { path: 'client-timeline/:id', element: <OrderClientTimeline /> },
+              { path: 'select-bill-client/:idKH', element: <SelectAllBillOfClient /> },
+              // { path: 'select-bill-client', element: <SelectAllBillOfClient /> },
             ],
     },
     {

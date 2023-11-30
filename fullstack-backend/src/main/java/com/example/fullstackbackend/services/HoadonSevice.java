@@ -27,6 +27,8 @@ public interface HoadonSevice {
 
     HoaDon update(HoaDon update);
 
+//    HoaDon updatePaymentClient(Integer idHd, HoaDon update);
+
     Optional<HoaDon> detail(Integer id);
 
     HoaDon finByMaHD(Integer maHD);

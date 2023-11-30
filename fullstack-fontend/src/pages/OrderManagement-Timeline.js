@@ -11,16 +11,17 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {
-  FaBackward,
-  FaCogs,
-  FaPaperPlane,
-  FaRegCalendarCheck,
-  FaRegCheckCircle,
-  FaRegFileAlt,
-  FaMoneyBillWave,
-  FaBug,
-  FaQuestionCircle,
-} from 'react-icons/fa';
+  FcAssistant,
+  FcShipped,
+  FcSurvey,
+  FcHome,
+  FcProcess,
+  FcPrint,
+  FcTodoList,
+  FcSalesPerformance,
+  FcDeleteDatabase,
+  FcCancel,
+} from 'react-icons/fc';
 import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
@@ -127,16 +128,16 @@ const OrderManagementTimeline = ({ classes }) => {
   }
 
   function getIconForTrangThai(trangThai) {
-    if (trangThai === 0 || trangThai === 8) return FaRegFileAlt;
-    if (trangThai === 1) return FaRegFileAlt;
-    if (trangThai === 2) return FaRegCalendarCheck;
-    if (trangThai === 3) return FaPaperPlane;
-    if (trangThai === 4 || trangThai === 9) return FaMoneyBillWave;
-    if (trangThai === 5) return FaRegCheckCircle;
-    if (trangThai === 6) return FaBackward;
-    if (trangThai === 7) return FaCogs;
-    if (trangThai === 10) return FaBug;
-    return FaQuestionCircle;
+    if (trangThai === 0 || trangThai === 8) return FcPrint;
+    if (trangThai === 1) return FcSurvey;
+    if (trangThai === 2) return FcAssistant;
+    if (trangThai === 3) return FcShipped;
+    if (trangThai === 4 || trangThai === 9) return FcSalesPerformance;
+    if (trangThai === 5) return FcHome;
+    if (trangThai === 6) return FcProcess;
+    if (trangThai === 7) return FcTodoList;
+    if (trangThai === 10) return FcDeleteDatabase;
+    return FcCancel;
   }
 
   //   Handle click Confirm

@@ -19,13 +19,13 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 // Service
 import { detailBill, finByProductOnCart, paymentOnline } from '../../service/BillSevice';
 import { updateTongTien, viewAllHTTT } from '../../service/OrderManagementTimeLine';
 import ModalAddAddress from '../../forms/Modals-Add-Address';
-import { selectDiaChiByTK } from '../../service/client/Payment';
+import { selectDiaChiByTK, updateClientPayment } from '../../service/client/Payment';
 
 const ImageButton = styled(ButtonBase)(({ theme }) => ({
   position: 'relative',
@@ -197,6 +197,7 @@ export default function PaymentPage1() {
   };
 
   // Handle successfully
+  const navigate = useNavigate();
   const [alertContent, setAlertContent] = useState(null);
 
   const handleSnackbarClose = (event, reason) => {
@@ -206,13 +207,15 @@ export default function PaymentPage1() {
     setAlertContent(null);
   };
 
-  const handleDatHang = () => {
+  const handleDatHang = async () => {
     if (isDeliveryChecked === false) {
       console.log('Thanh Toán Khi Nhận Hàng');
+      await updateClientPayment(idHdParam, tenKH, sdtKH, diaChi);
+      navigate(`/client/client-timeline/${idHdParam}`);
     }
     if (isDeliveryChecked === true) {
       if (listHTTT.length > 0) {
-        console.log('Đi Tiếp');
+        navigate(`/client/client-timeline/${idHdParam}`);
       } else {
         setAlertContent({
           type: 'warning',

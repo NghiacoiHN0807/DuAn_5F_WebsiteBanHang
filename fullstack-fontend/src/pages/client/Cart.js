@@ -179,7 +179,8 @@ export default function Cart() {
         message: 'Vui Lòng Chọn Sản Phẩm',
       });
     } else {
-      const res = await postAddBillAddBill(authorities.idTaiKhoan, 2, 0);
+      console.log('authorities: ', authorities);
+      const res = await postAddBillAddBill(authorities, 2, 0);
       for (let i = 0; i < selectedItems.length; i += 1) {
         (async () => {
           await postAddDirectClient(res.idHd, selectedItems[i]);

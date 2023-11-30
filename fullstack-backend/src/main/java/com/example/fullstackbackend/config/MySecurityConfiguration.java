@@ -62,7 +62,7 @@ public class MySecurityConfiguration {
                                 req.requestMatchers("/", "/anh/**", "/add", "/api/**", "/san-pham/**", "chi-tiet-san-pham/**", "/chat-lieu/**", "/loai-sp/**", "/xuat-xu/**", "/loai-co-ao/**", "/ong-tay-ao/**", "/mau-sac/**", "/size/**").permitAll()
                                         .requestMatchers("/tai-khoan/**").hasRole("ADMIN")
                                         .requestMatchers("/giam-gia/**", "/giam-gia-chi-tiet/**").hasAnyRole("ADMIN", "STAFF")
-                                        .requestMatchers("/tai-khoan-khach-hang/**", "/hoa-don/**", "/gio-hang-chi-tiet/**", "/gio-hang/**").hasAnyRole("ADMIN", "STAFF", "CUSTOMER")
+                                        .requestMatchers("/tai-khoan-khach-hang/**", "/hoa-don/**", "/hoa-don-chi-tiet/**", "/gio-hang-chi-tiet/**", "/gio-hang/**").hasAnyRole("ADMIN", "STAFF", "CUSTOMER")
                                         .anyRequest().authenticated())
 //                .oauth2Login(oath2 -> {
 //                    oath2.successHandler(oAuth2LoginSuccessHandler);

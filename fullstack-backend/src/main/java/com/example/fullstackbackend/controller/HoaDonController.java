@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -99,7 +98,6 @@ public class HoaDonController {
     public HoaDon detail(@PathVariable("id") Integer id) {
         return hoadonSevice.detail(id).
                 orElseThrow(() -> new xuatXuNotFoundException(id));
-
     }
 
     @GetMapping("findByMaHD/{id}")
@@ -143,7 +141,6 @@ public class HoaDonController {
 
         //Add to history bill
 
-
         LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
         lichSuHoaDon.setIdHd(newHD1);
         lichSuHoaDon.setIdTk(newHD1.getIdTK());
@@ -183,6 +180,29 @@ public class HoaDonController {
         lichSuHoaDon.setIdTk(newHD1.getIdTK());
         lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
         lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
+        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+        lichSuHoaDonService.add(lichSuHoaDon);
+
+        return newHD1;
+    }
+
+    @PutMapping("update-client-payment/{id}")
+    public HoaDon updateClientThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+            hoaDon.setTenKh(newHD.getTenKh());
+            hoaDon.setSdtKh(newHD.getSdtKh());
+            hoaDon.setDiaChi(newHD.getDiaChi());
+            hoaDon.setNgayTao(currentTimestamp);
+            hoaDon.setTrangThai(0);
+            return hoadonSevice.update(hoaDon);
+        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+        //Add to history bill
+        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+        lichSuHoaDon.setIdHd(newHD1);
+        lichSuHoaDon.setIdTk(newHD1.getIdTK());
+        lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+        lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
         lichSuHoaDon.setNgayThayDoi(currentTimestamp);
         lichSuHoaDonService.add(lichSuHoaDon);
 
@@ -259,7 +279,7 @@ public class HoaDonController {
             BigDecimal tienMat = getTongTien.subtract(realPrice);
             //Add to updatePaymentOnline
             HoaDon hoaDonDTO1 = new HoaDon();
-            hoaDonDTO1.setNgayThanhToan(LocalDate.now());
+            hoaDonDTO1.setNgayThanhToan(currentTimestamp);
             hoaDonDTO1.setTienDua(realPrice);
             int setTrangThai;
             if (getOne.getTrangThai() <= 3) {
@@ -333,7 +353,7 @@ public class HoaDonController {
         }
     }
 
-    @GetMapping("view-bill-idkh/{idKH}")
+    @GetMapping("/view-bill-idkh/{idKH}")
     public ResponseEntity<?> viewAllHDByIDKH(@PathVariable("idKH") Integer idKH) {
         return ResponseEntity.ok(hoadonSevice.findAllByIDKH(idKH));
     }

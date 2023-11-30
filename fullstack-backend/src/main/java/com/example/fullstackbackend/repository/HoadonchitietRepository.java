@@ -41,4 +41,5 @@ public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, In
             "WHERE ct.trang_thai = 0 AND hd.id_hd = ?1")
     List<Object[]> getListProductOncart(Integer idHd);
 
+    List<HoaDonChiTiet> findByIdHd_IdKH_IdTaiKhoan(Integer idTK);
 }

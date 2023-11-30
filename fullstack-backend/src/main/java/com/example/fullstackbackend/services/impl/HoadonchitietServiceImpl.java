@@ -39,6 +39,11 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     @Override
+    public List<HoaDonChiTiet> getListProductByIDKH(Integer idKH) {
+        return hoadonchitietRepository.findByIdHd_IdKH_IdTaiKhoan(idKH);
+    }
+
+    @Override
     public HoaDonChiTiet add(HoaDonChiTiet add) {
         if (add.getTrangThai() < 8) {
             addLS(add, 1);

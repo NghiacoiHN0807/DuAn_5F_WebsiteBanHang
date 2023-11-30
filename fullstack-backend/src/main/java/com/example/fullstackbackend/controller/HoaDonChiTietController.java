@@ -30,6 +30,11 @@ public class HoaDonChiTietController {
         return hoadonchitietSevice.chatlieuPage();
     }
 
+    @GetMapping("view-allProduct/{idKH}")
+    public List<HoaDonChiTiet> getListProductByIDKH(@PathVariable("idKH") Integer idKH) {
+        return hoadonchitietSevice.getListProductByIDKH(idKH);
+    }
+
     @PostMapping("add")
     public HoaDonChiTiet add(@Valid @RequestBody HoaDonChiTiet newHD,
                              BindingResult bindingResult) {
