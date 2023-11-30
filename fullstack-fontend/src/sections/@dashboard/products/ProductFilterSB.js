@@ -21,7 +21,7 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 // components
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
-import { ColorMultiPicker } from '../../../components/color-utils';
+// import { ColorMultiPicker } from '../../../components/color-utils';
 
 import { fetchLSP } from '../../../service/LoaiSPService';
 import { fetchCL } from '../../../service/ChatLieuService';
@@ -131,6 +131,8 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
     setListLocCoAo([]);
     setListLocMS([]);
     setListLocSize([]);
+    setLocLsp('all');
+    setLocGia('all');
     onFilter(listSP);
   };
 
@@ -149,6 +151,16 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
     );
   };
 
+  // loc radio
+  const [locLsp, setLocLsp] = useState('all');
+  const [locGia, setLocGia] = useState('all');
+  const khoangGia = [
+    { value: 'all', label: 'Tất cả' },
+    { value: '0-249999', label: 'Dưới 250.000đ' },
+    { value: '250000-750000', label: 'Từ 250.000đ đến 750.000đ' },
+    { value: '750001+', label: 'Trên 750.000đ' },
+  ];
+
   const listLoc = useMemo(() => {
     if (
       listLocCL.length === 0 &&
@@ -156,11 +168,32 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
       listLocTayAo.length === 0 &&
       listLocCoAo.length === 0 &&
       listLocMS.length === 0 &&
-      listLocSize.length === 0
+      listLocSize.length === 0 &&
+      locLsp === 'all' &&
+      locGia === 'all'
     ) {
       return listSP;
     }
+    const parsePriceRange = (range) => {
+      if (range.includes('+')) {
+        const min = parseInt(range, 10);
+        return { min };
+      }
 
+      const [min, max] = range.split('-').map(Number);
+      return { min, max };
+    };
+
+    const isInPriceRange = (product, range) => {
+      if (range === 'all') {
+        return true;
+      }
+      const { min, max } = parsePriceRange(range);
+      if (range.includes('+')) {
+        return product.giaThucTe >= min || product.giaMax >= min;
+      }
+      return (product.giaThucTe >= min && product.giaThucTe <= max) || (product.giaMax >= min && product.giaMax <= max);
+    };
     return listSP.filter((product) => {
       const chatLieuMatched = listLocCL.length === 0 || listLocCL.some((check) => product.chatLieus.includes(check));
 
@@ -174,9 +207,22 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
 
       const sizeMatched = listLocSize.length === 0 || listLocSize.some((check) => product.sizes.includes(check));
 
-      return chatLieuMatched && xuatXuMatched && tayAoMatched && coAoMatched && mauSacMatched && sizeMatched;
+      const loaiSpMatched = locLsp === 'all' || product.loaiSPs.includes(locLsp);
+
+      const giaMatched = locGia === 'all' || isInPriceRange(product, locGia);
+
+      return (
+        chatLieuMatched &&
+        xuatXuMatched &&
+        tayAoMatched &&
+        coAoMatched &&
+        mauSacMatched &&
+        sizeMatched &&
+        loaiSpMatched &&
+        giaMatched
+      );
     });
-  }, [listSP, listLocCL, listLocXX, listLocTayAo, listLocCoAo, listLocMS, listLocSize]);
+  }, [listLocCL, listLocXX, listLocTayAo, listLocCoAo, listLocMS, listLocSize, locLsp, locGia, listSP]);
 
   return (
     <>
@@ -212,9 +258,22 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
               {listLSP.length > 0 && (
                 <FormControl>
                   <RadioGroup aria-labelledby="demo-radio-buttons-group-label" name="radio-buttons-group">
-                    <FormControlLabel value={'all'} control={<Radio defaultChecked />} label="Tất cả" />
+                    <FormControlLabel
+                      value={'all'}
+                      control={<Radio defaultChecked />}
+                      label="Tất cả"
+                      checked={locLsp === 'all'}
+                      onChange={() => setLocLsp('all')}
+                    />
                     {listLSP.map((item, index) => (
-                      <FormControlLabel key={index} value={item.idLoaisp} control={<Radio />} label={item.tenLsp} />
+                      <FormControlLabel
+                        key={index}
+                        value={item.idLoaisp}
+                        control={<Radio />}
+                        label={item.tenLsp}
+                        checked={locLsp === item.idLoaisp}
+                        onChange={() => setLocLsp(item.idLoaisp)}
+                      />
                     ))}
                   </RadioGroup>
                 </FormControl>
@@ -365,16 +424,24 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
               <Typography variant="subtitle1" gutterBottom>
                 Giá
               </Typography>
-              <RadioGroup
-                aria-labelledby="demo-radio-buttons-group-label"
-                name="radio-buttons-group"
-                defaultValue="all"
-              >
-                <FormControlLabel value="all" control={<Radio defaultChecked />} label="Tất cả" />
-                <FormControlLabel value="below" control={<Radio />} label="Dưới 250.000đ" />
-                <FormControlLabel value="between" control={<Radio />} label="Từ 250.000đ - 750.000đ" />
-                <FormControlLabel value="above" control={<Radio />} label="Trên 750.000đ" />
-              </RadioGroup>
+              {khoangGia.length > 0 && (
+                <RadioGroup
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  name="radio-buttons-group"
+                  defaultValue="all"
+                >
+                  {khoangGia.map((item, index) => (
+                    <FormControlLabel
+                      key={index}
+                      value={item.value}
+                      control={<Radio />}
+                      label={item.label}
+                      checked={locGia === item.value}
+                      onChange={() => setLocGia(item.value)}
+                    />
+                  ))}
+                </RadioGroup>
+              )}
             </div>
           </Stack>
         </Scrollbar>
