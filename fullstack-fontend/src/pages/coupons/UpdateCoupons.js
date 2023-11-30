@@ -2,21 +2,22 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // import {toast} from "react-toastify";
 import { Helmet } from "react-helmet-async";
-import { Box, Button, Container, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, Container, InputAdornment, Stack, TextField, Typography } from "@mui/material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { vi } from 'date-fns/locale'; // Import locale cho tiếng Việt
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
-import { add, detail, update } from "../../service/CouponsService";
+import { detail, update } from "../../service/CouponsService";
 import Iconify from "../../components/iconify";
 import { useAlert } from "../../layouts/dashboard/AlertContext";
 
 const UpdateCoupons = () => {
-    const todayAtNoon = dayjs().set('hour', 12).startOf('hour');
-    const todayAt9AM = dayjs().set('hour', 9).startOf('hour');
+    const todayAtNoon = dayjs();
+    const todayAt9AM = dayjs();
     const [ngayKetThuc, setNgayKetThuc] = useState(dayjs().set('hour', 12).startOf('hour'));
+    const [ngayBatDau, setNgayBatDau] = useState(dayjs().set('hour', 12).startOf('hour'));
     const [randomCode, setRandomCode] = useState("");
     const { id } = useParams();
 
@@ -31,6 +32,7 @@ const UpdateCoupons = () => {
         code: '',
         moTa: '',
         thoiGianKetThuc: '',
+        thoiGianTao: '',
         soLuong: '',
         phanTram: '',
         tienToiThieu: ''
@@ -46,12 +48,15 @@ const UpdateCoupons = () => {
 
         const selectedDatekt = dayjs(ngayKetThuc);
         const ngaykt = selectedDatekt.format('YYYY-MM-DDTHH:mm:ss', { locale: vi });
+        const selectedDateBd = dayjs(ngayBatDau);
+        const ngayBd = selectedDateBd.format('YYYY-MM-DDTHH:mm:ss', { locale: vi });
 
         const couponAdd = {
             tenChuongTrinh: coupon.tenChuongTrinh,
             code: coupon.code,
             moTa: coupon.moTa,
             thoiGianKetThuc: ngaykt,
+            thoiGianTao: ngayBd,
             soLuong: coupon.soLuong,
             phanTram: coupon.phanTram,
             tienToiThieu: coupon.tienToiThieu
@@ -139,6 +144,8 @@ const UpdateCoupons = () => {
 
                 >
                     <TextField
+                        error={!!validationErrors.tenChuongTrinh}
+                        helperText={validationErrors.tenChuongTrinh}
                         fullWidth
                         margin={"dense"}
                         label="Tên Chương Trình"
@@ -146,25 +153,29 @@ const UpdateCoupons = () => {
                         value={coupon.tenChuongTrinh}
                         onChange={(e) => onInputChange(e)}
                     />
-                    <div className="w-100 d-flex align-items-center">
-                        <TextField
-                            error={!!validationErrors.ten}
-                            helperText={validationErrors.ten}
-                            fullWidth
-                            margin="dense"
-                            label="Code"
-                            name="code"
-                            value={coupon.code}
-                            disabled
-                            onChange={(e) => onInputChange(e)}
-                        />
-                        <Button size="small" onClick={() => refreshInput()} style={{ marginLeft: '8px' }}>
-                            <RefreshIcon data-testid="RefreshIcon" />
-                        </Button>
-                    </div>
                     <TextField
-                        error={!!validationErrors.sdt}
-                        helperText={validationErrors.sdt}
+                        error={!!validationErrors.code}
+                        helperText={validationErrors.code}
+                        fullWidth
+                        margin="dense"
+                        label="Code"
+                        name="code"
+                        value={coupon.code}
+                        disabled
+                        onChange={(e) => onInputChange(e)}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <Button size="small" onClick={() => refreshInput()}>
+                                        <RefreshIcon data-testid="RefreshIcon" />
+                                    </Button>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
+                    <TextField
+                        error={!!validationErrors.soLuong}
+                        helperText={validationErrors.soLuong}
                         fullWidth
                         margin={"dense"}
                         label="Số Lượng"
@@ -172,6 +183,39 @@ const UpdateCoupons = () => {
                         value={coupon.soLuong}
                         onChange={(e) => onInputChange(e)}
                     />
+
+                    <div className="mb-3 text-center mt-3">
+                        <p className="form-label">Ngày bắt đầu</p>
+                        <LocalizationProvider dateAdapter={AdapterDayjs} fullWidth>
+                            <DemoContainer components={['DateTimePicker']}>
+                                <DemoItem>
+                                    <DateTimePicker
+                                        defaultValue={todayAtNoon}
+                                        minDateTime={todayAt9AM}
+                                        name='thoiGianTao'
+                                        value={dayjs(coupon.thoiGianTao)}
+                                        onChange={(newDate) => setNgayBatDau(newDate)}
+                                        renderInput={(props) => (
+                                            <TextField
+                                                fullWidth
+                                                margin="dense"
+                                                label="Thời Gian bắt đầu"
+                                                {...props}
+                                                sx={{
+                                                    '& .MuiInputLabel-root': {
+                                                        fontSize: '0.875rem !important',
+                                                    },
+                                                    '& .MuiInputBase-root': {
+                                                        fontSize: '0.875rem !important',
+                                                    },
+                                                }}
+                                            />
+                                        )}
+                                    />
+                                </DemoItem>
+                            </DemoContainer>
+                        </LocalizationProvider>
+                    </div>
 
                     <div className="mb-3 text-center mt-3">
                         <p className="form-label">Ngày kết thúc</p>
@@ -207,8 +251,8 @@ const UpdateCoupons = () => {
                     </div>
 
                     <TextField
-                        error={!!validationErrors.sdt}
-                        helperText={validationErrors.sdt}
+                        error={!!validationErrors.phanTram}
+                        helperText={validationErrors.phanTram}
                         fullWidth
                         margin={"dense"}
                         label="Phần Trăm Giảm"
@@ -218,8 +262,8 @@ const UpdateCoupons = () => {
                     />
 
                     <TextField
-                        error={!!validationErrors.sdt}
-                        helperText={validationErrors.sdt}
+                        error={!!validationErrors.tienToiThieu}
+                        helperText={validationErrors.tienToiThieu}
                         fullWidth
                         margin={"dense"}
                         label="Số tiền tối thiểu"
@@ -228,8 +272,8 @@ const UpdateCoupons = () => {
                         onChange={(e) => onInputChange(e)}
                     />
                     <TextField
-                        error={!!validationErrors.email}
-                        helperText={validationErrors.email}
+                        error={!!validationErrors.moTa}
+                        helperText={validationErrors.moTa}
                         multiline
                         rows={4}
                         fullWidth
@@ -246,7 +290,7 @@ const UpdateCoupons = () => {
                         onClick={() => handleSave()}
                         style={{ marginTop: "20px" }} // Make button wider
                     >
-                        Thêm Coupon Mới
+                        Update Coupon
                     </Button>
                 </Box>
 
