@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -273,16 +274,16 @@ public class HoaDonController {
 
         if (paymentStatus == 1) {
             //Detail HD by IdHd
-            HoaDon getOne = hoadonSevice.detail(idHd).orElseThrow();
-            BigDecimal getTongTien = getOne.getTongTien();
+            Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
+            BigDecimal getTongTien = getOne.get().getTongTien();
 
             BigDecimal tienMat = getTongTien.subtract(realPrice);
             //Add to updatePaymentOnline
             HoaDon hoaDonDTO1 = new HoaDon();
-            hoaDonDTO1.setNgayThanhToan(currentTimestamp);
+            hoaDonDTO1.setNgayThanhToan(LocalDate.now());
             hoaDonDTO1.setTienDua(realPrice);
             int setTrangThai;
-            if (getOne.getTrangThai() <= 3) {
+            if (getOne.get().getTrangThai() == 3) {
                 setTrangThai = 4;
             } else {
                 setTrangThai = 9;

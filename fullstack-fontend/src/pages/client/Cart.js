@@ -180,7 +180,7 @@ export default function Cart() {
       });
     } else {
       console.log('authorities: ', authorities);
-      const res = await postAddBillAddBill(authorities, 2, 0);
+      const res = await postAddBillAddBill(authorities, totalPayment, 2, 11);
       for (let i = 0; i < selectedItems.length; i += 1) {
         (async () => {
           await postAddDirectClient(res.idHd, selectedItems[i]);

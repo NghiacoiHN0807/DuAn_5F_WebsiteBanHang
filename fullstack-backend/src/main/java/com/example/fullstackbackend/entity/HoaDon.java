@@ -16,6 +16,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Entity
 @AllArgsConstructor
@@ -44,7 +45,7 @@ public class HoaDon {
     private Timestamp ngayTao;
 
     @Column(name = "ngay_thanh_toan")
-    private Timestamp ngayThanhToan;
+    private LocalDate ngayThanhToan;
 
     @Column(name = "so_tien_giam_gia")
     private BigDecimal soTienGiamGia;

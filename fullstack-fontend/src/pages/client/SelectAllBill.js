@@ -13,7 +13,7 @@ import UpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { green } from '@mui/material/colors';
 import Box from '@mui/material/Box';
 import { Fragment, useCallback, useEffect, useState } from 'react';
-import { Button, Container, Grid } from '@mui/material';
+import { Button, Container, Grid, Paper } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 
 // Service
@@ -77,10 +77,12 @@ export default function SelectAllBillOfClient() {
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
+    console.log('newValue: ', newValue);
     setValue(newValue);
   };
 
   const handleChangeIndex = (index) => {
+    console.log('Hihi: ', index);
     setValue(index);
   };
 
@@ -160,16 +162,33 @@ export default function SelectAllBillOfClient() {
       });
 
       if (mergedData) {
-        setProductOnCart(mergedData);
-        console.log('res1111: ', res);
-        console.log('imgDataArray: ', imgDataArray);
-        console.log('combinedData: ', combinedData);
-        console.log('mergedData: ', mergedData);
+        const filterDataByStatus = (status) => {
+          const filteredData = mergedData.filter((item) => item.idHd.trangThai === status);
+          console.log('filteredData: ', filteredData);
+          return filteredData;
+        };
+        if (value === 0) {
+          setProductOnCart(mergedData);
+        } else if (value === 1) {
+          setProductOnCart(filterDataByStatus(0));
+        } else if (value === 2) {
+          setProductOnCart(filterDataByStatus(1));
+        } else if (value === 3) {
+          setProductOnCart(filterDataByStatus(2));
+        } else if (value === 4) {
+          setProductOnCart(filterDataByStatus(3));
+        } else if (value === 5) {
+          setProductOnCart(filterDataByStatus(4));
+        } else if (value === 6) {
+          setProductOnCart(filterDataByStatus(10));
+        } else if (value === 7) {
+          setProductOnCart(filterDataByStatus(6));
+        }
       }
     } catch (error) {
       console.error(error);
     }
-  }, [idParam]);
+  }, [idParam, value]);
 
   useEffect(() => {
     SelectAllBill();
@@ -181,6 +200,93 @@ export default function SelectAllBillOfClient() {
     console.log(idHd.idHd);
     navigate(`/client/client-timeline/${idHd.idHd}`);
   };
+  // Select renderTabPanel
+  const renderTabPanel = (indexTab) => (
+    <TabPanel value={value} index={indexTab} dir={theme.direction}>
+      <Grid container spacing={3}>
+        {productOnCart && productOnCart.length > 0 ? (
+          productOnCart.map((item, index) => {
+            const { idHd, hdct } = item || {};
+            const maHd = idHd?.maHd || '';
+
+            return (
+              <Fragment key={index}>
+                <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Mã Hóa Đơn: {maHd}
+                  </Typography>
+                </Grid>
+                {hdct.map((ctsp, ctspIndex) => {
+                  const { idCtsp, soLuong } = ctsp || {};
+                  const tenSp = idCtsp?.idSp?.tenSp || '';
+                  const tenMs = idCtsp?.idMs?.tenMs || '';
+                  const tenSize = idCtsp?.idSize?.tenSize || '';
+                  const imageUrl = idCtsp?.url || '';
+
+                  return (
+                    <Grid
+                      key={ctspIndex}
+                      container
+                      item
+                      xs={12}
+                      md={6}
+                      lg={12}
+                      sx={{ marginTop: 1, backgroundColor: 'white', alignItems: 'center' }}
+                    >
+                      <StyledProductImg
+                        sx={{
+                          position: 'relative',
+                          width: '140px',
+                          height: '180px',
+                          marginLeft: '14px',
+                        }}
+                        alt={imageUrl}
+                        src={imageUrl}
+                      />
+                      <div style={{ marginLeft: '16px' }}>
+                        <Typography variant="body1" gutterBottom>
+                          Tên Sản Phẩm: {tenSp}
+                        </Typography>
+                        <Typography variant="body2" gutterBottom>
+                          Phân Loại: {tenMs} {tenSize}
+                        </Typography>
+                        <Typography variant="body2" gutterBottom>
+                          Số Lượng: {soLuong}
+                        </Typography>
+                      </div>
+                    </Grid>
+                  );
+                })}
+                <Grid item xs={12} md={6} lg={12} sx={{ textAlign: 'right', marginTop: 1, backgroundColor: 'white' }}>
+                  <Button onClick={() => handleClick(idHd)} variant="contained" color="success">
+                    Chi Tiết
+                  </Button>
+                </Grid>
+              </Fragment>
+            );
+          })
+        ) : (
+          <Paper
+            sx={{
+              textAlign: 'center',
+            }}
+          >
+            <Typography variant="h6" paragraph>
+              Data is entry
+            </Typography>
+
+            <Typography variant="body2">
+              No results found for &nbsp;
+              <br /> Try checking for typos or using complete words.
+            </Typography>
+          </Paper>
+        )}
+      </Grid>
+    </TabPanel>
+  );
+
+  // Sử dụng renderTabPanel trong return của component
+  // Ví dụ: renderTabPanel(0), renderTabPanel(1),...
 
   return (
     <Container>
@@ -206,9 +312,9 @@ export default function SelectAllBillOfClient() {
             <Tab label="Tất Cả" {...a11yProps(0)} />
             <Tab label="Chờ Xác Nhận Đơn" {...a11yProps(1)} />
             <Tab label="Chờ Xác Nhận Thông Tin" {...a11yProps(2)} />
-            <Tab label="Đã Chuyển Cho Đơn Vị" {...a11yProps(2)} />
-            <Tab label="Xác Nhận Thanh Toán" {...a11yProps(2)} />
-            <Tab label="Đã Giao Thành Công" {...a11yProps(2)} />
+            <Tab label="Đã Chuyển Cho Đơn Vị" {...a11yProps(3)} />
+            <Tab label="Xác Nhận Thanh Toán" {...a11yProps(4)} />
+            <Tab label="Đã Giao Thành Công" {...a11yProps(3)} />
             <Tab label="Đơn hàng đã hủy" {...a11yProps(2)} />
             <Tab label="Đổi/Trả Hàng" {...a11yProps(1)} />
           </Tabs>
@@ -218,10 +324,17 @@ export default function SelectAllBillOfClient() {
           index={value}
           onChangeIndex={handleChangeIndex}
         >
-          <TabPanel value={value} index={0} dir={theme.direction}>
+          {renderTabPanel(0)}
+          {renderTabPanel(1)}
+          {renderTabPanel(2)}
+          {renderTabPanel(3)}
+          {renderTabPanel(4)}
+          {renderTabPanel(5)}
+          {renderTabPanel(6)}
+          {renderTabPanel(7)}
+          {/* <TabPanel value={value} index={2} dir={theme.direction}>
             <Grid container spacing={3}>
-              {productOnCart &&
-                productOnCart.length > 0 &&
+              {productOnCart && productOnCart.length > 0 ? (
                 productOnCart.map((item, index) => {
                   const { idHd, hdct } = item || {};
                   const maHd = idHd?.maHd || '';
@@ -287,15 +400,86 @@ export default function SelectAllBillOfClient() {
                       </Grid>
                     </Fragment>
                   );
-                })}
+                })
+              ) : (
+                <Typography variant="subtitle2">Không có dữ liệu</Typography>
+              )}
             </Grid>
           </TabPanel>
-          <TabPanel value={value} index={1} dir={theme.direction}>
-            Item Two
-          </TabPanel>
-          <TabPanel value={value} index={2} dir={theme.direction}>
-            Item Three
-          </TabPanel>
+          <TabPanel value={value} index={3} dir={theme.direction}>
+            <Grid container spacing={3}>
+              {productOnCart && productOnCart.length > 0 ? (
+                productOnCart.map((item, index) => {
+                  const { idHd, hdct } = item || {};
+                  const maHd = idHd?.maHd || '';
+
+                  return (
+                    <Fragment key={index}>
+                      <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
+                        <Typography variant="subtitle2" gutterBottom>
+                          Mã Hóa Đơn: {maHd}
+                        </Typography>
+                      </Grid>
+                      {hdct.map((ctsp, ctspIndex) => {
+                        const { idCtsp, soLuong } = ctsp || {};
+                        const tenSp = idCtsp?.idSp?.tenSp || '';
+                        const tenMs = idCtsp?.idMs?.tenMs || '';
+                        const tenSize = idCtsp?.idSize?.tenSize || '';
+                        const imageUrl = idCtsp?.url || '';
+
+                        return (
+                          <Grid
+                            key={ctspIndex}
+                            container
+                            item
+                            xs={12}
+                            md={6}
+                            lg={12}
+                            sx={{ marginTop: 1, backgroundColor: 'white', alignItems: 'center' }}
+                          >
+                            <StyledProductImg
+                              sx={{
+                                position: 'relative',
+                                width: '140px',
+                                height: '180px',
+                                marginLeft: '14px',
+                              }}
+                              alt={imageUrl}
+                              src={imageUrl}
+                            />
+                            <div style={{ marginLeft: '16px' }}>
+                              <Typography variant="body1" gutterBottom>
+                                Tên Sản Phẩm: {tenSp}
+                              </Typography>
+                              <Typography variant="body2" gutterBottom>
+                                Phân Loại: {tenMs} {tenSize}
+                              </Typography>
+                              <Typography variant="body2" gutterBottom>
+                                Số Lượng: {soLuong}
+                              </Typography>
+                            </div>
+                          </Grid>
+                        );
+                      })}
+                      <Grid
+                        item
+                        xs={12}
+                        md={6}
+                        lg={12}
+                        sx={{ textAlign: 'right', marginTop: 1, backgroundColor: 'white' }}
+                      >
+                        <Button onClick={() => handleClick(idHd)} variant="contained" color="success">
+                          Chi Tiết
+                        </Button>
+                      </Grid>
+                    </Fragment>
+                  );
+                })
+              ) : (
+                <Typography variant="subtitle2">Không có dữ liệu</Typography>
+              )}
+            </Grid>
+          </TabPanel> */}
         </SwipeableViews>
         {fabs.map((fab, index) => (
           <Zoom

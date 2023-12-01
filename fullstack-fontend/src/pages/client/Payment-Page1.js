@@ -230,7 +230,7 @@ export default function PaymentPage1() {
 
   // handle payment online
   const handlePaymentOnline = async () => {
-    const paymentOn = await paymentOnline(thanhTien, listHD.idHd);
+    const paymentOn = await paymentOnline(thanhTien, idHdParam);
     console.log('Check paymentOn: ', paymentOn);
     window.location.href = paymentOn;
 
