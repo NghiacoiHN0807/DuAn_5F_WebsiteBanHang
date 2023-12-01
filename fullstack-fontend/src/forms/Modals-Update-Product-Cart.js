@@ -18,9 +18,15 @@ const ModalUpdateProductOnCart = (props) => {
   ModalUpdateProductOnCart.propTypes = {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
+<<<<<<< HEAD
     itemUpdateClassify: PropTypes.array.isRequired,
     selectDataCart: PropTypes.func.isRequired,
     itemUpdate: PropTypes.array.isRequired,
+=======
+    itemUpdateClassify: PropTypes.object.isRequired,
+    selectDataCart: PropTypes.func.isRequired,
+    itemUpdate: PropTypes.object.isRequired,
+>>>>>>> origin/nghiant0807
   };
   const { show, handleClose, itemUpdateClassify, selectDataCart, itemUpdate } = props;
 

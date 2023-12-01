@@ -1,7 +1,9 @@
 import { Navigate, useRoutes } from 'react-router-dom';
+
 // layouts
 import DashboardLayout from './layouts/dashboard';
 import SimpleLayout from './layouts/simple';
+
 //
 import UserPage from './pages/UserPage';
 import LoginPage from './pages/LoginPage';
@@ -23,7 +25,7 @@ import UserStaff from './pages/Staff/Modal-User-Staff';
 import AddTKNV from './pages/Staff/Modal-Add-Staff';
 import UpdateTkNV from './pages/Staff/Modal-Update-Staff';
 import Contact from './pages/client/Contact';
-import PaymentPage from './pages/client/Payment-Page';
+import PaymentPage1 from './pages/client/Payment-Page1';
 
 // san pham
 import ProductMain from './pages/SanPham/SanPhamMain';
@@ -38,9 +40,14 @@ import AddressByClient from './pages/diaChi/AddressByClient';
 import AddAddress from './pages/diaChi/AddAddress';
 import UpdateAddress from './pages/diaChi/UpdateAddress';
 import SignUp from './pages/client/SignUp';
+<<<<<<< HEAD
 import AddCoupons from './pages/coupons/AddCoupons';
 import CouponsPage from './pages/coupons/CouponsPage';
 import UpdateCoupons from './pages/coupons/UpdateCoupons';
+=======
+import OrderClientTimeline from './pages/client/OrderClient-Timeline';
+import SelectAllBillOfClient from './pages/client/SelectAllBill';
+>>>>>>> origin/nghiant0807
 
 // ----------------------------------------------------------------------
 
@@ -90,9 +97,12 @@ export default function Router() {
               { path: 'home', element: <Home /> },
               { path: 'detail/:id', element: <DetailProduct /> },
               { path: 'cart', element: <Cart /> },
-              { path: 'payment/:id', element: <PaymentPage /> },
+              { path: 'payment/:id', element: <PaymentPage1 /> },
               { path: 'contact', element: <Contact /> },
               { path: 'products', element: <ProductsPage /> },
+              { path: 'client-timeline/:id', element: <OrderClientTimeline /> },
+              { path: 'select-bill-client/:idKH', element: <SelectAllBillOfClient /> },
+              // { path: 'select-bill-client', element: <SelectAllBillOfClient /> },
             ],
     },
     {
