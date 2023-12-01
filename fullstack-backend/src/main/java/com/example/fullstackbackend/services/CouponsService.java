@@ -24,4 +24,6 @@ public interface CouponsService {
 
     Optional<Coupons> detailByCode(String code);
 
+    Boolean removeCoupons(Integer idHd);
+
 }

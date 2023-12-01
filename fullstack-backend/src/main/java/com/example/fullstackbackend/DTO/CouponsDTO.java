@@ -1,15 +1,21 @@
 package com.example.fullstackbackend.DTO;
 
-import java.math.BigDecimal;
+import com.example.fullstackbackend.entity.HoaDon;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class CouponsDTO {
+
+    private HoaDon hoaDon;
 
     private String code;
 
-    private String moTa;
-
-    private String maHd;
-
-    private BigDecimal thanhTien;
+    private Integer phanTramGiam;
 
 }

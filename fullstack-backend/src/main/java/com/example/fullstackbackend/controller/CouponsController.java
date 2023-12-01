@@ -123,9 +123,15 @@ public class CouponsController {
                                 "Mã giảm giá đã hết lượt sử dụng!"
                         );
                     } else {
-                        return ResponseEntity.status(HttpStatus.OK).body(
-                                couponsService.addCoupons(idHd, code)
-                        );
+                        if(coupons.get().getTrangThai() == 10) {
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                                    "Mã giảm giá không tồn tại hoặc hết hạn!"
+                            );
+                        } else {
+                            return ResponseEntity.status(HttpStatus.OK).body(
+                                    couponsService.addCoupons(idHd, code)
+                            );
+                        }
                     }
                 } else {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
