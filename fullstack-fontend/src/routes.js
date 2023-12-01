@@ -40,14 +40,11 @@ import AddressByClient from './pages/diaChi/AddressByClient';
 import AddAddress from './pages/diaChi/AddAddress';
 import UpdateAddress from './pages/diaChi/UpdateAddress';
 import SignUp from './pages/client/SignUp';
-<<<<<<< HEAD
 import AddCoupons from './pages/coupons/AddCoupons';
 import CouponsPage from './pages/coupons/CouponsPage';
 import UpdateCoupons from './pages/coupons/UpdateCoupons';
-=======
 import OrderClientTimeline from './pages/client/OrderClient-Timeline';
 import SelectAllBillOfClient from './pages/client/SelectAllBill';
->>>>>>> origin/nghiant0807
 
 // ----------------------------------------------------------------------
 

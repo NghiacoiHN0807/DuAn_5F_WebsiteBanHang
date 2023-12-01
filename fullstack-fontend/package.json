@@ -71,14 +71,6 @@
     "react-hook-form": "^7.43.1",
     "react-icons": "^4.10.1",
     "react-perfect-scrollbar": "^1.5.8",
-<<<<<<< HEAD
-    "react-router-dom": "^6.8.1",
-    "react-scripts": "^5.0.1",
-    "sass": "^1.49.10",
-    "simplebar-react": "^3.2.1",
-    "web-vitals": "^3.1.1",
-    "react-qr-scanner": "^1.0.0-alpha.11"
-=======
     "react-qr-scanner": "^1.0.0-alpha.11",
     "react-router-dom": "^6.8.1",
     "react-scripts": "^5.0.1",
@@ -86,7 +78,6 @@
     "sass": "^1.49.10",
     "simplebar-react": "^3.2.1",
     "web-vitals": "^3.1.1"
->>>>>>> origin/nghiant0807
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
