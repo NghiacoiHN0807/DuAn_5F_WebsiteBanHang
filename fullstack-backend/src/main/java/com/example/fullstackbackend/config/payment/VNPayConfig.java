@@ -1,4 +1,4 @@
-package com.example.fullstackbackend.DTO;
+package com.example.fullstackbackend.config.payment;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;

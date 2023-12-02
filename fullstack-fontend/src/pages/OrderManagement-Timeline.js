@@ -293,6 +293,8 @@ const OrderManagementTimeline = ({ classes }) => {
     setShowModalDelete(false);
     getListData();
   };
+  // Format thanhTien
+  const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
   return (
     <>
       <div className="row-order-management-timeline">
@@ -317,7 +319,7 @@ const OrderManagementTimeline = ({ classes }) => {
             variant="contained"
             color="success"
             onClick={() => handleConfirm()}
-            disabled={activeIndex === 10 || activeIndex === 3 || activeIndex >= 5}
+            disabled={activeIndex === 10 || (activeIndex === 3 && listHTTT.length <= 0) || activeIndex >= 5}
           >
             {activeIndex === 0
               ? 'Xác Nhận Hóa Đơn'
@@ -325,8 +327,10 @@ const OrderManagementTimeline = ({ classes }) => {
               ? 'Xác Nhận Thông Tin'
               : activeIndex === 2
               ? 'Chuyển Cho Đơn Vị'
-              : activeIndex === 3
+              : activeIndex === 3 && listHTTT.length <= 0
               ? 'Xác Nhận Thanh Toán'
+              : activeIndex === 3 && listHTTT.length >= 0
+              ? 'Giao Thành Công'
               : activeIndex === 4
               ? 'Giao Thành Công'
               : activeIndex === 5
@@ -335,7 +339,7 @@ const OrderManagementTimeline = ({ classes }) => {
               ? 'Đơn Đã Hoàn Thành'
               : activeIndex === 10
               ? 'Đơn Hàng Đã Bị Hủy'
-              : 'Đơn Đã Hoàn Thành'}
+              : 'Đơn Đã Hoàn Thành1'}
           </Button>{' '}
           <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 1}>
             Hủy Đơn Hàng
@@ -351,7 +355,7 @@ const OrderManagementTimeline = ({ classes }) => {
             <Typography variant="h6" gutterBottom>
               Thông Tin Khách Hàng{' '}
             </Typography>
-            <Button size="small" variant="outlined">
+            <Button disabled={activeIndex >= 1} size="small" variant="outlined">
               Chỉnh sửa thông tin
             </Button>
           </Stack>
@@ -393,7 +397,7 @@ const OrderManagementTimeline = ({ classes }) => {
               onClick={() => handlePayment()}
               size="small"
               variant="outlined"
-              disabled={activeIndex < 3 || activeIndex > 3}
+              disabled={activeIndex < 3 || activeIndex > 3 || listHTTT.length > 0}
             >
               Xác nhận thanh toán
             </Button>
@@ -420,8 +424,8 @@ const OrderManagementTimeline = ({ classes }) => {
                       <TableCell component="th" scope="row">
                         {item.hinhThuc}
                       </TableCell>
-                      <TableCell align="right">{item.soTien}</TableCell>
-                      <TableCell align="right">{item.idHd.ngayThanhToan}</TableCell>
+                      <TableCell align="right">{formatCurrency(item.soTien)}</TableCell>
+                      <TableCell align="right">{formatDateTime(item.idHd.ngayThanhToan)}</TableCell>
                     </TableRow>
                   ))
                 ) : (
@@ -480,17 +484,27 @@ const OrderManagementTimeline = ({ classes }) => {
                         <TableCell>{item[4]}</TableCell>
                         <TableCell align="right">{item[5]}</TableCell>
                         <TableCell align="right">
-                          <Button onClick={() => handleUpdateClassify(item)} size="small" variant="outlined">
+                          <Button
+                            onClick={() => handleUpdateClassify(item)}
+                            disabled={activeIndex >= 1}
+                            size="small"
+                            variant="outlined"
+                          >
                             Size: {item[6]}
                             <br />
                             Màu: {item[11]}
                           </Button>
                         </TableCell>
-                        <TableCell align="right">{item[7]}</TableCell>
+                        <TableCell align="right">{formatCurrency(item[7])}</TableCell>
                         <TableCell align="right">{item[8]}</TableCell>
-                        <TableCell align="right">{item[9]}</TableCell>
+                        <TableCell align="right">{formatCurrency(item[9])}</TableCell>
                         <TableCell align="right">
-                          <IconButton aria-label="delete" size="large" onClick={() => handleDelete(item)}>
+                          <IconButton
+                            aria-label="delete"
+                            size="large"
+                            disabled={activeIndex >= 1}
+                            onClick={() => handleDelete(item)}
+                          >
                             <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
                           </IconButton>
                         </TableCell>
@@ -511,7 +525,7 @@ const OrderManagementTimeline = ({ classes }) => {
             </Table>{' '}
             {listData.length > 0 && (
               <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
-                Thành Tiền: {listData[0].idHd.thanhTien}
+                Thành Tiền: {formatCurrency(listData[0].idHd.thanhTien)}
               </Typography>
             )}
           </TableContainer>
@@ -528,12 +542,14 @@ const OrderManagementTimeline = ({ classes }) => {
                 tenKhTT={listData[0].idHd.tenKh}
                 sdtKHTT={listData[0].idHd.sdtKh}
               />
-              <ModalDeleteProductOnCart
-                open={showModalsDelete}
-                handleClose={handleCloseModalDelelte}
-                itemDelete={itemDelete}
-                selectDataCart={selectDataCart}
-              />
+              {itemDelete !== undefined && (
+                <ModalDeleteProductOnCart
+                  open={showModalsDelete}
+                  handleClose={handleCloseModalDelelte}
+                  itemDelete={itemDelete}
+                  selectDataCart={selectDataCart}
+                />
+              )}
               <ModalUpdateProductOnCart
                 show={showModalsUpdate}
                 handleClose={handleCloseUpdateClassify}

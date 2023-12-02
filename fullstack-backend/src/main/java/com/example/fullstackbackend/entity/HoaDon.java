@@ -45,7 +45,7 @@ public class HoaDon {
     private Timestamp ngayTao;
 
     @Column(name = "ngay_thanh_toan")
-    private LocalDate ngayThanhToan;
+    private Timestamp ngayThanhToan;
 
     @Column(name = "so_tien_giam_gia")
     private BigDecimal soTienGiamGia;

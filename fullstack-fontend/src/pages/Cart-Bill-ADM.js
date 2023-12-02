@@ -395,8 +395,8 @@ const CartBillADM = () => {
   }, [selectedDistrict, selectedProvince, selectedWard, districts, provinces, wards, diachiCuThe]);
 
   // Show thanhTien
-  const [thanhTien, setThanhTien] = useState();
-  const [tongTien, setTongTien] = useState();
+  const [thanhTien, setThanhTien] = useState(0);
+  const [tongTien, setTongTien] = useState(0);
 
   useEffect(() => {
     const calculateTotalPrice = async () => {
@@ -463,6 +463,8 @@ const CartBillADM = () => {
     }
     setAlertContent(null);
   };
+  // Format thanhTien
+  const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 
   return (
     <>
@@ -826,7 +828,7 @@ const CartBillADM = () => {
                         Tiền Hàng{' '}
                       </Typography>
                       <Typography variant="h6" gutterBottom>
-                        {tongTien}{' '}
+                        {formatCurrency(tongTien)}{' '}
                       </Typography>
                     </Stack>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
@@ -842,7 +844,7 @@ const CartBillADM = () => {
                         Thành Tiền{' '}
                       </Typography>
                       <Typography variant="h6" gutterBottom>
-                        {thanhTien}{' '}
+                        {formatCurrency(thanhTien)}{' '}
                       </Typography>
                     </Stack>
                   </div>
@@ -880,12 +882,14 @@ const CartBillADM = () => {
               itemUpdate={itemUpdate}
             />
             {/* Modal Delete Product  */}
-            <ModalDeleteProductOnCart
-              open={showModalsDelete}
-              handleClose={handleCloseModalDelelte}
-              itemDelete={itemDelete}
-              selectDataCart={selectDataCart}
-            />
+            {itemDelete !== undefined && (
+              <ModalDeleteProductOnCart
+                open={showModalsDelete}
+                handleClose={handleCloseModalDelelte}
+                itemDelete={itemDelete}
+                selectDataCart={selectDataCart}
+              />
+            )}
             {/* Modal Delete Product  */}
             <ModalDeleteAllProductOnCart
               open={showModalsDeleteAll}
