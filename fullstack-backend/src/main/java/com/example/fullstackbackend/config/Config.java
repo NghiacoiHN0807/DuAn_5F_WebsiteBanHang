@@ -1,4 +1,3 @@
-
 package com.example.fullstackbackend.config;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -87,7 +86,7 @@ public class Config {
         }
         return hmacSHA512(vnp_HashSecret,sb.toString());
     }
-    
+
     public static String hmacSHA512(final String key, final String data) {
         try {
 

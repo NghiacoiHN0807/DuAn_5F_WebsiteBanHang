@@ -12,7 +12,6 @@ import {
   IconButton,
   InputLabel,
   MenuItem,
-  Pagination,
   Paper,
   Select,
   Snackbar,
@@ -102,7 +101,6 @@ const CartBillADM = () => {
 
   // Detail Hd
   const [listHD, setlistHD] = useState([]);
-  // const [listHD, setlistHD] = useState([]);
 
   const getDetailHD = useCallback(async () => {
     try {
@@ -156,7 +154,6 @@ const CartBillADM = () => {
         type: 'warning',
         message: 'Đã Tồn Tại 5 Hóa Đơn Chờ. Vui Lòng Thanh Toán!!!',
       });
-      // toast.warn('Đã Tồn Tại 5 Hóa Đơn Chờ. Vui Lòng Thanh Toán!!!');
     } else {
       const res = await postAddBill(1, 8);
       getListData();
@@ -164,8 +161,6 @@ const CartBillADM = () => {
         type: 'success',
         message: 'Tạo thành công hóa đơn',
       });
-
-      // toast.success('');
 
       // Update the tabs state to include the new tab
       const nextTabNumber = tabs.length + 1;
@@ -204,19 +199,16 @@ const CartBillADM = () => {
   // const [numberPages, setNumberPages] = useState(0);
   // const [currentPage, setCurrentPage] = useState(0);
 
-  const selectDataCart = useCallback(
-    async (page) => {
-      try {
-        const res = await finByProductOnCart(page, idHdParam);
-        if (res) {
-          setDataCart(res);
-        }
-      } catch (error) {
-        console.error(error);
+  const selectDataCart = useCallback(async () => {
+    try {
+      const res = await finByProductOnCart(idHdParam);
+      if (res) {
+        setDataCart(res);
       }
-    },
-    [idHdParam]
-  );
+    } catch (error) {
+      console.error(error);
+    }
+  }, [idHdParam]);
   useEffect(() => {
     selectDataCart();
   }, [selectDataCart]);
@@ -417,11 +409,11 @@ const CartBillADM = () => {
       const totalShip = tienShip === 0 && listHD && listHD.tienShip ? listHD.tienShip : tienShip;
       // Set Thanh Tien
       setThanhTien(total + totalShip);
-      await updateTongTien(idHdParam, total, totalShip);
+      await updateTongTien(idHdParam, total, totalShip, thanhTien);
     };
 
     calculateTotalPrice();
-  }, [DataCart, idHdParam, tienShip, listHD]);
+  }, [DataCart, idHdParam, tienShip, listHD, thanhTien]);
 
   // Modal add KH
   const [showModalsKH, setShowModalKH] = useState(false);

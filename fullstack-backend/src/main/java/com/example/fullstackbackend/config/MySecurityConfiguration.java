@@ -48,7 +48,7 @@ public class MySecurityConfiguration {
     @Primary
     @Bean
     protected AuthenticationManagerBuilder configureAuth(AuthenticationManagerBuilder auth) throws Exception {
-        System.out.println("auth: " + auth);
+        System.out.println("auth: " + auth.getDefaultUserDetailsService());
         auth.userDetailsService(userService) // Provide userservice for spring security
                 .passwordEncoder(passwordEncoder()); // Provide password encoder
         return auth;
@@ -58,6 +58,7 @@ public class MySecurityConfiguration {
     protected SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
         System.out.println("http: " + http);
         return http.authorizeHttpRequests(
+<<<<<<< HEAD
 
                 req ->
                         req.requestMatchers("/", "/anh/**", "/gio-hang-chi-tiet/**", "/add", "/api/**", "/san-pham/**", "chi-tiet-san-pham/**", "/hoa-don/**", "/hoa-don-chi-tiet/**", "/tai-khoan-khach-hang/**", "/chat-lieu/**", "/loai-sp/**", "/xuat-xu/**", "/loai-co-ao/**", "/ong-tay-ao/**", "/mau-sac/**", "/size/**").permitAll()
@@ -65,6 +66,17 @@ public class MySecurityConfiguration {
                                 .requestMatchers("/giam-gia/**", "/giam-gia-chi-tiet/**").hasAnyRole("ADMIN", "STAFF")
                                 .requestMatchers("/tai-khoan-khach-hang/**", "/hoa-don/**", "/hoa-don-chi-tiet/**", "/gio-hang-chi-tiet/**", "/gio-hang/**", "/payment-online/**", "/hinh-thuc-thanh-toan/**", "/lich-su-hoa-don/**").hasAnyRole("ADMIN", "STAFF", "CUSTOMER")
                                 .anyRequest().authenticated())
+=======
+                        req ->
+                                req.requestMatchers("/", "/anh/**", "/add", "/api/**", "/san-pham/**", "chi-tiet-san-pham/**", "/chat-lieu/**", "/loai-sp/**", "/xuat-xu/**", "/loai-co-ao/**", "/ong-tay-ao/**", "/mau-sac/**", "/size/**").permitAll()
+                                        .requestMatchers("/tai-khoan/**").hasRole("ADMIN")
+                                        .requestMatchers("/giam-gia/**", "/giam-gia-chi-tiet/**").hasAnyRole("ADMIN", "STAFF")
+                                        .requestMatchers("/tai-khoan-khach-hang/**", "/hoa-don/**", "/hoa-don-chi-tiet/**", "/gio-hang-chi-tiet/**", "/gio-hang/**").hasAnyRole("ADMIN", "STAFF", "CUSTOMER")
+                                        .anyRequest().authenticated())
+//                .oauth2Login(oath2 -> {
+//                    oath2.successHandler(oAuth2LoginSuccessHandler);
+//                })
+>>>>>>> 114b0a9ab04d94b0bba4348cbdb8ca920eebdb30
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable())
                 .cors(a -> a.configure(http))

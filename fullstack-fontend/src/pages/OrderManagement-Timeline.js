@@ -11,16 +11,17 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {
-  FaBackward,
-  FaCogs,
-  FaPaperPlane,
-  FaRegCalendarCheck,
-  FaRegCheckCircle,
-  FaRegFileAlt,
-  FaMoneyBillWave,
-  FaBug,
-  FaQuestionCircle,
-} from 'react-icons/fa';
+  FcAssistant,
+  FcShipped,
+  FcSurvey,
+  FcHome,
+  FcProcess,
+  FcPrint,
+  FcTodoList,
+  FcSalesPerformance,
+  FcDeleteDatabase,
+  FcCancel,
+} from 'react-icons/fc';
 import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
@@ -59,7 +60,11 @@ const OrderManagementTimeline = ({ classes }) => {
   const getListData = useCallback(async () => {
     try {
       const res = await getDetailOneHD(idHdParam);
+      console.log('res: ', res);
+
       const res1 = await viewAllHTTT(idHdParam);
+      console.log('res1: ', res1);
+
       setListData(res);
       setListHTTT(res1);
       setActiveIndex(res[0].idHd.trangThai);
@@ -73,20 +78,17 @@ const OrderManagementTimeline = ({ classes }) => {
 
   const [DataCart, setDataCart] = useState([]);
 
-  const selectDataCart = useCallback(
-    async (page) => {
-      try {
-        const res = await finByProductOnCart(page, idHdParam);
-        if (res) {
-          console.log('Check DataCart: ', res);
-          setDataCart(res);
-        }
-      } catch (error) {
-        console.error(error);
+  const selectDataCart = useCallback(async () => {
+    try {
+      const res = await finByProductOnCart(idHdParam);
+      if (res) {
+        console.log('Check DataCart: ', res);
+        setDataCart(res);
       }
-    },
-    [idHdParam]
-  );
+    } catch (error) {
+      console.error(error);
+    }
+  }, [idHdParam]);
   useEffect(() => {
     selectDataCart();
   }, [selectDataCart]);
@@ -126,16 +128,16 @@ const OrderManagementTimeline = ({ classes }) => {
   }
 
   function getIconForTrangThai(trangThai) {
-    if (trangThai === 0 || trangThai === 8) return FaRegFileAlt;
-    if (trangThai === 1) return FaRegFileAlt;
-    if (trangThai === 2) return FaRegCalendarCheck;
-    if (trangThai === 3) return FaPaperPlane;
-    if (trangThai === 4 || trangThai === 9) return FaMoneyBillWave;
-    if (trangThai === 5) return FaRegCheckCircle;
-    if (trangThai === 6) return FaBackward;
-    if (trangThai === 7) return FaCogs;
-    if (trangThai === 10) return FaBug;
-    return FaQuestionCircle;
+    if (trangThai === 0 || trangThai === 8) return FcPrint;
+    if (trangThai === 1) return FcSurvey;
+    if (trangThai === 2) return FcAssistant;
+    if (trangThai === 3) return FcShipped;
+    if (trangThai === 4 || trangThai === 9) return FcSalesPerformance;
+    if (trangThai === 5) return FcHome;
+    if (trangThai === 6) return FcProcess;
+    if (trangThai === 7) return FcTodoList;
+    if (trangThai === 10) return FcDeleteDatabase;
+    return FcCancel;
   }
 
   //   Handle click Confirm
@@ -284,7 +286,6 @@ const OrderManagementTimeline = ({ classes }) => {
   const [showModalsDelete, setShowModalDelete] = useState(false);
   const [itemDelete, setIntemDelete] = useState();
   const handleDelete = (item) => {
-    console.log('Check item', item);
     setShowModalDelete(true);
     setIntemDelete(item);
   };
@@ -555,6 +556,7 @@ const OrderManagementTimeline = ({ classes }) => {
             handleClose={handleCloseUpdate}
             activeIndex={activeIndex}
             getListData={getListData}
+            listHTTT={listHTTT}
           />
           {/* Dialog xác nhận xóa */}
           <ModalDeleteDirectSale open={openDelete} handleClose={handleClose1} information={information} />

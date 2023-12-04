@@ -39,6 +39,11 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     @Override
+    public List<HoaDonChiTiet> getListProductByIDKH(Integer idKH) {
+        return hoadonchitietRepository.findByIdHd_IdKH_IdTaiKhoan(idKH);
+    }
+
+    @Override
     public HoaDonChiTiet add(HoaDonChiTiet add) {
         if (add.getTrangThai() < 8) {
             addLS(add, 1);
@@ -46,8 +51,6 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
         } else {
             return hoadonchitietRepository.save(add);
         }
-
-
     }
 
     @Override
@@ -58,7 +61,7 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     @Override
     public void delete(Integer id) {
         Optional<HoaDonChiTiet> detailHDCT = detail(id);
-        if (detailHDCT.get().getTrangThai() >= 0 || detailHDCT.get().getTrangThai() < 8) {
+        if (detailHDCT.get().getTrangThai() < 8) {
             addLS(detailHDCT.get(), 2);
             hoadonchitietRepository.deleteById(id);
         } else {

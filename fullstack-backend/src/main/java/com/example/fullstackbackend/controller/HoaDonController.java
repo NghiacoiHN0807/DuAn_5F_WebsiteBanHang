@@ -63,8 +63,7 @@ public class HoaDonController {
 
     @GetMapping("view-all-offline-invoice")
     public List<HoaDon> viewOffline() {
-        List<HoaDon> hoaDons = hoadonSevice.hoaDonOffline();
-        return hoaDons;
+        return hoadonSevice.hoaDonOffline();
     }
 
     @GetMapping("view-all-invoice-waiting")
@@ -100,7 +99,6 @@ public class HoaDonController {
     public HoaDon detail(@PathVariable("id") Integer id) {
         return hoadonSevice.detail(id).
                 orElseThrow(() -> new xuatXuNotFoundException(id));
-
     }
 
     @GetMapping("findByMaHD/{id}")
@@ -143,7 +141,6 @@ public class HoaDonController {
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
 
         //Add to history bill
-
 
         LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
         lichSuHoaDon.setIdHd(newHD1);
@@ -190,9 +187,31 @@ public class HoaDonController {
         return newHD1;
     }
 
+    @PutMapping("update-client-payment/{id}")
+    public HoaDon updateClientThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+            hoaDon.setTenKh(newHD.getTenKh());
+            hoaDon.setSdtKh(newHD.getSdtKh());
+            hoaDon.setDiaChi(newHD.getDiaChi());
+            hoaDon.setNgayTao(currentTimestamp);
+            hoaDon.setTrangThai(0);
+            return hoadonSevice.update(hoaDon);
+        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+        //Add to history bill
+        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+        lichSuHoaDon.setIdHd(newHD1);
+        lichSuHoaDon.setIdTk(newHD1.getIdTK());
+        lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+        lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
+        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+        lichSuHoaDonService.add(lichSuHoaDon);
+
+        return newHD1;
+    }
+
     @PutMapping("update-ship-online/{id}")
     public HoaDon updateShipOnline(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
-//        int paymentStatus = vnPayService.orderReturn(request);
 
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTenKh(newHD.getTenKh());
@@ -219,7 +238,7 @@ public class HoaDonController {
     @PutMapping("update-tong-tien/{id}")
     public HoaDon updateTongTien(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
         return hoadonSevice.detail(id).map(hoaDon -> {
-            BigDecimal thanhTien =  newHD.getTongTien().add(newHD.getTienShip());
+            BigDecimal thanhTien = newHD.getTongTien().add(newHD.getTienShip());
             hoaDon.setTongTien(newHD.getTongTien());
             hoaDon.setTienShip(newHD.getTienShip());
             hoaDon.setThanhTien(thanhTien);
@@ -315,19 +334,17 @@ public class HoaDonController {
 
     }
 
-
-
     @PutMapping("delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Integer id) {
         if (!hoadonSevice.checkExists(id)) {
             throw new xuatXuNotFoundException(id);
         } else {
-            Optional<HoaDon> hoaDon = hoadonSevice.detail(id);
+            HoaDon hoaDon = hoadonSevice.detail(id).orElseThrow();
             //Add to history bill
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-            lichSuHoaDon.setIdHd(hoaDon.get());
-            lichSuHoaDon.setIdTk(hoaDon.get().getIdTK());
-            lichSuHoaDon.setTrangThai(hoaDon.get().getTrangThai());
+            lichSuHoaDon.setIdHd(hoaDon);
+            lichSuHoaDon.setIdTk(hoaDon.getIdTK());
+            lichSuHoaDon.setTrangThai(hoaDon.getTrangThai());
             lichSuHoaDon.setMoTa("Đơn Hàng Đã Bị Xóa");
             lichSuHoaDon.setNgayThayDoi(currentTimestamp);
             lichSuHoaDonService.add(lichSuHoaDon);
@@ -335,6 +352,11 @@ public class HoaDonController {
             hoadonSevice.delete(id);
             return ResponseEntity.ok("Đã Xóa Thành Công!!!");
         }
+    }
+
+    @GetMapping("/view-bill-idkh/{idKH}")
+    public ResponseEntity<?> viewAllHDByIDKH(@PathVariable("idKH") Integer idKH) {
+        return ResponseEntity.ok(hoadonSevice.findAllByIDKH(idKH));
     }
 
     @GetMapping("/total-revenue")
