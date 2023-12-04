@@ -208,13 +208,27 @@ export default function SelectAllBillOfClient() {
           productOnCart.map((item, index) => {
             const { idHd, hdct } = item || {};
             const maHd = idHd?.maHd || '';
+            const diaChi = idHd?.diaChi || '';
+            const sdtKh = idHd?.sdtKh || '';
+            const tenKh = idHd?.tenKh || '';
 
             return (
               <Fragment key={index}>
                 <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
-                  <Typography variant="subtitle2" gutterBottom>
-                    Mã Hóa Đơn: {maHd}
-                  </Typography>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                    <Typography sx={{ fontSize: 16 }} variant="subtitle2" gutterBottom>
+                      Mã Hóa Đơn: {maHd}
+                    </Typography>
+                    <Typography sx={{ fontSize: 16, marginLeft: 'auto' }} variant="button" gutterBottom>
+                      {tenKh}
+                    </Typography>
+                    <Typography sx={{ fontSize: 16, marginLeft: 2 }} variant="button" gutterBottom>
+                      {sdtKh}
+                    </Typography>
+                    <Typography sx={{ fontSize: 16, marginLeft: 4 }} variant="body2" gutterBottom>
+                      {diaChi && diaChi}
+                    </Typography>
+                  </div>
                 </Grid>
                 {hdct.map((ctsp, ctspIndex) => {
                   const { idCtsp, soLuong } = ctsp || {};
@@ -266,20 +280,22 @@ export default function SelectAllBillOfClient() {
             );
           })
         ) : (
-          <Paper
-            sx={{
-              textAlign: 'center',
-            }}
-          >
-            <Typography variant="h6" paragraph>
-              Data is entry
-            </Typography>
+          <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
+            <Paper
+              sx={{
+                textAlign: 'center',
+              }}
+            >
+              <Typography variant="h6" paragraph>
+                Dữ Liệu Trống
+              </Typography>
 
-            <Typography variant="body2">
-              No results found for &nbsp;
-              <br /> Try checking for typos or using complete words.
-            </Typography>
-          </Paper>
+              <Typography variant="body2">
+                Bạn Không Có Hóa Đơn Nào Ở Trạng Thái Này &nbsp;
+                <br /> Xin Vui Lòng Đặt Hàng.
+              </Typography>
+            </Paper>
+          </Grid>
         )}
       </Grid>
     </TabPanel>
@@ -332,154 +348,6 @@ export default function SelectAllBillOfClient() {
           {renderTabPanel(5)}
           {renderTabPanel(6)}
           {renderTabPanel(7)}
-          {/* <TabPanel value={value} index={2} dir={theme.direction}>
-            <Grid container spacing={3}>
-              {productOnCart && productOnCart.length > 0 ? (
-                productOnCart.map((item, index) => {
-                  const { idHd, hdct } = item || {};
-                  const maHd = idHd?.maHd || '';
-
-                  return (
-                    <Fragment key={index}>
-                      <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
-                        <Typography variant="subtitle2" gutterBottom>
-                          Mã Hóa Đơn: {maHd}
-                        </Typography>
-                      </Grid>
-                      {hdct.map((ctsp, ctspIndex) => {
-                        const { idCtsp, soLuong } = ctsp || {};
-                        const tenSp = idCtsp?.idSp?.tenSp || '';
-                        const tenMs = idCtsp?.idMs?.tenMs || '';
-                        const tenSize = idCtsp?.idSize?.tenSize || '';
-                        const imageUrl = idCtsp?.url || '';
-
-                        return (
-                          <Grid
-                            key={ctspIndex}
-                            container
-                            item
-                            xs={12}
-                            md={6}
-                            lg={12}
-                            sx={{ marginTop: 1, backgroundColor: 'white', alignItems: 'center' }}
-                          >
-                            <StyledProductImg
-                              sx={{
-                                position: 'relative',
-                                width: '140px',
-                                height: '180px',
-                                marginLeft: '14px',
-                              }}
-                              alt={imageUrl}
-                              src={imageUrl}
-                            />
-                            <div style={{ marginLeft: '16px' }}>
-                              <Typography variant="body1" gutterBottom>
-                                Tên Sản Phẩm: {tenSp}
-                              </Typography>
-                              <Typography variant="body2" gutterBottom>
-                                Phân Loại: {tenMs} {tenSize}
-                              </Typography>
-                              <Typography variant="body2" gutterBottom>
-                                Số Lượng: {soLuong}
-                              </Typography>
-                            </div>
-                          </Grid>
-                        );
-                      })}
-                      <Grid
-                        item
-                        xs={12}
-                        md={6}
-                        lg={12}
-                        sx={{ textAlign: 'right', marginTop: 1, backgroundColor: 'white' }}
-                      >
-                        <Button onClick={() => handleClick(idHd)} variant="contained" color="success">
-                          Chi Tiết
-                        </Button>
-                      </Grid>
-                    </Fragment>
-                  );
-                })
-              ) : (
-                <Typography variant="subtitle2">Không có dữ liệu</Typography>
-              )}
-            </Grid>
-          </TabPanel>
-          <TabPanel value={value} index={3} dir={theme.direction}>
-            <Grid container spacing={3}>
-              {productOnCart && productOnCart.length > 0 ? (
-                productOnCart.map((item, index) => {
-                  const { idHd, hdct } = item || {};
-                  const maHd = idHd?.maHd || '';
-
-                  return (
-                    <Fragment key={index}>
-                      <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
-                        <Typography variant="subtitle2" gutterBottom>
-                          Mã Hóa Đơn: {maHd}
-                        </Typography>
-                      </Grid>
-                      {hdct.map((ctsp, ctspIndex) => {
-                        const { idCtsp, soLuong } = ctsp || {};
-                        const tenSp = idCtsp?.idSp?.tenSp || '';
-                        const tenMs = idCtsp?.idMs?.tenMs || '';
-                        const tenSize = idCtsp?.idSize?.tenSize || '';
-                        const imageUrl = idCtsp?.url || '';
-
-                        return (
-                          <Grid
-                            key={ctspIndex}
-                            container
-                            item
-                            xs={12}
-                            md={6}
-                            lg={12}
-                            sx={{ marginTop: 1, backgroundColor: 'white', alignItems: 'center' }}
-                          >
-                            <StyledProductImg
-                              sx={{
-                                position: 'relative',
-                                width: '140px',
-                                height: '180px',
-                                marginLeft: '14px',
-                              }}
-                              alt={imageUrl}
-                              src={imageUrl}
-                            />
-                            <div style={{ marginLeft: '16px' }}>
-                              <Typography variant="body1" gutterBottom>
-                                Tên Sản Phẩm: {tenSp}
-                              </Typography>
-                              <Typography variant="body2" gutterBottom>
-                                Phân Loại: {tenMs} {tenSize}
-                              </Typography>
-                              <Typography variant="body2" gutterBottom>
-                                Số Lượng: {soLuong}
-                              </Typography>
-                            </div>
-                          </Grid>
-                        );
-                      })}
-                      <Grid
-                        item
-                        xs={12}
-                        md={6}
-                        lg={12}
-                        sx={{ textAlign: 'right', marginTop: 1, backgroundColor: 'white' }}
-                      >
-                        <Button onClick={() => handleClick(idHd)} variant="contained" color="success">
-                          Chi Tiết
-                        </Button>
-                      </Grid>
-                    </Fragment>
-                  );
-                })
-              ) : (
-                <Typography variant="subtitle2">Không có dữ liệu</Typography>
-              )}
-            </Grid>
-          </TabPanel> */}
         </SwipeableViews>
         {fabs.map((fab, index) => (
           <Zoom

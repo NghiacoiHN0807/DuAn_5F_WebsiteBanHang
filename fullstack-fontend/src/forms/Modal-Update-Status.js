@@ -18,7 +18,7 @@ const ModalUpdateStatus = (props) => {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     getListData: PropTypes.func.isRequired,
-    listHTTT: PropTypes.func.isRequired,
+    listHTTT: PropTypes.array.isRequired,
     activeIndex: PropTypes.number.isRequired,
   };
   const { show, handleClose, getListData, activeIndex, listHTTT } = props;
@@ -38,7 +38,7 @@ const ModalUpdateStatus = (props) => {
         });
       } else {
         if (listHTTT.length > 0) {
-          const newActiveIndex = activeIndex + 1 === 4 ? 5 : activeIndex + 1;
+          const newActiveIndex = activeIndex === 3 ? 5 : activeIndex + 1;
           await updateStatusBill(idHdParam, moTa, newActiveIndex);
         } else {
           await updateStatusBill(idHdParam, moTa, activeIndex + 1);
@@ -96,18 +96,6 @@ const ModalUpdateStatus = (props) => {
             <Button onClick={handleUpdate}>Đồng Ý</Button>
           </DialogActions>
         </Dialog>
-        {alertContent && (
-          <Snackbar
-            open
-            autoHideDuration={3000}
-            onClose={handleSnackbarClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          >
-            <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
-              {alertContent.message}
-            </Alert>
-          </Snackbar>
-        )}
       </div>
       {alertContent && (
         <Snackbar

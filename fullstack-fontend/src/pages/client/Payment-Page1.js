@@ -215,6 +215,8 @@ export default function PaymentPage1() {
     }
     if (isDeliveryChecked === true) {
       if (listHTTT.length > 0) {
+        await updateClientPayment(idHdParam, tenKH, sdtKH, diaChi);
+
         navigate(`/client/client-timeline/${idHdParam}`);
       } else {
         setAlertContent({

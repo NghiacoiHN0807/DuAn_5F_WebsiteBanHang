@@ -117,7 +117,7 @@ const OrderClientTimeline = ({ classes }) => {
   function getTextForTrangThai(trangThai) {
     if (trangThai === 0) return 'Tạo Đơn Hàng Ship';
     if (trangThai === 8) return 'Đã Xác Nhận Đơn Tại Quầy';
-    if (trangThai === 1) return 'Đã Xác Nhận Đơn ';
+    if (trangThai === 1) return 'Đã Xác Nhận Đơn';
     if (trangThai === 2) return 'Đã Xác Nhận Người Mua';
     if (trangThai === 3) return 'Đã Chuyển Cho Đơn Vị';
     if (trangThai === 4 || trangThai === 9) return 'Đã Xác Nhận Thanh Toán';
@@ -333,7 +333,7 @@ const OrderClientTimeline = ({ classes }) => {
               <Typography variant="h6" gutterBottom>
                 Thông Tin Khách Hàng{' '}
               </Typography>
-              <Button size="small" variant="outlined">
+              <Button disabled={activeIndex >= 1} size="small" variant="outlined">
                 Chỉnh sửa thông tin
               </Button>
             </Stack>
@@ -462,7 +462,12 @@ const OrderClientTimeline = ({ classes }) => {
                           <TableCell>{item[4]}</TableCell>
                           <TableCell align="right">{item[5]}</TableCell>
                           <TableCell align="right">
-                            <Button onClick={() => handleUpdateClassify(item)} size="small" variant="outlined">
+                            <Button
+                              onClick={() => handleUpdateClassify(item)}
+                              disabled={activeIndex >= 1}
+                              size="small"
+                              variant="outlined"
+                            >
                               Size: {item[6]}
                               <br />
                               Màu: {item[11]}
@@ -472,7 +477,12 @@ const OrderClientTimeline = ({ classes }) => {
                           <TableCell align="right">{item[8]}</TableCell>
                           <TableCell align="right">{item[9]}</TableCell>
                           <TableCell align="right">
-                            <IconButton aria-label="delete" size="large" onClick={() => handleDelete(item)}>
+                            <IconButton
+                              aria-label="delete"
+                              size="large"
+                              disabled={activeIndex >= 1}
+                              onClick={() => handleDelete(item)}
+                            >
                               <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
                             </IconButton>
                           </TableCell>
