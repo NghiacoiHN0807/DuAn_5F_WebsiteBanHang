@@ -344,7 +344,7 @@ public class HoaDonController {
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
             lichSuHoaDon.setIdHd(hoaDon);
             lichSuHoaDon.setIdTk(hoaDon.getIdTK());
-            lichSuHoaDon.setTrangThai(hoaDon.getTrangThai());
+            lichSuHoaDon.setTrangThai(10);
             lichSuHoaDon.setMoTa("Đơn Hàng Đã Bị Xóa");
             lichSuHoaDon.setNgayThayDoi(currentTimestamp);
             lichSuHoaDonService.add(lichSuHoaDon);

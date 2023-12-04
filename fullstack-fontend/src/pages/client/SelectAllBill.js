@@ -15,7 +15,7 @@ import Box from '@mui/material/Box';
 import { Fragment, useCallback, useEffect, useState } from 'react';
 import { Button, Container, Grid, Paper } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import InfiniteScroll from 'react-infinite-scroll-component';
 // Service
 import { viewAllHDByIDKH } from '../../service/client/SelectBill';
 import { listImg } from '../../service/client/Detail-Product';
@@ -118,6 +118,8 @@ export default function SelectAllBillOfClient() {
 
   // const [DataCart, setDataCart] = useState([]);
   const [productOnCart, setProductOnCart] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [items, setItems] = useState(productOnCart.slice(0, 5)); // Sử dụng 5 phần tử ban đầu
 
   const SelectAllBill = useCallback(async () => {
     try {
@@ -168,7 +170,19 @@ export default function SelectAllBillOfClient() {
           return filteredData;
         };
         if (value === 0) {
-          setProductOnCart(mergedData);
+          console.log('productOnCart.length: ', productOnCart.length);
+          console.log('res.length: ', res.length);
+          console.log('mergedData.length: ', mergedData.length);
+
+          // eslint-disable-next-line no-self-compare
+          if (mergedData.length === mergedData.length) {
+            setHasMore(false);
+          } else {
+            // setProductOnCart(mergedData);
+            setTimeout(() => {
+              setProductOnCart((prevList) => [...prevList, ...mergedData]);
+            }, 1000);
+          }
         } else if (value === 1) {
           setProductOnCart(filterDataByStatus(0));
         } else if (value === 2) {
@@ -188,7 +202,7 @@ export default function SelectAllBillOfClient() {
     } catch (error) {
       console.error(error);
     }
-  }, [idParam, value]);
+  }, [idParam, productOnCart.length, value]);
 
   useEffect(() => {
     SelectAllBill();
@@ -200,104 +214,118 @@ export default function SelectAllBillOfClient() {
     console.log(idHd.idHd);
     navigate(`/client/client-timeline/${idHd.idHd}`);
   };
+  const fetchMoreData = () => {
+    setTimeout(() => {
+      const nextItems = productOnCart.slice(items.length, items.length + 5); // Lấy thêm 5 phần tử tiếp theo
+      setItems((prevItems) => prevItems.concat(nextItems));
+    }, 1500);
+  };
   // Select renderTabPanel
   const renderTabPanel = (indexTab) => (
     <TabPanel value={value} index={indexTab} dir={theme.direction}>
-      <Grid container spacing={3}>
-        {productOnCart && productOnCart.length > 0 ? (
-          productOnCart.map((item, index) => {
-            const { idHd, hdct } = item || {};
-            const maHd = idHd?.maHd || '';
-            const diaChi = idHd?.diaChi || '';
-            const sdtKh = idHd?.sdtKh || '';
-            const tenKh = idHd?.tenKh || '';
+      <InfiniteScroll
+        dataLength={items.length}
+        next={fetchMoreData}
+        hasMore={hasMore}
+        loader={<p>Loading...</p>}
+        endMessage={<p>No more items.</p>}
+      >
+        <Grid container spacing={3}>
+          {productOnCart && productOnCart.length > 0 ? (
+            productOnCart.map((item, index) => {
+              const { idHd, hdct } = item || {};
+              const maHd = idHd?.maHd || '';
+              const diaChi = idHd?.diaChi || '';
+              const sdtKh = idHd?.sdtKh || '';
+              const tenKh = idHd?.tenKh || '';
 
-            return (
-              <Fragment key={index}>
-                <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                    <Typography sx={{ fontSize: 16 }} variant="subtitle2" gutterBottom>
-                      Mã Hóa Đơn: {maHd}
-                    </Typography>
-                    <Typography sx={{ fontSize: 16, marginLeft: 'auto' }} variant="button" gutterBottom>
-                      {tenKh}
-                    </Typography>
-                    <Typography sx={{ fontSize: 16, marginLeft: 2 }} variant="button" gutterBottom>
-                      {sdtKh}
-                    </Typography>
-                    <Typography sx={{ fontSize: 16, marginLeft: 4 }} variant="body2" gutterBottom>
-                      {diaChi && diaChi}
-                    </Typography>
-                  </div>
-                </Grid>
-                {hdct.map((ctsp, ctspIndex) => {
-                  const { idCtsp, soLuong } = ctsp || {};
-                  const tenSp = idCtsp?.idSp?.tenSp || '';
-                  const tenMs = idCtsp?.idMs?.tenMs || '';
-                  const tenSize = idCtsp?.idSize?.tenSize || '';
-                  const imageUrl = idCtsp?.url || '';
+              return (
+                <Fragment key={index}>
+                  <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                      <Typography sx={{ fontSize: 16 }} variant="subtitle2" gutterBottom>
+                        Mã Hóa Đơn: {maHd}
+                      </Typography>
+                      <Typography sx={{ fontSize: 16, marginLeft: 'auto' }} variant="button" gutterBottom>
+                        {tenKh}
+                      </Typography>
+                      <Typography sx={{ fontSize: 16, marginLeft: 2 }} variant="button" gutterBottom>
+                        {sdtKh}
+                      </Typography>
+                      <Typography sx={{ fontSize: 16, marginLeft: 4 }} variant="body2" gutterBottom>
+                        {diaChi && diaChi}
+                      </Typography>
+                    </div>
+                  </Grid>
+                  {hdct.map((ctsp, ctspIndex) => {
+                    const { idCtsp, soLuong } = ctsp || {};
+                    const tenSp = idCtsp?.idSp?.tenSp || '';
+                    const tenMs = idCtsp?.idMs?.tenMs || '';
+                    const tenSize = idCtsp?.idSize?.tenSize || '';
+                    const imageUrl = idCtsp?.url || '';
 
-                  return (
-                    <Grid
-                      key={ctspIndex}
-                      container
-                      item
-                      xs={12}
-                      md={6}
-                      lg={12}
-                      sx={{ marginTop: 1, backgroundColor: 'white', alignItems: 'center' }}
-                    >
-                      <StyledProductImg
-                        sx={{
-                          position: 'relative',
-                          width: '140px',
-                          height: '180px',
-                          marginLeft: '14px',
-                        }}
-                        alt={imageUrl}
-                        src={imageUrl}
-                      />
-                      <div style={{ marginLeft: '16px' }}>
-                        <Typography variant="body1" gutterBottom>
-                          Tên Sản Phẩm: {tenSp}
-                        </Typography>
-                        <Typography variant="body2" gutterBottom>
-                          Phân Loại: {tenMs} {tenSize}
-                        </Typography>
-                        <Typography variant="body2" gutterBottom>
-                          Số Lượng: {soLuong}
-                        </Typography>
-                      </div>
-                    </Grid>
-                  );
-                })}
-                <Grid item xs={12} md={6} lg={12} sx={{ textAlign: 'right', marginTop: 1, backgroundColor: 'white' }}>
-                  <Button onClick={() => handleClick(idHd)} variant="contained" color="success">
-                    Chi Tiết
-                  </Button>
-                </Grid>
-              </Fragment>
-            );
-          })
-        ) : (
-          <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
-            <Paper
-              sx={{
-                textAlign: 'center',
-              }}
-            >
-              <Typography variant="h6" paragraph>
-                Dữ Liệu Trống
-              </Typography>
+                    return (
+                      <Grid
+                        key={ctspIndex}
+                        container
+                        item
+                        xs={12}
+                        md={6}
+                        lg={12}
+                        sx={{ marginTop: 1, backgroundColor: 'white', alignItems: 'center' }}
+                      >
+                        <StyledProductImg
+                          sx={{
+                            position: 'relative',
+                            width: '140px',
+                            height: '180px',
+                            marginLeft: '14px',
+                          }}
+                          alt={imageUrl}
+                          src={imageUrl}
+                        />
+                        <div style={{ marginLeft: '16px' }}>
+                          <Typography variant="body1" gutterBottom>
+                            Tên Sản Phẩm: {tenSp}
+                          </Typography>
+                          <Typography variant="body2" gutterBottom>
+                            Phân Loại: {tenMs} {tenSize}
+                          </Typography>
+                          <Typography variant="body2" gutterBottom>
+                            Số Lượng: {soLuong}
+                          </Typography>
+                        </div>
+                      </Grid>
+                    );
+                  })}
+                  <Grid item xs={12} md={6} lg={12} sx={{ textAlign: 'right', marginTop: 1, backgroundColor: 'white' }}>
+                    <Button onClick={() => handleClick(idHd)} variant="contained" color="success">
+                      Chi Tiết
+                    </Button>
+                  </Grid>
+                </Fragment>
+              );
+            })
+          ) : (
+            <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
+              <Paper
+                sx={{
+                  textAlign: 'center',
+                }}
+              >
+                <Typography variant="h6" paragraph>
+                  Dữ Liệu Trống
+                </Typography>
 
-              <Typography variant="body2">
-                Bạn Không Có Hóa Đơn Nào Ở Trạng Thái Này &nbsp;
-                <br /> Xin Vui Lòng Đặt Hàng.
-              </Typography>
-            </Paper>
-          </Grid>
-        )}
-      </Grid>
+                <Typography variant="body2">
+                  Bạn Không Có Hóa Đơn Nào Ở Trạng Thái Này &nbsp;
+                  <br /> Xin Vui Lòng Đặt Hàng.
+                </Typography>
+              </Paper>
+            </Grid>
+          )}
+        </Grid>
+      </InfiniteScroll>
     </TabPanel>
   );
 
