@@ -30,7 +30,6 @@ import { fetchTayAo } from '../../../service/OngTayAoService';
 import { fetchCoAo } from '../../../service/LoaiCoAoService';
 import { fetchMS } from '../../../service/MauSacService';
 import { fetchSize } from '../../../service/SizeService';
-import { fetchSpForClient } from '../../../service/SanPhamService';
 
 // ----------------------------------------------------------------------
 
@@ -66,9 +65,10 @@ ShopFilterSidebar.propTypes = {
   onOpenFilter: PropTypes.func,
   onCloseFilter: PropTypes.func,
   onFilter: PropTypes.func,
+  listSP: PropTypes.array,
 };
 
-export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter, onFilter }) {
+export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter, onFilter, listSP }) {
   const [listCL, setListCL] = useState([]);
   const [listLSP, setListLSP] = useState([]);
   const [listXX, setListXX] = useState([]);
@@ -76,8 +76,6 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
   const [listCoAo, setListCoAo] = useState([]);
   const [listMS, setListMS] = useState([]);
   const [listSize, setListSize] = useState([]);
-
-  const [listSP, setListSP] = useState([]);
 
   useEffect(() => {
     getAllList();
@@ -105,18 +103,6 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
     const resSize = await fetchSize();
     setListSize(resSize);
   };
-
-  const getListData = async () => {
-    try {
-      const res = await fetchSpForClient();
-      setListSP(res);
-    } catch (error) {
-      console.error('Error in list bill: ', error);
-    }
-  };
-  useEffect(() => {
-    getListData();
-  }, []);
 
   // fiter
 

@@ -5,6 +5,7 @@ import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.DTO.SanPhamIgDTO;
 import com.example.fullstackbackend.DTO.SanPhamWithMinImageDTO;
+import com.example.fullstackbackend.entity.DiaChi;
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.services.SanPhamService;
 import jakarta.validation.Valid;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -80,12 +84,20 @@ public class SanPhamController {
     }
 
     @PostMapping("add")
-    public SanPham add(@Valid @RequestBody SanPham sanPham,
+    public ResponseEntity<?> add(@Valid @RequestBody SanPham sanPham,
                        BindingResult bindingResult) {
+
         if (bindingResult.hasErrors()) {
-            return null;
+            Map<String, String> errorMap = new HashMap<>();
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+
+            for (FieldError fieldError : fieldErrors) {
+                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+
+            return ResponseEntity.badRequest().body(errorMap);
         } else {
-            return sanPhamService.add(sanPham);
+            return ResponseEntity.ok(sanPhamService.add(sanPham));
         }
     }
 
@@ -100,8 +112,21 @@ public class SanPhamController {
     }
 
     @PutMapping("update")
-    public SanPham update(@RequestBody SanPham sanPham) {
-        return sanPhamService.update(sanPham);
+    public ResponseEntity<?> update(@Valid @RequestBody SanPham sanPham,
+                                 BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+
+            for (FieldError fieldError : fieldErrors) {
+                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+
+            return ResponseEntity.badRequest().body(errorMap);
+        } else {
+            return ResponseEntity.ok(sanPhamService.update(sanPham));
+        }
     }
 
     @GetMapping("getSpWithImg")

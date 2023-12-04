@@ -5,8 +5,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { pink } from '@mui/material/colors';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import EditIcon from '@mui/icons-material/Edit';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import CircularProgress from '@mui/material/CircularProgress';
 import { CardGroup } from 'react-bootstrap';
 import { useDropzone } from 'react-dropzone';
@@ -769,7 +767,7 @@ export default function UpdateSanPham() {
             )}
           </div>
           <div className="listSize">
-            <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', pb: 1, marginTop: '50px' }}>
               <div>
                 Size:{' '}
                 {listSize.map((item, itemIndex) => (
