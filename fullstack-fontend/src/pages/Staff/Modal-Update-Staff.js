@@ -1,23 +1,27 @@
 import { useCallback, useEffect, useState } from "react";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
 
 import {
-  Alert,
   Box,
   Button,
   FormControl,
   FormControlLabel,
   FormLabel,
+  IconButton,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Radio,
   RadioGroup,
   Select,
-  Snackbar,
   TextField,
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
 import { detailTaiKhoan, postUpdateTaiKhoan, } from "../../service/taiKhoanNhanVienService";
-import { chucVu3 ,detailTen} from "../../service/chucVuService";
+import { chucVu3 } from "../../service/chucVuService";
+
 
 
 const UpdateTkNV = (props) => {
@@ -34,18 +38,15 @@ const UpdateTkNV = (props) => {
   const [trangThai, setTrangThai] = useState("0");
   const [myChucVu, setMyChucVu] = useState([]);
   const [alertContent, setAlertContent] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [validationErrors, setValidationErrors] = useState("");
 
   const getAllChucVu = async () => {
     const rs = await chucVu3(0);
     setMyChucVu(rs);
   };
 
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setAlertContent(null);
-  };
+  
 
   useEffect(() => {
     getAllChucVu();
@@ -75,24 +76,12 @@ const UpdateTkNV = (props) => {
   }, [getListData]);
 
   const handleSave = async () => {
-    if (
-      ho === "" ||
-      ten === "" ||
-      email === "" ||
-      sdt === "" ||
-      matKhau === "" ||
-      soCanCuoc === ""
-    ) {
-      setAlertContent({
-        type: 'warning',
-        message: 'Một số trường đang trống!',
-      });
-    } else {
-      const tenCv = await detailTen({ tenCv: chucVu });
-      const res = await postUpdateTaiKhoan(
+    let res;
+    try {
+      res = await postUpdateTaiKhoan(
         Data.idTaiKhoan,
         Data.maTaiKhoan,
-        tenCv,
+        Data.idChucVu,
         ho,
         ten,
         sdt,
@@ -102,24 +91,51 @@ const UpdateTkNV = (props) => {
         trangThai
       );
       console.log("Check res: ", res);
-      if (res && res.idTaiKhoan) {
-        const successMessage = {
-          type: 'success',
-          message: 'Cập nhập Nhân Viên Thành Công!',
-        };
-        localStorage.setItem('successMessage', JSON.stringify(successMessage));
-        navigate('/dashboard/staff');
+    } catch (error) {
+      if (error.response && error.response.data) {
+        console.log(error.response.data);
+        setValidationErrors(error.response.data);
       } else {
-        setAlertContent({
-          type: 'error',
-          message: 'Cập Nhập tài khoản thất bại!',
-        });
+        console.error("Error:", error);
       }
+      return;
+    }
+
+    console.log("Check res: ", res);
+    if (res && res.idTaiKhoan) {
+      const successMessage = {
+        type: 'success',
+        message: 'Cập nhập Nhân Viên Thành Công!',
+      };
+      localStorage.setItem('successMessage', JSON.stringify(successMessage));
+      navigate('/dashboard/staff');
+    } else {
+      setAlertContent({
+        type: 'error',
+        message: 'Cập Nhập tài khoản thất bại!',
+      });
+
     }
   };
+
+  const goback = () => {
+    window.history.back();
+  }
+
   return (
     <>
+
       <div className="row row-order-management">
+        <div style={{ textAlign: "left", margin: "20px 0" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={goback}
+            startIcon={<ArrowBackIcon />}
+          >
+            Back
+          </Button>
+        </div>
         <div
           className="title"
           style={{ textAlign: "center", margin: "20px 0" }}
@@ -127,6 +143,7 @@ const UpdateTkNV = (props) => {
           <h4>Cập Nhập Tài Khoản</h4>
           <h5>Mã tài khoản: {Data.maTaiKhoan}</h5>
         </div>
+
         <Box
           component="form"
           sx={{
@@ -156,43 +173,68 @@ const UpdateTkNV = (props) => {
           </FormControl>
 
           <TextField
+           error={!!validationErrors.ho}
+           helperText={validationErrors.ho}
             fullWidth
             label="Họ"
-            id="fullWidth"
+            id="ho"
             value={ho}
             onChange={(event) => setHo(event.target.value)}
           />
           <TextField
+           error={!!validationErrors.ten}
+           helperText={validationErrors.ten}
             fullWidth
             label="Tên"
-            id="fullWidth"
+            id="ten"
             value={ten}
             onChange={(event) => setTen(event.target.value)}
           />
           <TextField
+           error={!!validationErrors.email}
+           helperText={validationErrors.email}
             fullWidth
             label="Email"
-            id="fullWidth"
+            id="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
           />
           <TextField
+           error={!!validationErrors.sdt}
+           helperText={validationErrors.sdt}
             fullWidth
             label="Số Điện Thoại"
-            id="fullWidth"
+            id="sdt"
             value={sdt}
             onChange={(event) => setSdt(event.target.value)}
           />
           <TextField
+           error={!!validationErrors.matKhau}
+           helperText={validationErrors.matKhau}
             fullWidth
-            id="outlined-basic"
+            type={showPassword ? "text" : "password"}
+            id="matKhau"
             label="Mật Khẩu"
-            // value={matKhau}
+            value={matKhau}
             onChange={(event) => setMatKhau(event.target.value)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)} // Khi nhấn vào nút, đảo ngược trạng thái
+                    onMouseDown={(event) => event.preventDefault()}
+                  >
+                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
+           error={!!validationErrors.soCanCuoc}
+           helperText={validationErrors.soCanCuoc}
             fullWidth
-            id="outlined-basic"
+            id="soCanCuoc"
             label="Số Căn Cước"
             value={soCanCuoc}
             onChange={(event) => setSoCanCuoc(event.target.value)}
@@ -222,27 +264,16 @@ const UpdateTkNV = (props) => {
           </FormControl>
         </Box>
 
-        <div style={{ textAlign: "right", margin: "20px 0" }}>
+        <div style={{ textAlign: "center", margin: "20px 0" }}>
           <Button
             variant="contained"
             color="success"
             onClick={() => handleSave()}
           >
-            Cập Nhập
+            Cập Nhập Tài Khoản Nhân Viên
           </Button>
         </div>
-        {alertContent && (
-          <Snackbar
-            open
-            autoHideDuration={3000}
-            onClose={handleSnackbarClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          >
-            <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
-              {alertContent.message}
-            </Alert>
-          </Snackbar>
-        )}
+
       </div>
 
     </>

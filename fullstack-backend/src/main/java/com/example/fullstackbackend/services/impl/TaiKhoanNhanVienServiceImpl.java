@@ -3,6 +3,7 @@ package com.example.fullstackbackend.services.impl;
 import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.repository.TaiKhoanNhanVienRepository;
 import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,7 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
         return taiKhoan;
     }
 
+    @Transactional
     @Override
     public TaiKhoan update(TaiKhoan taiKhoan, Integer id) {
         taiKhoan.setMatKhau(hashPassword(taiKhoan.getMatKhau()));

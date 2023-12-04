@@ -8,13 +8,13 @@ import React, { useState, useEffect } from 'react';
 
 // icon
 import { library } from '@fortawesome/fontawesome-svg-core';
-import {  faSackDollar } from '@fortawesome/free-solid-svg-icons';
-
+import { faSackDollar } from '@fortawesome/free-solid-svg-icons';
 
 // components
 import Iconify from '../components/iconify';
 import { totalRevenue, totalInvoieces, totalTheoNgay, tyLeTraHang, tongSpDaBan } from '../service/bill-service'
 import { topSpTrending } from '../service/san-pham-service'
+
 // sections
 import {
   AppTasks,
@@ -27,7 +27,6 @@ import {
   AppCurrentSubject,
   AppConversionRates,
 } from '../sections/@dashboard/app';
-
 
 // ----------------------------------------------------------------------
 library.add(faSackDollar);
@@ -54,12 +53,10 @@ export default function DashboardAppPage() {
 
       setTotalBill(Number(res));
       setinvoieces(Number(invoiecesResponse));
-      setRate(Number(rateResponse));
+      setRate(rateResponse);
       setAllSp(Number(allSpres));
       setheoNgay(response);
       setSpTrending(trendingResponse);  // Set trending data
-
-      console.log(hdNgay);
     };
 
     fetchData();
@@ -74,7 +71,7 @@ export default function DashboardAppPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | Minimal UI </title>
+        <title> Thống Kê | 5F Store </title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -84,11 +81,11 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={'ant-design:android-filled'} />
+            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={['fas', 'sack-dollar']}  />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng Đơn Hàng" total={invoieces} color="info" icon={'ant-design:apple-filled'}/>
+            <AppWidgetSummary title="Tổng Đơn Hàng" total={invoieces} color="info" icon={'ant-design:apple-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
@@ -103,7 +100,7 @@ export default function DashboardAppPage() {
             <AppWebsiteVisits
               title="Tổng Tiền Theo Ngày"
               subheader="Biểu đồ tổng tiền theo ngày"
-              chartLabels={hdNgay.map(item => item[0])} // Assuming the first element in each sub-array is the date
+              chartLabels={hdNgay.map(item => item[0])}
               chartData={[
                 {
                   name: 'Tổng Tiền',
@@ -113,9 +110,7 @@ export default function DashboardAppPage() {
                 },
               ]}
             />
-
           </Grid>
-
 
           <Grid item xs={12} md={6} lg={4}>
             <AppCurrentVisits
