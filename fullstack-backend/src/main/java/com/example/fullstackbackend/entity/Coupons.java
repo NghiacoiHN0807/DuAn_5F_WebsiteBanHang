@@ -55,7 +55,6 @@ public class Coupons {
     private Date thoiGianKetThuc;
 
     @Column(name = "so_luong")
-    @NotNull(message = "Vui lòng nhập số lượng!")
     private Integer soLuong;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true)

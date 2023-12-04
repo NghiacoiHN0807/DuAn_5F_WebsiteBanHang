@@ -34,6 +34,7 @@ import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 // import { useEffect } from 'react';
 import { getAll } from '../../service/CouponsService';
 import ModalDeleteCoupon from './Modal-Delete-Coupon';
+import ModalResetCoupon from './Modal-Reset-Coupon';
 
 // ----------------------------------------------------------------------
 
@@ -43,7 +44,7 @@ const TABLE_HEAD = [
     { id: 'code', label: 'Code', alignRight: false },
     { id: 'moTa', label: 'Mô Tả', alignRight: false },
     { id: 'thoigian', label: 'Thời Gian', alignRight: false },
-    { id: 'soLuong', label: 'Số Lượng', alignRight: false },
+    { id: 'soLuongHienTai', label: 'Số Lượng', alignRight: false },
     { id: 'phanTram', label: 'Mức Giảm', alignRight: false },
     { id: 'tienToiThieu', label: 'Số Tiền Tối Thiểu', alignRight: false },
     { id: 'trangthai', label: 'Trạng Thái', alignRight: false },
@@ -200,6 +201,7 @@ export default function CouponsPage() {
 
     // Handle delete
     const [openDelete, setOpenDelete] = useState(false);
+    const [openReset, setOpenReset] = useState(false);
     const [information, setInformation] = useState();
     const handleDelete = () => {
         setInformation(object);
@@ -208,6 +210,7 @@ export default function CouponsPage() {
     };
     const handleClose = () => {
         setOpenDelete(false);
+        setOpenReset(false);
         getListData();
     };
 
@@ -236,6 +239,12 @@ export default function CouponsPage() {
 
         return formattedEndDate;
     };
+
+    const handleReset = () => {
+        setInformation(object);
+        setOpenReset(true);
+        setOpen(null);
+    }
 
 
     return (
@@ -273,7 +282,7 @@ export default function CouponsPage() {
                                 />
                                 <TableBody>
                                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                                        const { idCoupon, tenChuongTrinh, trangThai, code, moTa, thoiGianKetThuc, thoiGianTao, soLuong, phanTram, tienToiThieu } = row;
+                                        const { idCoupon, tenChuongTrinh, trangThai, code, moTa, thoiGianKetThuc, thoiGianTao, soLuongHienTai, phanTram, tienToiThieu } = row;
                                         const selectedUser = selected.indexOf(idCoupon) !== -1;
 
                                         return (
@@ -296,7 +305,7 @@ export default function CouponsPage() {
                                                 <TableCell align="left">{code}</TableCell>
                                                 <TableCell align="left">{moTa}</TableCell>
                                                 <TableCell align="left">{`${formatDate(thoiGianTao)} - ${formatDate(thoiGianKetThuc)}`}</TableCell>
-                                                <TableCell align="left">{soLuong}</TableCell>
+                                                <TableCell align="left">{soLuongHienTai}</TableCell>
                                                 <TableCell align="left">{`${phanTram} %`}</TableCell>
                                                 <TableCell align="left">{`${formatCurrency(tienToiThieu)}`}</TableCell>
                                                 <TableCell align="left">{mapTrangThaiToStatus(trangThai)}</TableCell>
@@ -377,13 +386,23 @@ export default function CouponsPage() {
                     Edit
                 </MenuItem>
 
-                <MenuItem onClick={() => handleDelete()} sx={{ color: 'error.main' }}>
-                    <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                    Delete
-                </MenuItem>
+                {object.trangThai === 10 && (
+                    <MenuItem onClick={() => handleReset()} sx={{ color: 'primary.main' }}>
+                        <Iconify icon={'bi:arrow-repeat'} sx={{ mr: 2 }} />
+                        Reset
+                    </MenuItem>
+                )}
+
+                {object.trangThai === 0 && (
+                    <MenuItem onClick={handleDelete} sx={{ color: 'error.main' }}>
+                        <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
+                        Delete
+                    </MenuItem>
+                )}
             </Popover>
             {/* Dialog xác nhận xóa */}
             <ModalDeleteCoupon open={openDelete} handleClose={handleClose} information={information} />
+            <ModalResetCoupon open={openReset} handleClose={handleClose} information={information} />
             {alertContent && (
                 <Snackbar
                     open

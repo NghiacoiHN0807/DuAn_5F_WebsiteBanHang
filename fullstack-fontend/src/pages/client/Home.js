@@ -189,6 +189,12 @@ const Home = () => {
           <h6 className="hello">XIN CHÀO CÁC BẠN</h6>
           <p>Chào Mừng Đến Với Cửa Hàng 5F Store</p>
         </div>
+        <div className='text-center running-text mx-auto'>
+          <span className="fw-bold fs-3 rainbow-text">
+          aRenxO5v - Giảm giá 8% tất cả hóa đơn từ 3.900.000VND số lượng có hạn
+          </span>
+        </div>
+
         <div>
           <Carousel>
             <Carousel.Item style={{ height: '400px' }}>

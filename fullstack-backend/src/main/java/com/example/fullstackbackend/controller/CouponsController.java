@@ -85,8 +85,8 @@ public class CouponsController {
         }
     }
 
-    @DeleteMapping("/delete/{id}")
-    ResponseEntity<?> delete(@PathVariable("id") Integer id) {
+    @DeleteMapping("/delete/{id}/{trangThai}")
+    ResponseEntity<?> delete(@PathVariable("id") Integer id, @PathVariable("trangThai") Integer trangThai) {
         Boolean exists = couponsService.existsById(id);
         if (!exists) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -94,7 +94,7 @@ public class CouponsController {
             );
         }
         return ResponseEntity.status(HttpStatus.OK).body(
-                couponsService.delete(id)
+                couponsService.delete(id, trangThai)
         );
     }
 
@@ -118,19 +118,31 @@ public class CouponsController {
             if (hoaDon.get().getMaGiamGia() == null) {
                 Optional<Coupons> coupons = couponsService.detailByCode(code);
                 if (coupons.isPresent()) {
-                    if (coupons.get().getSoLuongHienTai() < 1) {
+                    System.out.println("coupons.get().getSoLuongHienTai(): " + coupons.get().getSoLuongHienTai());
+                    if (coupons.get().getSoLuongHienTai() == null) {
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                                 "Mã giảm giá đã hết lượt sử dụng!"
                         );
-                    } else {
-                        if(coupons.get().getTrangThai() == 10) {
+                    } else if(coupons.get().getSoLuongHienTai() < 1){
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                                "Mã giảm giá đã hết lượt sử dụng!"
+                        );
+                    }else {
+                        if (coupons.get().getTrangThai() == 10) {
                             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                                     "Mã giảm giá không tồn tại hoặc hết hạn!"
                             );
                         } else {
-                            return ResponseEntity.status(HttpStatus.OK).body(
-                                    couponsService.addCoupons(idHd, code)
-                            );
+                            Integer check = hoaDon.get().getThanhTien().compareTo(coupons.get().getTienToiThieu());
+                            if (check == -1) {
+                                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                                        "Số tiền tối thiểu không đủ!"
+                                );
+                            } else {
+                                return ResponseEntity.status(HttpStatus.OK).body(
+                                        couponsService.addCoupons(idHd, code)
+                                );
+                            }
                         }
                     }
                 } else {

@@ -33,12 +33,12 @@ const UpdateCoupons = () => {
         moTa: '',
         thoiGianKetThuc: '',
         thoiGianTao: '',
-        soLuong: '',
+        soLuongHienTai: '',
         phanTram: '',
         tienToiThieu: ''
     });
 
-    // const {name, code, moTa, thoiGianKetThuc, soLuong, hoaDon, phanTram, tienToiThieu, soLuongHienTai} = coupon;
+    // const {name, code, moTa, thoiGianKetThuc, soLuongHienTai, hoaDon, phanTram, tienToiThieu, soLuongHienTaiHienTai} = coupon;
 
     const onInputChange = (e) => {
         setCoupon({ ...coupon, [e.target.name]: e.target.value });
@@ -57,7 +57,7 @@ const UpdateCoupons = () => {
             moTa: coupon.moTa,
             thoiGianKetThuc: ngaykt,
             thoiGianTao: ngayBd,
-            soLuong: coupon.soLuong,
+            soLuongHienTai: coupon.soLuongHienTai,
             phanTram: coupon.phanTram,
             tienToiThieu: coupon.tienToiThieu
         };
@@ -174,13 +174,13 @@ const UpdateCoupons = () => {
                         }}
                     />
                     <TextField
-                        error={!!validationErrors.soLuong}
-                        helperText={validationErrors.soLuong}
+                        error={!!validationErrors.soLuongHienTai}
+                        helperText={validationErrors.soLuongHienTai}
                         fullWidth
                         margin={"dense"}
                         label="Số Lượng"
-                        name="soLuong"
-                        value={coupon.soLuong}
+                        name="soLuongHienTai"
+                        value={coupon.soLuongHienTai}
                         onChange={(e) => onInputChange(e)}
                     />
 

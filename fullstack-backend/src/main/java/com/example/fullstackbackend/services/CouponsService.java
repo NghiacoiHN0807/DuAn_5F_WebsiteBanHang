@@ -14,7 +14,7 @@ public interface CouponsService {
 
     Coupons update(Coupons coupons, Integer id);
 
-    Boolean delete(Integer id);
+    Boolean delete(Integer id, Integer trangThai);
 
     List<Coupons> getAll();
 

@@ -36,15 +36,18 @@ public class CouponsServiceImpl implements CouponsService {
 
     @Override
     public Coupons update(Coupons coupons, Integer id) {
+        Coupons coupons1 = detail(id).orElseThrow();
         coupons.setIdCoupon(id);
+        Integer soLuong = coupons1.getSoLuong() + coupons.getSoLuongHienTai();
+        coupons.setSoLuong(soLuong);
         return couponsRepository.save(coupons);
     }
 
     @Override
-    public Boolean delete(Integer id) {
+    public Boolean delete(Integer id, Integer trangThai) {
         try {
             Coupons coupons = detail(id).orElseThrow();
-            coupons.setTrangThai(10);
+            coupons.setTrangThai(trangThai);
             couponsRepository.save(coupons);
             return true;
         }catch (Exception e) {

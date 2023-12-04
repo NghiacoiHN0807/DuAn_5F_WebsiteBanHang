@@ -7,7 +7,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { useState, useEffect, forwardRef } from 'react';
-import { remove } from '../../service/giamGiaService';
+import { del } from '../../service/CouponsService';
 
 const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
@@ -28,12 +28,12 @@ export default function ModalDeleteCoupon(props) {
   const handleDelete = async () => {
     if (information.trangThai === 0) {
       console.log(information.idCoupon);
-      await remove(information.idCoupon);
+      await del(information.idCoupon, 10);
       setAlertContent({
         type: 'success',
         message: 'Xóa thành công!',
       });
-    } else if (information.trangThai === 1) {
+    } else if (information.trangThai === 10) {
       setAlertContent({
         type: 'warning',
         message: 'Không thể xóa!!!',
@@ -47,7 +47,7 @@ export default function ModalDeleteCoupon(props) {
     handleClose();
   };
 
-  const handleSnackbarClose = (event, reason) => {
+  const handleSnackbarClose = (reason) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -63,7 +63,7 @@ export default function ModalDeleteCoupon(props) {
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{'Xóa Giảm Giá'}</DialogTitle>
+        <DialogTitle>{'Xóa Coupon'}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">Xóa Coupon Có Mã Là: {idCoupon}</DialogContentText>
         </DialogContent>
