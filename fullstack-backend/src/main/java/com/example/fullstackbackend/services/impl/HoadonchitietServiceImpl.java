@@ -7,6 +7,9 @@ import com.example.fullstackbackend.repository.HoadonchitietRepository;
 import com.example.fullstackbackend.repository.LichSuHoaDonRepository;
 import com.example.fullstackbackend.services.HoadonchitietSevice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -39,8 +42,9 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     @Override
-    public List<HoaDonChiTiet> getListProductByIDKH(Integer idKH) {
-        return hoadonchitietRepository.findByIdHd_IdKH_IdTaiKhoan(idKH);
+    public Page<HoaDonChiTiet> getListProductByIDKH(Integer idKH, Integer pageNo, Integer size) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        return hoadonchitietRepository.findByIdHd_IdKH_IdTaiKhoan(idKH, pageable);
     }
 
     @Override

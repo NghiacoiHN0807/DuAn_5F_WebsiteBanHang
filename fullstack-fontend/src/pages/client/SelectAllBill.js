@@ -116,21 +116,26 @@ export default function SelectAllBillOfClient() {
   const idParam = param.idKH;
   //   console.log('param: ', param);
 
-  // const [DataCart, setDataCart] = useState([]);
+  const [DataCart, setDataCart] = useState([]);
   const [productOnCart, setProductOnCart] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const [items, setItems] = useState(productOnCart.slice(0, 5)); // Sử dụng 5 phần tử ban đầu
 
   const SelectAllBill = useCallback(async () => {
     try {
-      const res = await viewAllHDByIDKH(idParam);
+      const res = await viewAllHDByIDKH(idParam, currentPage);
+      console.log('ré: ', res);
+      setDataCart(res);
+      const productId = res.content.map((item) => item.idCtsp.idSp.idSp);
+      console.log('productId: ', productId);
 
-      const productId = res.map((item) => item.idCtsp.idSp.idSp);
       const imgDataArray = await Promise.all(productId.map((productId) => listImg(productId)));
-      const combinedData = res.map((item, index) => ({
+      const combinedData = res.content.map((item, index) => ({
         ...item,
         image: imgDataArray[index], // Assuming 'image' is the key to hold image data
       }));
+      console.log('combinedData: ', combinedData);
+
       // const uniqueSizes = [...new Set(combinedData.map((hd) => hd.idHd))];
 
       const groupedData = {};
@@ -162,6 +167,7 @@ export default function SelectAllBillOfClient() {
           }
         });
       });
+      console.log('mergedData: ', mergedData);
 
       if (mergedData) {
         const filterDataByStatus = (status) => {
@@ -170,19 +176,10 @@ export default function SelectAllBillOfClient() {
           return filteredData;
         };
         if (value === 0) {
-          console.log('productOnCart.length: ', productOnCart.length);
-          console.log('res.length: ', res.length);
-          console.log('mergedData.length: ', mergedData.length);
-
-          // eslint-disable-next-line no-self-compare
-          if (mergedData.length === mergedData.length) {
-            setHasMore(false);
-          } else {
+          setTimeout(() => {
+            setProductOnCart((prevList) => [...prevList, ...mergedData]);
             // setProductOnCart(mergedData);
-            setTimeout(() => {
-              setProductOnCart((prevList) => [...prevList, ...mergedData]);
-            }, 1000);
-          }
+          }, 2000);
         } else if (value === 1) {
           setProductOnCart(filterDataByStatus(0));
         } else if (value === 2) {
@@ -202,33 +199,36 @@ export default function SelectAllBillOfClient() {
     } catch (error) {
       console.error(error);
     }
-  }, [idParam, productOnCart.length, value]);
+  }, [currentPage, idParam, value]);
 
   useEffect(() => {
     SelectAllBill();
   }, [SelectAllBill]);
 
+  const fetchMoreData = () => {
+    console.log('DataCart.length: ', DataCart.totalElements);
+    console.log('productOnCart.length: ', productOnCart.length);
+    if (DataCart.totalElements - 1 === productOnCart.length) {
+      setHasMore(false);
+    } else {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
   // Handle Click
   const navigate = useNavigate();
   const handleClick = (idHd) => {
     console.log(idHd.idHd);
     navigate(`/client/client-timeline/${idHd.idHd}`);
   };
-  const fetchMoreData = () => {
-    setTimeout(() => {
-      const nextItems = productOnCart.slice(items.length, items.length + 5); // Lấy thêm 5 phần tử tiếp theo
-      setItems((prevItems) => prevItems.concat(nextItems));
-    }, 1500);
-  };
   // Select renderTabPanel
   const renderTabPanel = (indexTab) => (
     <TabPanel value={value} index={indexTab} dir={theme.direction}>
       <InfiniteScroll
-        dataLength={items.length}
+        dataLength={productOnCart.length}
         next={fetchMoreData}
         hasMore={hasMore}
-        loader={<p>Loading...</p>}
-        endMessage={<p>No more items.</p>}
+        loader={<p style={{ textAlign: 'center' }}>Loading...</p>}
+        endMessage={<p style={{ textAlign: 'center' }}>Đã tải hết hóa đơn của bạn!!!</p>}
       >
         <Grid container spacing={3}>
           {productOnCart && productOnCart.length > 0 ? (
