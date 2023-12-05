@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,6 +39,7 @@ public class HoaDon {
     @JoinColumn(name = "id_khach_hang", referencedColumnName = "id_tai_khoan")
     private TaiKhoan idKH;
 
+    @NotNull(message = "Không Được Để Trống")
     @Column(name = "ma_hd")
     private String maHd;
 
@@ -89,9 +91,11 @@ public class HoaDon {
     @Column(name = "ngay_giao_thanh_cong")
     private Timestamp ngayGiaoThanhCong;
 
+    @NotNull(message = "Không Được Để Trống")
     @Column(name = "kieu_hoa_don")
     private Integer kieuHoaDon;
 
+    @NotNull(message = "Không Được Để Trống")
     @Column(name = "trang_thai")
     private Integer trangThai;
 

@@ -84,6 +84,40 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     @Override
+    public HoaDonChiTiet returnItem(HoaDonChiTiet update) {
+        // Save history time-line
+        addLS(update, 4);
+
+        // Update old hdct
+        HoaDonChiTiet updateOLDHDCT = hoadonchitietRepository.findById(update.getIdHdct()).orElseThrow();
+        System.out.println("updateOLDHDCT: " + updateOLDHDCT.getSoLuong());
+        // Get quantity
+        System.out.println("updateOLDHDCT.getSoLuong(): " + updateOLDHDCT.getSoLuong());
+        System.out.println("update.getSoLuong(): " + update.getSoLuong());
+        int quantity = updateOLDHDCT.getSoLuong()-update.getSoLuong();
+        System.out.println("quantity " + quantity);
+        updateOLDHDCT.setSoLuong(quantity);
+        //Update TongTien
+        BigDecimal tongTien = updateOLDHDCT.getIdCtsp().getGiaThucTe().multiply(BigDecimal.valueOf(quantity));
+        updateOLDHDCT.setDonGia(tongTien);
+        System.out.println("updateOLDHDCT.getIdHdct(): " + updateOLDHDCT.getIdHdct());
+        hoadonchitietRepository.save(updateOLDHDCT);
+
+        // Add return item
+        HoaDonChiTiet newHdcteturn = new HoaDonChiTiet();
+        newHdcteturn.setIdHd(update.getIdHd());
+        newHdcteturn.setIdCtsp(update.getIdCtsp());
+        newHdcteturn.setSoLuong(update.getSoLuong());
+        BigDecimal donGia = updateOLDHDCT.getIdCtsp().getGiaThucTe().multiply(BigDecimal.valueOf(update.getSoLuong()));
+        newHdcteturn.setDonGia(donGia);
+        newHdcteturn.setLyDoHuy(update.getLyDoHuy());
+        newHdcteturn.setTrangThai(10);
+
+        return hoadonchitietRepository.save(newHdcteturn);
+
+    }
+
+    @Override
     public LichSuHoaDon addLS(HoaDonChiTiet addLS, int status) {
 
         // Get datetime now
@@ -107,6 +141,12 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
             ls.setIdHd(addLS.getIdHd());
             ls.setTrangThai(7);
             ls.setMoTa("Sửa sản phẩm: " + addLS.getIdCtsp().getIdSp().getTenSp() + " Với số lượng: " + addLS.getSoLuong());
+            ls.setNgayThayDoi(currentTimestamp);
+            return lichSuHoaDonRepository.save(ls);
+        } else if (status == 4) {
+            ls.setIdHd(addLS.getIdHd());
+            ls.setTrangThai(6);
+            ls.setMoTa("Trả Sản Phẩm: " + addLS.getIdCtsp().getIdSp().getTenSp() + " Với số lượng: " + addLS.getSoLuong());
             ls.setNgayThayDoi(currentTimestamp);
             return lichSuHoaDonRepository.save(ls);
         }

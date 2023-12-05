@@ -92,7 +92,6 @@ export default function Cart() {
 
   const handleDeleteProduct = async (item) => {
     try {
-      console.log('item: ', item.idGhct);
       await deleteProductOnCart(item.idGhct);
       setAlertContent({
         type: 'success',

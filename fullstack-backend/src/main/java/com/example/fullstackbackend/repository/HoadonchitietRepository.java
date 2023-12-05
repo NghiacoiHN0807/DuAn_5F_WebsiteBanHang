@@ -28,7 +28,7 @@ public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, In
             "JOIN duan_5f.mau_sac ms ON ct.id_ms = ms.id_ms\n" +
             "JOIN duan_5f.hoa_don_chi_tiet hdct ON ct.id_ctsp = hdct.id_ctsp\n" +
             "JOIN duan_5f.hoa_don hd ON hd.id_hd = hdct.id_hd\n" +
-            "WHERE ct.trang_thai =0 AND hd.id_hd= ?1\n" +
+            "WHERE ct.trang_thai =0 AND hd.id_hd= ?1 AND hdct.trang_thai= 0\n" +
             "GROUP BY hd.id_hd, hdct.id_hdct, sp.id_sp, sp.ma_sp, sp.ten_sp,ct.gia_thuc_te, hdct.so_luong, hdct.don_gia, ct.id_ctsp\n" +
             "ORDER BY sp.ma_sp DESC", nativeQuery = true, countQuery = "SELECT COUNT(DISTINCT ct.id_ctsp)\n" +
             "FROM duan_5f.chi_tiet_san_pham ct\n" +

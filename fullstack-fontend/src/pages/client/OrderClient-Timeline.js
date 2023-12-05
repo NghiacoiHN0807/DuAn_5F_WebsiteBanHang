@@ -62,10 +62,8 @@ const OrderClientTimeline = ({ classes }) => {
   const getListData = useCallback(async () => {
     try {
       const res = await getDetailOneHD(idHdParam);
-      console.log('res: ', res);
 
       const res1 = await viewAllHTTT(idHdParam);
-      console.log('res1: ', res1);
 
       setListData(res);
       setListHTTT(res1);
@@ -523,6 +521,7 @@ const OrderClientTimeline = ({ classes }) => {
                   selectDataCart={selectDataCart}
                   handleClose={handleClose}
                   DataCart={DataCart}
+                  getListData={getListData}
                 />
               </>
             )}
