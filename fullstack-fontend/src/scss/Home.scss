@@ -50,35 +50,4 @@
   }
 }
 
-.running-text {
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.running-text span {
-  display: inline-block;
-  width: 50%;
-  animation: moveRight 20s linear infinite;
-}
-
-@keyframes moveRight {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
-}
-
-@keyframes rainbow {
-  0%   { color: #ff0000 !important; } /* Red */
-  16%  { color: #ff8000 !important; } /* Orange */
-  33%  { color: #ffff00 !important; } /* Yellow */
-  50%  { color: #00ff00 !important; } /* Green */
-  66%  { color: #0000ff !important; } /* Blue */
-  83%  { color: #8000ff !important; } /* Purple */
-  100% { color: #ff00ff !important; } /* Pink */
-}
-
-.rainbow-text {
-  display: inline-block;
-  animation: rainbow 20s linear infinite; /* Thay đổi thời gian tại đây */
-}
-
 
