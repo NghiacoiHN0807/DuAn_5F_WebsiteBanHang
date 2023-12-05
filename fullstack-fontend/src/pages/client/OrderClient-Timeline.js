@@ -39,6 +39,7 @@ import ModalDeleteDirectSale from '../../forms/Modal-Delete-DirectSale';
 import ModalAddProduct from '../../forms/Modals-AddProduct';
 import ModalDeleteProductOnCart from '../../forms/Modal-Delete-Product';
 import ModalUpdateProductOnCart from '../../forms/Modals-Update-Product-Cart';
+import ModalReturnItem from '../../forms/client/Modals-ReturnItem';
 
 const styles = {
   container: {
@@ -148,10 +149,14 @@ const OrderClientTimeline = ({ classes }) => {
   // };
 
   //   Edit show modals payment
-  // const [showModalsAdd, setShowModalAdd] = useState(false);
-  // const handleClose = () => {
-  //   setShowModalAdd(false);
-  // };
+  const [showModalsReturnItem, setShowModalsReturnItem] = useState(false);
+
+  const handleClose = () => {
+    setShowModalsReturnItem(false);
+  };
+  const handleReturnItem = () => {
+    setShowModalsReturnItem(true);
+  };
   // //   Edit show modals update timeline
   // const [showModalUpdate, setShowModalUpdate] = useState(false);
 
@@ -159,10 +164,7 @@ const OrderClientTimeline = ({ classes }) => {
   //   setShowModalUpdate(false);
   //   getListData();
   // };
-  //
-  // const handlePayment = () => {
-  //   setShowModalAdd(true);
-  // };
+
   // Modal show detail timeline bill
   const [showModalsDT, setShowModalDT] = useState(false);
   const handleSelect = () => {
@@ -186,6 +188,8 @@ const OrderClientTimeline = ({ classes }) => {
 
     return formattedDateTime;
   }
+  // Format thanhTien
+  const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 
   function renderTrangThai(trangThai) {
     let badgeVariant;
@@ -320,6 +324,9 @@ const OrderClientTimeline = ({ classes }) => {
               <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 1}>
                 Hủy Đơn Hàng
               </Button>{' '}
+              <Button variant="outlined" color="error" onClick={handleReturnItem}>
+                Đổi/Trả Hàng
+              </Button>{' '}
               <Button variant="outlined" color="error" onClick={handleSelect}>
                 Chi Tiết
               </Button>
@@ -371,14 +378,14 @@ const OrderClientTimeline = ({ classes }) => {
               <Typography variant="h6" gutterBottom>
                 Lịch Sử Thanh Toán{' '}
               </Typography>
-              {/* <Button
-                onClick={() => handlePayment()}
+              <Button
+                // onClick={() => handleReturnItem()}
                 size="small"
                 variant="outlined"
                 disabled={activeIndex < 3 || activeIndex > 3}
               >
                 Xác nhận thanh toán
-              </Button> */}
+              </Button>
             </Stack>
           </div>
           <div className="row row-botton">
@@ -402,7 +409,7 @@ const OrderClientTimeline = ({ classes }) => {
                         <TableCell component="th" scope="row">
                           {item.hinhThuc}
                         </TableCell>
-                        <TableCell align="right">{item.soTien}</TableCell>
+                        <TableCell align="right">{formatCurrency(item.soTien)}</TableCell>
                         <TableCell align="right">{item.idHd.ngayThanhToan}</TableCell>
                       </TableRow>
                     ))
@@ -473,9 +480,9 @@ const OrderClientTimeline = ({ classes }) => {
                               Màu: {item[11]}
                             </Button>
                           </TableCell>
-                          <TableCell align="right">{item[7]}</TableCell>
+                          <TableCell align="right">{formatCurrency(item[7])}</TableCell>
                           <TableCell align="right">{item[8]}</TableCell>
-                          <TableCell align="right">{item[9]}</TableCell>
+                          <TableCell align="right">{formatCurrency(item[9])}</TableCell>
                           <TableCell align="right">
                             <IconButton
                               aria-label="delete"
@@ -503,23 +510,24 @@ const OrderClientTimeline = ({ classes }) => {
               </Table>{' '}
               {listData.length > 0 && (
                 <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
-                  Thành Tiền: {listData[0].idHd.thanhTien}
+                  Thành Tiền: {formatCurrency(listData[0].idHd.thanhTien)}
                 </Typography>
               )}
             </TableContainer>
             {/* Modal Payment */}
+            {DataCart.length > 0 && (
+              <>
+                <ModalReturnItem
+                  show={showModalsReturnItem}
+                  // showModalsReturnItem={showModalsReturnItem}
+                  selectDataCart={selectDataCart}
+                  handleClose={handleClose}
+                  DataCart={DataCart}
+                />
+              </>
+            )}
             {listData.length > 0 && (
               <>
-                {/* <ModalPaymentComfirm
-                  show={showModalsAdd}
-                  showModalsAdd={showModalsAdd}
-                  handleClose={handleClose}
-                  listData={listData}
-                  thanhTien={listData[0].idHd.thanhTien}
-                  listHD={listData[0].idHd}
-                  tenKhTT={listData[0].idHd.tenKh}
-                  sdtKHTT={listData[0].idHd.sdtKh}
-                /> */}
                 <ModalDeleteProductOnCart
                   open={showModalsDelete}
                   handleClose={handleCloseModalDelelte}

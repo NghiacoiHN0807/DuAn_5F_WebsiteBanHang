@@ -206,8 +206,6 @@ export default function SelectAllBillOfClient() {
   }, [SelectAllBill]);
 
   const fetchMoreData = () => {
-    console.log('DataCart.length: ', DataCart.totalElements);
-    console.log('productOnCart.length: ', productOnCart.length);
     if (DataCart.totalElements - 1 === productOnCart.length) {
       setHasMore(false);
     } else {
