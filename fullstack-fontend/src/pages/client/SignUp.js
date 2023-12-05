@@ -15,7 +15,7 @@ import Container from '@mui/material/Container';
 import {createTheme, ThemeProvider} from '@mui/material/styles';
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {postAddTaiKhoanKhachHang} from "../../service/taiKhoanKhachHangSevice";
+import {postSignUp} from "../../service/taiKhoanKhachHangSevice";
 
 
 const SignUp = () => {
@@ -38,7 +38,7 @@ const SignUp = () => {
 
         let res;
         try {
-            res = await postAddTaiKhoanKhachHang(
+            res = await postSignUp(
                 maTaiKhoan,
                 ho,
                 ten,

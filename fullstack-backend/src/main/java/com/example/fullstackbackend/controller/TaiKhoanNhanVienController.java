@@ -76,6 +76,7 @@ public class TaiKhoanNhanVienController {
 
     @PutMapping("update/{id}")
     public ResponseEntity<?> update(@PathVariable("id") Integer id,
+                                    @Valid
                                     @RequestBody TaiKhoan taiKhoan,
                                     BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

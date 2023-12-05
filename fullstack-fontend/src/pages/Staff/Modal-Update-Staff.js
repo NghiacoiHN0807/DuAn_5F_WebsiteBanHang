@@ -20,7 +20,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
 import { detailTaiKhoan, postUpdateTaiKhoan, } from "../../service/taiKhoanNhanVienService";
-import { chucVu3 } from "../../service/chucVuService";
+import { chucVu3, detailTen } from "../../service/chucVuService";
 
 
 
@@ -77,11 +77,16 @@ const UpdateTkNV = (props) => {
 
   const handleSave = async () => {
     let res;
+    let tenCvObject;
     try {
+
+      tenCvObject = await detailTen(chucVu);
+      console.log("chuc vu", tenCvObject);
+
       res = await postUpdateTaiKhoan(
         Data.idTaiKhoan,
         Data.maTaiKhoan,
-        Data.idChucVu,
+        tenCvObject,
         ho,
         ten,
         sdt,
@@ -280,4 +285,3 @@ const UpdateTkNV = (props) => {
   );
 };
 export default UpdateTkNV;
-

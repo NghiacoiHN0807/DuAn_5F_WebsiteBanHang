@@ -13,6 +13,6 @@ const deleteChucVu = (id) => custom.delete(`/chuc-vu/delete/${id}`);
 
 const detail = (id) => custom.get(`/chuc-vu/detail/${id}`);
 
-const detailTen = (params) => custom.get(`/chuc-vu/detailTen`, { params });
+const detailTen = (params) => custom.get(`/chuc-vu/detailTen?tenCv=${params}`);
 
 export { detail, chucVu, postAddChucVu, deleteChucVu, chucVu2, chucVu3, detailTen };
