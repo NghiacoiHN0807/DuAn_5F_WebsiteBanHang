@@ -3,6 +3,7 @@ package com.example.fullstackbackend.services;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
 import com.example.fullstackbackend.entity.LichSuHoaDon;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,7 +16,7 @@ public interface HoadonchitietSevice {
 
     List<Object[]> getListProductOncart(Integer idHd);
 
-    List<HoaDonChiTiet> getListProductByIDKH(Integer idKH);
+    Page<HoaDonChiTiet> getListProductByIDKH(Integer idKH, Integer pageNo, Integer size);
 
     HoaDonChiTiet add(HoaDonChiTiet add);
 
