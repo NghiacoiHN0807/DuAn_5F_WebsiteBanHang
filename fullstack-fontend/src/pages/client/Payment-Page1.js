@@ -330,7 +330,7 @@ export default function PaymentPage1() {
             </TableContainer>
           </Grid>
 
-          <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 5, backgroundColor: 'white' }}>
+          <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 5, backgroundColor: 'white' }} className='d-flex justify-content-between'>
             <Grid item xs={12} md={6} lg={4}>
               <Typography variant="h6" sx={{ marginTop: 1 }} gutterBottom>
                 Phương Thức Thanh Toán{' '}
@@ -406,10 +406,10 @@ export default function PaymentPage1() {
                   {listHD && thanhTien}{' '}
                 </Typography>
               </Stack>
+              <Button onClick={() => handleDatHang()} variant="contained" color="success">
+                Đặt Hàng
+              </Button>
             </Grid>
-            <Button onClick={() => handleDatHang()} variant="contained" color="success">
-              Đặt Hàng
-            </Button>
           </Grid>
         </Grid>
       </Container>
