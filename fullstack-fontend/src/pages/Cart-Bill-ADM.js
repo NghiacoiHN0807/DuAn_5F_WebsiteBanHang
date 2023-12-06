@@ -12,7 +12,6 @@ import {
   IconButton,
   InputLabel,
   MenuItem,
-  Pagination,
   Paper,
   Select,
   Snackbar,
@@ -102,7 +101,6 @@ const CartBillADM = () => {
 
   // Detail Hd
   const [listHD, setlistHD] = useState([]);
-  // const [listHD, setlistHD] = useState([]);
 
   const getDetailHD = useCallback(async () => {
     try {
@@ -156,7 +154,6 @@ const CartBillADM = () => {
         type: 'warning',
         message: 'Đã Tồn Tại 5 Hóa Đơn Chờ. Vui Lòng Thanh Toán!!!',
       });
-      // toast.warn('Đã Tồn Tại 5 Hóa Đơn Chờ. Vui Lòng Thanh Toán!!!');
     } else {
       const res = await postAddBill(1, 8);
       getListData();
@@ -164,8 +161,6 @@ const CartBillADM = () => {
         type: 'success',
         message: 'Tạo thành công hóa đơn',
       });
-
-      // toast.success('');
 
       // Update the tabs state to include the new tab
       const nextTabNumber = tabs.length + 1;
@@ -204,19 +199,16 @@ const CartBillADM = () => {
   // const [numberPages, setNumberPages] = useState(0);
   // const [currentPage, setCurrentPage] = useState(0);
 
-  const selectDataCart = useCallback(
-    async (page) => {
-      try {
-        const res = await finByProductOnCart(page, idHdParam);
-        if (res) {
-          setDataCart(res);
-        }
-      } catch (error) {
-        console.error(error);
+  const selectDataCart = useCallback(async () => {
+    try {
+      const res = await finByProductOnCart(idHdParam);
+      if (res) {
+        setDataCart(res);
       }
-    },
-    [idHdParam]
-  );
+    } catch (error) {
+      console.error(error);
+    }
+  }, [idHdParam]);
   useEffect(() => {
     selectDataCart();
   }, [selectDataCart]);
@@ -403,8 +395,8 @@ const CartBillADM = () => {
   }, [selectedDistrict, selectedProvince, selectedWard, districts, provinces, wards, diachiCuThe]);
 
   // Show thanhTien
-  const [thanhTien, setThanhTien] = useState();
-  const [tongTien, setTongTien] = useState();
+  const [thanhTien, setThanhTien] = useState(0);
+  const [tongTien, setTongTien] = useState(0);
 
   useEffect(() => {
     const calculateTotalPrice = async () => {
@@ -417,11 +409,11 @@ const CartBillADM = () => {
       const totalShip = tienShip === 0 && listHD && listHD.tienShip ? listHD.tienShip : tienShip;
       // Set Thanh Tien
       setThanhTien(total + totalShip);
-      await updateTongTien(idHdParam, total, totalShip);
+      await updateTongTien(idHdParam, total, totalShip, thanhTien);
     };
 
     calculateTotalPrice();
-  }, [DataCart, idHdParam, tienShip, listHD]);
+  }, [DataCart, idHdParam, tienShip, listHD, thanhTien]);
 
   // Modal add KH
   const [showModalsKH, setShowModalKH] = useState(false);
@@ -471,6 +463,8 @@ const CartBillADM = () => {
     }
     setAlertContent(null);
   };
+  // Format thanhTien
+  const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 
   return (
     <>
@@ -834,7 +828,7 @@ const CartBillADM = () => {
                         Tiền Hàng{' '}
                       </Typography>
                       <Typography variant="h6" gutterBottom>
-                        {tongTien}{' '}
+                        {formatCurrency(tongTien)}{' '}
                       </Typography>
                     </Stack>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
@@ -850,7 +844,7 @@ const CartBillADM = () => {
                         Thành Tiền{' '}
                       </Typography>
                       <Typography variant="h6" gutterBottom>
-                        {thanhTien}{' '}
+                        {formatCurrency(thanhTien)}{' '}
                       </Typography>
                     </Stack>
                   </div>
@@ -888,12 +882,14 @@ const CartBillADM = () => {
               itemUpdate={itemUpdate}
             />
             {/* Modal Delete Product  */}
-            <ModalDeleteProductOnCart
-              open={showModalsDelete}
-              handleClose={handleCloseModalDelelte}
-              itemDelete={itemDelete}
-              selectDataCart={selectDataCart}
-            />
+            {itemDelete !== undefined && (
+              <ModalDeleteProductOnCart
+                open={showModalsDelete}
+                handleClose={handleCloseModalDelelte}
+                itemDelete={itemDelete}
+                selectDataCart={selectDataCart}
+              />
+            )}
             {/* Modal Delete Product  */}
             <ModalDeleteAllProductOnCart
               open={showModalsDeleteAll}

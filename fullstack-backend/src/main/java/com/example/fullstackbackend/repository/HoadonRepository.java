@@ -26,11 +26,12 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
             "or x.trangThai = 5 or x.trangThai = 8 or x.trangThai = 9 or x.trangThai = 10 or x.trangThai = 0 ORDER BY x.maHd DESC")
     List<HoaDon> pageOnlineInvoice();
 
+    List<HoaDon> findAllByIdKH_IdTaiKhoan(Integer idKh);
+
     @Modifying
     @Transactional
     @Query(value = "UPDATE HoaDon hd SET hd.trangThai= 10 WHERE hd.idHd=?1")
     void delete(Integer idHD);
-
 
     @Query(value = "SELECT SUM(tong_tien) AS total_revenue \n" +
             "FROM hoa_don where trang_thai = 9 or trang_thai = 5;", nativeQuery = true)

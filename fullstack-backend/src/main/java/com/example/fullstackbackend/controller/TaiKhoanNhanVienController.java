@@ -4,8 +4,11 @@ import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+<<<<<<< HEAD
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+=======
+>>>>>>> origin/nghiant0807
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -17,7 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -28,7 +30,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/tai-khoan/")
 @CrossOrigin("http://localhost:3000/")
-@Secured("ADMIN")
+
 public class TaiKhoanNhanVienController {
     @Autowired
     private TaiKhoanNhanVienService taiKhoanNhanVienService;

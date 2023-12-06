@@ -56,7 +56,7 @@ public class MySecurityConfiguration {
     @Primary
     @Bean
     protected AuthenticationManagerBuilder configureAuth(AuthenticationManagerBuilder auth) throws Exception {
-        System.out.println("auth: " + auth);
+        System.out.println("auth: " + auth.getDefaultUserDetailsService());
         auth.userDetailsService(userService) // Provide userservice for spring security
                 .passwordEncoder(passwordEncoder()); // Provide password encoder
         return auth;
@@ -66,11 +66,19 @@ public class MySecurityConfiguration {
     protected SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
         System.out.println("http: " + http);
         return http.authorizeHttpRequests(
+
                         req ->
+<<<<<<< HEAD:fullstack-backend/src/main/java/com/example/fullstackbackend/security/MySecurityConfiguration.java
                                 req.requestMatchers("/", "/google-login", "/anh/**", "/gio-hang-chi-tiet/**", "/add", "/api/**", "/san-pham/**", "chi-tiet-san-pham/**", "/hoa-don/**", "/hoa-don-chi-tiet/**", "/chat-lieu/**", "/loai-sp/**", "/xuat-xu/**", "/loai-co-ao/**", "/ong-tay-ao/**", "/mau-sac/**", "/size/**").permitAll()
                                         .requestMatchers("/**").hasRole("ADMIN")
                                         .requestMatchers("/**").hasRole("STAFF")
                                         .requestMatchers("/tai-khoan-khach-hang/**", "/hoa-don/**", "/gio-hang-chi-tiet/**", "/gio-hang/**", "/hoa-don-chi-tiet/**", "/san-pham/**", "chi-tiet-san-pham/**").hasRole("CUSTOMER")
+=======
+                                req.requestMatchers("/", "/anh/**", "/gio-hang-chi-tiet/**", "/add", "/api/**", "/san-pham/**", "chi-tiet-san-pham/**", "/hoa-don/**", "/hoa-don-chi-tiet/**", "/tai-khoan-khach-hang/**", "/chat-lieu/**", "/loai-sp/**", "/xuat-xu/**", "/loai-co-ao/**", "/ong-tay-ao/**", "/mau-sac/**", "/size/**").permitAll()
+                                        .requestMatchers("/tai-khoan/**").hasRole("ADMIN")
+                                        .requestMatchers("/giam-gia/**", "/giam-gia-chi-tiet/**").hasAnyRole("ADMIN", "STAFF")
+                                        .requestMatchers("/tai-khoan-khach-hang/**", "/hoa-don/**", "/hoa-don-chi-tiet/**", "/gio-hang-chi-tiet/**", "/gio-hang/**", "/payment-online/**", "/hinh-thuc-thanh-toan/**", "/lich-su-hoa-don/**").hasAnyRole("ADMIN", "STAFF", "CUSTOMER")
+>>>>>>> origin/nghiant0807:fullstack-backend/src/main/java/com/example/fullstackbackend/config/MySecurityConfiguration.java
                                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)

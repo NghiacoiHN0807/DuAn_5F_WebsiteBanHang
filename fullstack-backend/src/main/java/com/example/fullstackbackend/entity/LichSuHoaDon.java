@@ -14,6 +14,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Timestamp;
+
 
 @Entity
 @AllArgsConstructor
@@ -42,5 +44,5 @@ public class LichSuHoaDon {
     private String moTa;
 
     @Column(name = "ngay_thay_doi")
-    private java.sql.Timestamp ngayThayDoi;
+    private Timestamp ngayThayDoi;
 }

@@ -7,6 +7,9 @@ import com.example.fullstackbackend.repository.HoadonchitietRepository;
 import com.example.fullstackbackend.repository.LichSuHoaDonRepository;
 import com.example.fullstackbackend.services.HoadonchitietSevice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -39,6 +42,12 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     @Override
+    public Page<HoaDonChiTiet> getListProductByIDKH(Integer idKH, Integer pageNo, Integer size) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        return hoadonchitietRepository.findByIdHd_IdKH_IdTaiKhoan(idKH, pageable);
+    }
+
+    @Override
     public HoaDonChiTiet add(HoaDonChiTiet add) {
         if (add.getTrangThai() < 8) {
             addLS(add, 1);
@@ -46,8 +55,6 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
         } else {
             return hoadonchitietRepository.save(add);
         }
-
-
     }
 
     @Override
@@ -58,7 +65,7 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     @Override
     public void delete(Integer id) {
         Optional<HoaDonChiTiet> detailHDCT = detail(id);
-        if (detailHDCT.get().getTrangThai() >= 0 || detailHDCT.get().getTrangThai() < 8) {
+        if (detailHDCT.get().getTrangThai() < 8) {
             addLS(detailHDCT.get(), 2);
             hoadonchitietRepository.deleteById(id);
         } else {

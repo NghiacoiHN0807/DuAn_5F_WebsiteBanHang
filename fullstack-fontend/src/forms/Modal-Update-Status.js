@@ -6,7 +6,6 @@ import Button from '@mui/material/Button';
 import PropTypes from 'prop-types';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { updateStatusBill } from '../service/OrderManagementTimeLine';
@@ -19,9 +18,10 @@ const ModalUpdateStatus = (props) => {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     getListData: PropTypes.func.isRequired,
+    listHTTT: PropTypes.array.isRequired,
     activeIndex: PropTypes.number.isRequired,
   };
-  const { show, handleClose, getListData, activeIndex } = props;
+  const { show, handleClose, getListData, activeIndex, listHTTT } = props;
   const [alertContent, setAlertContent] = useState(null);
 
   //   Insert product
@@ -37,8 +37,12 @@ const ModalUpdateStatus = (props) => {
           message: 'Hãy Nhập Thêm Mô Tả',
         });
       } else {
-        const check = await updateStatusBill(idHdParam, moTa, activeIndex + 1);
-        console.log('check: ', check);
+        if (listHTTT.length > 0) {
+          const newActiveIndex = activeIndex === 3 ? 5 : activeIndex + 1;
+          await updateStatusBill(idHdParam, moTa, newActiveIndex);
+        } else {
+          await updateStatusBill(idHdParam, moTa, activeIndex + 1);
+        }
         setAlertContent({
           type: 'success',
           message: 'Đã Cập Nhập Trạng Thái Hóa Đơn!!!',
