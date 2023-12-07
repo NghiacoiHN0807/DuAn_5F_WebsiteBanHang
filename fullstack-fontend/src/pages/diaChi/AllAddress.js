@@ -39,9 +39,6 @@ const AllAddress = () => {
     const [originalListData, setOriginalListData] = useState([]);
     const navigate = useNavigate();
     const isMounted = useRef(true);
-    const [listTP, setListTP] = useState([]);
-    const [listQH, setListQH] = useState([]);
-    const [listPX, setListPX] = useState([]);
 
     const getListData = async (page, query) => {
         try {
@@ -59,57 +56,12 @@ const AllAddress = () => {
     useEffect(() => {
         isMounted.current = true;
         getListData(0);
-        getListTP();
+        // getListTP();
         return () => {
             isMounted.current = false;
         };
     }, []);
 
-    useEffect(() => {
-        if (listData.length > 0) {
-            listData.forEach((item) => {
-                fetchQuanHuyenAndPhuongXa(item.tinhThanh, item.quanHuyen);
-            });
-        }
-        // eslint-disable-next-line
-    }, [listData]);
-    const getListTP = async () => {
-        const resTP = await getTinhThanhPho();
-
-        setListTP(resTP?.data.results);
-
-    };
-
-    const getNameByIdTP = (id) => {
-        const province = listTP.find((item) => item.province_id === id);
-        return province ? province.province_name : null;
-    };
-    const getNameByIdQH = (id) => {
-        const province = listQH.find((item) => item.district_id === id);
-        return province ? province.district_name : null;
-    };
-    const getNameByIdPX = (id) => {
-        const province = listPX.find((item) => item.ward_id === id);
-        return province ? province.ward_name : null;
-    };
-
-    const fetchQuanHuyenAndPhuongXa = async (tinhThanhID, quanHuyenID) => {
-        const existingQH = listQH.find(item => item.district_id === quanHuyenID);
-        const existingPX = listPX.find(item => item.ward_id === quanHuyenID);
-
-        if (existingQH && existingPX) {
-            // Data already exists, no need to fetch again
-            return;
-        }
-
-        const quanHuyenData = await getQuanHuyen(tinhThanhID);
-        const phuongXaData = await getPhuongXa(quanHuyenID);
-
-        if (quanHuyenData.status === 200 && phuongXaData.status === 200) {
-            setListQH(prevListQH => [...prevListQH, ...quanHuyenData.data.results]);
-            setListPX(prevListPX => [...prevListPX, ...phuongXaData.data.results]);
-        }
-    };
 
 
     const columns = [
@@ -196,7 +148,7 @@ const AllAddress = () => {
             maTaiKhoan: item.taiKhoan.maTaiKhoan,
             tenNguoiNhan: item.tenNguoiNhan,
             sdtKh: item.sdt,
-            diaChi: `${getNameByIdTP(item.tinhThanh)}, ${getNameByIdQH(item.quanHuyen)}, ${getNameByIdPX(item.phuongXa)}`,
+            diaChi: `${item.tinhThanh}, ${item.quanHuyen}, ${item.phuongXa}`,
             diaChiCuThe: item.diaChiCuThe,
             loaiDiaChi: item.loaiDiaChi,
             trangThai: item.trangThai,

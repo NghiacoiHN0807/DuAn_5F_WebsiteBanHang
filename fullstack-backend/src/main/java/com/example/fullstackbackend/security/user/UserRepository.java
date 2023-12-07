@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<TaiKhoanUser, Integer> {
 
-    @Query("select t from TaiKhoanUser t where t.email = ?1 and t.trangThai=0 or t.trangThai=1")
+    @Query("select t from TaiKhoanUser t where t.email = ?1 and( t.trangThai=0 or t.trangThai=1)")
     TaiKhoanUser findByEmail(String email);
 
 

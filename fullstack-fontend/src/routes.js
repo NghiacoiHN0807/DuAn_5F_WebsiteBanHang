@@ -38,7 +38,7 @@ import AllAddress from './pages/diaChi/AllAddress';
 import AddressByClient from './pages/diaChi/AddressByClient';
 import AddAddress from './pages/diaChi/AddAddress';
 import UpdateAddress from './pages/diaChi/UpdateAddress';
-import SignUp from './pages/client/SignUp';
+import SignUpPage from "./pages/SignUpPage";
 
 // ----------------------------------------------------------------------
 
@@ -96,7 +96,7 @@ export default function Router() {
     },
     {
       path: 'signUp',
-      element: <SignUp />,
+      element: <SignUpPage />,
     },
     {
       element: <SimpleLayout />,

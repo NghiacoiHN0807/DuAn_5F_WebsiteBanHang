@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.validator.constraints.CodePointLength;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Entity
@@ -60,8 +62,13 @@ public class DiaChi {
     @Column(name = "tinh_thanh")
     private String tinhThanh;
 
+    @Column(name = "phi_ship", precision = 38, scale = 2)
+    private BigDecimal phiShip;
+
     @Column(name = "trang_thai")
     private Integer trangThai;
+
+
 
 
 }

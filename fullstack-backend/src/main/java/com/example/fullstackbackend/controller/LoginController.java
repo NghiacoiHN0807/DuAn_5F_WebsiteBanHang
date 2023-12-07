@@ -1,5 +1,7 @@
 package com.example.fullstackbackend.controller;
 
+import com.example.fullstackbackend.entity.GioHang;
+import com.example.fullstackbackend.repository.GioHangReponsitory;
 import com.example.fullstackbackend.security.CustomUserDetails;
 import com.example.fullstackbackend.services.UserService;
 import com.example.fullstackbackend.security.jwt.JwtTokenProvider;
@@ -35,6 +37,9 @@ public class LoginController {
     private TaiKhoanKhachHangSevice TaiKhoanKhachHangKHSevice;
 
     @Autowired
+    private GioHangReponsitory gioHangReponsitory;
+
+    @Autowired
     public LoginController(JwtDecoder jwtDecoder) {
         this.jwtDecoder = jwtDecoder;
     }
@@ -61,6 +66,13 @@ public class LoginController {
             }
 
             TaiKhoan addTK = TaiKhoanKhachHangKHSevice.add(taiKhoankh);
+            GioHang gioHang = new GioHang();
+            gioHang.setIdKh(addTK);
+            gioHang.setMaGioHang(null);
+            gioHang.setNgayTao(null);
+            gioHang.setTrangThai(0);
+            gioHangReponsitory.save(gioHang);
+
             return ResponseEntity.ok(addTK);
         }
     }
@@ -85,7 +97,16 @@ public class LoginController {
             userEntity.setTen(givenName);
             userEntity.setTrangThai(0);
             userEntity.setSdt(null);
-            userService.add(userEntity);
+            TaiKhoanUser tku =      userService.add(userEntity);
+            TaiKhoan tk = new TaiKhoan();
+            tk.setIdTaiKhoan(tku.getIdTaiKhoan());
+            tk.setIdChucVu(tku.getIdChucVu());
+            GioHang gioHang = new GioHang();
+            gioHang.setIdKh(tk);
+            gioHang.setMaGioHang(null);
+            gioHang.setNgayTao(null);
+            gioHang.setTrangThai(0);
+            gioHangReponsitory.save(gioHang);
             UserDetails userDetails = new CustomUserDetails(userEntity);
             return tokenProvider.generateToken(userDetails);
         }

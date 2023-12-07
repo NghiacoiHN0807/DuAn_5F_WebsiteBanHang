@@ -9,6 +9,8 @@ import Logo from '../components/logo';
 import Iconify from '../components/iconify';
 // sections
 import { LoginForm } from '../sections/auth/login';
+import {AlertProvider} from "../layouts/dashboard/AlertContext";
+import AlertSnackbar from "../layouts/dashboard/AlertSnackbar";
 
 // ----------------------------------------------------------------------
 
@@ -44,7 +46,9 @@ export default function LoginPage() {
   const mdUp = useResponsive('up', 'md');
 
   return (
-    <>
+    <> <AlertProvider>
+      <AlertSnackbar />
+
       <Helmet>
         <title> Login | Minimal UI </title>
       </Helmet>
@@ -61,7 +65,7 @@ export default function LoginPage() {
         {mdUp && (
           <StyledSection>
             <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-              Hi, Welcome Back
+             Chào Mừng Tới 5FStore
             </Typography>
             <img src="/assets/illustrations/illustration_login.png" alt="login" />
           </StyledSection>
@@ -89,6 +93,7 @@ export default function LoginPage() {
           </StyledContent>
         </Container>
       </StyledRoot>
+    </AlertProvider>
     </>
   );
 }
