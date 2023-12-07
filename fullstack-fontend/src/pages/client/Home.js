@@ -7,7 +7,7 @@ import { Carousel, Col, Row } from 'react-bootstrap';
 import { styled } from '@mui/material/styles';
 // utils
 import { useNavigate } from 'react-router-dom';
-import { fCurrency } from '../../utils/formatNumber';
+// import { fCurrency } from '../../utils/formatNumber';
 // import
 import anh1 from '../../assets/slider_2.jpg';
 import anh2 from '../../assets/banner-thoi-trang-nam.jpg';
@@ -47,6 +47,8 @@ const Home = () => {
   }, [getAllData]);
 
   const navigate = useNavigate();
+  // Format thanhTien
+  const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 
   const handleChoose = async (id, cover) => {
     console.log('HIHIHI', cover, id);
@@ -60,19 +62,20 @@ const Home = () => {
     const arrayPrice = item[4].split(',');
     const price = arrayPrice.map((price) => parseFloat(price));
     // find max and min of price
-    const minPrice = Math.min(...price);
-    const maxPrice = Math.max(...price);
+    const minPrice = formatCurrency(Math.min(...price));
+    const maxPrice = formatCurrency(Math.max(...price));
     // Select price
     const priceRange = minPrice === maxPrice ? minPrice : `${minPrice} ${maxPrice}`;
 
-    const PRODUCT_COLOR = ['#00AB55', '#000000', '#FFFFFF', '#FFC0CB', '#FF4842', '#1890FF', '#94D82D', '#FFC107'];
+    // const PRODUCT_COLOR = ['#00AB55', '#000000', '#FFFFFF', '#FFC0CB', '#FF4842', '#1890FF', '#94D82D', '#FFC107'];
+    const PRODUCT_COLOR = ['#000000', '#FFC0CB', '#94D82D'];
 
     return {
       id: item[1],
       cover: firstImage,
       name: item[3],
-      price: priceRange,
-      priceSale: item[2],
+      price: formatCurrency(priceRange),
+      priceSale: formatCurrency(item[1]),
       colors:
         (setIndex === 1 && PRODUCT_COLOR.slice(0, 2)) ||
         (setIndex === 2 && PRODUCT_COLOR.slice(1, 3)) ||
@@ -81,7 +84,7 @@ const Home = () => {
         (setIndex === 23 && PRODUCT_COLOR.slice(4, 6)) ||
         (setIndex === 24 && PRODUCT_COLOR.slice(5, 6)) ||
         PRODUCT_COLOR,
-      status: sample(['sale', 'new', 'hot', '']),
+      status: sample(['hot']),
     };
   });
 
@@ -91,24 +94,17 @@ const Home = () => {
 
   const slides = [];
   for (let i = 0; i < numSlides; i += 1) {
+    const start = i * itemsPerSlide;
+    const end = (i + 1) * itemsPerSlide;
+
+    const slideProducts = PRODUCTS.slice(start, end);
     const slide = (
       <Carousel.Item key={i}>
         <Container>
           <Row>
-            {/* {PRODUCTS.map((product, index) => (
-              <Col key={index}>
-                <Card sx={{ maxWidth: 345 }}>
-                  <CardActionArea>
-                    <DialogContent>
-                      <ProductListClient products={[product]} />
-                    </DialogContent>
-                  </CardActionArea>
-                </Card>
-              </Col>
-            ))} */}
-            {PRODUCTS.map((product, index) => (
-              <Col key={index}>
-                <Card sx={{ height: 350, width: '70%' }}>
+            {slideProducts.map((product, index) => (
+              <Col key={index} sm={6} md={4} lg={3} className="product-col">
+                <Card sx={{ height: 350, width: 250 }}>
                   <CardActionArea onClick={() => handleChoose(product.id, product.cover)}>
                     {/* <DialogContent> */}
                     <Box sx={{ pt: '100%', position: 'relative' }}>
@@ -132,26 +128,26 @@ const Home = () => {
 
                     <Stack spacing={2} sx={{ p: 3 }}>
                       <Link color="inherit" underline="hover">
-                        <Typography variant="subtitle2" noWrap>
+                        <Typography variant="subtitle1" noWrap>
                           {product.name}
                         </Typography>
                       </Link>
 
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <ColorPreview colors={product.colors} />
-                        <Typography variant="subtitle1">
+                        <Typography variant="subtitle2">
                           <Typography
                             component="span"
-                            variant="body1"
+                            variant="subtitle2"
                             sx={{
                               color: 'text.disabled',
                               textDecoration: 'line-through',
                             }}
                           >
-                            {product.priceSale && fCurrency(product.priceSale)}
+                            {formatCurrency(product.priceSale) && formatCurrency(product.priceSale)}
                           </Typography>
                           &nbsp;
-                          {fCurrency(product.price)}
+                          {formatCurrency(product.price)}
                         </Typography>
                       </Stack>
                     </Stack>
@@ -159,21 +155,6 @@ const Home = () => {
                   </CardActionArea>
                 </Card>
               </Col>
-              // <Col key={index}>
-              //   <Card sx={{ maxWidth: 345 }}>
-              //     <CardActionArea>
-              //       <CardMedia component="img" height="140" image={product.cover} alt={product.cover} />
-              //       <CardContent>
-              //         <Typography gutterBottom variant="h5" component="div">
-              //           {product.name}
-              //         </Typography>
-              //         <Typography variant="body2" color="text.secondary">
-              //           {product.price}
-              //         </Typography>
-              //       </CardContent>
-              //     </CardActionArea>
-              //   </Card>
-              // </Col>
             ))}
           </Row>
         </Container>

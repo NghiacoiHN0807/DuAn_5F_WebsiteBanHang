@@ -92,7 +92,6 @@ export default function Cart() {
 
   const handleDeleteProduct = async (item) => {
     try {
-      console.log('item: ', item.idGhct);
       await deleteProductOnCart(item.idGhct);
       setAlertContent({
         type: 'success',
@@ -276,8 +275,8 @@ export default function Cart() {
                                     size="small"
                                     className="ms-size"
                                   >
-                                    {item.idCtsp.idMs.tenMs}
-                                  </Button>
+                                    {item.idCtsp.idMs.tenMs},
+                                    {/* </Button>
                                   ,
                                   <Button
                                     style={{
@@ -288,7 +287,7 @@ export default function Cart() {
                                     // variant={selectedMauSac === item.idCtsp.idSize ? 'contained' : 'outlined'}
                                     size="small"
                                     className="ms-size"
-                                  >
+                                  > */}
                                     {item.idCtsp.idSize.tenSize}
                                   </Button>
                                 </span>

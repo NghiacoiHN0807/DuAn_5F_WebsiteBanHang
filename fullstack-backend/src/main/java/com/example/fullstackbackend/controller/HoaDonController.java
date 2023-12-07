@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,21 +76,22 @@ public class HoaDonController {
     }
 
     @PostMapping("add")
-    public HoaDon add(@Valid @RequestBody HoaDon newHD, BindingResult bindingResult) {
+    public ResponseEntity<?> add(@Valid @RequestBody HoaDon newHD, BindingResult bindingResult) {
+        System.out.println("add123: " + newHD.getTrangThai());
         if (bindingResult.hasErrors()) {
-            return null;
+            return ResponseEntity.ok("Đã Lỗi");
         } else {
+            System.out.println("add123: " + newHD.getTrangThai());
             HoaDon hoaDon = hoadonSevice.add(newHD);
-            //Add to history bill
+            // Add to history bill
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
             lichSuHoaDon.setIdHd(hoaDon);
             lichSuHoaDon.setIdTk(hoaDon.getIdTK());
             lichSuHoaDon.setTrangThai(hoaDon.getTrangThai());
-            lichSuHoaDon.setMoTa("Tạo Hóa Đơn Thành Công");
+            lichSuHoaDon.setMoTa("Tạo Đơn Chờ Tại Quầy Thành Công");
             lichSuHoaDon.setNgayThayDoi(currentTimestamp);
             lichSuHoaDonService.add(lichSuHoaDon);
-
-            return hoaDon;
+            return ResponseEntity.ok(hoaDon);
         }
     }
 

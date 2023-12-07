@@ -209,7 +209,6 @@ export default function UserPage() {
 
   // Create a new Detail Direct
   const [alertContent, setAlertContent] = useState(null);
-  let getIdHttp;
 
   const handleAdd = async () => {
     const res = await postAddBill(1, 8);
@@ -217,8 +216,7 @@ export default function UserPage() {
       type: 'success',
       message: 'Tạo thành công hóa đơn',
     });
-    getIdHttp = res.idHd;
-    navigate(`/dashboard/sales/card-bill/${getIdHttp}`);
+    navigate(`/dashboard/sales/card-bill/${res.idHd}`);
   };
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
