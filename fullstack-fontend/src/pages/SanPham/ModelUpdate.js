@@ -350,16 +350,28 @@ export default function UpdateSanPham() {
     }
   }, [selectedImages, uploadImage]);
 
-  const onDrop = useCallback((acceptedFiles) => {
-    const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
-    setSelectedImages(imageFiles);
-    handleOpenBD();
+  const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
+    if (acceptedFiles.length > 0 && rejectedFiles.length === 0) {
+      const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
+      setSelectedImages(imageFiles);
+      handleOpenBD();
+    }
+    if (rejectedFiles.length > 0 && acceptedFiles.length === 0) {
+      handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
+    }
+    if (acceptedFiles.length > 0 && rejectedFiles.length > 0) {
+      const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
+      setSelectedImages(imageFiles);
+      handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
+      handleOpenBD();
+    }
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: 'image/*',
     multiple: true,
+    maxSize: 1024 * 1024,
   });
 
   const handlDeleteImg = async (idImg, url) => {
@@ -856,8 +868,8 @@ export default function UpdateSanPham() {
                       <div {...getRootProps()} className="dropzone">
                         <input {...getInputProps()} />
                         <p>
-                          <AddPhotoAlternateIcon sx={{ fontSize: 40 }} /> Kéo hoặc thả ảnh vô đây, hoặc click để chọn
-                          ảnh
+                          <AddPhotoAlternateIcon sx={{ fontSize: 40 }} />
+                          {'Kéo hoặc thả ảnh vô đây, hoặc click để chọn ảnh! (Lưu ý dung lượng ảnh phải <= 1 MB)'}
                         </p>
                       </div>
                     </Card>
@@ -897,24 +909,38 @@ export default function UpdateSanPham() {
         <DialogTitle id="alert-dialog-title">{'Thêm thuộc tính'}</DialogTitle>
         <DialogContent>
           <div className="listMauSac">
-            {listMS.length > 0 && (
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Màu sắc</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Màu sắc"
-                  value={mauSac}
-                  onChange={(event) => setMauSac(event.target.value)}
+            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              <Grid item xs={10}>
+                {listMS.length > 0 && (
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Màu sắc</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Màu sắc"
+                      value={mauSac}
+                      onChange={(event) => setMauSac(event.target.value)}
+                    >
+                      {listMS.map((item, index) => (
+                        <MenuItem value={item.idMs} key={index}>
+                          {item.tenMs}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+              </Grid>
+
+              <Grid item xs={1} sx={{ display: 'flex', marginTop: '4px' }}>
+                <Button
+                  variant="outlined"
+                  size="large"
+                  onClick={() => handleOpenQuickAtt('Ống tay áo', 'idTayAo', 'maTayAo', 'loaiTayAo')}
                 >
-                  {listMS.map((item, index) => (
-                    <MenuItem value={item.idMs} key={index}>
-                      {item.tenMs}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
+                  <MoreHorizIcon />
+                </Button>
+              </Grid>
+            </Grid>
           </div>
           <div className="listSize">
             <Box sx={{ display: 'flex', alignItems: 'center', pb: 1, marginTop: '50px' }}>
@@ -935,6 +961,16 @@ export default function UpdateSanPham() {
                     {item.tenSize}
                   </Button>
                 ))}
+                <Button
+                  style={{
+                    marginRight: '4px',
+                    marginBottom: '4px',
+                  }}
+                  size="small"
+                  variant="outlined"
+                >
+                  +
+                </Button>
               </div>
             </Box>
           </div>
