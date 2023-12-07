@@ -35,7 +35,9 @@ ModalQuickAtt.propTypes = {
   handleCloseQuickAtt: PropTypes.func,
   listAtt: PropTypes.array,
   phanTu: PropTypes.object,
-  addFunction: PropTypes.func,
+  addFunc: PropTypes.func,
+  updateFunc: PropTypes.func,
+  detailFunc: PropTypes.func,
   getAllList: PropTypes.func,
 };
 
@@ -61,35 +63,53 @@ function renderTrangThai(trangThai) {
   return <Chip label={statusText} color={badgeVariant} />;
 }
 
-export default function ModalQuickAtt({ openQuickAtt, handleCloseQuickAtt, listAtt, phanTu, addFunction, getAllList }) {
-  const [tenAtt, setTenAtt] = useState('');
-  const [emptyErr, setEmptyErr] = useState(false);
-  const [duplicateErr, setDuplicateErr] = useState(false);
+export default function ModalQuickAtt({
+  openQuickAtt,
+  handleCloseQuickAtt,
+  listAtt,
+  phanTu,
+  addFunc,
+  updateFunc,
+  detailFunc,
+  getAllList,
+}) {
+  const [idAtt, setIdAtt] = useState('');
+  const [maAtt, setMaAtt] = useState('');
+  const [tenAdd, setTenAdd] = useState('');
+  const [tenUpdate, setTenUpdate] = useState('');
   const [trangThaiAtt, setTrangAtt] = useState('');
 
-  const handleTenChange = (event) => {
-    const { value } = event.target;
-    setTenAtt(value);
-    setEmptyErr(value.trim() === '');
-    const isDuplicate = listAtt.some((item) => item[phanTu.ten] === value);
-    setDuplicateErr(isDuplicate);
-  };
-
+  // add
   const handleAdd = async () => {
-    // Kiểm tra nếu giá trị là trống thì không đóng dialog
-    if (tenAtt.trim() === '' || listAtt.some((item) => item[phanTu.ten] === tenAtt)) {
-      setEmptyErr(true);
-      setDuplicateErr(true);
+    if (tenAdd.trim() === '' || listAtt.some((item) => item[phanTu.ten] === tenAdd)) {
+      setEmptyAdd(true);
+      setDuplicateAdd(true);
     } else {
-      const res = await addFunction(null, tenAtt, 0);
+      const res = await addFunc(null, tenAdd, 0);
       getAllList();
-      console.log('Check res: ', res);
       if (res && res[phanTu.ma]) {
         handleAlertClick('Thêm thành công!', 'success');
+        setTenAdd('');
         handlCloseAdd();
       } else {
         handleAlertClick('Thêm thất bại!', 'danger');
         handlCloseAdd();
+      }
+    }
+  };
+
+  const hanldeUpdate = async () => {
+    if (tenUpdate.trim() === '') {
+      setEmptyAdd(true);
+    } else {
+      const res = await updateFunc(idAtt, maAtt, tenUpdate, trangThaiAtt);
+      getAllList();
+      if (res && res[phanTu.id]) {
+        handleAlertClick('Cập nhật thành công!', 'success');
+        handlCloseUpdate();
+      } else {
+        handleAlertClick('Thêm thất bại!', 'danger');
+        handlCloseUpdate();
       }
     }
   };
@@ -126,15 +146,48 @@ export default function ModalQuickAtt({ openQuickAtt, handleCloseQuickAtt, listA
 
   const [openUpdate, setOpenUpdate] = useState(false);
 
-  const handlOpenUpdate = () => {
+  const handlOpenUpdate = (id) => {
+    getDetailAtt(id);
     setOpenUpdate(true);
+    setEmptyUpdate(false);
   };
 
   const handlCloseUpdate = () => {
     setOpenUpdate(false);
   };
 
+  // detail
+  const getDetailAtt = async (id) => {
+    try {
+      const res = await detailFunc(id);
+      setIdAtt(res[phanTu.id]);
+      setMaAtt(res[phanTu.ma]);
+      setTenUpdate(res[phanTu.ten]);
+      setTrangAtt(res.trangThai);
+    } catch (error) {
+      console.log('error: ', error);
+    }
+  };
+
   // validate
+  const [emptyAdd, setEmptyAdd] = useState(false);
+  const [duplicateAdd, setDuplicateAdd] = useState(false);
+
+  const [emptyUpdate, setEmptyUpdate] = useState(false);
+
+  const handleTenAddChange = (event) => {
+    const { value } = event.target;
+    setTenAdd(value);
+    setEmptyAdd(value.trim() === '');
+    const isDuplicate = listAtt.some((item) => item[phanTu.ten] === value);
+    setDuplicateAdd(isDuplicate);
+  };
+
+  const handleTenUpdateChange = (event) => {
+    const { value } = event.target;
+    setTenUpdate(value);
+    setEmptyUpdate(value.trim() === '');
+  };
 
   return (
     <>
@@ -180,7 +233,7 @@ export default function ModalQuickAtt({ openQuickAtt, handleCloseQuickAtt, listA
                         <TableCell>{phanTu && phanTu.ten && row[phanTu.ten]}</TableCell>
                         <TableCell>{renderTrangThai(row.trangThai)}</TableCell>
                         <TableCell>
-                          <IconButton aria-label="add an alarm" onClick={() => handlOpenUpdate()}>
+                          <IconButton aria-label="add an alarm" onClick={() => handlOpenUpdate(row[phanTu.id])}>
                             <EditIcon />
                           </IconButton>
                         </TableCell>
@@ -209,10 +262,10 @@ export default function ModalQuickAtt({ openQuickAtt, handleCloseQuickAtt, listA
               id="outlined-number"
               label="Nhập tên"
               fullWidth
-              value={tenAtt}
-              onChange={handleTenChange}
-              error={emptyErr || duplicateErr}
-              helperText={emptyErr ? 'Tên không được để trống' : duplicateErr ? 'Tên đã tồn tại' : ''}
+              value={tenAdd}
+              onChange={handleTenAddChange}
+              error={emptyAdd || duplicateAdd}
+              helperText={emptyAdd ? 'Tên không được để trống' : duplicateAdd ? 'Tên đã tồn tại' : ''}
             />
           </div>
         </DialogContent>
@@ -234,16 +287,30 @@ export default function ModalQuickAtt({ openQuickAtt, handleCloseQuickAtt, listA
         </DialogTitle>
         <DialogContent>
           <div className="editAtt">
-            <TextField id="outlined-number" label="Mã" fullWidth disabled />
+            <TextField id="outlined-number" label="Mã" fullWidth disabled value={maAtt} />
           </div>
           <div className="editAtt">
-            <TextField id="outlined-number" label="Tên" fullWidth />
+            <TextField
+              id="outlined-number"
+              label="Tên"
+              fullWidth
+              value={tenUpdate}
+              onChange={handleTenUpdateChange}
+              error={emptyUpdate}
+              helperText={emptyUpdate ? 'Tên không được để trống' : ''}
+            />
           </div>
 
           <div className="editAtt">
             <FormControl>
               <FormLabel id="demo-row-radio-buttons-group-label">Trạng thái</FormLabel>
-              <RadioGroup row aria-labelledby="demo-row-radio-buttons-group-label" name="row-radio-buttons-group">
+              <RadioGroup
+                row
+                aria-labelledby="demo-row-radio-buttons-group-label"
+                name="row-radio-buttons-group"
+                value={trangThaiAtt}
+                onChange={(event) => setTrangAtt(event.target.value)}
+              >
                 <FormControlLabel value="0" control={<Radio />} label="Còn bán" />
                 <FormControlLabel value="10" control={<Radio />} label="Ngừng kinh doanh" />
               </RadioGroup>
@@ -252,7 +319,7 @@ export default function ModalQuickAtt({ openQuickAtt, handleCloseQuickAtt, listA
         </DialogContent>
         <DialogActions>
           <Button onClick={() => handlCloseUpdate()}>Canel</Button>
-          <Button onClick={() => handlCloseUpdate()} autoFocus>
+          <Button onClick={() => hanldeUpdate()} autoFocus>
             Ok
           </Button>
         </DialogActions>

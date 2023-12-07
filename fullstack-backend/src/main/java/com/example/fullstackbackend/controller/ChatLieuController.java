@@ -1,7 +1,6 @@
 package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.ChatLieu;
-import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.ChatlieuService;
 import jakarta.validation.Valid;

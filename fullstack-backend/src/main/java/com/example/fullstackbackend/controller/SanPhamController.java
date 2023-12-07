@@ -5,7 +5,6 @@ import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.DTO.SanPhamIgDTO;
 import com.example.fullstackbackend.DTO.SanPhamWithMinImageDTO;
-import com.example.fullstackbackend.entity.DiaChi;
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.services.SanPhamService;
 import jakarta.validation.Valid;

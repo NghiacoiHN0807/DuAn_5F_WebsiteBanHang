@@ -45,20 +45,22 @@ import {
   Backdrop,
   Chip,
 } from '@mui/material';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import Iconify from '../../components/iconify';
 import { putUpdateSanPham, detailSP } from '../../service/SanPhamService';
 import { findCtspById, addColorAndSize, updateNumber, detailCTSP } from '../../service/ChiTietSPService';
 import { deleteAnh, fetchAnh } from '../../service/AnhService';
 import { postAddCloud, deleteCloud } from '../../service/CloudinaryService';
 
-import { fetchXX, detailXX } from '../../service/XuatXuService';
-import { fetchCL, detailCL } from '../../service/ChatLieuService';
-import { fetchCoAo, detailCoAo } from '../../service/LoaiCoAoService';
-import { fetchLSP, detailLSP } from '../../service/LoaiSPService';
-import { fetchTayAo, detailTayAo } from '../../service/OngTayAoService';
+import { fetchXX, detailXX, postAddXuatXu, putUpdateXuatXu } from '../../service/XuatXuService';
+import { fetchCL, detailCL, postAddChatLieu, putUpdateChatLieu } from '../../service/ChatLieuService';
+import { fetchCoAo, detailCoAo, postAddLoaiCoAo, putUpdateLoaiCoAo } from '../../service/LoaiCoAoService';
+import { fetchLSP, detailLSP, postAddLoaiSP, putUpdateLoaiSP } from '../../service/LoaiSPService';
+import { fetchTayAo, detailTayAo, postAddOngTayAo, putUpdateOngTayAo } from '../../service/OngTayAoService';
 import { fetchMS } from '../../service/MauSacService';
 import { fetchSize } from '../../service/SizeService';
 import '../../scss/UpdateSp.scss';
+import ModalQuickAtt from './ModalQuickAtt';
 
 function renderTrangThai(trangThai) {
   let badgeVariant;
@@ -438,6 +440,95 @@ export default function UpdateSanPham() {
     }
   };
 
+  // open quick att
+  const [openQuickAtt, setOpenQuickAtt] = useState(false);
+  const [phanTu, setPhanTu] = useState({
+    att: null,
+    id: null,
+    ma: null,
+    ten: null,
+  });
+  const [listAtt, setListAtt] = useState([]);
+  const emptyFunc = () => {};
+
+  const getAddFunc = (att) => {
+    switch (att) {
+      case 'Chất liệu':
+        return postAddChatLieu;
+      case 'Xuất xứ':
+        return postAddXuatXu;
+      case 'Loại sản phẩm':
+        return postAddLoaiSP;
+      case 'Loại cổ áo':
+        return postAddLoaiCoAo;
+      case 'Ống tay áo':
+        return postAddOngTayAo;
+      default:
+        return emptyFunc;
+    }
+  };
+
+  const getUpdateFunc = (att) => {
+    switch (att) {
+      case 'Chất liệu':
+        return putUpdateChatLieu;
+      case 'Xuất xứ':
+        return putUpdateXuatXu;
+      case 'Loại sản phẩm':
+        return putUpdateLoaiSP;
+      case 'Loại cổ áo':
+        return putUpdateLoaiCoAo;
+      case 'Ống tay áo':
+        return putUpdateOngTayAo;
+      default:
+        return emptyFunc;
+    }
+  };
+
+  const getDetailFunc = (att) => {
+    switch (att) {
+      case 'Chất liệu':
+        return detailCL;
+      case 'Xuất xứ':
+        return detailXX;
+      case 'Loại sản phẩm':
+        return detailLSP;
+      case 'Loại cổ áo':
+        return detailCoAo;
+      case 'Ống tay áo':
+        return detailTayAo;
+      default:
+        return emptyFunc;
+    }
+  };
+
+  const handleOpenQuickAtt = (att, id, ma, ten) => {
+    setOpenQuickAtt(true);
+    setPhanTu({ att, id, ma, ten });
+  };
+
+  const handleCloseQuickAtt = () => {
+    setOpenQuickAtt(false);
+  };
+
+  useEffect(() => {
+    if (phanTu.att === 'Chất liệu') {
+      setListAtt(listCL);
+    }
+    if (phanTu.att === 'Loại sản phẩm') {
+      setListAtt(listLSP);
+    }
+    if (phanTu.att === 'Xuất xứ') {
+      setListAtt(listXX);
+    }
+    if (phanTu.att === 'Loại cổ áo') {
+      setListAtt(listCoAo);
+    }
+    if (phanTu.att === 'Ống tay áo') {
+      setListAtt(listTayAo);
+    }
+  }, [listCL, listLSP, listXX, listTayAo, listCoAo, phanTu]);
+
   return (
     <>
       <Helmet>
@@ -466,7 +557,7 @@ export default function UpdateSanPham() {
                 value={tenSp}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               {listCL.length > 0 && (
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Chất liệu</InputLabel>
@@ -477,17 +568,28 @@ export default function UpdateSanPham() {
                     value={chatLieu}
                     onChange={(event) => setChatLieu(event.target.value)}
                   >
-                    {listCL.map((item, index) => (
-                      <MenuItem value={item.idCl} key={index}>
-                        {item.tenCl}
-                      </MenuItem>
-                    ))}
+                    {listCL
+                      .filter((item) => item.trangThai === 0)
+                      .map((item, index) => (
+                        <MenuItem value={item.idCl} key={index}>
+                          {item.tenCl}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               )}
             </Grid>
+            <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={() => handleOpenQuickAtt('Chất liệu', 'idCl', 'maCl', 'tenCl')}
+              >
+                <MoreHorizIcon />
+              </Button>
+            </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               {listLSP.length > 0 && (
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Loại sản phẩm</InputLabel>
@@ -498,16 +600,28 @@ export default function UpdateSanPham() {
                     value={loaiSP}
                     onChange={(event) => setLoaiSP(event.target.value)}
                   >
-                    {listLSP.map((option, index) => (
-                      <MenuItem key={index} value={option.idLoaisp}>
-                        {option.tenLsp}
-                      </MenuItem>
-                    ))}
+                    {listLSP
+                      .filter((item) => item.trangThai === 0)
+                      .map((item, index) => (
+                        <MenuItem key={index} value={item.idLoaisp}>
+                          {item.tenLsp}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               )}
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={() => handleOpenQuickAtt('Loại sản phẩm', 'idLoaisp', 'maLsp', 'tenLsp')}
+              >
+                <MoreHorizIcon />
+              </Button>
+            </Grid>
+
+            <Grid item xs={5}>
               {listXX.length > 0 && (
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Xuất xứ</InputLabel>
@@ -518,16 +632,28 @@ export default function UpdateSanPham() {
                     value={xuatXu}
                     onChange={(event) => setXuatXu(event.target.value)}
                   >
-                    {listXX.map((item, index) => (
-                      <MenuItem value={item.idXx} key={index}>
-                        {item.tenNuoc}
-                      </MenuItem>
-                    ))}
+                    {listXX
+                      .filter((item) => item.trangThai === 0)
+                      .map((item, index) => (
+                        <MenuItem value={item.idXx} key={index}>
+                          {item.tenNuoc}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               )}
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={() => handleOpenQuickAtt('Xuất xứ', 'idXx', 'maXx', 'tenNuoc')}
+              >
+                <MoreHorizIcon />
+              </Button>
+            </Grid>
+
+            <Grid item xs={5}>
               {listCoAo.length > 0 && (
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Loại cổ áo</InputLabel>
@@ -538,16 +664,28 @@ export default function UpdateSanPham() {
                     value={coAo}
                     onChange={(event) => setCoAo(event.target.value)}
                   >
-                    {listCoAo.map((item, index) => (
-                      <MenuItem value={item.idCoAo} key={index}>
-                        {item.loaiCoAo}
-                      </MenuItem>
-                    ))}
+                    {listCoAo
+                      .filter((item) => item.trangThai === 0)
+                      .map((item, index) => (
+                        <MenuItem value={item.idCoAo} key={index}>
+                          {item.loaiCoAo}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               )}
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={() => handleOpenQuickAtt('Loại cổ áo', 'idCoAo', 'maCoAo', 'loaiCoAo')}
+              >
+                <MoreHorizIcon />
+              </Button>
+            </Grid>
+
+            <Grid item xs={5}>
               {listTayAo.length > 0 && (
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Ống tay áo</InputLabel>
@@ -558,11 +696,13 @@ export default function UpdateSanPham() {
                     value={tayAo}
                     onChange={(event) => setTayAo(event.target.value)}
                   >
-                    {listTayAo.map((option, index) => (
-                      <MenuItem key={index} value={option.idTayAo}>
-                        {option.loaiTayAo}
-                      </MenuItem>
-                    ))}
+                    {listTayAo
+                      .filter((item) => item.trangThai === 0)
+                      .map((option, index) => (
+                        <MenuItem key={index} value={option.idTayAo}>
+                          {option.loaiTayAo}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               )}
@@ -589,6 +729,15 @@ export default function UpdateSanPham() {
                   />
                 </RadioGroup>
               </div>
+            </Grid>
+            <Grid item xs={1} sx={{ display: 'flex', marginTop: '4px' }}>
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={() => handleOpenQuickAtt('Ống tay áo', 'idTayAo', 'maTayAo', 'loaiTayAo')}
+              >
+                <MoreHorizIcon />
+              </Button>
             </Grid>
 
             <Grid item xs={6}>
@@ -908,6 +1057,17 @@ export default function UpdateSanPham() {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+
+      <ModalQuickAtt
+        openQuickAtt={openQuickAtt}
+        handleCloseQuickAtt={handleCloseQuickAtt}
+        listAtt={listAtt}
+        phanTu={phanTu}
+        addFunc={getAddFunc(phanTu.att)}
+        updateFunc={getUpdateFunc(phanTu.att)}
+        detailFunc={getDetailFunc(phanTu.att)}
+        getAllList={getAllList}
+      />
     </>
   );
 }

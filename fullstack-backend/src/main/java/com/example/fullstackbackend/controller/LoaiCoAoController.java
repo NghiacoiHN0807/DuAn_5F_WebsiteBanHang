@@ -1,6 +1,5 @@
 package com.example.fullstackbackend.controller;
 
-import com.example.fullstackbackend.entity.ChatLieu;
 import com.example.fullstackbackend.entity.LoaiCoAo;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.LoaiCoAoService;
