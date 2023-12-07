@@ -548,6 +548,7 @@ const OrderManagementTimeline = ({ classes }) => {
                   handleClose={handleCloseModalDelelte}
                   itemDelete={itemDelete}
                   selectDataCart={selectDataCart}
+                  DataCart={DataCart}
                 />
               )}
               <ModalUpdateProductOnCart

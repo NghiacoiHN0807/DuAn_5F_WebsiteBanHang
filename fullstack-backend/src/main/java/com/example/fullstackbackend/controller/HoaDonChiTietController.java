@@ -85,14 +85,14 @@ public class HoaDonChiTietController {
     @PutMapping("update/{id}")
     public HoaDonChiTiet update(@RequestBody HoaDonChiTiet newHDCT,
                                 @PathVariable("id") Integer id) {
-        HoaDonChiTiet newHD = hoadonchitietSevice.detail(id).map(
+        return hoadonchitietSevice.detail(id).map(
                 hoaDonChiTiet -> {
                     hoaDonChiTiet.setIdCtsp(newHDCT.getIdCtsp());
                     hoaDonChiTiet.setSoLuong(newHDCT.getSoLuong());
                     hoaDonChiTiet.setDonGia(newHDCT.getDonGia());
                     return hoadonchitietSevice.update(hoaDonChiTiet);
                 }).orElseThrow(() -> new xuatXuNotFoundException(id));
-        return newHD;
+
     }
 
     @PutMapping("update-cart/{id}")

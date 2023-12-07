@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
@@ -41,6 +42,9 @@ public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, In
             "WHERE ct.trang_thai = 0 AND hd.id_hd = ?1")
     List<Object[]> getListProductOncart(Integer idHd);
 
+    List<HoaDonChiTiet> findAllByIdHd_IdHdAndTrangThai(Integer idHd, Integer trangThai);
+
+    HoaDonChiTiet findByIdHd_IdHdAndTrangThai(Integer idHd, Integer trangThai);
 
     @Query(value = "SELECT c FROM HoaDonChiTiet c WHERE c.idHd.idKH.idTaiKhoan = ?1")
     Page<HoaDonChiTiet> findByIdHd_IdKH_IdTaiKhoan(Integer idTK, Pageable pageable);

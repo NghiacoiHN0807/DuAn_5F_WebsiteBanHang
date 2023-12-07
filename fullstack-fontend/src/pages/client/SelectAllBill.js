@@ -178,10 +178,12 @@ export default function SelectAllBillOfClient() {
         if (value === 0) {
           setTimeout(() => {
             setProductOnCart((prevList) => [...prevList, ...mergedData]);
-            // setProductOnCart(mergedData);
-          }, 2000);
+          }, 1500);
         } else if (value === 1) {
-          setProductOnCart(filterDataByStatus(0));
+          setTimeout(() => {
+            setProductOnCart((prevList) => [...prevList, ...filterDataByStatus(0)]);
+          }, 1500);
+          // setProductOnCart(filterDataByStatus(0));
         } else if (value === 2) {
           setProductOnCart(filterDataByStatus(1));
         } else if (value === 3) {
@@ -205,8 +207,18 @@ export default function SelectAllBillOfClient() {
     SelectAllBill();
   }, [SelectAllBill]);
 
+  useEffect(() => {
+    setProductOnCart([]); // Xóa dữ liệu khi giá trị value thay đổi
+    // setHasMore(true);
+    setCurrentPage(0);
+  }, [value]);
+
   const fetchMoreData = () => {
-    if (DataCart.totalElements - 1 === productOnCart.length) {
+    if (
+      // DataCart.totalElements - 1 === productOnCart.length ||
+      currentPage + 1 === DataCart.totalPages ||
+      DataCart.numberOfElements === 0
+    ) {
       setHasMore(false);
     } else {
       setCurrentPage((prevPage) => prevPage + 1);
@@ -218,6 +230,8 @@ export default function SelectAllBillOfClient() {
     console.log(idHd.idHd);
     navigate(`/client/client-timeline/${idHd.idHd}`);
   };
+
+  // const [currentTab, setCurrentTab] = useState(0);
   // Select renderTabPanel
   const renderTabPanel = (indexTab) => (
     <TabPanel value={value} index={indexTab} dir={theme.direction}>

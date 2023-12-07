@@ -507,9 +507,14 @@ const OrderClientTimeline = ({ classes }) => {
                 </TableBody>
               </Table>{' '}
               {listData.length > 0 && (
-                <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
-                  Thành Tiền: {formatCurrency(listData[0].idHd.thanhTien)}
-                </Typography>
+                <>
+                  <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
+                    Tiền Giao Hàng: {formatCurrency(listData[0].idHd.tienShip)}
+                  </Typography>
+                  <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
+                    Thành Tiền: {formatCurrency(listData[0].idHd.thanhTien)}
+                  </Typography>
+                </>
               )}
             </TableContainer>
             {/* Modal Payment */}
