@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
 import '../../scss/detail-client.scss';
 import { Carousel } from 'react-bootstrap';
 import CardMedia from '@mui/material/CardMedia';
@@ -12,6 +11,9 @@ import { findById } from '../../service/BillSevice';
 import { addProductOnCart } from '../../service/client/Detail-Cart';
 
 const DetailProduct = () => {
+  // DetailProduct.propTypes = {
+  //   refetch: PropTypes.func.isRequired,
+  // };
   const [quantity, setQuantity] = useState(1);
   // const [selectedSizes, setSelectedSizes] = useState([]);
   const [detailProduct, setDetailProduct] = useState([]);
@@ -109,11 +111,6 @@ const DetailProduct = () => {
     setQuantity(quantity + 1);
   };
 
-  // Add product on cart
-  // const [product, setProduct] = useState({
-  //   idCtsp: detailProduct.idCtsp,
-  //   soLuong: quantity,
-  // });
   const [alertContent, setAlertContent] = useState(null);
 
   const handleAddProduct = async () => {
@@ -127,6 +124,7 @@ const DetailProduct = () => {
         type: 'success',
         message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
       });
+      // refetch();
     } catch (error) {
       console.error(error);
     }

@@ -10,7 +10,7 @@ import {
   Paper,
   Button,
   Popover,
-  Checkbox,
+  // Checkbox,
   TableRow,
   MenuItem,
   TableBody,
@@ -29,12 +29,13 @@ import {
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
-import { UserListHead, UserListToolbar } from '../sections/@dashboard/user';
+import { UserListHeadNoCheckBox, UserListToolbar } from '../sections/@dashboard/user';
 import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 import { getAllOrderManagement } from '../service/OderManagementSevice';
 import { postAddBill } from '../service/BillSevice';
 
 const TABLE_HEAD = [
+  { id: 'stt', label: 'STT', alignRight: false },
   { id: 'maHd', label: 'Mã Hóa Đơn', alignRight: false },
   { id: 'tenKh', label: 'Tên Khách Hàng', alignRight: false },
   { id: 'sdtKh', label: 'Số Điện Thoại', alignRight: false },
@@ -146,20 +147,20 @@ const OrderManagement = () => {
 
   // Click checkbox on table
 
-  const handleClick = (event, idHd) => {
-    const selectedIndex = selected.indexOf(idHd);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, idHd);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
-  };
+  // const handleClick = (event, idHd) => {
+  //   const selectedIndex = selected.indexOf(idHd);
+  //   let newSelected = [];
+  //   if (selectedIndex === -1) {
+  //     newSelected = newSelected.concat(selected, idHd);
+  //   } else if (selectedIndex === 0) {
+  //     newSelected = newSelected.concat(selected.slice(1));
+  //   } else if (selectedIndex === selected.length - 1) {
+  //     newSelected = newSelected.concat(selected.slice(0, -1));
+  //   } else if (selectedIndex > 0) {
+  //     newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
+  //   }
+  //   setSelected(newSelected);
+  // };
   // Next Page
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -216,17 +217,21 @@ const OrderManagement = () => {
         break;
       case 1:
         badgeVariant = 'primary';
-        statusText = 'Đang Chờ Xác Nhận Thông Tin';
+        statusText = 'Đã Xác Nhận Đơn';
         break;
       case 2:
         badgeVariant = 'secondary';
-        statusText = 'Đã Chuyển Cho Đơn Vị';
+        statusText = 'Đã Xác Nhận Người Mua';
         break;
       case 3:
         badgeVariant = 'warning';
-        statusText = 'Xác Nhận Thanh Toán';
+        statusText = 'Đã Chuyển Cho Đơn Vị';
         break;
       case 4:
+        badgeVariant = 'success';
+        statusText = 'Đã Xác Nhận Thanh Toán';
+        break;
+      case 5:
         badgeVariant = 'success';
         statusText = 'Đã Giao Thành Công';
         break;
@@ -290,6 +295,24 @@ const OrderManagement = () => {
     setOpenDelete(false);
     getListData();
   };
+
+  // Format Date Time
+  function formatDateTime(dateTimeString) {
+    // Tạo một đối tượng Date từ chuỗi thời gian
+    const dateTime = new Date(dateTimeString);
+
+    // Kiểm tra xem đối tượng Date đã được tạo thành công chưa
+    if (Number.isNaN(dateTime)) {
+      return 'Thời gian không hợp lệ';
+    }
+
+    // Chuyển đổi thành định dạng ngày giờ
+    const formattedDateTime = dateTime.toLocaleString();
+
+    return formattedDateTime;
+  }
+  // Format thanhTien
+  const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
   return (
     <>
       <Helmet>
@@ -312,7 +335,7 @@ const OrderManagement = () => {
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <UserListHead
+                <UserListHeadNoCheckBox
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
@@ -322,22 +345,23 @@ const OrderManagement = () => {
                   onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                     const { idHd, maHd, thanhTien, ngayTao, kieuHoaDon, trangThai } = row;
                     const selectedUser = selected.indexOf(idHd) !== -1;
 
                     return (
                       <TableRow hover key={idHd} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
+                        {/* <TableCell padding="checkbox">
                           <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, idHd)} />
-                        </TableCell>
+                        </TableCell> */}
+                        <TableCell align="left">{index + 1}</TableCell>
                         <TableCell align="left">{maHd}</TableCell>
                         <TableCell align="left">
                           {row.idKH ? `${row.idKH.ho} ${row.idKH.ten}` : <Chip label="Khách Lẻ" color="primary" />}
-                        </TableCell>{' '}
-                        <TableCell align="left">{row.idKH && row.idKH.sdt}</TableCell>{' '}
-                        <TableCell align="left">{thanhTien}</TableCell>
-                        <TableCell align="left">{ngayTao}</TableCell>
+                        </TableCell>
+                        <TableCell align="left">{row.idKH && row.idKH.sdt}</TableCell>
+                        <TableCell align="left">{formatCurrency(thanhTien)}</TableCell>
+                        <TableCell align="left">{formatDateTime(ngayTao)}</TableCell>
                         <TableCell align="left">{renderKieuHoaDon(kieuHoaDon)}</TableCell>
                         <TableCell align="left">{renderTrangThai(trangThai)}</TableCell>
                         <TableCell align="right">

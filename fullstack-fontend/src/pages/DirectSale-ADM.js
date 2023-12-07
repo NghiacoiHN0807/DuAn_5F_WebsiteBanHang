@@ -119,8 +119,27 @@ export default function UserPage() {
   }, []);
 
   // Set status of trangThai
-  function mapTrangThaiToStatus(trangThai) {
-    return trangThai === 8 ? 'Hóa Đơn Treo' : trangThai === 9 ? 'Đã thanh toán' : 'Unknown status';
+  // function mapTrangThaiToStatus(trangThai) {
+  //   return trangThai === 8 ? 'Hóa Đơn Treo' : trangThai === 9 ? 'Đã thanh toán' : 'Unknown status';
+  // }
+  // Set status of trangThai
+
+  function renderKieuHoaDon(trangThai) {
+    let badgeVariant;
+    let statusText;
+
+    switch (trangThai) {
+      case 8:
+        badgeVariant = 'info';
+        statusText = 'Hóa Đơn Treo';
+        break;
+      default:
+        badgeVariant = 'light';
+        statusText = 'Đang Đặt';
+        break;
+    }
+
+    return <Chip label={statusText} color={badgeVariant} />;
   }
   // Open and Close menu
   const [object, getObject] = useState([]);
@@ -190,7 +209,6 @@ export default function UserPage() {
 
   // Create a new Detail Direct
   const [alertContent, setAlertContent] = useState(null);
-  let getIdHttp;
 
   const handleAdd = async () => {
     const res = await postAddBill(1, 8);
@@ -198,8 +216,7 @@ export default function UserPage() {
       type: 'success',
       message: 'Tạo thành công hóa đơn',
     });
-    getIdHttp = res.idHd;
-    navigate(`/dashboard/sales/card-bill/${getIdHttp}`);
+    navigate(`/dashboard/sales/card-bill/${res.idHd}`);
   };
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -225,6 +242,22 @@ export default function UserPage() {
     console.log('object.idHd:', object.idHd);
     navigate(`/dashboard/sales/card-bill/${object.idHd}`);
   };
+
+  // Format Date Time
+  function formatDateTime(dateTimeString) {
+    // Tạo một đối tượng Date từ chuỗi thời gian
+    const dateTime = new Date(dateTimeString);
+
+    // Kiểm tra xem đối tượng Date đã được tạo thành công chưa
+    if (Number.isNaN(dateTime)) {
+      return 'Thời gian không hợp lệ';
+    }
+
+    // Chuyển đổi thành định dạng ngày giờ
+    const formattedDateTime = dateTime.toLocaleString();
+
+    return formattedDateTime;
+  }
 
   return (
     <>
@@ -271,10 +304,10 @@ export default function UserPage() {
                         {/* <TableCell align="left">{thanhTien}</TableCell> */}
                         <TableCell align="left">
                           {row.idKH ? `${row.idKH.ho} ${row.idKH.ten}` : <Chip label="Khách Lẻ" color="primary" />}
-                        </TableCell>{' '}
-                        <TableCell align="left">{row.idKH && row.idKH.sdt}</TableCell>{' '}
-                        <TableCell align="left">{ngayTao}</TableCell>
-                        <TableCell align="left">{mapTrangThaiToStatus(trangThai)}</TableCell>
+                        </TableCell>
+                        <TableCell align="left">{row.idKH && row.idKH.sdt}</TableCell>
+                        <TableCell align="left">{formatDateTime(ngayTao)}</TableCell>
+                        <TableCell align="left">{renderKieuHoaDon(trangThai)}</TableCell>
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row)}>
                             <Iconify icon={'eva:more-vertical-fill'} />

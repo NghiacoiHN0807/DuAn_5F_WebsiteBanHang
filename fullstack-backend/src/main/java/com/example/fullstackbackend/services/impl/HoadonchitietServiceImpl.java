@@ -1,12 +1,17 @@
 package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
+import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
 import com.example.fullstackbackend.entity.LichSuHoaDon;
+import com.example.fullstackbackend.repository.HoadonRepository;
 import com.example.fullstackbackend.repository.HoadonchitietRepository;
 import com.example.fullstackbackend.repository.LichSuHoaDonRepository;
 import com.example.fullstackbackend.services.HoadonchitietSevice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,6 +21,9 @@ import java.util.Optional;
 
 @Service
 public class HoadonchitietServiceImpl implements HoadonchitietSevice {
+
+    @Autowired
+    private HoadonRepository hoadonRepo;
 
     @Autowired
     private HoadonchitietRepository hoadonchitietRepository;
@@ -39,20 +47,20 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     @Override
-    public List<HoaDonChiTiet> getListProductByIDKH(Integer idKH) {
-        return hoadonchitietRepository.findByIdHd_IdKH_IdTaiKhoan(idKH);
+    public Page<HoaDonChiTiet> getListProductByIDKH(Integer idKH, Integer pageNo, Integer size) {
+        Pageable pageable = PageRequest.of(pageNo, size);
+        return hoadonchitietRepository.findByIdHd_IdKH_IdTaiKhoan(idKH, pageable);
     }
 
     @Override
     public HoaDonChiTiet add(HoaDonChiTiet add) {
-        if (add.getTrangThai() < 8) {
+        HoaDon hoaDon = hoadonRepo.findById(add.getIdHd().getIdHd()).orElseThrow();
+        if (hoaDon.getTrangThai() < 8) {
             addLS(add, 1);
             return hoadonchitietRepository.save(add);
         } else {
             return hoadonchitietRepository.save(add);
         }
-
-
     }
 
     @Override
@@ -62,9 +70,9 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 
     @Override
     public void delete(Integer id) {
-        Optional<HoaDonChiTiet> detailHDCT = detail(id);
-        if (detailHDCT.get().getTrangThai() < 8) {
-            addLS(detailHDCT.get(), 2);
+        HoaDonChiTiet detailHDCT = detail(id).orElseThrow();
+        if (detailHDCT.getIdHd().getTrangThai() < 8) {
+            addLS(detailHDCT, 2);
             hoadonchitietRepository.deleteById(id);
         } else {
             hoadonchitietRepository.deleteById(id);
@@ -78,7 +86,77 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 
     @Override
     public HoaDonChiTiet update(HoaDonChiTiet update) {
-        return hoadonchitietRepository.save(update);
+        HoaDon hoaDon = hoadonRepo.findById(update.getIdHd().getIdHd()).orElseThrow();
+        if (hoaDon.getTrangThai() < 8) {
+            addLS(update, 3);
+            return hoadonchitietRepository.save(update);
+        } else {
+            return hoadonchitietRepository.save(update);
+        }
+
+    }
+
+    @Override
+    public HoaDonChiTiet returnItem(HoaDonChiTiet update) {
+        // Save history time-line
+        addLS(update, 4);
+
+        // Update old hdct
+        HoaDonChiTiet updateOLDHDCT = hoadonchitietRepository.findById(update.getIdHdct()).orElseThrow();
+        // Get quantity
+        int quantity = updateOLDHDCT.getSoLuong() - update.getSoLuong();
+        updateOLDHDCT.setSoLuong(quantity);
+
+        //Update TongTien
+        BigDecimal tongTien = updateOLDHDCT.getIdCtsp().getGiaThucTe().multiply(BigDecimal.valueOf(quantity));
+        updateOLDHDCT.setDonGia(tongTien);
+        hoadonchitietRepository.save(updateOLDHDCT);
+
+        // Delete product if quantity = 0
+        if (quantity <= 0) {
+            hoadonchitietRepository.deleteById(update.getIdHdct());
+        }
+        // Update tongTien and thanhTien
+        // Find hd
+        HoaDon hoaDon = hoadonRepo.findById(update.getIdHd().getIdHd()).orElseThrow();
+        List<HoaDonChiTiet> donChiTiets = hoadonchitietRepository.findAllByIdHd_IdHdAndTrangThai(update.getIdHd().getIdHd(), 0);
+        // Prepare the bill
+        if (hoaDon.getSoTienGiamGia() == null) {
+            hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
+        }
+        if (hoaDon.getTienShip() == null) {
+            hoaDon.setTienShip(BigDecimal.ZERO);
+        }
+        BigDecimal tongGiaTien = donChiTiets.stream()
+                .map(HoaDonChiTiet::getDonGia)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal tienShip = hoaDon.getTienShip() != null ? hoaDon.getTienShip() : BigDecimal.ZERO;
+        BigDecimal tienGiam = hoaDon.getSoTienGiamGia() != null ? hoaDon.getSoTienGiamGia() : BigDecimal.ZERO;
+
+        BigDecimal thanhTien = tongGiaTien.add(tienShip).subtract(tienGiam);
+        hoaDon.setTongTien(tongGiaTien);
+        hoaDon.setThanhTien(thanhTien);
+        hoadonRepo.save(hoaDon);
+
+        // Add return item
+        HoaDonChiTiet donChiTietss = hoadonchitietRepository.findByIdHd_IdHdAndTrangThai(update.getIdHd().getIdHd(), 10);
+        if (donChiTietss != null) {
+            int quantityExist = donChiTietss.getSoLuong() + update.getSoLuong();
+            donChiTietss.setSoLuong(quantityExist);
+            donChiTietss.setLyDoHuy(update.getLyDoHuy());
+            return hoadonchitietRepository.save(donChiTietss);
+        } else {
+            HoaDonChiTiet newHdcteturn = new HoaDonChiTiet();
+            newHdcteturn.setIdHd(update.getIdHd());
+            newHdcteturn.setIdCtsp(update.getIdCtsp());
+            newHdcteturn.setSoLuong(update.getSoLuong());
+            BigDecimal donGia = updateOLDHDCT.getIdCtsp().getGiaThucTe().multiply(BigDecimal.valueOf(update.getSoLuong()));
+            newHdcteturn.setDonGia(donGia);
+            newHdcteturn.setLyDoHuy(update.getLyDoHuy());
+            newHdcteturn.setTrangThai(10);
+            return hoadonchitietRepository.save(newHdcteturn);
+
+        }
     }
 
     @Override
@@ -105,6 +183,12 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
             ls.setIdHd(addLS.getIdHd());
             ls.setTrangThai(7);
             ls.setMoTa("Sửa sản phẩm: " + addLS.getIdCtsp().getIdSp().getTenSp() + " Với số lượng: " + addLS.getSoLuong());
+            ls.setNgayThayDoi(currentTimestamp);
+            return lichSuHoaDonRepository.save(ls);
+        } else if (status == 4) {
+            ls.setIdHd(addLS.getIdHd());
+            ls.setTrangThai(6);
+            ls.setMoTa("Trả Sản Phẩm: " + addLS.getIdCtsp().getIdSp().getTenSp() + " Với số lượng: " + addLS.getSoLuong() + "Lý Do Hủy Đơn: " + addLS.getLyDoHuy());
             ls.setNgayThayDoi(currentTimestamp);
             return lichSuHoaDonRepository.save(ls);
         }

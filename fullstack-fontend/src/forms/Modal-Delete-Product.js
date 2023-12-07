@@ -19,9 +19,10 @@ export default function ModalDeleteProductOnCart(props) {
     handleClose: PropTypes.func.isRequired,
     // itemDelete: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     itemDelete: PropTypes.array.isRequired,
+    DataCart: PropTypes.array.isRequired,
     selectDataCart: PropTypes.func.isRequired,
   };
-  const { open, handleClose, itemDelete, selectDataCart } = props;
+  const { open, handleClose, itemDelete, selectDataCart, DataCart } = props;
 
   // Set maHd using useState
 
@@ -45,7 +46,8 @@ export default function ModalDeleteProductOnCart(props) {
   }, [itemDelete]);
   // Handle Delete
   const handleDelete = async () => {
-    if (selectDataCart.length <= 1) {
+    console.log('DataCart: ', DataCart);
+    if (DataCart.length <= 1) {
       setAlertContent({
         type: 'warning',
         message: 'Sản Phẩm Trong Hóa Đơn Không Thể Trống',

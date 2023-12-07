@@ -59,8 +59,8 @@ public class HoadonServiceImpl implements HoadonSevice {
 
     @Override
     public HoaDon add(HoaDon add) {
-        List<HoaDon> allHoaDon = getAll();// Get datetime now
-        LocalDate currentDate = LocalDate.now();
+        List<HoaDon> allHoaDon = getAll();
+
         if (!allHoaDon.isEmpty()) {
 
             String maxMaHd = getAll().stream()

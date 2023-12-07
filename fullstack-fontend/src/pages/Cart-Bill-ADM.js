@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCartPlus } from '@fortawesome/free-solid-svg-icons';
 import {
+  Alert,
   Button,
   Chip,
   FormControl,
@@ -34,7 +35,7 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
 import { pink } from '@mui/material/colors';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Alert, Image } from 'react-bootstrap';
+import { Image } from 'react-bootstrap';
 import { styled } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
 import Tabs from '@mui/material/Tabs';
@@ -268,6 +269,14 @@ const CartBillADM = () => {
   const [isDeliveryChecked, setIsDeliveryChecked] = useState(false);
 
   const handleDeliveryChange = (event) => {
+    getTienShip(0);
+    if (isDeliveryChecked === true) {
+      setSelectedProvince('');
+      setSelectedWard('');
+      setSelectedDistrict('');
+      setResult('');
+    }
+
     setIsDeliveryChecked(event.target.checked);
   };
 
@@ -364,13 +373,16 @@ const CartBillADM = () => {
           shop_id: 4699724,
         },
       });
-      const totalShip = response.data?.data?.total || 0;
-      console.log('getSevice: ', response);
-      getTienShip(totalShip);
+      if (provinces == null) {
+        getTienShip(0);
+      } else {
+        const totalShip = response.data?.data?.total || 0;
+        getTienShip(totalShip);
+      }
     } catch (error) {
       console.error('Error get service:', error);
     }
-  }, [selectedDistrict]);
+  }, [provinces, selectedDistrict]);
 
   useEffect(() => {
     if (selectedDistrict) {
@@ -395,8 +407,8 @@ const CartBillADM = () => {
   }, [selectedDistrict, selectedProvince, selectedWard, districts, provinces, wards, diachiCuThe]);
 
   // Show thanhTien
-  const [thanhTien, setThanhTien] = useState();
-  const [tongTien, setTongTien] = useState();
+  const [thanhTien, setThanhTien] = useState(0);
+  const [tongTien, setTongTien] = useState(0);
 
   useEffect(() => {
     const calculateTotalPrice = async () => {
@@ -406,10 +418,10 @@ const CartBillADM = () => {
       setTongTien(total);
       // Set Tien Ship
       console.log('getDataShip: ', listHD.tienShip);
-      const totalShip = tienShip === 0 && listHD && listHD.tienShip ? listHD.tienShip : tienShip;
+      // const totalShip = tienShip === 0 && listHD && listHD.tienShip ? listHD.tienShip : tienShip;
       // Set Thanh Tien
-      setThanhTien(total + totalShip);
-      await updateTongTien(idHdParam, total, totalShip, thanhTien);
+      setThanhTien(total + tienShip);
+      await updateTongTien(idHdParam, total, tienShip, thanhTien);
     };
 
     calculateTotalPrice();
@@ -445,7 +457,12 @@ const CartBillADM = () => {
     } else if (!tenKhShip.trim() || !sdtKHShip.trim()) {
       setAlertContent({
         type: 'warning',
-        message: 'Hãy Thông Tin Người Nhận Hàng!!!',
+        message: 'Hãy Nhập Thông Tin Người Nhận Hàng!!!',
+      });
+    } else if (!selectedWard.trim() || !selectedDistrict.trim() || !selectedProvince.trim()) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Nhập Địa Chỉ Nhận Hàng!!!',
       });
     } else {
       setCreateOnline(true);
@@ -463,6 +480,8 @@ const CartBillADM = () => {
     }
     setAlertContent(null);
   };
+  // Format thanhTien
+  const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 
   return (
     <>
@@ -551,9 +570,9 @@ const CartBillADM = () => {
                                 Màu: {item[11]}
                               </Button>
                             </TableCell>
-                            <TableCell align="right">{item[7]}</TableCell>
+                            <TableCell align="right">{formatCurrency(item[7])}</TableCell>
                             <TableCell align="right">{item[8]}</TableCell>
-                            <TableCell align="right">{item[9]}</TableCell>
+                            <TableCell align="right">{formatCurrency(item[9])}</TableCell>
                             <TableCell align="right">
                               <IconButton aria-label="delete" size="large" onClick={() => handleDelete(item)}>
                                 <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
@@ -826,7 +845,7 @@ const CartBillADM = () => {
                         Tiền Hàng{' '}
                       </Typography>
                       <Typography variant="h6" gutterBottom>
-                        {tongTien}{' '}
+                        {formatCurrency(tongTien)}{' '}
                       </Typography>
                     </Stack>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
@@ -834,7 +853,7 @@ const CartBillADM = () => {
                         Tiền Ship{' '}
                       </Typography>
                       <Typography variant="h6" gutterBottom>
-                        {tienShip === 0 ? listHD.tienShip : tienShip}{' '}
+                        {tienShip}{' '}
                       </Typography>
                     </Stack>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
@@ -842,7 +861,7 @@ const CartBillADM = () => {
                         Thành Tiền{' '}
                       </Typography>
                       <Typography variant="h6" gutterBottom>
-                        {thanhTien}{' '}
+                        {formatCurrency(thanhTien)}{' '}
                       </Typography>
                     </Stack>
                   </div>
@@ -879,13 +898,7 @@ const CartBillADM = () => {
               selectDataCart={selectDataCart}
               itemUpdate={itemUpdate}
             />
-            {/* Modal Delete Product  */}
-            <ModalDeleteProductOnCart
-              open={showModalsDelete}
-              handleClose={handleCloseModalDelelte}
-              itemDelete={itemDelete}
-              selectDataCart={selectDataCart}
-            />
+
             {/* Modal Delete Product  */}
             <ModalDeleteAllProductOnCart
               open={showModalsDeleteAll}
@@ -905,6 +918,16 @@ const CartBillADM = () => {
             <ModalDeleteDirectSale open={open} handleClose={handleCloseDeleteInvoice} information={information} />
             {DataCart.length > 0 && (
               <>
+                {/* Modal Delete Product  */}
+                {itemDelete !== undefined && (
+                  <ModalDeleteProductOnCart
+                    open={showModalsDelete}
+                    handleClose={handleCloseModalDelelte}
+                    itemDelete={itemDelete}
+                    selectDataCart={selectDataCart}
+                    DataCart={DataCart}
+                  />
+                )}
                 <ModalPaymentComfirm
                   show={openPayment}
                   handleClose={handlePaymentClose}

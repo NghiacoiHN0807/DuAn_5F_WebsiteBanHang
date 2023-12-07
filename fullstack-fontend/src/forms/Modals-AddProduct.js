@@ -18,10 +18,10 @@ const ModalAddProduct = (props) => {
   const { show, handleClose, selectDataCart, DataCart } = props;
   const [listData, setListData] = useState([]);
 
-  const getAllData = useCallback(async (page) => {
+  const getAllData = useCallback(async () => {
     try {
-      const getData = await fetchAllCTSPBySize(page);
-      console.log('getData: ', getData);
+      const getData = await fetchAllCTSPBySize();
+      console.log('getDataSanPham: ', getData);
       if (getData) {
         setListData(getData);
       }

@@ -13,9 +13,9 @@ import UpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { green } from '@mui/material/colors';
 import Box from '@mui/material/Box';
 import { Fragment, useCallback, useEffect, useState } from 'react';
-import { Button, Container, Grid } from '@mui/material';
+import { Button, Container, Grid, Paper } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-
+import InfiniteScroll from 'react-infinite-scroll-component';
 // Service
 import { viewAllHDByIDKH } from '../../service/client/SelectBill';
 import { listImg } from '../../service/client/Detail-Product';
@@ -77,10 +77,12 @@ export default function SelectAllBillOfClient() {
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
+    console.log('newValue: ', newValue);
     setValue(newValue);
   };
 
   const handleChangeIndex = (index) => {
+    console.log('Hihi: ', index);
     setValue(index);
   };
 
@@ -114,19 +116,26 @@ export default function SelectAllBillOfClient() {
   const idParam = param.idKH;
   //   console.log('param: ', param);
 
-  // const [DataCart, setDataCart] = useState([]);
+  const [DataCart, setDataCart] = useState([]);
   const [productOnCart, setProductOnCart] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
   const SelectAllBill = useCallback(async () => {
     try {
-      const res = await viewAllHDByIDKH(idParam);
+      const res = await viewAllHDByIDKH(idParam, currentPage);
+      console.log('ré: ', res);
+      setDataCart(res);
+      const productId = res.content.map((item) => item.idCtsp.idSp.idSp);
+      console.log('productId: ', productId);
 
-      const productId = res.map((item) => item.idCtsp.idSp.idSp);
       const imgDataArray = await Promise.all(productId.map((productId) => listImg(productId)));
-      const combinedData = res.map((item, index) => ({
+      const combinedData = res.content.map((item, index) => ({
         ...item,
         image: imgDataArray[index], // Assuming 'image' is the key to hold image data
       }));
+      console.log('combinedData: ', combinedData);
+
       // const uniqueSizes = [...new Set(combinedData.map((hd) => hd.idHd))];
 
       const groupedData = {};
@@ -158,29 +167,182 @@ export default function SelectAllBillOfClient() {
           }
         });
       });
+      console.log('mergedData: ', mergedData);
 
       if (mergedData) {
-        setProductOnCart(mergedData);
-        console.log('res1111: ', res);
-        console.log('imgDataArray: ', imgDataArray);
-        console.log('combinedData: ', combinedData);
-        console.log('mergedData: ', mergedData);
+        const filterDataByStatus = (status) => {
+          const filteredData = mergedData.filter((item) => item.idHd.trangThai === status);
+          console.log('filteredData: ', filteredData);
+          return filteredData;
+        };
+        if (value === 0) {
+          setTimeout(() => {
+            setProductOnCart((prevList) => [...prevList, ...mergedData]);
+          }, 1500);
+        } else if (value === 1) {
+          setTimeout(() => {
+            setProductOnCart((prevList) => [...prevList, ...filterDataByStatus(0)]);
+          }, 1500);
+          // setProductOnCart(filterDataByStatus(0));
+        } else if (value === 2) {
+          setProductOnCart(filterDataByStatus(1));
+        } else if (value === 3) {
+          setProductOnCart(filterDataByStatus(2));
+        } else if (value === 4) {
+          setProductOnCart(filterDataByStatus(3));
+        } else if (value === 5) {
+          setProductOnCart(filterDataByStatus(4));
+        } else if (value === 6) {
+          setProductOnCart(filterDataByStatus(10));
+        } else if (value === 7) {
+          setProductOnCart(filterDataByStatus(6));
+        }
       }
     } catch (error) {
       console.error(error);
     }
-  }, [idParam]);
+  }, [currentPage, idParam, value]);
 
   useEffect(() => {
     SelectAllBill();
   }, [SelectAllBill]);
 
+  useEffect(() => {
+    setProductOnCart([]); // Xóa dữ liệu khi giá trị value thay đổi
+    // setHasMore(true);
+    setCurrentPage(0);
+  }, [value]);
+
+  const fetchMoreData = () => {
+    if (
+      // DataCart.totalElements - 1 === productOnCart.length ||
+      currentPage + 1 === DataCart.totalPages ||
+      DataCart.numberOfElements === 0
+    ) {
+      setHasMore(false);
+    } else {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
   // Handle Click
   const navigate = useNavigate();
   const handleClick = (idHd) => {
     console.log(idHd.idHd);
     navigate(`/client/client-timeline/${idHd.idHd}`);
   };
+
+  // const [currentTab, setCurrentTab] = useState(0);
+  // Select renderTabPanel
+  const renderTabPanel = (indexTab) => (
+    <TabPanel value={value} index={indexTab} dir={theme.direction}>
+      <InfiniteScroll
+        dataLength={productOnCart.length}
+        next={fetchMoreData}
+        hasMore={hasMore}
+        loader={<p style={{ textAlign: 'center' }}>Loading...</p>}
+        endMessage={<p style={{ textAlign: 'center' }}>Đã tải hết hóa đơn của bạn!!!</p>}
+      >
+        <Grid container spacing={3}>
+          {productOnCart && productOnCart.length > 0 ? (
+            productOnCart.map((item, index) => {
+              const { idHd, hdct } = item || {};
+              const maHd = idHd?.maHd || '';
+              const diaChi = idHd?.diaChi || '';
+              const sdtKh = idHd?.sdtKh || '';
+              const tenKh = idHd?.tenKh || '';
+
+              return (
+                <Fragment key={index}>
+                  <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                      <Typography sx={{ fontSize: 16 }} variant="subtitle2" gutterBottom>
+                        Mã Hóa Đơn: {maHd}
+                      </Typography>
+                      <Typography sx={{ fontSize: 16, marginLeft: 'auto' }} variant="button" gutterBottom>
+                        {tenKh}
+                      </Typography>
+                      <Typography sx={{ fontSize: 16, marginLeft: 2 }} variant="button" gutterBottom>
+                        {sdtKh}
+                      </Typography>
+                      <Typography sx={{ fontSize: 16, marginLeft: 4 }} variant="body2" gutterBottom>
+                        {diaChi && diaChi}
+                      </Typography>
+                    </div>
+                  </Grid>
+                  {hdct.map((ctsp, ctspIndex) => {
+                    const { idCtsp, soLuong } = ctsp || {};
+                    const tenSp = idCtsp?.idSp?.tenSp || '';
+                    const tenMs = idCtsp?.idMs?.tenMs || '';
+                    const tenSize = idCtsp?.idSize?.tenSize || '';
+                    const imageUrl = idCtsp?.url || '';
+
+                    return (
+                      <Grid
+                        key={ctspIndex}
+                        container
+                        item
+                        xs={12}
+                        md={6}
+                        lg={12}
+                        sx={{ marginTop: 1, backgroundColor: 'white', alignItems: 'center' }}
+                      >
+                        <StyledProductImg
+                          sx={{
+                            position: 'relative',
+                            width: '140px',
+                            height: '180px',
+                            marginLeft: '14px',
+                          }}
+                          alt={imageUrl}
+                          src={imageUrl}
+                        />
+                        <div style={{ marginLeft: '16px' }}>
+                          <Typography variant="body1" gutterBottom>
+                            Tên Sản Phẩm: {tenSp}
+                          </Typography>
+                          <Typography variant="body2" gutterBottom>
+                            Phân Loại: {tenMs} {tenSize}
+                          </Typography>
+                          <Typography variant="body2" gutterBottom>
+                            Số Lượng: {soLuong}
+                          </Typography>
+                        </div>
+                      </Grid>
+                    );
+                  })}
+                  <Grid item xs={12} md={6} lg={12} sx={{ textAlign: 'right', marginTop: 1, backgroundColor: 'white' }}>
+                    <Button onClick={() => handleClick(idHd)} variant="contained" color="success">
+                      Chi Tiết
+                    </Button>
+                  </Grid>
+                </Fragment>
+              );
+            })
+          ) : (
+            <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
+              <Paper
+                sx={{
+                  textAlign: 'center',
+                }}
+              >
+                <Typography variant="h6" paragraph>
+                  Dữ Liệu Trống
+                </Typography>
+
+                <Typography variant="body2">
+                  Bạn Không Có Hóa Đơn Nào Ở Trạng Thái Này &nbsp;
+                  <br /> Xin Vui Lòng Đặt Hàng.
+                </Typography>
+              </Paper>
+            </Grid>
+          )}
+        </Grid>
+      </InfiniteScroll>
+    </TabPanel>
+  );
+
+  // Sử dụng renderTabPanel trong return của component
+  // Ví dụ: renderTabPanel(0), renderTabPanel(1),...
 
   return (
     <Container>
@@ -206,9 +368,9 @@ export default function SelectAllBillOfClient() {
             <Tab label="Tất Cả" {...a11yProps(0)} />
             <Tab label="Chờ Xác Nhận Đơn" {...a11yProps(1)} />
             <Tab label="Chờ Xác Nhận Thông Tin" {...a11yProps(2)} />
-            <Tab label="Đã Chuyển Cho Đơn Vị" {...a11yProps(2)} />
-            <Tab label="Xác Nhận Thanh Toán" {...a11yProps(2)} />
-            <Tab label="Đã Giao Thành Công" {...a11yProps(2)} />
+            <Tab label="Đã Chuyển Cho Đơn Vị" {...a11yProps(3)} />
+            <Tab label="Xác Nhận Thanh Toán" {...a11yProps(4)} />
+            <Tab label="Đã Giao Thành Công" {...a11yProps(3)} />
             <Tab label="Đơn hàng đã hủy" {...a11yProps(2)} />
             <Tab label="Đổi/Trả Hàng" {...a11yProps(1)} />
           </Tabs>
@@ -218,84 +380,14 @@ export default function SelectAllBillOfClient() {
           index={value}
           onChangeIndex={handleChangeIndex}
         >
-          <TabPanel value={value} index={0} dir={theme.direction}>
-            <Grid container spacing={3}>
-              {productOnCart &&
-                productOnCart.length > 0 &&
-                productOnCart.map((item, index) => {
-                  const { idHd, hdct } = item || {};
-                  const maHd = idHd?.maHd || '';
-
-                  return (
-                    <Fragment key={index}>
-                      <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
-                        <Typography variant="subtitle2" gutterBottom>
-                          Mã Hóa Đơn: {maHd}
-                        </Typography>
-                      </Grid>
-                      {hdct.map((ctsp, ctspIndex) => {
-                        const { idCtsp, soLuong } = ctsp || {};
-                        const tenSp = idCtsp?.idSp?.tenSp || '';
-                        const tenMs = idCtsp?.idMs?.tenMs || '';
-                        const tenSize = idCtsp?.idSize?.tenSize || '';
-                        const imageUrl = idCtsp?.url || '';
-
-                        return (
-                          <Grid
-                            key={ctspIndex}
-                            container
-                            item
-                            xs={12}
-                            md={6}
-                            lg={12}
-                            sx={{ marginTop: 1, backgroundColor: 'white', alignItems: 'center' }}
-                          >
-                            <StyledProductImg
-                              sx={{
-                                position: 'relative',
-                                width: '140px',
-                                height: '180px',
-                                marginLeft: '14px',
-                              }}
-                              alt={imageUrl}
-                              src={imageUrl}
-                            />
-                            <div style={{ marginLeft: '16px' }}>
-                              <Typography variant="body1" gutterBottom>
-                                Tên Sản Phẩm: {tenSp}
-                              </Typography>
-                              <Typography variant="body2" gutterBottom>
-                                Phân Loại: {tenMs} {tenSize}
-                              </Typography>
-                              <Typography variant="body2" gutterBottom>
-                                Số Lượng: {soLuong}
-                              </Typography>
-                            </div>
-                          </Grid>
-                        );
-                      })}
-                      <Grid
-                        item
-                        xs={12}
-                        md={6}
-                        lg={12}
-                        sx={{ textAlign: 'right', marginTop: 1, backgroundColor: 'white' }}
-                      >
-                        <Button onClick={() => handleClick(idHd)} variant="contained" color="success">
-                          Chi Tiết
-                        </Button>
-                      </Grid>
-                    </Fragment>
-                  );
-                })}
-            </Grid>
-          </TabPanel>
-          <TabPanel value={value} index={1} dir={theme.direction}>
-            Item Two
-          </TabPanel>
-          <TabPanel value={value} index={2} dir={theme.direction}>
-            Item Three
-          </TabPanel>
+          {renderTabPanel(0)}
+          {renderTabPanel(1)}
+          {renderTabPanel(2)}
+          {renderTabPanel(3)}
+          {renderTabPanel(4)}
+          {renderTabPanel(5)}
+          {renderTabPanel(6)}
+          {renderTabPanel(7)}
         </SwipeableViews>
         {fabs.map((fab, index) => (
           <Zoom

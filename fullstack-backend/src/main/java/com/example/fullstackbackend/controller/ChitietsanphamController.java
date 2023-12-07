@@ -32,8 +32,8 @@ public class ChitietsanphamController {
     public Page<ChiTietSanPham> viewAll(@RequestParam(defaultValue = "0") Integer page,
                                         @RequestParam(defaultValue = "5") Integer size,
                                         @RequestParam("p") Optional<Integer> p) {
-        Page<ChiTietSanPham> chiTietSP = chitietsanphamSevice.chiTietSP(p.orElse(page), size);
-        return chiTietSP;
+        return chitietsanphamSevice.chiTietSP(p.orElse(page), size);
+
     }
 
     @GetMapping("view-all-ctsp")
@@ -53,8 +53,7 @@ public class ChitietsanphamController {
 
     @GetMapping("select-Classify/{name}")
     public List<ChiTietSanPham> findByProductName(@PathVariable("name") String name) {
-        List<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductName(name);
-        return chiTietSanPham;
+        return chitietsanphamSevice.findByProductName(name);
     }
 
 
@@ -62,15 +61,15 @@ public class ChitietsanphamController {
     public Optional<ChiTietSanPham> findByProductNameAndSize(@PathVariable("name") String name,
                                                              @PathVariable("size") String size,
                                                              @PathVariable("ms") String ms) {
-        Optional<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductNameAndSize(name, size, ms);
-        return chiTietSanPham;
+        return chitietsanphamSevice.findByProductNameAndSize(name, size, ms);
+
     }
 
 
     @GetMapping("select-ctsp-byid/{id}")
     public List<ChiTietSanPham> findByProductId(@PathVariable("id") Integer id) {
-        List<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductId(id);
-        return chiTietSanPham;
+        return chitietsanphamSevice.findByProductId(id);
+
     }
 
     @PostMapping("add/{soLuong}")

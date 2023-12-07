@@ -39,6 +39,7 @@ import ModalDeleteDirectSale from '../../forms/Modal-Delete-DirectSale';
 import ModalAddProduct from '../../forms/Modals-AddProduct';
 import ModalDeleteProductOnCart from '../../forms/Modal-Delete-Product';
 import ModalUpdateProductOnCart from '../../forms/Modals-Update-Product-Cart';
+import ModalReturnItem from '../../forms/client/Modals-ReturnItem';
 
 const styles = {
   container: {
@@ -61,10 +62,8 @@ const OrderClientTimeline = ({ classes }) => {
   const getListData = useCallback(async () => {
     try {
       const res = await getDetailOneHD(idHdParam);
-      console.log('res: ', res);
 
       const res1 = await viewAllHTTT(idHdParam);
-      console.log('res1: ', res1);
 
       setListData(res);
       setListHTTT(res1);
@@ -117,7 +116,7 @@ const OrderClientTimeline = ({ classes }) => {
   function getTextForTrangThai(trangThai) {
     if (trangThai === 0) return 'Tạo Đơn Hàng Ship';
     if (trangThai === 8) return 'Đã Xác Nhận Đơn Tại Quầy';
-    if (trangThai === 1) return 'Đã Xác Nhận Đơn ';
+    if (trangThai === 1) return 'Đã Xác Nhận Đơn';
     if (trangThai === 2) return 'Đã Xác Nhận Người Mua';
     if (trangThai === 3) return 'Đã Chuyển Cho Đơn Vị';
     if (trangThai === 4 || trangThai === 9) return 'Đã Xác Nhận Thanh Toán';
@@ -148,10 +147,14 @@ const OrderClientTimeline = ({ classes }) => {
   // };
 
   //   Edit show modals payment
-  // const [showModalsAdd, setShowModalAdd] = useState(false);
-  // const handleClose = () => {
-  //   setShowModalAdd(false);
-  // };
+  const [showModalsReturnItem, setShowModalsReturnItem] = useState(false);
+
+  const handleClose = () => {
+    setShowModalsReturnItem(false);
+  };
+  const handleReturnItem = () => {
+    setShowModalsReturnItem(true);
+  };
   // //   Edit show modals update timeline
   // const [showModalUpdate, setShowModalUpdate] = useState(false);
 
@@ -159,10 +162,7 @@ const OrderClientTimeline = ({ classes }) => {
   //   setShowModalUpdate(false);
   //   getListData();
   // };
-  //
-  // const handlePayment = () => {
-  //   setShowModalAdd(true);
-  // };
+
   // Modal show detail timeline bill
   const [showModalsDT, setShowModalDT] = useState(false);
   const handleSelect = () => {
@@ -186,6 +186,8 @@ const OrderClientTimeline = ({ classes }) => {
 
     return formattedDateTime;
   }
+  // Format thanhTien
+  const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 
   function renderTrangThai(trangThai) {
     let badgeVariant;
@@ -320,6 +322,9 @@ const OrderClientTimeline = ({ classes }) => {
               <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 1}>
                 Hủy Đơn Hàng
               </Button>{' '}
+              <Button variant="outlined" color="error" onClick={handleReturnItem}>
+                Đổi/Trả Hàng
+              </Button>{' '}
               <Button variant="outlined" color="error" onClick={handleSelect}>
                 Chi Tiết
               </Button>
@@ -333,7 +338,7 @@ const OrderClientTimeline = ({ classes }) => {
               <Typography variant="h6" gutterBottom>
                 Thông Tin Khách Hàng{' '}
               </Typography>
-              <Button size="small" variant="outlined">
+              <Button disabled={activeIndex >= 1} size="small" variant="outlined">
                 Chỉnh sửa thông tin
               </Button>
             </Stack>
@@ -371,14 +376,14 @@ const OrderClientTimeline = ({ classes }) => {
               <Typography variant="h6" gutterBottom>
                 Lịch Sử Thanh Toán{' '}
               </Typography>
-              {/* <Button
-                onClick={() => handlePayment()}
+              <Button
+                // onClick={() => handleReturnItem()}
                 size="small"
                 variant="outlined"
                 disabled={activeIndex < 3 || activeIndex > 3}
               >
                 Xác nhận thanh toán
-              </Button> */}
+              </Button>
             </Stack>
           </div>
           <div className="row row-botton">
@@ -402,7 +407,7 @@ const OrderClientTimeline = ({ classes }) => {
                         <TableCell component="th" scope="row">
                           {item.hinhThuc}
                         </TableCell>
-                        <TableCell align="right">{item.soTien}</TableCell>
+                        <TableCell align="right">{formatCurrency(item.soTien)}</TableCell>
                         <TableCell align="right">{item.idHd.ngayThanhToan}</TableCell>
                       </TableRow>
                     ))
@@ -462,17 +467,27 @@ const OrderClientTimeline = ({ classes }) => {
                           <TableCell>{item[4]}</TableCell>
                           <TableCell align="right">{item[5]}</TableCell>
                           <TableCell align="right">
-                            <Button onClick={() => handleUpdateClassify(item)} size="small" variant="outlined">
+                            <Button
+                              onClick={() => handleUpdateClassify(item)}
+                              disabled={activeIndex >= 1}
+                              size="small"
+                              variant="outlined"
+                            >
                               Size: {item[6]}
                               <br />
                               Màu: {item[11]}
                             </Button>
                           </TableCell>
-                          <TableCell align="right">{item[7]}</TableCell>
+                          <TableCell align="right">{formatCurrency(item[7])}</TableCell>
                           <TableCell align="right">{item[8]}</TableCell>
-                          <TableCell align="right">{item[9]}</TableCell>
+                          <TableCell align="right">{formatCurrency(item[9])}</TableCell>
                           <TableCell align="right">
-                            <IconButton aria-label="delete" size="large" onClick={() => handleDelete(item)}>
+                            <IconButton
+                              aria-label="delete"
+                              size="large"
+                              disabled={activeIndex >= 1}
+                              onClick={() => handleDelete(item)}
+                            >
                               <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
                             </IconButton>
                           </TableCell>
@@ -492,24 +507,31 @@ const OrderClientTimeline = ({ classes }) => {
                 </TableBody>
               </Table>{' '}
               {listData.length > 0 && (
-                <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
-                  Thành Tiền: {listData[0].idHd.thanhTien}
-                </Typography>
+                <>
+                  <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
+                    Tiền Giao Hàng: {formatCurrency(listData[0].idHd.tienShip)}
+                  </Typography>
+                  <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
+                    Thành Tiền: {formatCurrency(listData[0].idHd.thanhTien)}
+                  </Typography>
+                </>
               )}
             </TableContainer>
             {/* Modal Payment */}
+            {DataCart.length > 0 && (
+              <>
+                <ModalReturnItem
+                  show={showModalsReturnItem}
+                  // showModalsReturnItem={showModalsReturnItem}
+                  selectDataCart={selectDataCart}
+                  handleClose={handleClose}
+                  DataCart={DataCart}
+                  getListData={getListData}
+                />
+              </>
+            )}
             {listData.length > 0 && (
               <>
-                {/* <ModalPaymentComfirm
-                  show={showModalsAdd}
-                  showModalsAdd={showModalsAdd}
-                  handleClose={handleClose}
-                  listData={listData}
-                  thanhTien={listData[0].idHd.thanhTien}
-                  listHD={listData[0].idHd}
-                  tenKhTT={listData[0].idHd.tenKh}
-                  sdtKHTT={listData[0].idHd.sdtKh}
-                /> */}
                 <ModalDeleteProductOnCart
                   open={showModalsDelete}
                   handleClose={handleCloseModalDelelte}
