@@ -93,6 +93,10 @@ function renderTrangThai(trangThai) {
       badgeVariant = 'warning';
       statusText = 'Đang giảm giá';
       break;
+    case 9:
+      badgeVariant = 'default';
+      statusText = 'Đang cập nhật';
+      break;
     case 10:
       badgeVariant = 'error';
       statusText = 'Ngừng kinh doanh';

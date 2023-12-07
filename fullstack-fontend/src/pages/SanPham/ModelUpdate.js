@@ -285,6 +285,7 @@ export default function UpdateSanPham() {
     ) {
       handleAlertClick('Cập nhật thất bại!', 'danger');
     } else {
+      const trangThaiValue = listImg.length === 0 || listCTSP.length === 0 ? 9 : trangThai;
       const res = await putUpdateSanPham(
         idSpHttp,
         maSp,
@@ -295,7 +296,7 @@ export default function UpdateSanPham() {
         getObjCoAo,
         getObjTayAo,
         moTa,
-        trangThai
+        trangThaiValue
       );
 
       console.log('Check res: ', res);
@@ -1050,11 +1051,7 @@ export default function UpdateSanPham() {
         </Snackbar>
       </Stack>
 
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={openBD}
-        onClick={() => handleCloseBD()}
-      >
+      <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={openBD}>
         <CircularProgress color="inherit" />
       </Backdrop>
 
