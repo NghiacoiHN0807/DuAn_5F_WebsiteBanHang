@@ -111,44 +111,49 @@ public class CouponsController {
         );
     }
 
-    @PostMapping("/coupon/insert-hd")
+    @PostMapping("/insert-hd")
     ResponseEntity<?> insertHd(@RequestParam("idHd") Integer idHd, @RequestParam("code") String code) {
         Optional<HoaDon> hoaDon = hoadonSevice.detail(idHd);
         if (hoaDon.isPresent()) {
-            if (hoaDon.get().getMaGiamGia() == null) {
-                Optional<Coupons> coupons = couponsService.detailByCode(code);
-                if (coupons.isPresent()) {
-                    System.out.println("coupons.get().getSoLuongHienTai(): " + coupons.get().getSoLuongHienTai());
-                    if (coupons.get().getSoLuongHienTai() == null) {
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                                "Mã giảm giá đã hết lượt sử dụng!"
-                        );
-                    } else if(coupons.get().getSoLuongHienTai() < 1){
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                                "Mã giảm giá đã hết lượt sử dụng!"
-                        );
-                    }else {
-                        if (coupons.get().getTrangThai() == 10) {
+            if (hoaDon.get().getMaGiamGia() == null || !hoaDon.get().getMaGiamGia().trim().isBlank()) {
+                if (hoaDon.get().getThanhTien() == null) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                            "Không tìm thấy thành tiền!"
+                    );
+                } else {
+                    Optional<Coupons> coupons = couponsService.detailByCode(code);
+                    if (coupons.isPresent()) {
+                        if (coupons.get().getSoLuongHienTai() == null) {
                             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                                    "Mã giảm giá không tồn tại hoặc hết hạn!"
+                                    "Mã giảm giá đã hết lượt sử dụng!"
+                            );
+                        } else if (coupons.get().getSoLuongHienTai() < 1) {
+                            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                                    "Mã giảm giá đã hết lượt sử dụng!"
                             );
                         } else {
-                            Integer check = hoaDon.get().getThanhTien().compareTo(coupons.get().getTienToiThieu());
-                            if (check == -1) {
+                            if (coupons.get().getTrangThai() == 10) {
                                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                                        "Số tiền tối thiểu không đủ!"
+                                        "Mã giảm giá không tồn tại hoặc hết hạn!"
                                 );
                             } else {
-                                return ResponseEntity.status(HttpStatus.OK).body(
-                                        couponsService.addCoupons(idHd, code)
-                                );
+                                Integer check = hoaDon.get().getThanhTien().compareTo(coupons.get().getTienToiThieu());
+                                if (check == -1) {
+                                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                                            "Số tiền tối thiểu không đủ!"
+                                    );
+                                } else {
+                                    return ResponseEntity.status(HttpStatus.OK).body(
+                                            couponsService.addCoupons(idHd, code)
+                                    );
+                                }
                             }
                         }
+                    } else {
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                                "Mã giảm giá không tồn tại hoặc hết hạn!"
+                        );
                     }
-                } else {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                            "Mã giảm giá không tồn tại hoặc hết hạn!"
-                    );
                 }
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(

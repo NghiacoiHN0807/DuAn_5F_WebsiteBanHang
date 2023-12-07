@@ -23,9 +23,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 // Service
 import { detailBill, finByProductOnCart, paymentOnline } from '../../service/BillSevice';
-import { updateTongTien, viewAllHTTT } from '../../service/OrderManagementTimeLine';
+import { updateTienShip, viewAllHTTT } from '../../service/OrderManagementTimeLine';
 import ModalAddAddress from '../../forms/Modals-Add-Address';
 import { selectDiaChiByTK, updateClientPayment } from '../../service/client/Payment';
+import ModalPaymentPage from './Moda-Payment-Page1';
 
 const ImageButton = styled(ButtonBase)(({ theme }) => ({
   position: 'relative',
@@ -94,6 +95,8 @@ export default function PaymentPage1() {
   // Payment
   // Show  payment information
   const [isDeliveryChecked, setIsDeliveryChecked] = useState(false);
+  const [openCoupon, setOpenCoupon] = useState(false);
+  const [information, setInformation] = useState();
 
   const handleDeliveryChange = (event) => {
     setIsDeliveryChecked(event.target.checked);
@@ -111,10 +114,12 @@ export default function PaymentPage1() {
     try {
       const res = await finByProductOnCart(idHdParam);
       const res1 = await viewAllHTTT(idHdParam);
+      console.log("res", res);
 
       if (res || res1) {
         setDataCart(res);
         setListHTTT(res1);
+        setInformation(res);
       }
     } catch (error) {
       console.error(error);
@@ -123,6 +128,11 @@ export default function PaymentPage1() {
   useEffect(() => {
     selectDataCart();
   }, [selectDataCart]);
+
+  const handleClose = () => {
+    setOpenCoupon(false);
+    selectDataCart();
+  };
 
   // Detail Hd
   const [listHD, setlistHD] = useState([]);
@@ -176,11 +186,11 @@ export default function PaymentPage1() {
 
   useEffect(() => {
     const calculateTotalPrice = async () => {
-      const total = DataCart.reduce((accumulator, item) => accumulator + item[9], 0);
-      const thanhTien = total + tienShip;
-      setThanhTien(thanhTien);
+      // const total = DataCart.reduce((accumulator, item) => accumulator + item[9], 0);
+      // const thanhTien = total + tienShip;
+      // setThanhTien(thanhTien);
 
-      await updateTongTien(idHdParam, total, tienShip, thanhTien);
+      await updateTienShip(idHdParam, tienShip);
       // setlistHD();
     };
 
@@ -239,9 +249,13 @@ export default function PaymentPage1() {
     console.log('Đi tới thanh toán');
   };
 
+  const handleCoupon = () => {
+    setOpenCoupon(true);
+  }
+
   return (
     <>
-      <Container>
+      <Container sx={{ marginBottom: 10 }}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 5, backgroundColor: 'white' }}>
             <Typography variant="h6" sx={{ marginTop: 1 }}>
@@ -400,15 +414,28 @@ export default function PaymentPage1() {
               </Stack>
               <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
                 <Typography variant="button" display="block" gutterBottom>
+                  Số Tiền Giảm{' '}
+                </Typography>
+                <Typography variant="button" display="block" gutterBottom>
+                  {listHD && listHD.soTienGiamGia}{' '}
+                </Typography>
+              </Stack>
+              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+                <Typography variant="button" display="block" gutterBottom>
                   Thành Tiền{' '}
                 </Typography>
                 <Typography variant="button" display="block" gutterBottom>
-                  {listHD && thanhTien}{' '}
+                  {listHD && listHD.thanhTien}{' '}
                 </Typography>
               </Stack>
-              <Button onClick={() => handleDatHang()} variant="contained" color="success">
-                Đặt Hàng
-              </Button>
+              <Grid sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Button onClick={() => handleDatHang()} variant="contained" color="success">
+                  Đặt Hàng
+                </Button>
+                <Button onClick={() => handleCoupon()}>
+                  Thêm mã giảm giá tại đây.
+                </Button>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
@@ -438,6 +465,7 @@ export default function PaymentPage1() {
           </Alert>
         </Snackbar>
       )}
+      <ModalPaymentPage open={openCoupon} handleClose={handleClose} information={information} getDetailHD={getDetailHD} />
     </>
   );
 }
