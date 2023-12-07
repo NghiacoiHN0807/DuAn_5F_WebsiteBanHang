@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { set, sub } from 'date-fns';
 import { noCase } from 'change-case';
 import { faker } from '@faker-js/faker';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import {
   Box,
@@ -20,64 +20,84 @@ import {
   ListItemAvatar,
   ListItemButton,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+
 // utils
 import { fToNow } from '../../../utils/formatTime';
 // components
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
+import { getAllOrderManagement } from '../../../service/OderManagementSevice';
 
 // ----------------------------------------------------------------------
-
-const NOTIFICATIONS = [
-  {
-    id: faker.datatype.uuid(),
-    title: 'Your order is placed',
-    description: 'waiting for shipping',
-    avatar: null,
-    type: 'order_placed',
-    createdAt: set(new Date(), { hours: 10, minutes: 30 }),
-    isUnRead: true,
-  },
-  {
-    id: faker.datatype.uuid(),
-    title: faker.name.fullName(),
-    description: 'answered to your comment on the Minimal',
-    avatar: '/assets/images/avatars/avatar_2.jpg',
-    type: 'friend_interactive',
-    createdAt: sub(new Date(), { hours: 3, minutes: 30 }),
-    isUnRead: true,
-  },
-  {
-    id: faker.datatype.uuid(),
-    title: 'You have new message',
-    description: '5 unread messages',
-    avatar: null,
-    type: 'chat_message',
-    createdAt: sub(new Date(), { days: 1, hours: 3, minutes: 30 }),
-    isUnRead: false,
-  },
-  {
-    id: faker.datatype.uuid(),
-    title: 'You have new mail',
-    description: 'sent from Guido Padberg',
-    avatar: null,
-    type: 'mail',
-    createdAt: sub(new Date(), { days: 2, hours: 3, minutes: 30 }),
-    isUnRead: false,
-  },
-  {
-    id: faker.datatype.uuid(),
-    title: 'Delivery processing',
-    description: 'Your order is being shipped',
-    avatar: null,
-    type: 'order_shipped',
-    createdAt: sub(new Date(), { days: 3, hours: 3, minutes: 30 }),
-    isUnRead: false,
-  },
-];
+// {
+//   id: faker.datatype.uuid(),
+//   title: faker.name.fullName(),
+//   description: 'answered to your comment on the Minimal',
+//   avatar: '/assets/images/avatars/avatar_2.jpg',
+//   type: 'friend_interactive',
+//   createdAt: sub(new Date(), { hours: 3, minutes: 30 }),
+//   isUnRead: true,
+// },
+// {
+//   id: faker.datatype.uuid(),
+//   title: 'You have new message',
+//   description: '5 unread messages',
+//   avatar: null,
+//   type: 'chat_message',
+//   createdAt: sub(new Date(), { days: 1, hours: 3, minutes: 30 }),
+//   isUnRead: false,
+// },
+// {
+//   id: faker.datatype.uuid(),
+//   title: 'You have new mail',
+//   description: 'sent from Guido Padberg',
+//   avatar: null,
+//   type: 'mail',
+//   createdAt: sub(new Date(), { days: 2, hours: 3, minutes: 30 }),
+//   isUnRead: false,
+// },
+// {
+//   id: faker.datatype.uuid(),
+//   title: 'Delivery processing',
+//   description: 'Your order is being shipped',
+//   avatar: null,
+//   type: 'order_shipped',
+//   createdAt: sub(new Date(), { days: 3, hours: 3, minutes: 30 }),
+//   isUnRead: false,
+// },
 
 export default function NotificationsPopover() {
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
+  const [listData, setListData] = useState([]);
+
+  const getListData = async () => {
+    try {
+      const res = await getAllOrderManagement();
+      setListData(res.filter((item) => item.trangThai === 0));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    getListData();
+  }, []);
+
+  // const maHDList = listData.map((item) => item.maHD);
+  const [notifications, setNotifications] = useState([]);
+
+  useEffect(() => {
+    const updatedNotifications = listData.map((item) => ({
+      idHd: item.idHd,
+      id: faker.datatype.uuid(),
+      title: 'Có Một Hóa Đơn Mới',
+      description: item.maHd,
+      avatar: null,
+      type: 'order_placed',
+      createdAt: item.ngayTao,
+      isUnRead: true,
+    }));
+    setNotifications(updatedNotifications);
+  }, [listData]);
 
   const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
 
@@ -126,7 +146,7 @@ export default function NotificationsPopover() {
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="subtitle1">Notifications</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              You have {totalUnRead} unread messages
+              Đang Có {totalUnRead} Chưa Được Xác Nhận
             </Typography>
           </Box>
 
@@ -150,12 +170,12 @@ export default function NotificationsPopover() {
               </ListSubheader>
             }
           >
-            {notifications.slice(0, 2).map((notification) => (
+            {notifications.slice(0, notifications.length).map((notification) => (
               <NotificationItem key={notification.id} notification={notification} />
             ))}
           </List>
 
-          <List
+          {/* <List
             disablePadding
             subheader={
               <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
@@ -166,7 +186,7 @@ export default function NotificationsPopover() {
             {notifications.slice(2, 5).map((notification) => (
               <NotificationItem key={notification.id} notification={notification} />
             ))}
-          </List>
+          </List> */}
         </Scrollbar>
 
         <Divider sx={{ borderStyle: 'dashed' }} />
@@ -192,14 +212,26 @@ NotificationItem.propTypes = {
     description: PropTypes.string,
     type: PropTypes.string,
     avatar: PropTypes.any,
+    idHd: PropTypes.array,
   }),
 };
 
 function NotificationItem({ notification }) {
-  const { avatar, title } = renderContent(notification);
+  const { idHd, avatar, title } = renderContent(notification);
+
+  // Click on the table
+  const navigate = useNavigate();
+
+  const handlClickRow = (idHd) => {
+    console.log('Check idHd: ', idHd);
+    console.log('HOHO');
+
+    navigate(`/dashboard/bills/time-line/${idHd}`);
+  };
 
   return (
     <ListItemButton
+      onClick={() => handlClickRow(idHd)}
       sx={{
         py: 1.5,
         px: 2.5,
@@ -247,6 +279,7 @@ function renderContent(notification) {
 
   if (notification.type === 'order_placed') {
     return {
+      idHd: notification.idHd,
       avatar: <img alt={notification.title} src="/assets/icons/ic_notification_package.svg" />,
       title,
     };

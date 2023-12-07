@@ -36,14 +36,6 @@ const StyledRoot = styled(AppBar)(({ theme }) => ({
   },
 }));
 
-// const StyledToolbar = styled(Toolbar)(({ theme }) => ({
-//   minHeight: HEADER_MOBILE,
-//   [theme.breakpoints.up('lg')]: {
-//     minHeight: HEADER_DESKTOP,
-//     padding: theme.spacing(0, 5),
-//   },
-// }));
-
 const StyledBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
     right: -3,
@@ -60,19 +52,19 @@ const SectionWithButton = styled('div')({
 const Header = () => {
   const [listData, setListData] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const getLocalStore = localStorage.getItem('userFormToken');
-        const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
-        const getData = await listProductOnCart(authorities.idTaiKhoan);
-        setListData(getData || []);
-      } catch (error) {
-        console.error(error);
-        setListData([]);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const getLocalStore = localStorage.getItem('userFormToken');
+      const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
+      const getData = await listProductOnCart(authorities.idTaiKhoan);
+      setListData(getData || []);
+    } catch (error) {
+      console.error(error);
+      setListData([]);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 

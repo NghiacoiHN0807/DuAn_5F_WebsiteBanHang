@@ -114,7 +114,7 @@ export default function PaymentPage1() {
     try {
       const res = await finByProductOnCart(idHdParam);
       const res1 = await viewAllHTTT(idHdParam);
-      console.log("res", res);
+      console.log('res', res);
 
       if (res || res1) {
         setDataCart(res);
@@ -182,7 +182,7 @@ export default function PaymentPage1() {
   }, [getAllData]);
 
   // Show thanhTien
-  const [thanhTien, setThanhTien] = useState();
+  // const [thanhTien, setThanhTien] = useState();
 
   useEffect(() => {
     const calculateTotalPrice = async () => {
@@ -190,12 +190,15 @@ export default function PaymentPage1() {
       // const thanhTien = total + tienShip;
       // setThanhTien(thanhTien);
 
-      await updateTienShip(idHdParam, tienShip);
+      const updated = await updateTienShip(idHdParam, tienShip);
+      if (updated) {
+        getDetailHD();
+      }
       // setlistHD();
     };
 
     calculateTotalPrice();
-  }, [DataCart, idHdParam, tienShip, listHD]);
+  }, [getDetailHD, idHdParam, tienShip]);
 
   // Select modal address
   const [showModalsAddress, setShowModalKH] = useState(false);
@@ -203,6 +206,7 @@ export default function PaymentPage1() {
     setShowModalKH(true);
   };
   const handleCloseAddress = () => {
+    getDetailHD();
     setShowModalKH(false);
   };
 
@@ -242,7 +246,7 @@ export default function PaymentPage1() {
 
   // handle payment online
   const handlePaymentOnline = async () => {
-    const paymentOn = await paymentOnline(thanhTien, idHdParam);
+    const paymentOn = await paymentOnline(listHD.thanhTien, idHdParam);
     console.log('Check paymentOn: ', paymentOn);
     window.location.href = paymentOn;
 
@@ -251,8 +255,20 @@ export default function PaymentPage1() {
 
   const handleCoupon = () => {
     setOpenCoupon(true);
-  }
+  };
 
+  // Format thanhTien
+  function formatCurrency(price) {
+    if (!price) return '0';
+
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
   return (
     <>
       <Container sx={{ marginBottom: 10 }}>
@@ -323,9 +339,9 @@ export default function PaymentPage1() {
                             <br />
                             Màu: {item[11]}
                           </TableCell>
-                          <TableCell align="right">{item[7]}</TableCell>
+                          <TableCell align="right">{formatCurrency(item[7])}</TableCell>
                           <TableCell align="right">{item[8]}</TableCell>
-                          <TableCell align="right">{item[9]}</TableCell>
+                          <TableCell align="right">{formatCurrency(item[9])}</TableCell>
                         </TableRow>
                       );
                     })
@@ -344,7 +360,14 @@ export default function PaymentPage1() {
             </TableContainer>
           </Grid>
 
-          <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 5, backgroundColor: 'white' }} className='d-flex justify-content-between'>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            lg={12}
+            sx={{ marginTop: 5, backgroundColor: 'white' }}
+            className="d-flex justify-content-between"
+          >
             <Grid item xs={12} md={6} lg={4}>
               <Typography variant="h6" sx={{ marginTop: 1 }} gutterBottom>
                 Phương Thức Thanh Toán{' '}
@@ -401,7 +424,7 @@ export default function PaymentPage1() {
                   Tổng Tiền{' '}
                 </Typography>
                 <Typography variant="button" display="block" gutterBottom>
-                  {listHD && listHD.tongTien}{' '}
+                  {listHD && formatCurrency(listHD.tongTien)}{' '}
                 </Typography>
               </Stack>
               <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
@@ -409,7 +432,7 @@ export default function PaymentPage1() {
                   Tiền Ship{' '}
                 </Typography>
                 <Typography variant="button" display="block" gutterBottom>
-                  {listHD && tienShip}{' '}
+                  {listHD && formatCurrency(listHD.tienShip)}{' '}
                 </Typography>
               </Stack>
               <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
@@ -417,7 +440,7 @@ export default function PaymentPage1() {
                   Số Tiền Giảm{' '}
                 </Typography>
                 <Typography variant="button" display="block" gutterBottom>
-                  {listHD && listHD.soTienGiamGia}{' '}
+                  {listHD && formatCurrency(listHD.soTienGiamGia)}{' '}
                 </Typography>
               </Stack>
               <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
@@ -425,16 +448,14 @@ export default function PaymentPage1() {
                   Thành Tiền{' '}
                 </Typography>
                 <Typography variant="button" display="block" gutterBottom>
-                  {listHD && listHD.thanhTien}{' '}
+                  {listHD && formatCurrency(listHD.thanhTien)}{' '}
                 </Typography>
               </Stack>
               <Grid sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Button onClick={() => handleDatHang()} variant="contained" color="success">
                   Đặt Hàng
                 </Button>
-                <Button onClick={() => handleCoupon()}>
-                  Thêm mã giảm giá tại đây.
-                </Button>
+                <Button onClick={() => handleCoupon()}>Thêm mã giảm giá tại đây.</Button>
               </Grid>
             </Grid>
           </Grid>
@@ -450,6 +471,7 @@ export default function PaymentPage1() {
             setSDTKH={setSDTKH}
             setDiaChi={setDiaChi}
             setTienShip={setTienShip}
+            getDetailHD={getDetailHD}
           />
         </>
       )}
@@ -465,7 +487,12 @@ export default function PaymentPage1() {
           </Alert>
         </Snackbar>
       )}
-      <ModalPaymentPage open={openCoupon} handleClose={handleClose} information={information} getDetailHD={getDetailHD} />
+      <ModalPaymentPage
+        open={openCoupon}
+        handleClose={handleClose}
+        information={information}
+        getDetailHD={getDetailHD}
+      />
     </>
   );
 }

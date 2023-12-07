@@ -82,12 +82,13 @@ const ModalAddAddress = (props) => {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     listData: PropTypes.array.isRequired,
+    getDetailHD: PropTypes.func.isRequired,
     setTenKH: PropTypes.func.isRequired,
     setSDTKH: PropTypes.func.isRequired,
     setDiaChi: PropTypes.func.isRequired,
     setTienShip: PropTypes.func.isRequired,
   };
-  const { open, handleClose, listData, setTenKH, setSDTKH, setDiaChi, setTienShip } = props;
+  const { open, handleClose, listData, setTenKH, setSDTKH, setDiaChi, setTienShip, getDetailHD } = props;
 
   // Edit table
   const [page, setPage] = useState(0);
@@ -146,6 +147,7 @@ const ModalAddAddress = (props) => {
     setDiaChi(`${item.diaChiCuThe}, ${item.phuongXa}, ${item.quanHuyen}, ${item.tinhThanh}`);
     setTienShip(item.phiShip);
     handleClose();
+    getDetailHD();
   };
 
   return (
