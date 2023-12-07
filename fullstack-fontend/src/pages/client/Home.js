@@ -170,6 +170,7 @@ const Home = () => {
           <h6 className="hello">XIN CHÀO CÁC BẠN</h6>
           <p>Chào Mừng Đến Với Cửa Hàng 5F Store</p>
         </div>
+
         <div>
           <Carousel>
             <Carousel.Item style={{ height: '400px' }}>

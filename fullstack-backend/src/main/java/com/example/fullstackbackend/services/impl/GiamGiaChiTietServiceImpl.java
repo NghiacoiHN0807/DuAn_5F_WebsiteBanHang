@@ -151,7 +151,7 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
                 giamGiaChiTietRepository.deleteGgctByidSp(Integer.valueOf(i));
                 GiamGiaChiTiet giamGiaChiTiet = new GiamGiaChiTiet();
                 SanPham sanPham = sanPhamService.detail(i).orElseThrow();
-                sanPham.setTrangThai(2);
+                sanPham.setTrangThai(1);
                 giamGiaChiTiet.setIdGiamGia(giamGia1);
                 giamGiaChiTiet.setIdSp(sanPham);
                 sanPhamService.add(sanPham);
@@ -183,7 +183,7 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
                 GiamGiaChiTiet giamGiaChiTiet1 = new GiamGiaChiTiet();
                 giamGiaChiTiet1.setIdGgct(id);
                 SanPham sanPham = sanPhamService.detail(i).orElseThrow();
-                sanPham.setTrangThai(2);
+                sanPham.setTrangThai(1);
                 giamGiaChiTiet1.setIdGiamGia(giamGia1);
                 giamGiaChiTiet1.setIdSp(sanPham);
                 sanPhamService.add(sanPham);

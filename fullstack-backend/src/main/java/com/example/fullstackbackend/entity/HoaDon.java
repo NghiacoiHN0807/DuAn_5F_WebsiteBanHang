@@ -87,6 +87,9 @@ public class HoaDon {
     @Column(name = "dia_chi")
     private String diaChi;
 
+    @Column(name = "ma_giam_gia")
+    private String maGiamGia;
+
     @Column(name = "ngay_du_tinh_nhan")
     private Timestamp ngayDuTinhNhan;
 

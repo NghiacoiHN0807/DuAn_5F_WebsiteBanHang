@@ -40,6 +40,9 @@ import AddressByClient from './pages/diaChi/AddressByClient';
 import AddAddress from './pages/diaChi/AddAddress';
 import UpdateAddress from './pages/diaChi/UpdateAddress';
 import SignUp from './pages/client/SignUp';
+import AddCoupons from './pages/coupons/AddCoupons';
+import CouponsPage from './pages/coupons/CouponsPage';
+import UpdateCoupons from './pages/coupons/UpdateCoupons';
 import OrderClientTimeline from './pages/client/OrderClient-Timeline';
 import SelectAllBillOfClient from './pages/client/SelectAllBill';
 
@@ -82,6 +85,9 @@ export default function Router() {
               { path: 'products', element: <ProductMain /> },
               { path: 'products/add', element: <ProductAdd /> },
               { path: 'products/update/:id', element: <ProductUpdate /> },
+              { path: 'coupons/add', element: <AddCoupons /> },
+              { path: 'coupons', element: <CouponsPage /> },
+              { path: 'coupons/update/:id', element: <UpdateCoupons /> },
             ]
           : [
               { element: <Navigate to="/client/home" />, index: true },

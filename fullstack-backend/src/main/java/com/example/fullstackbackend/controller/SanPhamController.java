@@ -73,6 +73,11 @@ public class SanPhamController {
         return ResponseEntity.ok(dtoList);
     }
 
+    @GetMapping("/minimage/{idSp}")
+    public SanPhamWithMinImageDTO getSanPhamWithMinImageUrlByIdSp(@PathVariable Integer idSp) {
+        return sanPhamService.getSanPhamWithMinImageUrlByIdSp(idSp);
+    }
+
     @GetMapping("dto")
     public ResponseEntity<List<SanPhamDTO>> getSanPhamDetails() {
         List<SanPhamDTO> page = sanPhamService.getSanPhamDetails();

@@ -3,6 +3,8 @@ package com.example.fullstackbackend.services.impl;
 import com.example.fullstackbackend.DTO.SanPhamClientDTO;
 import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.DTO.SanPhamDTO;
+import com.example.fullstackbackend.DTO.SanPhamIgDTO;
+import com.example.fullstackbackend.DTO.SanPhamWithMinImageDTO;
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.repository.SanphamRepository;
 import com.example.fullstackbackend.services.SanPhamService;
@@ -119,6 +121,32 @@ public class SanphamServiceImpl implements SanPhamService {
     @Override
     public List<Object[]> getSanPhamWithMinImageUrl() {
         return sanphamRepository.getSanPhamWithMinImageUrl();
+    }
+
+    @Override
+    public SanPhamWithMinImageDTO getSanPhamWithMinImageUrlByIdSp(Integer idSp) {
+        List<Object[]> results = sanphamRepository.getSanPhamWithMinImageUrlByIdSp(idSp);
+
+        List<SanPhamWithMinImageDTO> dto = new ArrayList<>();
+        for (Object[] row : results) {
+            SanPhamIgDTO sp = new SanPhamIgDTO();
+            sp.setIdSp((Integer) row[0]);
+            sp.setMaSp((String) row[1]);
+            sp.setTenSp((String) row[2]);
+            sp.setIdCl((Integer) row[3]);
+            sp.setIdLsp((Integer) row[4]);
+            sp.setIdXx((Integer) row[5]);
+            sp.setIdTayAo((Integer) row[6]);
+            sp.setIdCoAo((Integer) row[7]);
+            sp.setMoTa((String) row[8]);
+            sp.setTrangThai((Integer) row[9]);
+            String imageUrl = (String) row[10];
+            sp.setGiaSmall((BigDecimal) row[11]);
+            sp.setGiaBig((BigDecimal) row[12]);
+            dto.add(new SanPhamWithMinImageDTO(sp, imageUrl));
+        }
+
+        return dto.get(0);
     }
 
     @Override

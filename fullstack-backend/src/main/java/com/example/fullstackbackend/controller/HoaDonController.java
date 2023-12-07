@@ -246,6 +246,19 @@ public class HoaDonController {
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
     }
 
+    @PutMapping("update-tien-ship/{id}")
+    public HoaDon updateTienShip(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        return hoadonSevice.detail(id).map(hoaDon -> {
+            if(hoaDon.getSoTienGiamGia() == null) {
+                hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
+            }
+            BigDecimal thanhTien = (hoaDon.getTongTien().add(newHD.getTienShip())).subtract(hoaDon.getSoTienGiamGia());
+            hoaDon.setTienShip(newHD.getTienShip());
+            hoaDon.setThanhTien(thanhTien);
+            return hoadonSevice.update(hoaDon);
+        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+    }
+
     @PutMapping("update-khach-hang/{id}")
     public HoaDon updateKhachHang(@RequestBody TaiKhoan newTK, @PathVariable("id") Integer id) {
         return hoadonSevice.detail(id).map(hoaDon -> {
