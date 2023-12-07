@@ -93,6 +93,10 @@ function renderTrangThai(trangThai) {
       badgeVariant = 'warning';
       statusText = 'Đang giảm giá';
       break;
+    case 9:
+      badgeVariant = 'default';
+      statusText = 'Đang cập nhật';
+      break;
     case 10:
       badgeVariant = 'error';
       statusText = 'Ngừng kinh doanh';
@@ -216,12 +220,11 @@ export default function UserPage() {
   const isNotFound = !filteredUsers.length && !!filterName;
 
   // Delete
-
   const handleDelete = async (idSp) => {
     const res = await deleteSanPham(idSp);
     console.log('Check res: ', res);
     if (res && res.idSp) {
-      // handleAlertClick('Xóa thành công!', 'success');
+      handleAlertClick('Xóa thành công!', 'success');
       getListData();
       handleClose();
     } else {
