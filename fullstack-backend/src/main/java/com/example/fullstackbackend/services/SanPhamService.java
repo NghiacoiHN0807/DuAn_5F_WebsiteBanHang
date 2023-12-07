@@ -44,4 +44,7 @@ public interface SanPhamService {
 
     List<SanPhamDTO> getSanPhamDetails();
 
+    List<SanPhamClientDTO> getSpGiamGiaForClient();
+
+    List<SanPhamClientDTO> getTopSpBanChayForClient();
 }

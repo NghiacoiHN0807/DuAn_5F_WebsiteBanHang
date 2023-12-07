@@ -41,4 +41,6 @@ public class SanPhamClientDTO {
 
     private BigDecimal giaThucTe;
 
+    private BigDecimal soLuongBan;
+
 }
