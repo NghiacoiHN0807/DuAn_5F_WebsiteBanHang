@@ -240,6 +240,10 @@ export default function UserPage() {
     navigate(`/dashboard/products/update/${idSp}`);
   };
 
+  const handleAdd = () => {
+    navigate(`/dashboard/products/add`);
+  };
+
   // Xac nhan xoa
   const [openDelete, setOpenDelete] = useState(false);
 
@@ -283,7 +287,7 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Danh sách sản phẩm
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} href="/dashboard/products/add">
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => handleAdd()}>
             Thêm sản phẩm
           </Button>
         </Stack>

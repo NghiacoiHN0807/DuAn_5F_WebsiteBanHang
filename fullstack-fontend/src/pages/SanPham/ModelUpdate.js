@@ -351,15 +351,15 @@ export default function UpdateSanPham() {
   }, [selectedImages, uploadImage]);
 
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
-    if (acceptedFiles.length > 0 && rejectedFiles.length === 0) {
+    if (acceptedFiles && acceptedFiles.length > 0 && rejectedFiles && rejectedFiles.length === 0) {
       const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
       setSelectedImages(imageFiles);
       handleOpenBD();
     }
-    if (rejectedFiles.length > 0 && acceptedFiles.length === 0) {
+    if (acceptedFiles && acceptedFiles.length === 0 && rejectedFiles && rejectedFiles.length > 0) {
       handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
     }
-    if (acceptedFiles.length > 0 && rejectedFiles.length > 0) {
+    if (acceptedFiles && acceptedFiles.length > 0 && rejectedFiles && rejectedFiles.length > 0) {
       const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
       setSelectedImages(imageFiles);
       handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
@@ -795,40 +795,42 @@ export default function UpdateSanPham() {
               </Button>
             </Grid>
             <Grid item xs={12}>
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Màu sắc</TableCell>
-                      <TableCell>Size</TableCell>
-                      <TableCell>Giá nhập</TableCell>
-                      <TableCell>Giá bán</TableCell>
-                      <TableCell>Số lượng tồn</TableCell>
-                      <TableCell>Trạng thái</TableCell>
-                      <TableCell> </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {listCTSP.map((row) => (
-                      <TableRow key={row.idCtsp} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                        <TableCell component="th" scope="row">
-                          {row.idMs.tenMs}
-                        </TableCell>
-                        <TableCell>{row.idSize.tenSize}</TableCell>
-                        <TableCell>{formatCurrency(row.giaNhap)}</TableCell>
-                        <TableCell>{formatCurrency(row.giaBan)}</TableCell>
-                        <TableCell>{row.soLuongTon}</TableCell>
-                        <TableCell>{renderTrangThai(row.trangThai)}</TableCell>
-                        <TableCell>
-                          <IconButton aria-label="add an alarm" onClick={() => handleClickEditAtt(row.idCtsp)}>
-                            <EditIcon />
-                          </IconButton>
-                        </TableCell>
+              {listCTSP.length > 0 && (
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Màu sắc</TableCell>
+                        <TableCell>Size</TableCell>
+                        <TableCell>Giá nhập</TableCell>
+                        <TableCell>Giá bán</TableCell>
+                        <TableCell>Số lượng tồn</TableCell>
+                        <TableCell>Trạng thái</TableCell>
+                        <TableCell> </TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                      {listCTSP.map((row) => (
+                        <TableRow key={row.idCtsp} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                          <TableCell component="th" scope="row">
+                            {row.idMs.tenMs}
+                          </TableCell>
+                          <TableCell>{row.idSize.tenSize}</TableCell>
+                          <TableCell>{formatCurrency(row.giaNhap)}</TableCell>
+                          <TableCell>{formatCurrency(row.giaBan)}</TableCell>
+                          <TableCell>{row.soLuongTon}</TableCell>
+                          <TableCell>{renderTrangThai(row.trangThai)}</TableCell>
+                          <TableCell>
+                            <IconButton aria-label="add an alarm" onClick={() => handleClickEditAtt(row.idCtsp)}>
+                              <EditIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
             </Grid>
           </Grid>
         </Card>
@@ -848,16 +850,16 @@ export default function UpdateSanPham() {
                         <CardActionArea>
                           <Box position="relative">
                             <CardMedia component="img" height="200" image={item.url} alt="green iguana" />
-                            <IconButton
-                              sx={{ position: 'absolute', top: 0, right: 0 }}
-                              size="small"
-                              color="primary"
-                              onClick={() => handlDeleteImg(item.idImage, item.url)}
-                            >
-                              <DeleteIcon sx={{ color: pink[500], fontSize: 40 }} />
-                            </IconButton>
                           </Box>
                         </CardActionArea>
+                        <IconButton
+                          sx={{ position: 'absolute', top: 0, right: 0 }}
+                          size="small"
+                          color="primary"
+                          onClick={() => handlDeleteImg(item.idImage, item.url)}
+                        >
+                          <DeleteIcon sx={{ color: pink[500], fontSize: 40 }} />
+                        </IconButton>
                       </Card>
                     </Grid>
                   ))}
@@ -944,34 +946,36 @@ export default function UpdateSanPham() {
           </div>
           <div className="listSize">
             <Box sx={{ display: 'flex', alignItems: 'center', pb: 1, marginTop: '50px' }}>
-              <div>
-                Size:{' '}
-                {listSize.map((item, itemIndex) => (
+              {listLSP.length > 0 && (
+                <div>
+                  Size:{' '}
+                  {listSize.map((item, itemIndex) => (
+                    <Button
+                      style={{
+                        marginRight: '4px',
+                        marginBottom: '4px',
+                      }}
+                      key={`size-button-${itemIndex}`}
+                      onClick={() => handleShowSize(item.idSize)}
+                      variant={size === item.idSize ? 'contained' : 'outlined'}
+                      value={size}
+                      size="small"
+                    >
+                      {item.tenSize}
+                    </Button>
+                  ))}
                   <Button
                     style={{
                       marginRight: '4px',
                       marginBottom: '4px',
                     }}
-                    key={`size-button-${itemIndex}`}
-                    onClick={() => handleShowSize(item.idSize)}
-                    variant={size === item.idSize ? 'contained' : 'outlined'}
-                    value={size}
                     size="small"
+                    variant="outlined"
                   >
-                    {item.tenSize}
+                    +
                   </Button>
-                ))}
-                <Button
-                  style={{
-                    marginRight: '4px',
-                    marginBottom: '4px',
-                  }}
-                  size="small"
-                  variant="outlined"
-                >
-                  +
-                </Button>
-              </div>
+                </div>
+              )}
             </Box>
           </div>
         </DialogContent>
