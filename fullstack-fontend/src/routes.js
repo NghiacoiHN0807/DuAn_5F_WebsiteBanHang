@@ -39,6 +39,7 @@ import AddressByClient from './pages/diaChi/AddressByClient';
 import AddAddress from './pages/diaChi/AddAddress';
 import UpdateAddress from './pages/diaChi/UpdateAddress';
 import SignUpPage from "./pages/SignUpPage";
+import ForgetPasswordPage from "./pages/ForgetPasswordPage";
 
 // ----------------------------------------------------------------------
 
@@ -97,6 +98,10 @@ export default function Router() {
     {
       path: 'signUp',
       element: <SignUpPage />,
+    },
+      {
+      path: 'forgetPassword',
+      element: <ForgetPasswordPage />,
     },
     {
       element: <SimpleLayout />,

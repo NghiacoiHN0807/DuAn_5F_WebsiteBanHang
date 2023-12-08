@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 public class LoginController {
@@ -74,6 +76,49 @@ public class LoginController {
             gioHangReponsitory.save(gioHang);
 
             return ResponseEntity.ok(addTK);
+        }
+    }
+    @PostMapping("/forgetPassword")
+    public ResponseEntity<?> forgetPassword(@Valid @RequestBody Map<String, String> request,
+                                 BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+
+            for (FieldError fieldError : fieldErrors) {
+                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+
+            return ResponseEntity.badRequest().body(errorMap);
+        } else {
+            String email = request.get("email");
+            String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+            Pattern pattern = Pattern.compile(emailRegex);
+            Matcher matcher = pattern.matcher(email);
+
+            if(email.isBlank()){
+                Map<String, String> errorMap = new HashMap<>();
+                errorMap.put("email", "Email đang trống");
+                return ResponseEntity.badRequest().body(errorMap);
+            }
+            if (!matcher.matches()) {
+                Map<String, String> errorMap = new HashMap<>();
+                errorMap.put("email", "Email không đúng định dạng");
+                return ResponseEntity.badRequest().body(errorMap);
+            }
+            if (!userService.checkMailExists(email)) {
+                Map<String, String> errorMap = new HashMap<>();
+                errorMap.put("email", "Email Không tồn tại");
+                return ResponseEntity.badRequest().body(errorMap);
+            } else if (userService.checkBan(email)) {
+                Map<String, String> errorMap = new HashMap<>();
+                errorMap.put("email", "Tài Khoản đã bị khóa");
+                return ResponseEntity.badRequest().body(errorMap);
+            }
+            userService.forgetPassword(email);
+            Map<String, String> text = new HashMap<>();
+            text.put("email","Mật khẩu mới Đã được gửi");
+            return ResponseEntity.ok(text);
         }
     }
 

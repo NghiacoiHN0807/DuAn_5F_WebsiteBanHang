@@ -10,23 +10,17 @@ import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import {TextField} from "@mui/material";
 import Link from "@mui/material/Link";
-import {postSignUp} from "../../../service/taiKhoanKhachHangSevice";
+import {postForgetPassword} from "../../../service/taiKhoanKhachHangSevice";
 import {useAlert} from "../../../layouts/dashboard/AlertContext";
 
 
 // ----------------------------------------------------------------------
 
-export default function SignUpForm() {
+export default function ForgetPasswordForm() {
 
     const {showAlert} = useAlert();
-    const [maTaiKhoan] = useState(null);
-    const [ho, setHo] = useState("");
-    const [ten, setTen] = useState("");
-    const [sdt, setSdt] = useState("");
-    const [email, setEmail] = useState("");
-    const [matKhau] = useState(null);
-    const [trangThai] = useState("0");
 
+    const [email, setEmail] = useState("");
     // chuyen trang
     const navigate = useNavigate();
 
@@ -35,14 +29,8 @@ export default function SignUpForm() {
 
         let res;
         try {
-            res = await postSignUp(
-                maTaiKhoan,
-                ho,
-                ten,
-                sdt,
+            res = await postForgetPassword(
                 email,
-                matKhau,
-                trangThai
             );
             console.log("Check res: ", res);
         } catch (error) {
@@ -55,9 +43,8 @@ export default function SignUpForm() {
             return;
         }
 
-        if (res && res.idTaiKhoan) {
-            showAlert('success', 'Đăng Ký Tài Khoản Thành Công');
-            navigate("/client/home");
+        if (res.ok) {
+            showAlert('success', 'Mật khẩu mới đã được gửi');
         } else {
             showAlert('error', 'Thêm Thất Bại');
         }
@@ -78,55 +65,12 @@ export default function SignUpForm() {
                 }}
             >
                 <Typography component="h1" variant="h5">
-                    Đăng Ký Tài Khoản Mới
+                   Quên Mật Khẩu
                 </Typography>
                 <Box component="form" sx={{mt: 3}}>
                     <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-                                autoComplete="given-name"
-                                name="firstName"
-
-                                error={!!validationErrors.ho}
-                                helperText={validationErrors.ho}
-                                fullWidth
-                                margin={"dense"}
-                                onChange={(event) => setHo(event.target.value)}
-                                label="Họ"
-                                autoFocus
-                            />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <TextField
-
-                                id="lastName"
-                                error={!!validationErrors.ten}
-                                helperText={validationErrors.ten}
-                                fullWidth
-                                margin={"dense"}
-                                label="Tên"
-                                onChange={(event) => setTen(event.target.value)}
-                                autoComplete="family-name"
-                            />
-                        </Grid>
                         <Grid item xs={12}>
                             <TextField
-
-                                fullWidth
-                                error={!!validationErrors.sdt}
-                                helperText={validationErrors.sdt}
-                                margin={"dense"}
-                                inputProps={{maxLength: 10}}
-                                onChange={(event) => setSdt(event.target.value)}
-                                label="Số Điện Thoại"
-                                type="text"
-                                id="phone"
-                                autoComplete="new-phone"
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-
                                 fullWidth
                                 id="email"
                                 label="Địa Chỉ Email"
@@ -145,17 +89,18 @@ export default function SignUpForm() {
                         variant="contained"
                         sx={{mt: 3, mb: 2}}
                     >
-                        Đăng Ký
+                        Quên mật khẩu
                     </Button>
                     <Grid container spacing={2}>
                         <Grid item>
-                            <Link href="/login" variant="body2">
-                                Đã có tài khoản? Đăng Nhập
+                            <Link href="/signUp" variant="body2">
+                                Đăng ký tài khoản mới
                             </Link>
                         </Grid>
+
                         <Grid item>
-                            <Link href="/forgetPassword" variant="body2">
-                                Quên mật khẩu ?
+                            <Link href="/login" variant="body2">
+                                Đã có tài khoản? Đăng Nhập
                             </Link>
                         </Grid>
                     </Grid>

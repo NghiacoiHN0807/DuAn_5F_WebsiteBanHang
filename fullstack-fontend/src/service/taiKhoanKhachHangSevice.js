@@ -7,6 +7,8 @@ const postAddTaiKhoanKhachHang = (maTaiKhoan, ho, ten, sdt, email, matKhau, tran
 
 const postSignUp = (maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) =>
     custom.post("/signUp", {maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai});
+const postForgetPassword = ( email) =>
+    custom.post("/forgetPassword", {email});
 
 const postUpdateTaiKhoanKhachHang = (idTaiKhoan, maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) =>
     custom.post("/tai-khoan-khach-hang/update", {
@@ -28,4 +30,4 @@ const deleteTaiKhoanKH = (id) =>
     custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
 
 
-export {fetchAllTKKH, postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoanKH, getDetailOneTK,postSignUp};
+export {fetchAllTKKH, postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoanKH, getDetailOneTK,postSignUp,postForgetPassword};
