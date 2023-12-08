@@ -161,7 +161,7 @@ public class HoaDonController {
             hoaDon.setThanhTien(newHD.getThanhTien());
             hoaDon.setTienDua(newHD.getTienDua());
             hoaDon.setTienThua(newHD.getTienThua());
-            hoaDon.setKieuHoaDon(newHD.getKieuHoaDon());
+            hoaDon.setKieuHoaDon(hoaDon.getKieuHoaDon());
             hoaDon.setTrangThai(newHD.getTrangThai());
             return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));

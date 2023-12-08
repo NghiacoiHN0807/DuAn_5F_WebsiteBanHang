@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import '../scss/Modal-Detail-SanPham.scss';
+import { useCallback, useEffect, useState } from 'react';
+import '../../scss/Modal-Detail-SanPham.scss';
 // import { selectAllImgProduct } from "../services/BillSevice";
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Snackbar } from '@mui/material';
 import { Carousel } from 'react-bootstrap';
@@ -11,14 +11,16 @@ import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import PropTypes from 'prop-types';
-import { findByProductNameAndSize } from '../service/BillSevice';
-import { updateCart } from '../service/DirectSaleSevice';
+import { findByProductNameAndSize } from '../../service/BillSevice';
+import { updateCart } from '../../service/DirectSaleSevice';
+import { listImg } from '../../service/client/Detail-Product';
+import { updateCartClient } from '../../service/client/Detail-Cart';
 
-const ModalUpdateProductOnCart = (props) => {
-  ModalUpdateProductOnCart.propTypes = {
+const ModalUpdateProductOnCartClient = (props) => {
+  ModalUpdateProductOnCartClient.propTypes = {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
-    itemUpdateClassify: PropTypes.object.isRequired,
+    itemUpdateClassify: PropTypes.array.isRequired,
     selectDataCart: PropTypes.func.isRequired,
     itemUpdate: PropTypes.object.isRequired,
   };
@@ -105,20 +107,16 @@ const ModalUpdateProductOnCart = (props) => {
         message: 'Vui lòng chọn số lượng lớn hơn 0',
       });
     } else {
-      const getIdHdCt = itemUpdate[1];
+      const getIdHdCt = itemUpdate.idGhct;
 
       const getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize, selectedMauSac);
       console.log('getOneCTSP: ', getOneCTSP);
-
-      const donGia = getOneCTSP.giaThucTe * quantity;
-      console.log('donGia: ', donGia);
-
       //   Insert to the cart
 
-      await updateCart(getIdHdCt, getOneCTSP, quantity, donGia);
+      await updateCartClient(getIdHdCt, getOneCTSP, quantity);
       //   Close the modal
       setSelectedSize(null);
-      handleCloseDetai();
+      handleClose();
       setQuantity(1);
       //   Load new data on cart
       selectDataCart();
@@ -157,46 +155,41 @@ const ModalUpdateProductOnCart = (props) => {
     }
     return null;
   };
-  function formatCurrency(price) {
-    if (!price) return '0';
 
-    const formatter = new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-      minimumFractionDigits: 0,
-    });
+  const [images, setImages] = useState([]);
 
-    return formatter.format(price);
-  }
-  const handleCloseDetai = () => {
-    setSelectSoLuongTon([]);
-    setIsMSSelected(false);
-    setIsSizeSelected(false);
-    setSelectedMauSac(null);
-    setSelectedSize(null);
-    handleClose(); // Call the original handleClose function
-  };
+  const getDetail = useCallback(async () => {
+    try {
+      // console.log('itemUpdate131: ', itemUpdate);
+      const imgDataArray = await listImg(itemUpdate.idCtsp.idSp.idSp);
+
+      setImages(imgDataArray);
+      console.log('imgData753: ', imgDataArray);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [itemUpdate.idCtsp.idSp.idSp]);
+
+  useEffect(() => {
+    getDetail();
+  }, [getDetail]);
   return (
     <>
       <div>
-        <Dialog open={show} onClose={handleCloseDetai} maxWidth="xl">
+        <Dialog open={show} onClose={handleClose} maxWidth="xl">
           <DialogTitle>CẬP NHẬP SẢN PHẨM</DialogTitle>
           {itemUpdateClassify.length > 0 && (
             <DialogContent>
               <Card sx={{ display: 'flex' }}>
                 <Carousel interval={null} style={{ maxWidth: 500, margin: '0 auto' }}>
-                  {/* {listImages.map((item, index) => {
-                    return key={`carousel-item-${index}`} ( */}
                   <Carousel.Item>
                     <CardMedia
                       component="img"
-                      sx={{ maxWidth: 250, height: 300 }}
-                      image={getFirstImage(itemUpdate[2])}
-                      alt={getFirstImage(itemUpdate[2])}
+                      sx={{ maxWidth: 250, height: '100%' }}
+                      image={images && images[0].url}
+                      alt={images && images[0].url}
                     />
                   </Carousel.Item>
-                  {/* );
-                  })} */}
                 </Carousel>
 
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -207,9 +200,7 @@ const ModalUpdateProductOnCart = (props) => {
                     <Typography variant="subtitle1" color="text.secondary" component="div">
                       <p>Xuất Xứ: {itemUpdateClassify[0].idSp.idXx.tenNuoc}</p>
                       <p>Chất Liệu: {itemUpdateClassify[0].idSp.idCl.tenCl}</p>
-                      <p>
-                        Giá: {selectSoLuongTon.length > 0 ? formatCurrency(selectSoLuongTon[0].giaThucTe) : priceRange}
-                      </p>
+                      <p>Giá: {selectSoLuongTon.length > 0 ? selectSoLuongTon[0].giaThucTe : priceRange}</p>
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
                       <div>
@@ -300,7 +291,7 @@ const ModalUpdateProductOnCart = (props) => {
             </DialogContent>
           )}
           <DialogActions>
-            <Button onClick={handleCloseDetai}>Hủy</Button>
+            <Button onClick={handleClose}>Hủy</Button>
             <Button onClick={handleChoose}>Hoàn Tất</Button>
           </DialogActions>
         </Dialog>
@@ -320,4 +311,4 @@ const ModalUpdateProductOnCart = (props) => {
     </>
   );
 };
-export default ModalUpdateProductOnCart;
+export default ModalUpdateProductOnCartClient;

@@ -8,7 +8,7 @@ import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
 // Service
 import { listImg } from '../../service/client/Detail-Product';
 import { findById } from '../../service/BillSevice';
-import { addProductOnCart } from '../../service/client/Detail-Cart';
+import { addProductOnCart, listProductOnCart } from '../../service/client/Detail-Cart';
 
 const DetailProduct = () => {
   // DetailProduct.propTypes = {
@@ -111,6 +111,20 @@ const DetailProduct = () => {
     setQuantity(quantity + 1);
   };
 
+  const fetchData = async () => {
+    try {
+      const getLocalStore = localStorage.getItem('userFormToken');
+      const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
+      await listProductOnCart(authorities.idTaiKhoan);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   const [alertContent, setAlertContent] = useState(null);
 
   const handleAddProduct = async () => {
@@ -124,6 +138,7 @@ const DetailProduct = () => {
         type: 'success',
         message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
       });
+      fetchData();
       // refetch();
     } catch (error) {
       console.error(error);
