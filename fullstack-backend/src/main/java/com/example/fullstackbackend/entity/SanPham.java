@@ -11,6 +11,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +35,7 @@ public class SanPham {
     @Column(name = "ma_sp")
     private String maSp;
 
+    @NotBlank(message = "Tên sp không đuọc để trống")
     @Column(name = "ten_sp")
     private String tenSp;
 
@@ -59,6 +62,7 @@ public class SanPham {
     @Column(name = "mo_ta")
     private String moTa;
 
+    @NotNull(message = "Trạng thái không được để trống")
     @Column(name = "trang_thai")
     private Integer trangThai;
 
