@@ -24,7 +24,9 @@ import {
   Stack,
   Snackbar,
   Alert,
+  InputAdornment,
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 import { useState } from 'react';
 import PropTypes from 'prop-types';
@@ -199,10 +201,23 @@ export default function ModalQuickAtt({
       >
         <DialogTitle id="alert-dialog-title">
           <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Typography variant="h6" gutterBottom>
                 {phanTu && phanTu.att}
               </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                variant="outlined"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                placeholder="Search User..."
+              />
             </Grid>
             <Grid item xs={6} style={{ textAlign: 'right' }}>
               <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => handlOpenAdd()}>
