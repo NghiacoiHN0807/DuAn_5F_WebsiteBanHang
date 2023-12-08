@@ -24,6 +24,7 @@ import {
   Alert,
   Chip,
 } from '@mui/material';
+import { CSVLink } from 'react-csv';
 
 // components
 import Iconify from '../components/iconify';
@@ -104,6 +105,8 @@ const OrderManagement = () => {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const [selectedExports, setSelectedExports] = useState([]);
+
   const getListData = async () => {
     try {
       const res = await getAllOrderManagement();
@@ -145,22 +148,6 @@ const OrderManagement = () => {
     setSelected([]);
   };
 
-  // Click checkbox on table
-
-  // const handleClick = (event, idHd) => {
-  //   const selectedIndex = selected.indexOf(idHd);
-  //   let newSelected = [];
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, idHd);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-  //   }
-  //   setSelected(newSelected);
-  // };
   // Next Page
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -313,6 +300,30 @@ const OrderManagement = () => {
   }
   // Format thanhTien
   const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+
+  const handleExportData = () => {
+    const res = [];
+    if (listData && listData.length > 0) {
+      res.push([
+        'STT',
+        'Mã Hóa Đơn',
+        'Tên Khách Hàng',
+        'Số Điện Thoại',
+        'Thành Tiền',
+        'Ngày Tạo',
+        'Kiểu Hóa Đơn',
+        'Trạng Thái',
+      ]);
+      listData.map((item) => {
+        const array = [];
+        array[0] = item.idKH.ho;
+        return res.push(array);
+      });
+      setSelectedExports(res);
+      // done();
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -324,6 +335,9 @@ const OrderManagement = () => {
           <Typography variant="h4" gutterBottom>
             Hóa Đơn
           </Typography>
+          <CSVLink data={selectedExports} onClick={handleExportData}>
+            Download me
+          </CSVLink>
           <Button onClick={() => handleAdd()} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Thêm Hóa Đơn
           </Button>
