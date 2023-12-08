@@ -40,7 +40,6 @@ public class HoaDon {
     @JoinColumn(name = "id_khach_hang", referencedColumnName = "id_tai_khoan")
     private TaiKhoan idKH;
 
-
     @Column(name = "ma_hd")
     private String maHd;
 
