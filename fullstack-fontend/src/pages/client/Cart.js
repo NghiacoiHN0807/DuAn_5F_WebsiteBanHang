@@ -14,6 +14,8 @@ import {
   postAddBillAddBill,
   postAddDirectClient,
 } from '../../service/client/Detail-Cart';
+import ModalUpdateProductOnCartClient from '../../forms/client/Modals-Update-Product-Cart-Client';
+import { findById } from '../../service/BillSevice';
 
 const StyledProductImg = styled('img')({
   top: 0,
@@ -193,6 +195,26 @@ export default function Cart() {
     }
   };
 
+  // Update classify on the cart
+  const [showModalsUpdate, setShowModalsUpdate] = useState(false);
+  const [itemUpdateClassify, setItemUpdateClassify] = useState({});
+  const [itemUpdate, setItemUpdate] = useState({});
+
+  const handleUpdateClassify = async (item) => {
+    setShowModalsUpdate(true);
+    console.log('item:', item);
+    try {
+      const getOneSP = await findById(item.idCtsp.idSp.idSp);
+      setItemUpdateClassify(getOneSP);
+      setItemUpdate(item);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCloseUpdateClassify = () => {
+    setShowModalsUpdate(false);
+  };
   return (
     <>
       <div>
@@ -269,6 +291,7 @@ export default function Cart() {
                                     style={{
                                       fontSize: '12px',
                                     }}
+                                    onClick={() => handleUpdateClassify(item)}
                                     key={`size-button-${item.idCtsp.idMs.idMs}`}
                                     // onClick={() => handleShowMS(item.idCtsp.idMs)}
                                     // variant={selectedMauSac === item.idCtsp.idMs ? 'contained' : 'outlined'}
@@ -503,6 +526,15 @@ export default function Cart() {
             {alertContent.message}
           </Alert>
         </Snackbar>
+      )}
+      {itemUpdate && Object.keys(itemUpdate).length > 0 && (
+        <ModalUpdateProductOnCartClient
+          show={showModalsUpdate}
+          handleClose={handleCloseUpdateClassify}
+          itemUpdateClassify={itemUpdateClassify}
+          selectDataCart={getDetail}
+          itemUpdate={itemUpdate}
+        />
       )}
     </>
   );

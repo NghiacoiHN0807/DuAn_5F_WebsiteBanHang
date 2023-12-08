@@ -31,7 +31,7 @@ import TimelineEvent from '../MappingTimeLine/TimelineEvent';
 import { viewAllHTTT } from '../service/OrderManagementTimeLine';
 import { finByProductOnCart, findById } from '../service/BillSevice';
 import ModalUpdateStatus from '../forms/Modal-Update-Status';
-import ModalPaymentComfirm from '../forms/Modal-Payment-Confirm';
+import ModalPaymentComfirmTimeline from '../forms/Modal-Payment-Confirm-TimeLine';
 import { getDetailOneHD } from '../service/OderManagementSevice';
 import SelectHistoryBill from '../forms/Modals-SelectHistoryBill';
 import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
@@ -532,7 +532,7 @@ const OrderManagementTimeline = ({ classes }) => {
           {/* Modal Payment */}
           {listData.length > 0 && (
             <>
-              <ModalPaymentComfirm
+              <ModalPaymentComfirmTimeline
                 show={showModalsAdd}
                 showModalsAdd={showModalsAdd}
                 handleClose={handleClose}
@@ -541,6 +541,7 @@ const OrderManagementTimeline = ({ classes }) => {
                 listHD={listData[0].idHd}
                 tenKhTT={listData[0].idHd.tenKh}
                 sdtKHTT={listData[0].idHd.sdtKh}
+                getListData={getListData}
               />
               {itemDelete !== undefined && (
                 <ModalDeleteProductOnCart

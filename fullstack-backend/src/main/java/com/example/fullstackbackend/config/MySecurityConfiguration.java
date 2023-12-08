@@ -58,7 +58,6 @@ public class MySecurityConfiguration {
     protected SecurityFilterChain configureHttp(HttpSecurity http) throws Exception {
         System.out.println("http: " + http);
         return http.authorizeHttpRequests(
-
                 req ->
                         req.requestMatchers("/", "/anh/**", "/gio-hang-chi-tiet/**", "/add", "/api/**", "/san-pham/**", "chi-tiet-san-pham/**", "/hoa-don/**", "/hoa-don-chi-tiet/**", "/tai-khoan-khach-hang/**", "/chat-lieu/**", "/loai-sp/**", "/xuat-xu/**", "/loai-co-ao/**", "/ong-tay-ao/**", "/mau-sac/**", "/size/**", "/coupons/**").permitAll()
                                 .requestMatchers("/tai-khoan/**").hasRole("ADMIN")

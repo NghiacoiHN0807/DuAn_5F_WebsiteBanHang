@@ -42,7 +42,6 @@ export default function ProductListADM({ products, ...other }) {
         selectDataCart={products[0].selectDataCart}
         DataCart={products[0].DataCart}
         listImages={listImages}
-        currentPage1={products[0].currentPage1}
       />
     </>
   );
