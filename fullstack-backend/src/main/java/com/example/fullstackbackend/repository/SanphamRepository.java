@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.repository;
 
+import com.example.fullstackbackend.DTO.SanPhamWithMinImageDTO;
 import com.example.fullstackbackend.entity.SanPham;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +34,23 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "GROUP BY \n" +
             "    sp.id_sp, sp.ten_sp;", nativeQuery = true)
     List<Object[]> getSanPhamWithMinImageUrl();
+
+    @Query(value = "SELECT  \n" +
+            "                sp.*,  \n" +
+            "                MIN(img.images), \n" +
+            "                MIN(ctsp.gia_ban) AS gia_ban_nho_nhat, \n" +
+            "                MAX(ctsp.gia_ban) AS gia_ban_lon_nhat \n" +
+            "            FROM  \n" +
+            "                san_pham sp \n" +
+            "            LEFT JOIN  \n" +
+            "                Images img ON sp.id_sp = img.id_sp \n" +
+            "            LEFT JOIN  \n" +
+            "                chi_tiet_san_pham ctsp ON sp.id_sp = ctsp.id_sp \n" +
+            "            WHERE  \n" +
+            "                sp.id_sp =:idSp\n" +
+            "            GROUP BY  \n" +
+            "                sp.id_sp, sp.ten_sp", nativeQuery = true)
+    List<Object[]> getSanPhamWithMinImageUrlByIdSp(@Param("idSp") Integer idSp);
 
     @Query(value =
             "SELECT \n" +
@@ -136,6 +154,7 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "HAVING sp.trang_thai = 0 OR sp.trang_thai = 1;", nativeQuery = true)
     List<Object[]> getSpForClient();
 
+<<<<<<< HEAD
     @Query(value = "SELECT sp.id_sp, sp.ten_sp, SUM(hdct.so_luong) AS so_luong_ban\n" +
             "FROM san_pham sp\n" +
             "JOIN chi_tiet_san_pham ctsp ON sp.id_sp = ctsp.id_sp\n" +
@@ -143,5 +162,12 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "GROUP BY sp.id_sp, sp.ten_sp\n" +
             "ORDER BY so_luong_ban DESC\n" +
             "LIMIT 4;", nativeQuery = true)
+=======
+    @Query(value = "select distinct so_luong, ten_sp from duan_5f.san_pham sp , duan_5f.chi_tiet_san_pham  ctsp , duan_5f.hoa_don_chi_tiet hdct\n" +
+            "where sp.id_sp = ctsp.id_sp\n" +
+            "and ctsp.id_ctsp = hdct.id_ctsp\n" +
+            "order by so_luong desc\n" +
+            "limit 4;", nativeQuery = true)
+>>>>>>> origin/nghiant0807
     List<Object[]> topSptrending();
 }

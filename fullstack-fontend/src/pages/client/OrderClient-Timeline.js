@@ -62,10 +62,8 @@ const OrderClientTimeline = ({ classes }) => {
   const getListData = useCallback(async () => {
     try {
       const res = await getDetailOneHD(idHdParam);
-      console.log('res: ', res);
 
       const res1 = await viewAllHTTT(idHdParam);
-      console.log('res1: ', res1);
 
       setListData(res);
       setListHTTT(res1);
@@ -202,17 +200,21 @@ const OrderClientTimeline = ({ classes }) => {
         break;
       case 1:
         badgeVariant = 'primary';
-        statusText = 'Đang Chờ Xác Nhận Thông Tin';
+        statusText = 'Đã Xác Nhận Đơn';
         break;
       case 2:
         badgeVariant = 'secondary';
-        statusText = 'Đã Chuyển Cho Đơn Vị';
+        statusText = 'Đã Xác Nhận Người Mua';
         break;
       case 3:
         badgeVariant = 'warning';
-        statusText = 'Xác Nhận Thanh Toán';
+        statusText = 'Đã Chuyển Cho Đơn Vị';
         break;
       case 4:
+        badgeVariant = 'success';
+        statusText = 'Đã Xác Nhận Thanh Toán';
+        break;
+      case 5:
         badgeVariant = 'success';
         statusText = 'Đã Giao Thành Công';
         break;
@@ -509,9 +511,14 @@ const OrderClientTimeline = ({ classes }) => {
                 </TableBody>
               </Table>{' '}
               {listData.length > 0 && (
-                <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
-                  Thành Tiền: {formatCurrency(listData[0].idHd.thanhTien)}
-                </Typography>
+                <>
+                  <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
+                    Tiền Giao Hàng: {formatCurrency(listData[0].idHd.tienShip)}
+                  </Typography>
+                  <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
+                    Thành Tiền: {formatCurrency(listData[0].idHd.thanhTien)}
+                  </Typography>
+                </>
               )}
             </TableContainer>
             {/* Modal Payment */}
@@ -523,6 +530,7 @@ const OrderClientTimeline = ({ classes }) => {
                   selectDataCart={selectDataCart}
                   handleClose={handleClose}
                   DataCart={DataCart}
+                  getListData={getListData}
                 />
               </>
             )}

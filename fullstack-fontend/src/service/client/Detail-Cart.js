@@ -9,6 +9,11 @@ const deleteProductOnCart = (idGHCT) => custom.delete(`/gio-hang-chi-tiet/delete
 const postAddBillAddBill = (idKH, tongTien, kieuHoaDon, trangThai) =>
   custom.post('/hoa-don/add', { idKH, tongTien, kieuHoaDon, trangThai });
 const postAddDirectClient = (idHd, newHDCT) => custom.post(`/gio-hang-chi-tiet/add-to-hdct/${idHd}`, newHDCT);
+const updateCartClient = (idHdct, idCtsp, soLuong) =>
+  custom.put(`/gio-hang-chi-tiet/update-product/${idHdct}`, {
+    idCtsp,
+    soLuong,
+  });
 export {
   postAddDirectClient,
   listProductOnCart,
@@ -16,4 +21,5 @@ export {
   deleteProductOnCart,
   addProductOnCart,
   upadteProductOnCart,
+  updateCartClient,
 };

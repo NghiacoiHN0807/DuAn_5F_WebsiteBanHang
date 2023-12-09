@@ -6,7 +6,9 @@ import com.example.fullstackbackend.services.OngTayAoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -41,12 +45,20 @@ public class OngTayAoController {
     }
 
     @PostMapping("add")
-    public OngTayAo add(@Valid @RequestBody OngTayAo ongTayAo,
-                        BindingResult bindingResult) {
+    public ResponseEntity<?> add(@Valid @RequestBody OngTayAo ongTayAo,
+                                    BindingResult bindingResult) {
+
         if (bindingResult.hasErrors()) {
-            return null;
+            Map<String, String> errorMap = new HashMap<>();
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+
+            for (FieldError fieldError : fieldErrors) {
+                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+
+            return ResponseEntity.badRequest().body(errorMap);
         } else {
-            return ongTayAoService.add(ongTayAo);
+            return ResponseEntity.ok(ongTayAoService.add(ongTayAo));
         }
     }
 
@@ -66,7 +78,20 @@ public class OngTayAoController {
     }
 
     @PutMapping("update")
-    public OngTayAo update(@RequestBody OngTayAo ongTayAo) {
-        return ongTayAoService.update(ongTayAo);
+    public ResponseEntity<?> update(@Valid @RequestBody OngTayAo ongTayAo,
+                                    BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+
+            for (FieldError fieldError : fieldErrors) {
+                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+
+            return ResponseEntity.badRequest().body(errorMap);
+        } else {
+            return ResponseEntity.ok(ongTayAoService.update(ongTayAo));
+        }
     }
 }

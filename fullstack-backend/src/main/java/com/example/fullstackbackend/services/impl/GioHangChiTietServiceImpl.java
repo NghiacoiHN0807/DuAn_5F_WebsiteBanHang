@@ -6,8 +6,6 @@ import com.example.fullstackbackend.entity.GioHangChiTiet;
 import com.example.fullstackbackend.repository.ChitietsanphamRepository;
 import com.example.fullstackbackend.repository.GioHangChiTietReponsitory;
 import com.example.fullstackbackend.repository.GioHangReponsitory;
-import com.example.fullstackbackend.repository.HoadonRepository;
-import com.example.fullstackbackend.repository.HoadonchitietRepository;
 import com.example.fullstackbackend.services.GioHangChiTietSevice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,13 +24,23 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietSevice {
 
     private final GioHangReponsitory gioHangReponsitory;
 
-    private final HoadonchitietRepository hoadonchitietRepository;
-
-    private final HoadonRepository hoadonRepository;
+//    private final HoadonchitietRepository hoadonchitietRepository;
+//
+//    private final HoadonRepository hoadonRepository;
 
     @Override
     public List<GioHangChiTiet> getAll(Integer idKh) {
         return gioHangChiTietReponsitory.findByIdGh_IdKh_IdTaiKhoan(idKh);
+    }
+
+    @Override
+    public Optional<GioHangChiTiet> detail(Integer id) {
+        return gioHangChiTietReponsitory.findById(id);
+    }
+
+    @Override
+    public GioHangChiTiet update(GioHangChiTiet update) {
+        return gioHangChiTietReponsitory.save(update);
     }
 
     @Override

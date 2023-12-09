@@ -10,6 +10,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,15 +40,20 @@ public class HoaDonChiTiet {
     @JoinColumn(name = "id_ctsp", referencedColumnName = "id_ctsp")
     private ChiTietSanPham idCtsp;
 
+    @Min(message = "Không Được Nhỏ Hơn 0", value = 0)
+    @NotNull(message = "Không Được Để Trống")
     @Column(name = "so_luong")
     private Integer soLuong;
 
+    @NotNull(message = "Không Được Để Trống")
     @Column(name = "don_gia")
     private BigDecimal donGia;
 
+    @Size(message = "Nhập Quá Dài", min = 0, max = 225)
     @Column(name = "ly_do_huy")
-    private String lyDoHuy;
+    private String lyDoHuy; 
 
+    @NotNull(message = "Không Được Để Trống")
     @Column(name = "trang_thai")
     private Integer trangThai;
 

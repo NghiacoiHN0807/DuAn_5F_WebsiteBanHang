@@ -93,6 +93,10 @@ function renderTrangThai(trangThai) {
       badgeVariant = 'warning';
       statusText = 'Đang giảm giá';
       break;
+    case 9:
+      badgeVariant = 'default';
+      statusText = 'Đang cập nhật';
+      break;
     case 10:
       badgeVariant = 'error';
       statusText = 'Ngừng kinh doanh';
@@ -216,12 +220,11 @@ export default function UserPage() {
   const isNotFound = !filteredUsers.length && !!filterName;
 
   // Delete
-
   const handleDelete = async (idSp) => {
     const res = await deleteSanPham(idSp);
     console.log('Check res: ', res);
     if (res && res.idSp) {
-      // handleAlertClick('Xóa thành công!', 'success');
+      handleAlertClick('Xóa thành công!', 'success');
       getListData();
       handleClose();
     } else {
@@ -235,6 +238,10 @@ export default function UserPage() {
   const navigate = useNavigate();
   const handleUpdate = (idSp) => {
     navigate(`/dashboard/products/update/${idSp}`);
+  };
+
+  const handleAdd = () => {
+    navigate(`/dashboard/products/add`);
   };
 
   // Xac nhan xoa
@@ -280,7 +287,7 @@ export default function UserPage() {
           <Typography variant="h4" gutterBottom>
             Danh sách sản phẩm
           </Typography>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} href="/dashboard/products/add">
+          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />} onClick={() => handleAdd()}>
             Thêm sản phẩm
           </Button>
         </Stack>

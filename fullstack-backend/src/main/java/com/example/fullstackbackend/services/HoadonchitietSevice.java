@@ -28,6 +28,8 @@ public interface HoadonchitietSevice {
 
     HoaDonChiTiet update(HoaDonChiTiet update);
 
+    HoaDonChiTiet returnItem(HoaDonChiTiet update);
+
     LichSuHoaDon addLS(HoaDonChiTiet addLS, int status);
 
     Optional<HoaDonChiTiet> detail(Integer id);

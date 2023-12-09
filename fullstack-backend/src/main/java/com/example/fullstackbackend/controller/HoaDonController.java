@@ -1,6 +1,7 @@
 package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.config.payment.VNPayService;
+import com.example.fullstackbackend.config.payment.VNPayServiceClient;
 import com.example.fullstackbackend.entity.HinhThucThanhToan;
 import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.entity.LichSuHoaDon;
@@ -29,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +42,9 @@ public class HoaDonController {
 
     @Autowired
     private VNPayService vnPayService;
+
+    @Autowired
+    private VNPayServiceClient vnPayServiceClient;
 
     @Autowired
     private LichSuHoaDonService lichSuHoaDonService;
@@ -77,21 +80,22 @@ public class HoaDonController {
     }
 
     @PostMapping("add")
-    public HoaDon add(@Valid @RequestBody HoaDon newHD, BindingResult bindingResult) {
+    public ResponseEntity<?> add(@Valid @RequestBody HoaDon newHD, BindingResult bindingResult) {
+        System.out.println("add123: " + newHD.getTrangThai());
         if (bindingResult.hasErrors()) {
-            return null;
+            return ResponseEntity.ok("Đã Lỗi");
         } else {
+            System.out.println("add123: " + newHD.getTrangThai());
             HoaDon hoaDon = hoadonSevice.add(newHD);
-            //Add to history bill
+            // Add to history bill
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
             lichSuHoaDon.setIdHd(hoaDon);
             lichSuHoaDon.setIdTk(hoaDon.getIdTK());
             lichSuHoaDon.setTrangThai(hoaDon.getTrangThai());
-            lichSuHoaDon.setMoTa("Tạo Hóa Đơn Thành Công");
+            lichSuHoaDon.setMoTa("Tạo Đơn Chờ Tại Quầy Thành Công");
             lichSuHoaDon.setNgayThayDoi(currentTimestamp);
             lichSuHoaDonService.add(lichSuHoaDon);
-
-            return hoaDon;
+            return ResponseEntity.ok(hoaDon);
         }
     }
 
@@ -161,7 +165,7 @@ public class HoaDonController {
             hoaDon.setThanhTien(newHD.getThanhTien());
             hoaDon.setTienDua(newHD.getTienDua());
             hoaDon.setTienThua(newHD.getTienThua());
-            hoaDon.setKieuHoaDon(newHD.getKieuHoaDon());
+            hoaDon.setKieuHoaDon(hoaDon.getKieuHoaDon());
             hoaDon.setTrangThai(newHD.getTrangThai());
             return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
@@ -246,6 +250,19 @@ public class HoaDonController {
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
     }
 
+    @PutMapping("update-tien-ship/{id}")
+    public HoaDon updateTienShip(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        return hoadonSevice.detail(id).map(hoaDon -> {
+            if(hoaDon.getSoTienGiamGia() == null) {
+                hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
+            }
+            BigDecimal thanhTien = (hoaDon.getTongTien().add(newHD.getTienShip())).subtract(hoaDon.getSoTienGiamGia());
+            hoaDon.setTienShip(newHD.getTienShip());
+            hoaDon.setThanhTien(thanhTien);
+            return hoadonSevice.update(hoaDon);
+        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+    }
+
     @PutMapping("update-khach-hang/{id}")
     public HoaDon updateKhachHang(@RequestBody TaiKhoan newTK, @PathVariable("id") Integer id) {
         return hoadonSevice.detail(id).map(hoaDon -> {
@@ -255,6 +272,7 @@ public class HoaDonController {
 
     }
 
+    // Admin
     @PostMapping("submitOrder")
     public String submidOrder(@RequestParam("amount") BigDecimal orderTotal,
                               @RequestParam("orderInfo") String orderInfo,
@@ -328,6 +346,85 @@ public class HoaDonController {
             return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
         } else {
             response.sendRedirect("http://localhost:3000/dashboard/sales/card-bill/" + idHd);
+            return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
+
+        }
+
+    }
+    // Client
+    @PostMapping("submitOrder-client")
+    public String submidOrderClient(@RequestParam("amount") BigDecimal orderTotal,
+                              @RequestParam("orderInfo") String orderInfo,
+                              HttpServletRequest request) {
+        String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
+        return vnPayService.createOrder(orderTotal, orderInfo, baseUrl);
+    }
+
+    @GetMapping("vnpay-payment-client")
+    public ResponseEntity<String> GetMappingClient(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int paymentStatus = vnPayService.orderReturn(request);
+
+        String orderInfo = request.getParameter("vnp_OrderInfo");
+        String totalPrice = request.getParameter("vnp_Amount");
+        BigDecimal realPrice = new BigDecimal(totalPrice).divide(new BigDecimal(100));
+        Integer idHd = Integer.valueOf(orderInfo);
+
+        if (paymentStatus == 1) {
+            //Detail HD by IdHd
+            Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
+            BigDecimal getTongTien = getOne.get().getTongTien();
+
+            BigDecimal tienMat = getTongTien.subtract(realPrice);
+            //Add to updatePaymentOnline
+            HoaDon hoaDonDTO1 = new HoaDon();
+            hoaDonDTO1.setNgayThanhToan(currentTimestamp);
+            hoaDonDTO1.setTienDua(realPrice);
+            int setTrangThai;
+            if (getOne.get().getTrangThai() == 3) {
+                setTrangThai = 4;
+            } else {
+                setTrangThai = 9;
+            }
+            hoaDonDTO1.setTrangThai(setTrangThai);
+            HoaDon hoaDon = hoadonSevice.updatePaymentOnline(idHd, hoaDonDTO1);
+
+            // Add to payments
+            HinhThucThanhToan hinhThucThanhToan1 = new HinhThucThanhToan();
+            hinhThucThanhToan1.setIdHd(hoaDon);
+            hinhThucThanhToan1.setHinhThuc("Thanh Toán Online");
+            hinhThucThanhToan1.setSoTien(realPrice);
+            hinhThucThanhToan1.setMoTa("Thanh Toán Online");
+            hinhThucThanhToan1.setTrangThai(0);
+
+            HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
+            hinhThucThanhToan2.setIdHd(hoaDon);
+            hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
+            hinhThucThanhToan2.setSoTien(tienMat);
+            hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
+            hinhThucThanhToan2.setTrangThai(0);
+
+            if (tienMat.compareTo(BigDecimal.ZERO) <= 0) {
+                hinhThucThanhToanSevice.add(hinhThucThanhToan1);
+            } else {
+                hinhThucThanhToanSevice.add(hinhThucThanhToan1);
+                hinhThucThanhToanSevice.add(hinhThucThanhToan2);
+            }
+
+            //Add to history bill
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setIdHd(hoaDon);
+            lichSuHoaDon.setIdTk(hoaDonDTO1.getIdTK());
+            lichSuHoaDon.setTrangThai(hoaDonDTO1.getTrangThai());
+            lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
+            lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+            lichSuHoaDonService.add(lichSuHoaDon);
+
+            // Switch tab
+            response.sendRedirect("http://localhost:3000/client/client-timeline/" + idHd);
+
+            return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
+        } else {
+            response.sendRedirect("http://localhost:3000/client/sales/payment/" + idHd);
             return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
 
         }

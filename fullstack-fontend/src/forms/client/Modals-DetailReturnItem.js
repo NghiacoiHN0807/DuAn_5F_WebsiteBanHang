@@ -8,11 +8,14 @@ import {
   DialogTitle,
   Grid,
   Snackbar,
+  TextField,
   Typography,
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import { useState } from 'react';
+import { returnItem } from '../../service/client/ReturnItem';
+import { detailCTSP } from '../../service/ChiTietSPService';
 
 // @mui
 const StyledProductImg = styled('img')({
@@ -30,14 +33,14 @@ const ModalDetailItemReturn = (props) => {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     itemReturnOne: PropTypes.array.isRequired,
+    selectDataCart: PropTypes.func.isRequired,
+    getListData: PropTypes.func.isRequired,
   };
-  const { show, handleClose, itemReturnOne } = props;
+  const { show, handleClose, itemReturnOne, selectDataCart, getListData } = props;
 
-  const handleReturnAll = () => {
-    console.log('hihi');
-  };
   const [quantity, setQuantity] = useState(1);
   const [alertContent, setAlertContent] = useState(null);
+  const [reasonReturn, setReasonReturn] = useState();
 
   const handleDecreaseQuantity = (quantity) => {
     if (quantity > 1) {
@@ -46,7 +49,7 @@ const ModalDetailItemReturn = (props) => {
   };
 
   const handleIncreaseQuantity = (quantity) => {
-    if (itemReturnOne[8] < quantity) {
+    if (itemReturnOne[8] <= quantity) {
       setAlertContent({
         type: 'error',
         message: 'Không Được Vượt Quá Số Lượng Gốc',
@@ -63,13 +66,51 @@ const ModalDetailItemReturn = (props) => {
     setAlertContent(null);
   };
 
+  const handleReturn = async () => {
+    if (itemReturnOne[8] < quantity) {
+      setAlertContent({
+        type: 'error',
+        message: 'Không Được Vượt Quá Số Lượng Gốc',
+      });
+    } else if (reasonReturn.trim() === '') {
+      setAlertContent({
+        type: 'error',
+        message: 'Không Được Để Trống Lý Do',
+      });
+    } else {
+      const detailCTSP1 = await detailCTSP(itemReturnOne[10]);
+      // const detailBill1 = await detailBill(itemReturnOne[0]);
+
+      const updateHDCT = {
+        idHdct: itemReturnOne[1],
+        idHd: itemReturnOne[0],
+        idCtsp: detailCTSP1,
+        soLuong: quantity,
+        donGia: itemReturnOne[9],
+        lyDoHuy: reasonReturn,
+        trangThai: 6,
+      };
+      console.log('updateHDCT: ', updateHDCT);
+      await returnItem(updateHDCT);
+
+      setAlertContent({
+        type: 'success',
+        message: 'Trả Hàng Thành Công!!!',
+      });
+      selectDataCart();
+      getListData();
+
+      handleClose();
+    }
+  };
+
   return (
     <>
       <Container>
         <Dialog open={show} onClose={handleClose} maxWidth="xl" fullWidth>
           <DialogTitle>
             <Typography variant="h4" sx={{ mb: 5 }}>
-              Danh Sách Sản Phẩm
+              Sản Phẩm Muốn Trả
             </Typography>
           </DialogTitle>
           <DialogContent>
@@ -128,12 +169,19 @@ const ModalDetailItemReturn = (props) => {
                     +
                   </Button>
                 </div>
+                <TextField
+                  onChange={(e) => setReasonReturn(e.target.value)}
+                  id="outlined-multiline-static"
+                  label="Lý Do Hủy"
+                  multiline
+                  rows={4}
+                />
               </Grid>
             </Grid>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Hủy</Button>
-            <Button onClick={handleReturnAll}>Hoàn Trả</Button>
+            <Button onClick={handleReturn}>Hoàn Trả</Button>
           </DialogActions>
         </Dialog>
         {alertContent && (

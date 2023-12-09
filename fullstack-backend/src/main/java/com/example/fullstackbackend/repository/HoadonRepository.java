@@ -13,6 +13,11 @@ import java.util.List;
 @Repository
 
 public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
+
+
+    @Query(value = "SELECT x from HoaDon x where x.trangThai = ?1")
+    List<HoaDon> findAllByTrangThai(Integer trangThai);
+
     @Query(value = "SELECT x from HoaDon x where x.maHd = ?1")
     HoaDon findByMaHd(Integer maHD);
 
@@ -23,7 +28,7 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
     List<HoaDon> selectAllInvoiceWaiting();
 
     @Query(value = "SELECT x from HoaDon x where x.trangThai = 1 or x.trangThai = 2 or x.trangThai = 3 or x.trangThai = 4 " +
-            "or x.trangThai = 5 or x.trangThai = 8 or x.trangThai = 9 or x.trangThai = 10 or x.trangThai = 0 ORDER BY x.maHd DESC")
+            "or x.trangThai = 5 or x.trangThai = 9 or x.trangThai = 10 or x.trangThai = 0 ORDER BY x.maHd DESC")
     List<HoaDon> pageOnlineInvoice();
 
     List<HoaDon> findAllByIdKH_IdTaiKhoan(Integer idKh);

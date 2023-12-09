@@ -14,6 +14,8 @@ import {
   postAddBillAddBill,
   postAddDirectClient,
 } from '../../service/client/Detail-Cart';
+import ModalUpdateProductOnCartClient from '../../forms/client/Modals-Update-Product-Cart-Client';
+import { findById } from '../../service/BillSevice';
 
 const StyledProductImg = styled('img')({
   top: 0,
@@ -39,7 +41,16 @@ export default function Cart() {
 
   const getDetail = useCallback(async () => {
     try {
-      const getOneSP = await listProductOnCart(authorities.idTaiKhoan);
+      let getOneSP = {};
+
+      if (getLocalStore) {
+        getOneSP = await listProductOnCart(authorities.idTaiKhoan);
+      } else {
+        const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {}; // Nếu chưa có giá trị, tạo một đối tượng rỗng
+        console.log('idCtspListđá: ', currentCart);
+        getOneSP = Object.values(currentCart);
+        // getOneSP = currentCart;
+      }
       setProductOnCart(getOneSP);
       console.log('getOneSP: ', getOneSP);
       const productId = getOneSP.map((item) => item.idCtsp.idSp.idSp);
@@ -50,7 +61,7 @@ export default function Cart() {
     } catch (e) {
       console.error(e);
     }
-  }, [authorities.idTaiKhoan]);
+  }, [authorities.idTaiKhoan, getLocalStore]);
 
   useEffect(() => {
     getDetail();
@@ -92,7 +103,6 @@ export default function Cart() {
 
   const handleDeleteProduct = async (item) => {
     try {
-      console.log('item: ', item.idGhct);
       await deleteProductOnCart(item.idGhct);
       setAlertContent({
         type: 'success',
@@ -194,6 +204,26 @@ export default function Cart() {
     }
   };
 
+  // Update classify on the cart
+  const [showModalsUpdate, setShowModalsUpdate] = useState(false);
+  const [itemUpdateClassify, setItemUpdateClassify] = useState({});
+  const [itemUpdate, setItemUpdate] = useState({});
+
+  const handleUpdateClassify = async (item) => {
+    setShowModalsUpdate(true);
+    console.log('item:', item);
+    try {
+      const getOneSP = await findById(item.idCtsp.idSp.idSp);
+      setItemUpdateClassify(getOneSP);
+      setItemUpdate(item);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCloseUpdateClassify = () => {
+    setShowModalsUpdate(false);
+  };
   return (
     <>
       <div>
@@ -270,14 +300,15 @@ export default function Cart() {
                                     style={{
                                       fontSize: '12px',
                                     }}
+                                    onClick={() => handleUpdateClassify(item)}
                                     key={`size-button-${item.idCtsp.idMs.idMs}`}
                                     // onClick={() => handleShowMS(item.idCtsp.idMs)}
                                     // variant={selectedMauSac === item.idCtsp.idMs ? 'contained' : 'outlined'}
                                     size="small"
                                     className="ms-size"
                                   >
-                                    {item.idCtsp.idMs.tenMs}
-                                  </Button>
+                                    {item.idCtsp.idMs.tenMs},
+                                    {/* </Button>
                                   ,
                                   <Button
                                     style={{
@@ -288,7 +319,7 @@ export default function Cart() {
                                     // variant={selectedMauSac === item.idCtsp.idSize ? 'contained' : 'outlined'}
                                     size="small"
                                     className="ms-size"
-                                  >
+                                  > */}
                                     {item.idCtsp.idSize.tenSize}
                                   </Button>
                                 </span>
@@ -504,6 +535,15 @@ export default function Cart() {
             {alertContent.message}
           </Alert>
         </Snackbar>
+      )}
+      {itemUpdate && Object.keys(itemUpdate).length > 0 && (
+        <ModalUpdateProductOnCartClient
+          show={showModalsUpdate}
+          handleClose={handleCloseUpdateClassify}
+          itemUpdateClassify={itemUpdateClassify}
+          selectDataCart={getDetail}
+          itemUpdate={itemUpdate}
+        />
       )}
     </>
   );

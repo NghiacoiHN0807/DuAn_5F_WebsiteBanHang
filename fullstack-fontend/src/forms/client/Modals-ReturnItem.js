@@ -31,9 +31,10 @@ const ModalItemReturn = (props) => {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     selectDataCart: PropTypes.func.isRequired,
-    DataCart: PropTypes.array.isRequired,
+    DataCart: PropTypes.func.isRequired,
+    getListData: PropTypes.func.isRequired,
   };
-  const { show, handleClose, selectDataCart, DataCart } = props;
+  const { show, handleClose, selectDataCart, DataCart, getListData } = props;
 
   //   Select card product
   // const [openFilter, setOpenFilter] = useState(false);
@@ -63,6 +64,7 @@ const ModalItemReturn = (props) => {
   const handleReturnAll = () => {
     setShowModalReturnOne(false);
   };
+
   // Format thanhTien
   const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
 
@@ -148,6 +150,8 @@ const ModalItemReturn = (props) => {
           show={showModalsReturnOne}
           handleClose={handleCloseModalReturnOne}
           itemReturnOne={itemReturnOne}
+          selectDataCart={selectDataCart}
+          getListData={getListData}
         />
       )}
     </>

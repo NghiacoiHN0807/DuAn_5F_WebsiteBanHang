@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../scss/Modal-Detail-SanPham.scss';
 // import { selectAllImgProduct } from "../services/BillSevice";
@@ -120,7 +120,7 @@ const ModalDetailProduct = (props) => {
         await updateCart(getIdHdct, getOneCTSP, newQuantity, donGia);
         //   Close the modal
         setSelectedSize(null);
-        handleCloseDetai();
+        handleClose();
         setQuantity(1);
         //   Load new data on cart
         selectDataCart();
@@ -134,7 +134,7 @@ const ModalDetailProduct = (props) => {
         await postAddDirect(getOneCTSP, quantity, donGia, idHdParam, 0);
         //   Close the modal
         setSelectedSize(null);
-        handleCloseDetai();
+        handleClose();
         setQuantity(1);
         //   Load new data on cart
         selectDataCart();
@@ -167,21 +167,41 @@ const ModalDetailProduct = (props) => {
   const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
   const priceRange = minPrice === maxPrice ? formattedMinPrice : `${formattedMinPrice} - ${formattedMaxPrice}`;
 
+  function formatCurrency(price) {
+    if (!price) return '0';
+
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
+
+  const handleClose = () => {
+    setSelectSoLuongTon([]);
+    setIsMSSelected(false);
+    setIsSizeSelected(false);
+    setSelectedMauSac(null);
+    setSelectedSize(null);
+    setQuantity(1);
+    handleCloseDetai(); // Call the original handleClose function
+  };
+
   return (
     <>
       <div>
-        <Dialog open={show} onClose={handleCloseDetai} maxWidth="xl">
+        <Dialog open={show} onClose={handleClose} maxWidth="xl">
           <DialogTitle>THÔNG TIN SẢN PHẨM</DialogTitle>
           {dataDetail.length > 0 && (
             <DialogContent>
               <Card sx={{ display: 'flex' }}>
                 <Carousel interval={null} style={{ maxWidth: 500, margin: '0 auto' }}>
-                  {/* {listImages.map((item, index) => {
-                    return key={`carousel-item-${index}`} ( */}
                   <Carousel.Item>
                     <CardMedia
                       component="img"
-                      sx={{ maxWidth: 250, height: 300 }}
+                      sx={{ maxWidth: 250, height: '100%' }}
                       image={listImages}
                       alt={listImages}
                     />
@@ -196,7 +216,9 @@ const ModalDetailProduct = (props) => {
                     <Typography variant="subtitle1" color="text.secondary" component="div">
                       <p>Xuất Xứ: {dataDetail[0].idSp.idXx.tenNuoc}</p>
                       <p>Chất Liệu: {dataDetail[0].idSp.idCl.tenCl}</p>
-                      <p>Giá: {selectSoLuongTon.length > 0 ? selectSoLuongTon[0].giaThucTe : priceRange}</p>
+                      <p>
+                        Giá: {selectSoLuongTon.length > 0 ? formatCurrency(selectSoLuongTon[0].giaThucTe) : priceRange}
+                      </p>
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
                       <div>
@@ -287,7 +309,7 @@ const ModalDetailProduct = (props) => {
             </DialogContent>
           )}
           <DialogActions>
-            <Button onClick={handleCloseDetai}>Hủy</Button>
+            <Button onClick={handleClose}>Hủy</Button>
             <Button onClick={handleChoose}>Hoàn Tất</Button>
           </DialogActions>
         </Dialog>

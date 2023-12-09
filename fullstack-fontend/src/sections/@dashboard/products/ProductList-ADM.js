@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 // @mui
 import { Grid } from '@mui/material';
-import ShopProductCard from './ProductCardAll';
+import ShopProductCard from './ProductCard';
 import { findById } from '../../../service/BillSevice';
 import ModalDetailProduct from '../../../forms/Modal-Detail-SanPham';
 
@@ -42,7 +42,6 @@ export default function ProductListADM({ products, ...other }) {
         selectDataCart={products[0].selectDataCart}
         DataCart={products[0].DataCart}
         listImages={listImages}
-        currentPage1={products[0].currentPage1}
       />
     </>
   );

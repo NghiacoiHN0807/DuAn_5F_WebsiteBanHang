@@ -31,7 +31,7 @@ import TimelineEvent from '../MappingTimeLine/TimelineEvent';
 import { viewAllHTTT } from '../service/OrderManagementTimeLine';
 import { finByProductOnCart, findById } from '../service/BillSevice';
 import ModalUpdateStatus from '../forms/Modal-Update-Status';
-import ModalPaymentComfirm from '../forms/Modal-Payment-Confirm';
+import ModalPaymentComfirmTimeline from '../forms/Modal-Payment-Confirm-TimeLine';
 import { getDetailOneHD } from '../service/OderManagementSevice';
 import SelectHistoryBill from '../forms/Modals-SelectHistoryBill';
 import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
@@ -116,7 +116,7 @@ const OrderManagementTimeline = ({ classes }) => {
   function getTextForTrangThai(trangThai) {
     if (trangThai === 0) return 'Tạo Đơn Hàng Ship';
     if (trangThai === 8) return 'Đã Xác Nhận Đơn Tại Quầy';
-    if (trangThai === 1) return 'Đã Xác Nhận Đơn ';
+    if (trangThai === 1) return 'Đã Xác Nhận Đơn';
     if (trangThai === 2) return 'Đã Xác Nhận Người Mua';
     if (trangThai === 3) return 'Đã Chuyển Cho Đơn Vị';
     if (trangThai === 4 || trangThai === 9) return 'Đã Xác Nhận Thanh Toán';
@@ -124,6 +124,7 @@ const OrderManagementTimeline = ({ classes }) => {
     if (trangThai === 6) return 'Đổi/Trả Hàng';
     if (trangThai === 7) return 'Chỉnh Sửa Đơn Hàng';
     if (trangThai === 10) return 'Đơn Hàng Đã Bị Hủy';
+    if (trangThai === 11) return 'Tạo Hóa Đơn Treo Thành Công';
     return 'Trạng Thái Trống';
   }
 
@@ -196,17 +197,21 @@ const OrderManagementTimeline = ({ classes }) => {
         break;
       case 1:
         badgeVariant = 'primary';
-        statusText = 'Đang Chờ Xác Nhận Thông Tin';
+        statusText = 'Đã Xác Nhận Đơn';
         break;
       case 2:
         badgeVariant = 'secondary';
-        statusText = 'Đã Chuyển Cho Đơn Vị';
+        statusText = 'Đã Xác Nhận Người Mua';
         break;
       case 3:
         badgeVariant = 'warning';
-        statusText = 'Xác Nhận Thanh Toán';
+        statusText = 'Đã Chuyển Cho Đơn Vị';
         break;
       case 4:
+        badgeVariant = 'success';
+        statusText = 'Đã Xác Nhận Thanh Toán';
+        break;
+      case 5:
         badgeVariant = 'success';
         statusText = 'Đã Giao Thành Công';
         break;
@@ -532,7 +537,7 @@ const OrderManagementTimeline = ({ classes }) => {
           {/* Modal Payment */}
           {listData.length > 0 && (
             <>
-              <ModalPaymentComfirm
+              <ModalPaymentComfirmTimeline
                 show={showModalsAdd}
                 showModalsAdd={showModalsAdd}
                 handleClose={handleClose}
@@ -541,6 +546,7 @@ const OrderManagementTimeline = ({ classes }) => {
                 listHD={listData[0].idHd}
                 tenKhTT={listData[0].idHd.tenKh}
                 sdtKHTT={listData[0].idHd.sdtKh}
+                getListData={getListData}
               />
               {itemDelete !== undefined && (
                 <ModalDeleteProductOnCart
@@ -548,6 +554,7 @@ const OrderManagementTimeline = ({ classes }) => {
                   handleClose={handleCloseModalDelelte}
                   itemDelete={itemDelete}
                   selectDataCart={selectDataCart}
+                  DataCart={DataCart}
                 />
               )}
               <ModalUpdateProductOnCart

@@ -71,17 +71,28 @@ public class HoaDonChiTietController {
         }
     }
 
+    @PutMapping("return-item")
+    public HoaDonChiTiet returnItem(@Valid @RequestBody HoaDonChiTiet updateHD,
+                                    BindingResult bindingResult) {
+        System.out.println("updateHD: "+ updateHD.getIdHdct());
+        if (bindingResult.hasErrors()) {
+            return null;
+        } else {
+            return hoadonchitietSevice.returnItem(updateHD);
+        }
+    }
+
     @PutMapping("update/{id}")
     public HoaDonChiTiet update(@RequestBody HoaDonChiTiet newHDCT,
                                 @PathVariable("id") Integer id) {
-        HoaDonChiTiet newHD = hoadonchitietSevice.detail(id).map(
+        return hoadonchitietSevice.detail(id).map(
                 hoaDonChiTiet -> {
                     hoaDonChiTiet.setIdCtsp(newHDCT.getIdCtsp());
                     hoaDonChiTiet.setSoLuong(newHDCT.getSoLuong());
                     hoaDonChiTiet.setDonGia(newHDCT.getDonGia());
                     return hoadonchitietSevice.update(hoaDonChiTiet);
                 }).orElseThrow(() -> new xuatXuNotFoundException(id));
-        return newHD;
+
     }
 
     @PutMapping("update-cart/{id}")

@@ -68,7 +68,7 @@ CREATE TABLE `chi_tiet_san_pham` (
   CONSTRAINT `id_ms` FOREIGN KEY (`id_ms`) REFERENCES `mau_sac` (`id_ms`),
   CONSTRAINT `id_size` FOREIGN KEY (`id_size`) REFERENCES `size` (`id_size`),
   CONSTRAINT `id_sp` FOREIGN KEY (`id_sp`) REFERENCES `san_pham` (`id_sp`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -77,7 +77,7 @@ CREATE TABLE `chi_tiet_san_pham` (
 
 LOCK TABLES `chi_tiet_san_pham` WRITE;
 /*!40000 ALTER TABLE `chi_tiet_san_pham` DISABLE KEYS */;
-INSERT INTO `chi_tiet_san_pham` VALUES (14,5,5,4,500000.00,700000.00,700000.00,2619,0),(15,5,6,5,450000.00,580000.00,580000.00,289,0),(16,7,5,5,360000.00,566000.00,566000.00,9453,0),(17,6,7,4,780000.00,900000.00,900000.00,6822,0),(20,5,5,6,780000.00,780000.00,780000.00,765,0);
+INSERT INTO `chi_tiet_san_pham` VALUES (14,5,5,4,500000.00,700000.00,700000.00,2619,0),(15,5,6,5,450000.00,580000.00,580000.00,289,0),(16,7,5,5,360000.00,566000.00,566000.00,9453,0),(17,6,7,4,780000.00,900000.00,900000.00,6822,0),(20,5,5,6,780000.00,780000.00,780000.00,765,0),(21,9,6,5,150000.00,250000.00,250000.00,895,0),(22,9,5,6,60000.00,150000.00,150000.00,152,0),(23,10,6,5,158000.00,241000.00,241000.00,453,0),(24,10,5,5,60000.00,158000.00,158000.00,163,0),(25,11,6,5,89000.00,160000.00,160000.00,264,0),(26,11,7,4,85000.00,160000.00,160000.00,895,0);
 /*!40000 ALTER TABLE `chi_tiet_san_pham` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -117,23 +117,23 @@ DROP TABLE IF EXISTS `coupons`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `coupons` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `hoa_don_id` int NOT NULL,
+  `hoa_don_id` int DEFAULT NULL,
   `name` varchar(255) NOT NULL,
   `code` varchar(255) NOT NULL,
-  `mo_ta` varchar(255) NOT NULL,
+  `mo_ta` varchar(255) DEFAULT NULL,
   `thoi_gian_ket_thuc` datetime NOT NULL,
   `so_luong` int NOT NULL,
   `discount` decimal(38,2) DEFAULT NULL,
   `discount_percentage` int DEFAULT NULL,
   `max_discount` decimal(38,2) NOT NULL,
-  `so_luong_hien_tai` int NOT NULL,
-  `thoi_gian_tao` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-  `thoi_gian_sua` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `so_luong_hien_tai` int DEFAULT NULL,
+  `thoi_gian_tao` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `thoi_gian_sua` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `trang_thai` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `pk_coupons_hoa_don` (`hoa_don_id`),
   CONSTRAINT `pk_coupons_hoa_don` FOREIGN KEY (`hoa_don_id`) REFERENCES `hoa_don` (`id_hd`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -142,6 +142,7 @@ CREATE TABLE `coupons` (
 
 LOCK TABLES `coupons` WRITE;
 /*!40000 ALTER TABLE `coupons` DISABLE KEYS */;
+INSERT INTO `coupons` VALUES (6,NULL,'Vinh Loli','Lxp7G8WJ','Giảm giá siêu tốc','2023-12-21 21:30:14',7854,NULL,5,100000.00,7853,'2023-12-08 16:56:14.000','2023-12-07 17:01:34.273',0);
 /*!40000 ALTER TABLE `coupons` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -290,7 +291,7 @@ CREATE TABLE `gio_hang_chi_tiet` (
   KEY `id_gh_idx` (`id_gh`),
   CONSTRAINT `id_ctsp1` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`),
   CONSTRAINT `id_gh` FOREIGN KEY (`id_gh`) REFERENCES `gio_hang` (`id_gio_hang`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -299,6 +300,7 @@ CREATE TABLE `gio_hang_chi_tiet` (
 
 LOCK TABLES `gio_hang_chi_tiet` WRITE;
 /*!40000 ALTER TABLE `gio_hang_chi_tiet` DISABLE KEYS */;
+INSERT INTO `gio_hang_chi_tiet` VALUES (25,1,24,1,158000.00,158000.00,0);
 /*!40000 ALTER TABLE `gio_hang_chi_tiet` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -319,7 +321,7 @@ CREATE TABLE `hinh_thuc_thanh_toan` (
   PRIMARY KEY (`id_httt`),
   KEY `id_hd2_idx` (`id_hd`),
   CONSTRAINT `id_hd2` FOREIGN KEY (`id_hd`) REFERENCES `hoa_don` (`id_hd`)
-) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -328,7 +330,7 @@ CREATE TABLE `hinh_thuc_thanh_toan` (
 
 LOCK TABLES `hinh_thuc_thanh_toan` WRITE;
 /*!40000 ALTER TABLE `hinh_thuc_thanh_toan` DISABLE KEYS */;
-INSERT INTO `hinh_thuc_thanh_toan` VALUES (32,194,1560000.00,'Thanh Toán Online','Thanh Toán Online',0),(33,194,180000.00,'Thanh Toán Tiền Mặt','Thanh Toán Tiền Mặt',0);
+INSERT INTO `hinh_thuc_thanh_toan` VALUES (32,194,1560000.00,'Thanh Toán Online','Thanh Toán Online',0),(33,194,180000.00,'Thanh Toán Tiền Mặt','Thanh Toán Tiền Mặt',0),(37,196,3900000.00,'Thanh Toán Online','Thanh Toán Online',0),(38,199,2714000.00,'Thanh Toán Online','Thanh Toán Online',0);
 /*!40000 ALTER TABLE `hinh_thuc_thanh_toan` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -356,10 +358,10 @@ CREATE TABLE `hoa_don` (
   `so_tien_giam_gia` decimal(38,2) DEFAULT NULL,
   `ten_kh` varchar(255) DEFAULT NULL,
   `ten_ship` varchar(255) DEFAULT NULL,
-  `tien_dua` decimal(38,2) DEFAULT NULL,
-  `tien_ship` decimal(38,2) DEFAULT NULL,
-  `tien_thua` decimal(38,2) DEFAULT NULL,
-  `tong_tien` decimal(38,2) DEFAULT NULL,
+  `tien_dua` decimal(38,2) DEFAULT '0.00',
+  `tien_ship` decimal(38,2) DEFAULT '0.00',
+  `tien_thua` decimal(38,2) DEFAULT '0.00',
+  `tong_tien` decimal(38,2) DEFAULT '0.00',
   `thanh_tien` decimal(38,2) DEFAULT NULL,
   `kieu_hoa_don` int DEFAULT NULL,
   `trang_thai` int DEFAULT NULL,
@@ -368,7 +370,7 @@ CREATE TABLE `hoa_don` (
   KEY `id_khach_hang_idx` (`id_khach_hang`),
   CONSTRAINT `id_khach_hang` FOREIGN KEY (`id_khach_hang`) REFERENCES `tai_khoan` (`id_tai_khoan`),
   CONSTRAINT `id_tai_khoan` FOREIGN KEY (`id_tai_khoan`) REFERENCES `tai_khoan` (`id_tai_khoan`)
-) ENGINE=InnoDB AUTO_INCREMENT=200 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=210 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -377,7 +379,7 @@ CREATE TABLE `hoa_don` (
 
 LOCK TABLES `hoa_don` WRITE;
 /*!40000 ALTER TABLE `hoa_don` DISABLE KEYS */;
-INSERT INTO `hoa_don` VALUES (194,NULL,1,'HD000001',NULL,NULL,NULL,NULL,'2023-10-26 00:00:00','2023-10-26 00:00:00',NULL,NULL,NULL,NULL,NULL,NULL,1740000.00,NULL,NULL,1740000.00,1740000.00,1,9),(195,NULL,NULL,'HD000002',NULL,NULL,NULL,NULL,'2023-10-26 00:00:00',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0.00,NULL,580000.00,580000.00,1,8),(196,5,4,'HD000003','Tỉnh Thái Nguyên, Huyện Đồng Hỷ, Xã Cây Thị, Số 3',NULL,NULL,NULL,'2023-10-26 00:00:00','2023-10-28 00:00:00','0378255978',NULL,NULL,NULL,'Nguyen Hoang B',NULL,NULL,NULL,NULL,3900000.00,3900000.00,2,3),(197,NULL,3,'HD000004','21 Hoàng Bin, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội',NULL,NULL,NULL,'2023-11-27 15:25:56',NULL,'0578694258',NULL,NULL,NULL,'Hoàng Nguyễn',NULL,NULL,14000.00,NULL,5600000.00,5614000.00,2,1),(199,NULL,3,'HD000005','21 Hoàng Bin, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội',NULL,NULL,NULL,'2023-11-30 12:51:09',NULL,'0578694258',NULL,NULL,NULL,'Hoàng Nguyễn',NULL,NULL,14000.00,NULL,2700000.00,2714000.00,2,11);
+INSERT INTO `hoa_don` VALUES (194,NULL,1,'HD000001',NULL,NULL,NULL,NULL,'2023-10-26 00:00:00','2023-10-26 00:00:00',NULL,NULL,NULL,NULL,NULL,NULL,1740000.00,NULL,NULL,1740000.00,1740000.00,1,9),(195,NULL,NULL,'HD000002',NULL,NULL,NULL,NULL,'2023-10-26 00:00:00',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0.00,NULL,580000.00,580000.00,1,8),(196,5,4,'HD000003','Tỉnh Thái Nguyên, Huyện Đồng Hỷ, Xã Cây Thị, Số 3',NULL,NULL,NULL,'2023-10-26 00:00:00','2023-12-01 00:00:00','0378255978',NULL,NULL,NULL,'Nguyen Hoang B',NULL,3900000.00,NULL,NULL,3900000.00,3900000.00,2,4),(197,NULL,3,'HD000004','21 Hoàng Bin, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội',NULL,NULL,NULL,'2023-11-27 15:25:56',NULL,'0578694258',NULL,NULL,0.00,'Hoàng Nguyễn',NULL,NULL,14000.00,NULL,6500000.00,6514000.00,2,1),(199,NULL,3,'HD000005','21 Hoàng Bin, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội',NULL,NULL,NULL,'2023-12-01 21:40:22','2023-12-01 00:00:00','0578694258',NULL,NULL,NULL,'Hoàng Nguyễn',NULL,2714000.00,14000.00,NULL,2700000.00,2714000.00,2,5),(200,NULL,3,'HD000006','21 Hoàng Bin, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội',NULL,NULL,NULL,'2023-12-04 11:42:23',NULL,'0578694258',NULL,NULL,NULL,'Hoàng Nguyễn',NULL,NULL,14000.00,NULL,1800000.00,1814000.00,2,0),(201,NULL,3,'HD000007','23 Kim Hoàng, Xã Trung Sơn, Huyện Yên Lập, Phú Thọ',NULL,NULL,NULL,'2023-12-04 11:42:23',NULL,'0359782645',NULL,NULL,NULL,'Hoàng Nam',NULL,NULL,32000.00,NULL,1132000.00,1164000.00,2,0),(202,NULL,3,'HD000008','21 Hoàng Bin, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội',NULL,NULL,NULL,'2023-12-04 11:42:23',NULL,'0578694258',NULL,NULL,NULL,'Hoàng Nguyễn',NULL,NULL,14000.00,NULL,2264000.00,2278000.00,2,0),(203,NULL,3,'HD000009','21 Hoàng Bin, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội',NULL,NULL,NULL,'2023-12-04 11:42:23',NULL,'0578694258',NULL,NULL,NULL,'Hoàng Nguyễn',NULL,NULL,14000.00,NULL,1740000.00,1754000.00,2,10),(204,NULL,3,'HD000010','21 Hoàng Bin, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội',NULL,NULL,NULL,'2023-12-04 11:42:23',NULL,'0578694258',NULL,NULL,NULL,'Hoàng Nguyễn',NULL,NULL,14000.00,NULL,1560000.00,1574000.00,2,0),(205,NULL,3,'HD000011','21 Hoàng Bin, Phường Trung Văn, Quận Nam Từ Liêm, Hà Nội',NULL,NULL,NULL,'2023-12-04 11:42:23',NULL,'0578694258',NULL,NULL,NULL,'Hoàng Nguyễn',NULL,NULL,14000.00,NULL,1160000.00,1174000.00,2,0),(206,NULL,NULL,'HD000012',NULL,NULL,NULL,NULL,'2023-12-06 15:50:35',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0.00,NULL,150000.00,150000.00,1,8),(207,NULL,3,'HD000013',NULL,NULL,NULL,NULL,'2023-12-07 15:26:48',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,14000.00,NULL,780000.00,794000.00,2,11),(208,NULL,3,'HD000014',NULL,NULL,NULL,NULL,'2023-12-07 15:26:48',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,14000.00,NULL,1698000.00,1712000.00,2,11),(209,NULL,3,'HD000015',NULL,NULL,NULL,NULL,'2023-12-07 16:21:08',NULL,NULL,NULL,'Lxp7G8WJ',25700.00,NULL,NULL,NULL,32000.00,NULL,482000.00,488300.00,2,11);
 /*!40000 ALTER TABLE `hoa_don` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -401,7 +403,7 @@ CREATE TABLE `hoa_don_chi_tiet` (
   KEY `id_ctsp_idx` (`id_ctsp`),
   CONSTRAINT `id_ctsp` FOREIGN KEY (`id_ctsp`) REFERENCES `chi_tiet_san_pham` (`id_ctsp`),
   CONSTRAINT `id_hd` FOREIGN KEY (`id_hd`) REFERENCES `hoa_don` (`id_hd`)
-) ENGINE=InnoDB AUTO_INCREMENT=176 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=204 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -410,7 +412,7 @@ CREATE TABLE `hoa_don_chi_tiet` (
 
 LOCK TABLES `hoa_don_chi_tiet` WRITE;
 /*!40000 ALTER TABLE `hoa_don_chi_tiet` DISABLE KEYS */;
-INSERT INTO `hoa_don_chi_tiet` VALUES (165,15,194,3,1740000.00,NULL,0),(166,15,195,1,580000.00,NULL,0),(170,17,196,1,900000.00,NULL,0),(171,15,196,5,2900000.00,NULL,0),(172,17,197,3,2700000.00,NULL,0),(173,15,197,5,2900000.00,NULL,0),(175,17,199,3,2700000.00,NULL,0);
+INSERT INTO `hoa_don_chi_tiet` VALUES (165,15,194,3,1740000.00,NULL,0),(166,15,195,1,580000.00,NULL,0),(170,17,196,1,900000.00,NULL,0),(171,15,196,5,2900000.00,NULL,0),(175,17,199,3,2700000.00,NULL,0),(176,17,200,2,1800000.00,NULL,0),(177,16,201,2,1132000.00,NULL,0),(178,16,202,4,2264000.00,NULL,0),(179,15,203,3,1740000.00,NULL,0),(180,20,204,2,1560000.00,NULL,0),(181,20,205,3,2340000.00,NULL,0),(190,17,197,4,3600000.00,'',0),(195,15,197,5,2900000.00,'',0),(196,15,197,2,580000.00,'hi',10),(200,22,206,1,150000.00,NULL,0),(201,20,207,1,780000.00,NULL,0),(202,16,208,3,1698000.00,NULL,0),(203,23,209,2,482000.00,NULL,0);
 /*!40000 ALTER TABLE `hoa_don_chi_tiet` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -429,7 +431,7 @@ CREATE TABLE `images` (
   PRIMARY KEY (`id_images`),
   KEY `id_sp_id1x` (`id_sp`),
   CONSTRAINT `id_sp1` FOREIGN KEY (`id_sp`) REFERENCES `san_pham` (`id_sp`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -438,7 +440,7 @@ CREATE TABLE `images` (
 
 LOCK TABLES `images` WRITE;
 /*!40000 ALTER TABLE `images` DISABLE KEYS */;
-INSERT INTO `images` VALUES (7,6,'https://res.cloudinary.com/dqptpylda/image/upload/v1691813496/oobh4yxxuf1vwxuoamtt.jpg',0),(9,6,'https://res.cloudinary.com/dqptpylda/image/upload/v1691813591/abq6iic1suz9dmqq63zw.jpg',0),(10,5,'https://res.cloudinary.com/dqptpylda/image/upload/v1691813824/kwgazyerou8kh00ra2se.jpg',0),(11,7,'https://res.cloudinary.com/dqptpylda/image/upload/v1691813844/u2l4xroxo2zqibmwwwgb.jpg',0);
+INSERT INTO `images` VALUES (7,6,'https://res.cloudinary.com/dqptpylda/image/upload/v1691813496/oobh4yxxuf1vwxuoamtt.jpg',0),(9,6,'https://res.cloudinary.com/dqptpylda/image/upload/v1691813591/abq6iic1suz9dmqq63zw.jpg',0),(10,5,'https://res.cloudinary.com/dqptpylda/image/upload/v1691813824/kwgazyerou8kh00ra2se.jpg',0),(11,7,'https://res.cloudinary.com/dqptpylda/image/upload/v1691813844/u2l4xroxo2zqibmwwwgb.jpg',0),(12,9,'https://res.cloudinary.com/dqptpylda/image/upload/v1701853276/j5-7f/y6h69xtbym5rs7h7qrs5.jpg',0),(13,10,'https://res.cloudinary.com/dqptpylda/image/upload/v1701853462/j5-7f/idppz6mcaawwvwuovnnz.jpg',0),(14,11,'https://res.cloudinary.com/dqptpylda/image/upload/v1701853607/j5-7f/atynh3xx1lmn9w8jpkio.jpg',0);
 /*!40000 ALTER TABLE `images` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -493,7 +495,7 @@ CREATE TABLE `lich_su_hoa_don` (
   KEY `id_tk_idx` (`id_tk`),
   CONSTRAINT `id_hd3` FOREIGN KEY (`id_hd`) REFERENCES `hoa_don` (`id_hd`),
   CONSTRAINT `id_tk` FOREIGN KEY (`id_tk`) REFERENCES `tai_khoan` (`id_tai_khoan`)
-) ENGINE=InnoDB AUTO_INCREMENT=130 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=191 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -502,7 +504,7 @@ CREATE TABLE `lich_su_hoa_don` (
 
 LOCK TABLES `lich_su_hoa_don` WRITE;
 /*!40000 ALTER TABLE `lich_su_hoa_don` DISABLE KEYS */;
-INSERT INTO `lich_su_hoa_don` VALUES (104,194,NULL,8,'Tạo Hóa Đơn Thành Công','2023-10-26 10:48:00'),(105,194,NULL,9,'Thanh Toán Thành Công','2023-10-26 10:55:19'),(106,195,NULL,8,'Tạo Hóa Đơn Thành Công','2023-10-26 16:10:51'),(107,196,NULL,8,'Tạo Hóa Đơn Thành Công','2023-10-26 16:56:37'),(111,196,5,0,'Tạo Đơn Hàng Ship Thành Công','2023-10-28 12:47:36'),(112,196,NULL,7,'Chỉnh sửa sản phẩm: Quan Lolicon','2023-10-28 19:29:20'),(113,196,NULL,7,'Chỉnh sửa sản phẩm: Ao Kakame','2023-10-28 19:30:21'),(114,196,NULL,7,'Xóa Sản Phẩm: Quan Lolicon','2023-10-28 20:19:30'),(115,196,NULL,7,'Xóa Sản Phẩm: Quan Lolicon','2023-10-28 20:20:49'),(116,196,NULL,7,'Xóa Sản Phẩm: Quan Lolicon','2023-10-28 20:20:52'),(117,196,NULL,7,'Chỉnh sửa sản phẩm: Quan Lolicon','2023-10-28 20:25:25'),(118,197,NULL,11,'Tạo Hóa Đơn Treo Thành Công','2023-11-22 20:50:05'),(122,197,NULL,0,'Tạo Đơn Hàng Ship Thành Công','2023-11-27 15:25:56'),(123,196,5,1,'hi','2023-11-27 15:25:56'),(124,196,5,2,'hi','2023-11-27 15:25:56'),(125,196,5,3,'hi','2023-11-27 15:25:56'),(127,199,NULL,11,'Tạo Hóa Đơn Thành Công','2023-11-30 12:51:09'),(129,197,NULL,1,'Đã xác nhận','2023-12-01 09:16:56');
+INSERT INTO `lich_su_hoa_don` VALUES (104,194,NULL,8,'Tạo Hóa Đơn Thành Công','2023-10-26 10:48:00'),(105,194,NULL,9,'Thanh Toán Thành Công','2023-10-26 10:55:19'),(106,195,NULL,8,'Tạo Hóa Đơn Thành Công','2023-10-26 16:10:51'),(107,196,NULL,8,'Tạo Hóa Đơn Thành Công','2023-10-26 16:56:37'),(111,196,5,0,'Tạo Đơn Hàng Ship Thành Công','2023-10-28 12:47:36'),(112,196,NULL,7,'Chỉnh sửa sản phẩm: Quan Lolicon','2023-10-28 19:29:20'),(113,196,NULL,7,'Chỉnh sửa sản phẩm: Ao Kakame','2023-10-28 19:30:21'),(114,196,NULL,7,'Xóa Sản Phẩm: Quan Lolicon','2023-10-28 20:19:30'),(115,196,NULL,7,'Xóa Sản Phẩm: Quan Lolicon','2023-10-28 20:20:49'),(116,196,NULL,7,'Xóa Sản Phẩm: Quan Lolicon','2023-10-28 20:20:52'),(117,196,NULL,7,'Chỉnh sửa sản phẩm: Quan Lolicon','2023-10-28 20:25:25'),(118,197,NULL,11,'Tạo Hóa Đơn Treo Thành Công','2023-11-22 20:50:05'),(122,197,NULL,0,'Tạo Đơn Hàng Ship Thành Công','2023-11-27 15:25:56'),(123,196,5,1,'hi','2023-11-27 15:25:56'),(124,196,5,2,'hi','2023-11-27 15:25:56'),(125,196,5,3,'hi','2023-11-27 15:25:56'),(127,199,NULL,11,'Tạo Hóa Đơn Thành Công','2023-11-30 12:51:09'),(129,197,NULL,1,'Đã xác nhận','2023-12-01 09:16:56'),(130,196,NULL,4,'Thanh Toán Thành Công','2023-12-01 18:49:20'),(131,199,NULL,9,'Thanh Toán Thành Công','2023-12-01 18:59:30'),(132,199,NULL,0,'Tạo Đơn Hàng Ship Thành Công','2023-12-01 21:40:22'),(133,199,NULL,1,'Ổn','2023-12-02 15:22:32'),(141,199,NULL,2,'ok','2023-12-02 16:50:50'),(142,199,NULL,3,'ok','2023-12-02 16:50:50'),(143,199,NULL,5,'ok','2023-12-02 16:50:50'),(144,200,NULL,11,'Tạo Hóa Đơn Thành Công','2023-12-04 11:42:23'),(145,200,NULL,0,'Tạo Đơn Hàng Ship Thành Công','2023-12-04 11:42:23'),(146,201,NULL,11,'Tạo Hóa Đơn Thành Công','2023-12-04 11:42:23'),(147,201,NULL,0,'Tạo Đơn Hàng Ship Thành Công','2023-12-04 11:42:23'),(148,202,NULL,11,'Tạo Hóa Đơn Thành Công','2023-12-04 11:42:23'),(149,202,NULL,0,'Tạo Đơn Hàng Ship Thành Công','2023-12-04 11:42:23'),(150,203,NULL,11,'Tạo Hóa Đơn Thành Công','2023-12-04 11:42:23'),(151,203,NULL,0,'Tạo Đơn Hàng Ship Thành Công','2023-12-04 11:42:23'),(152,204,NULL,11,'Tạo Hóa Đơn Thành Công','2023-12-04 11:42:23'),(153,204,NULL,0,'Tạo Đơn Hàng Ship Thành Công','2023-12-04 11:42:23'),(154,205,NULL,11,'Tạo Hóa Đơn Thành Công','2023-12-04 11:42:23'),(155,205,NULL,0,'Tạo Đơn Hàng Ship Thành Công','2023-12-04 11:42:23'),(156,203,NULL,10,'Đơn Hàng Đã Bị Xóa','2023-12-04 17:24:15'),(182,197,NULL,6,'Trả Sản Phẩm: Quan Lolicon Với số lượng: 1','2023-12-06 10:26:14'),(183,197,NULL,6,'Trả Sản Phẩm: Quan Lolicon Với số lượng: 1','2023-12-06 10:26:20'),(184,206,NULL,8,'Tạo Đơn Chờ Tại Quầy Thành Công','2023-12-06 15:50:35'),(186,206,NULL,7,'Thêm sản phẩm: Ao Kakame Với số lượng: 1','2023-12-06 16:47:27'),(187,205,NULL,7,'Sửa sản phẩm: Quan Lolicon Với số lượng: 3','2023-12-06 16:52:29'),(188,207,NULL,11,'Tạo Đơn Chờ Tại Quầy Thành Công','2023-12-07 15:26:48'),(189,208,NULL,11,'Tạo Đơn Chờ Tại Quầy Thành Công','2023-12-07 15:26:48'),(190,209,NULL,11,'Tạo Đơn Chờ Tại Quầy Thành Công','2023-12-07 16:21:09');
 /*!40000 ALTER TABLE `lich_su_hoa_don` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -639,7 +641,7 @@ CREATE TABLE `san_pham` (
   CONSTRAINT `id_loaisp` FOREIGN KEY (`id_loaisp`) REFERENCES `loai_sp` (`id_loaisp`),
   CONSTRAINT `id_tay_ao` FOREIGN KEY (`id_tay_ao`) REFERENCES `ong_tay_ao` (`id_tay_ao`),
   CONSTRAINT `id_xx` FOREIGN KEY (`id_xx`) REFERENCES `xuat_xu` (`id_xx`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -648,7 +650,7 @@ CREATE TABLE `san_pham` (
 
 LOCK TABLES `san_pham` WRITE;
 /*!40000 ALTER TABLE `san_pham` DISABLE KEYS */;
-INSERT INTO `san_pham` VALUES (5,'SP01','Quan Lolicon',11,4,17,1,1,'Xau',0),(6,'SP02','Ao Kakame',12,5,102,2,2,'Moi',0),(7,'SP03','Quan Hoho',13,4,105,1,1,'Haha',0);
+INSERT INTO `san_pham` VALUES (5,'SP01','Quan Lolicon',11,4,17,1,1,'Xau',0),(6,'SP02','Ao Kakame',12,5,102,2,2,'Moi',0),(7,'SP03','Quan Hoho',13,4,105,1,1,'Haha',0),(9,'SP526691D50','Áo TheCown',12,4,102,2,1,'Thoáng Mát',0),(10,'SPB6A2FB2B6','Áo Monoco',12,4,104,1,2,'Mềm',0),(11,'SPB1C165530','Quần Jeans',11,4,102,2,1,'Bông',0);
 /*!40000 ALTER TABLE `san_pham` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -747,4 +749,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-01 15:56:40
+-- Dump completed on 2023-12-07 23:19:18

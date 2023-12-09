@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
 import '../../scss/detail-client.scss';
 import { Carousel } from 'react-bootstrap';
 import CardMedia from '@mui/material/CardMedia';
@@ -9,9 +8,12 @@ import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
 // Service
 import { listImg } from '../../service/client/Detail-Product';
 import { findById } from '../../service/BillSevice';
-import { addProductOnCart } from '../../service/client/Detail-Cart';
+import { addProductOnCart, listProductOnCart } from '../../service/client/Detail-Cart';
 
 const DetailProduct = () => {
+  // DetailProduct.propTypes = {
+  //   refetch: PropTypes.func.isRequired,
+  // };
   const [quantity, setQuantity] = useState(1);
   // const [selectedSizes, setSelectedSizes] = useState([]);
   const [detailProduct, setDetailProduct] = useState([]);
@@ -25,7 +27,7 @@ const DetailProduct = () => {
   const [availableColors, setAvailableColors] = useState([]);
   const [selectSoLuongTon, setSelectSoLuongTon] = useState([]);
   const [uniqueSizesHi, setUniqueSizes] = useState([]);
-
+  const [price, setPrice] = useState('');
   // Select detail product
   const param = useParams();
   const idHdParam = param.id;
@@ -34,6 +36,18 @@ const DetailProduct = () => {
     try {
       const getOneSP = await findById(idHdParam);
       const getOneSP1 = await listImg(idHdParam);
+
+      const giaThucTe = Array.isArray(getOneSP) ? [...new Set(getOneSP.map((item) => item.giaThucTe))] : [];
+
+      // Find max and min of price
+      const minPrice = Math.min(...giaThucTe);
+      const maxPrice = Math.max(...giaThucTe);
+
+      // Create the price range string
+      const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
+      const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
+      const priceRange = minPrice === maxPrice ? formattedMinPrice : `${formattedMinPrice} - ${formattedMaxPrice}`;
+      setPrice(priceRange);
       console.log('getOneSP: ', getOneSP);
       console.log('getOneSP1: ', getOneSP1);
       setDetailProduct(getOneSP);
@@ -109,26 +123,78 @@ const DetailProduct = () => {
     setQuantity(quantity + 1);
   };
 
-  // Add product on cart
-  // const [product, setProduct] = useState({
-  //   idCtsp: detailProduct.idCtsp,
-  //   soLuong: quantity,
-  // });
   const [alertContent, setAlertContent] = useState(null);
+
+  // const fetchData = async () => {
+  //   try {
+  //     const getLocalStore = localStorage.getItem('userFormToken');
+  //     // const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
+  //     if (getLocalStore) {
+  //       const authorities = JSON.parse(getLocalStore).taiKhoan;
+  //       await listProductOnCart(authorities.idTaiKhoan);
+  //     }
+
+  //     // await listProductOnCart(authorities.idTaiKhoan);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
   const handleAddProduct = async () => {
     // Get Author
     const getLocalStore = localStorage.getItem('userFormToken');
-    const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
-    try {
-      console.log('HIHI: ', authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
-      await addProductOnCart(authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
+
+    if (getLocalStore) {
+      const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
+      try {
+        if (selectedMauSac === null && selectedSize === null) {
+          setAlertContent({
+            type: 'warning',
+            message: 'Thuộc Tính Sản Phẩm Trống',
+          });
+        } else {
+          console.log('HIHI: ', authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
+          await addProductOnCart(authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
+          setAlertContent({
+            type: 'success',
+            message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
+          });
+          // fetchData();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    } else if (selectedMauSac === null && selectedSize === null) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Thuộc Tính Sản Phẩm Trống',
+      });
+    } else {
+      // Lấy giá trị hiện tại từ localStorage
+      const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {}; // Nếu chưa có giá trị, tạo một đối tượng rỗng
+      const productId = selectSoLuongTon[0].idCtsp;
+      const selectedItem = currentCart[productId];
+
+      if (selectedItem) {
+        selectedItem.soLuong += quantity;
+        selectedItem.donGia = selectSoLuongTon[0].giaThucTe * selectedItem.soLuong;
+      } else {
+        currentCart[productId] = {
+          idCtsp: selectSoLuongTon[0],
+          soLuong: quantity,
+          donGia: selectSoLuongTon[0].giaThucTe * quantity,
+        };
+      }
+      localStorage.setItem('cartProduct', JSON.stringify(currentCart));
+
       setAlertContent({
         type: 'success',
         message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
       });
-    } catch (error) {
-      console.error(error);
     }
   };
 
@@ -187,17 +253,6 @@ const DetailProduct = () => {
             >
               {detailProduct.length > 0 && detailProduct[0].idSp.tenSp}
             </Typography>
-            {/* <div className="info-sp">
-                        <div className="danhgia">
-                            <p className="danhgia-number underline">49</p>
-                            Đánh giá
-                        </div>
-                        <div className="daban">
-                            <p className="daban-number">1,1k</p>
-                            Đã bán
-                        </div>
-                    </div> */}
-
             <div className="price-product">
               <Typography variant="subtitle1">
                 <Typography
@@ -213,7 +268,7 @@ const DetailProduct = () => {
                   {detailProduct.length > 0 && detailProduct[0].giaBan && formatCurrency(detailProduct[0].giaBan)}
                 </Typography>
                 &nbsp;
-                {detailProduct.length > 0 && formatCurrency(detailProduct[0].giaBan)}
+                {selectSoLuongTon.length > 0 ? formatCurrency(selectSoLuongTon[0].giaThucTe) : price}
               </Typography>
             </div>
             <div className="vanchuyen d-block">
