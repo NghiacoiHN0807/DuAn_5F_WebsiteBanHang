@@ -12,7 +12,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import PropTypes from 'prop-types';
 import { findByProductNameAndSize } from '../../service/BillSevice';
-import { updateCart } from '../../service/DirectSaleSevice';
+// import { updateCart } from '../../service/DirectSaleSevice';
 import { listImg } from '../../service/client/Detail-Product';
 import { updateCartClient } from '../../service/client/Detail-Cart';
 
@@ -148,13 +148,13 @@ const ModalUpdateProductOnCartClient = (props) => {
   const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
   const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
   const priceRange = minPrice === maxPrice ? formattedMinPrice : `${formattedMinPrice} - ${formattedMaxPrice}`;
-  const getFirstImage = (item) => {
-    if (item && item.trim() !== '') {
-      const imagesArray = item.split(',');
-      return imagesArray[0];
-    }
-    return null;
-  };
+  // const getFirstImage = (item) => {
+  //   if (item && item.trim() !== '') {
+  //     const imagesArray = item.split(',');
+  //     return imagesArray[0];
+  //   }
+  //   return null;
+  // };
 
   const [images, setImages] = useState([]);
 

@@ -200,17 +200,21 @@ const OrderClientTimeline = ({ classes }) => {
         break;
       case 1:
         badgeVariant = 'primary';
-        statusText = 'Đang Chờ Xác Nhận Thông Tin';
+        statusText = 'Đã Xác Nhận Đơn';
         break;
       case 2:
         badgeVariant = 'secondary';
-        statusText = 'Đã Chuyển Cho Đơn Vị';
+        statusText = 'Đã Xác Nhận Người Mua';
         break;
       case 3:
         badgeVariant = 'warning';
-        statusText = 'Xác Nhận Thanh Toán';
+        statusText = 'Đã Chuyển Cho Đơn Vị';
         break;
       case 4:
+        badgeVariant = 'success';
+        statusText = 'Đã Xác Nhận Thanh Toán';
+        break;
+      case 5:
         badgeVariant = 'success';
         statusText = 'Đã Giao Thành Công';
         break;

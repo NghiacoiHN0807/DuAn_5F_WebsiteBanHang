@@ -41,7 +41,16 @@ export default function Cart() {
 
   const getDetail = useCallback(async () => {
     try {
-      const getOneSP = await listProductOnCart(authorities.idTaiKhoan);
+      let getOneSP = {};
+
+      if (getLocalStore) {
+        getOneSP = await listProductOnCart(authorities.idTaiKhoan);
+      } else {
+        const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {}; // Nếu chưa có giá trị, tạo một đối tượng rỗng
+        console.log('idCtspListđá: ', currentCart);
+        getOneSP = Object.values(currentCart);
+        // getOneSP = currentCart;
+      }
       setProductOnCart(getOneSP);
       console.log('getOneSP: ', getOneSP);
       const productId = getOneSP.map((item) => item.idCtsp.idSp.idSp);
@@ -52,7 +61,7 @@ export default function Cart() {
     } catch (e) {
       console.error(e);
     }
-  }, [authorities.idTaiKhoan]);
+  }, [authorities.idTaiKhoan, getLocalStore]);
 
   useEffect(() => {
     getDetail();
