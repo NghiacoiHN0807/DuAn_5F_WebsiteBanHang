@@ -6,9 +6,9 @@ const postAddTaiKhoanKhachHang = (maTaiKhoan, ho, ten, sdt, email, matKhau, tran
   custom.post('/tai-khoan-khach-hang/add', { maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai });
 
 const postSignUp = (maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) =>
-    custom.post("/signUp", {maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai});
-const postForgetPassword = ( email) =>
-    custom.post("/forgetPassword", {email});
+  custom.post("/signUp", { maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai });
+const postForgetPassword = (email) =>
+  custom.post("/forgetPassword", { email });
 
 const postUpdateTaiKhoanKhachHang = (idTaiKhoan, maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai) =>
   custom.post('/tai-khoan-khach-hang/update', {
@@ -26,12 +26,5 @@ const getDetailOneTK = (idTaiKhoan) => custom.get(`/tai-khoan-khach-hang/detail/
 
 const deleteTaiKhoanKH = (id) => custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
 
-<<<<<<< HEAD
-export { fetchAllTKKH, postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoanKH, getDetailOneTK };
-=======
-const deleteTaiKhoanKH = (id) =>
-    custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
 
-
-export {fetchAllTKKH, postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoanKH, getDetailOneTK,postSignUp,postForgetPassword};
->>>>>>> origin/phuclt
+export { fetchAllTKKH, postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoanKH, getDetailOneTK, postSignUp, postForgetPassword };

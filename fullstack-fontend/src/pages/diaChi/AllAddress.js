@@ -20,7 +20,6 @@ import AlertSnackbar from '../../layouts/dashboard/AlertSnackbar';
 const AllAddress = () => {
   const [listData, setListData] = useState([]);
 
-<<<<<<< HEAD
   const [searchKeyword, setSearchKeyword] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('Tất cả');
   const [selectedLoaiDiaChi, setSelectedLoaiDiaChi] = useState('Tất cả');
@@ -30,14 +29,6 @@ const AllAddress = () => {
   const [listTP, setListTP] = useState([]);
   const [listQH, setListQH] = useState([]);
   const [listPX, setListPX] = useState([]);
-=======
-    const [searchKeyword, setSearchKeyword] = useState("");
-    const [selectedStatus, setSelectedStatus] = useState("Tất cả");
-    const [selectedLoaiDiaChi, setSelectedLoaiDiaChi] = useState("Tất cả");
-    const [originalListData, setOriginalListData] = useState([]);
-    const navigate = useNavigate();
-    const isMounted = useRef(true);
->>>>>>> origin/phuclt
 
   const getListData = async (page, query) => {
     try {
@@ -61,7 +52,6 @@ const AllAddress = () => {
     };
   }, []);
 
-<<<<<<< HEAD
   useEffect(() => {
     if (listData.length > 0) {
       listData.forEach((item) => {
@@ -96,189 +86,6 @@ const AllAddress = () => {
     if (existingQH && existingPX) {
       // Data already exists, no need to fetch again
       return;
-=======
-    useEffect(() => {
-        isMounted.current = true;
-        getListData(0);
-        // getListTP();
-        return () => {
-            isMounted.current = false;
-        };
-    }, []);
-
-
-
-    const columns = [
-        {field: "index", headerName: "##", width: 30},
-        {field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 130},
-        {field: "tenNguoiNhan", headerName: "Tên Người Nhận", width: 120},
-        {field: "sdtKh", headerName: "Số Điện Thoại", width: 120,},
-        {field: "diaChi", headerName: "Địa Chỉ", width: 300,},
-        {field: "diaChiCuThe", headerName: "Địa Chỉ Cụ Thể", width: 210,},
-        {
-            field: "loaiDiaChi",
-            headerName: "Loại Địa Chỉ",
-            width: 100,
-            renderCell: (params) => {
-                const {value: loaiDiaChi} = params;
-                let badgeVariant;
-                let statusText;
-                switch (loaiDiaChi) {
-                    case 1:
-                        badgeVariant = "primary";
-                        statusText = "Nơi Làm Việc";
-                        break;
-                    default:
-                        badgeVariant = "light";
-                        statusText = "Nhà Riêng";
-                        break;
-                }
-
-                return (
-                    <Badge bg={badgeVariant} text="dark">
-                        {statusText}
-                    </Badge>
-                );
-            },
-        },
-        {
-            field: "trangThai",
-            headerName: "Trạng Thái",
-            width: 120,
-            renderCell: (params) => {
-                const {value: trangThai} = params;
-                let badgeVariant
-                let statusText;
-                switch (trangThai) {
-                    case 1:
-                        badgeVariant = "primary";
-                        statusText = "Đã Xác Nhận";
-                        break;
-                    case 4:
-                        badgeVariant = "info";
-                        statusText = "Đã Ngưng hoạt động";
-                        break;
-                    case 10:
-                        badgeVariant = "danger";
-                        statusText = "Đã Bị Xóa";
-                        break;
-                    default:
-                        badgeVariant = "light";
-                        statusText = "Chưa Xác Nhận";
-                        break;
-                }
-
-                return (
-                    <Badge bg={badgeVariant} text="dark">
-                        {statusText}
-                    </Badge>
-                );
-            },
-        },
-    ];
-
-    // Xử lý dữ liệu của bảng vào mảng rows
-    const rows = listData
-        .filter((item) => {
-            const valuesToSearch = [item.taiKhoan.maTaiKhoan, // Search maTaiKhoan directly
-                item.tenNguoiNhan, item.sdt, item.tinhThanh, item.quanHuyen, item.phuongXa, item.diaChiCuThe, // Convert trangThai to string for search
-            ];
-            return valuesToSearch.some((value) => String(value).toLowerCase().includes(searchKeyword.toLowerCase()));
-        })
-        .map((item, index) => ({
-            idTaiKhoan: item.taiKhoan.idTaiKhoan,
-            id: item.id,
-            index: index + 1,
-            maTaiKhoan: item.taiKhoan.maTaiKhoan,
-            tenNguoiNhan: item.tenNguoiNhan,
-            sdtKh: item.sdt,
-            diaChi: `${item.tinhThanh}, ${item.quanHuyen}, ${item.phuongXa}`,
-            diaChiCuThe: item.diaChiCuThe,
-            loaiDiaChi: item.loaiDiaChi,
-            trangThai: item.trangThai,
-        }));
-
-
-    const handlePageClick = (page) => {
-        getListData(page + 1);
-    };
-
-
-    useEffect(() => {
-        const filteredData =
-            selectedStatus === "Tất cả"
-                ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
-                : originalListData.filter(
-                    (item) =>
-                        item.trangThai === parseInt(selectedStatus, 10)
-                );
-
-        const filteredLoai =
-            selectedLoaiDiaChi === "Tất cả"
-                ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
-                : originalListData.filter(
-                    (item) =>
-                        item.loaiDiaChi === parseInt(selectedLoaiDiaChi, 10)
-                );
-        const combinedFilteredData = filteredData.filter(item =>
-            filteredLoai.includes(item)
-        );
-
-        setListData(combinedFilteredData);
-    }, [selectedStatus, selectedLoaiDiaChi, originalListData]);
-
-
-    const handlClickRow = (item) => {
-        // console.log("Check click: ", item);
-        navigate(`/dashboard/address/detail/${item.id}`);
-    };
-
-    function CustomToolbar() {
-        return (
-            <GridToolbarContainer>
-                <GridToolbarFilterButton/>
-                <GridToolbarColumnsButton/>
-                <GridToolbarDensitySelector/>
-                <GridToolbarExport
-                    csvOptions={{
-                        fileName: 'address',
-                        utf8WithBom: true,
-                    }}
-                />
-
-                <FormControl variant="standard" sx={{m: 1, minWidth: 120}}>
-                    <InputLabel id="status-select">Trạng Thái:</InputLabel>
-                    <Select
-                        labelId="status-select"
-                        id="status-select"
-                        value={selectedStatus}
-                        label="Trạng Thái"
-                        onChange={(e) => setSelectedStatus(e.target.value)}
-                    >
-                        <MenuItem value={"Tất cả"}>Tất Cả</MenuItem>
-                        <MenuItem value={0}>Chưa Kích Hoạt</MenuItem>
-                        <MenuItem value={1}>Đã Kích Hoạt</MenuItem>
-                        <MenuItem value={4}>Ngưng Hoạt Động</MenuItem>
-                        <MenuItem value={10}>Đã Bị Xóa</MenuItem>
-                    </Select>
-                </FormControl>
-                <FormControl variant="standard" sx={{m: 1, minWidth: 120}}>
-                    <InputLabel id="status-select">Loại Địa Chỉ:</InputLabel>
-                    <Select
-                        labelId="status-select"
-                        id="status-select"
-                        value={selectedStatus}
-                        label="Trạng Thái"
-                        onChange={(e) => setSelectedLoaiDiaChi(e.target.value)}
-                    >
-                        <MenuItem value={"Tất cả"}>Tất Cả</MenuItem>
-                        <MenuItem value={0}>Nhà Riêng</MenuItem>
-                        <MenuItem value={1}>Nơi Làm Việc</MenuItem>
-                    </Select>
-                </FormControl>
-            </GridToolbarContainer>
-        );
->>>>>>> origin/phuclt
     }
 
     const quanHuyenData = await getQuanHuyen(tinhThanhID);
