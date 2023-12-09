@@ -10,14 +10,10 @@ import { Alert, Box, Button, Container, Grid, Snackbar, Typography } from '@mui/
 
 import { listImg } from '../../service/client/Detail-Product';
 import { findById } from '../../service/BillSevice';
-<<<<<<< HEAD
 import { addProductOnCart, listProductOnCart } from '../../service/client/Detail-Cart';
-=======
-import { addProductOnCart } from '../../service/client/Detail-Cart';
 import { getRelatedSp } from '../../service/SanPhamService';
 import { ProductListAll } from '../../sections/@dashboard/products';
 import ShopProductCard from '../../sections/@dashboard/products/ProductCardAll';
->>>>>>> origin/vinhlt
 
 const DetailProduct = () => {
   // DetailProduct.propTypes = {
@@ -36,13 +32,10 @@ const DetailProduct = () => {
   const [availableColors, setAvailableColors] = useState([]);
   const [selectSoLuongTon, setSelectSoLuongTon] = useState([]);
   const [uniqueSizesHi, setUniqueSizes] = useState([]);
-<<<<<<< HEAD
   const [price, setPrice] = useState('');
-=======
   // get id of loai sp lien quan
   const [listLSP, setListLSP] = useState([]);
 
->>>>>>> origin/vinhlt
   // Select detail product
   const param = useParams();
   const idHdParam = param.id;
@@ -51,7 +44,6 @@ const DetailProduct = () => {
     try {
       const getOneSP = await findById(idHdParam);
       const getOneSP1 = await listImg(idHdParam);
-<<<<<<< HEAD
 
       const giaThucTe = Array.isArray(getOneSP) ? [...new Set(getOneSP.map((item) => item.giaThucTe))] : [];
 
@@ -66,8 +58,6 @@ const DetailProduct = () => {
       setPrice(priceRange);
       console.log('getOneSP: ', getOneSP);
       console.log('getOneSP1: ', getOneSP1);
-=======
->>>>>>> origin/vinhlt
       setDetailProduct(getOneSP);
       setDetailImg(getOneSP1);
       const getListLQ = await getRelatedSp(getOneSP[0].idSp.idLsp.idLoaisp, getOneSP[0].idSp.idSp);

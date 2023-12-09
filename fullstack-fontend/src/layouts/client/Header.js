@@ -212,10 +212,10 @@ const Header = () => {
                   <NavLink to="/client/products" className={'nav-link'}>
                     Sản phẩm
                   </NavLink>
-                  <Link to="/" className={'nav-link'}>
+                  <Link to="/client/products-sale" className={'nav-link'}>
                     Giảm Giá
                   </Link>
-                  <NavLink to="/" className={'nav-link'}>
+                  <NavLink to="/client/contact" className={'nav-link'}>
                     Về Chúng Tôi
                   </NavLink>
                 </Nav>

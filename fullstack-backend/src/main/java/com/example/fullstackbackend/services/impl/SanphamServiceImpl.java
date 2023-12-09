@@ -10,15 +10,12 @@ import com.example.fullstackbackend.repository.SanphamRepository;
 import com.example.fullstackbackend.services.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +31,7 @@ public class SanphamServiceImpl implements SanPhamService {
         Pageable pageable = PageRequest.of(pageNo, limit);
         return sanphamRepository.findAllByTinhTrang(tinhTrang, pageable);
     }
+
     public List<SanPham> getAll() {
         return sanphamRepository.findAll();
     }
@@ -186,15 +184,9 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
-<<<<<<< HEAD
     public List<SanPhamClientDTO> getSpGiamGiaForClient() {
         List<SanPhamClientDTO> dtos = new ArrayList<>();
         for (Object[] row : sanphamRepository.getSpGiamGiaForClient()) {
-=======
-    public List<SanPhamClientDTO> relatedProduct(Integer idLsp, Integer idSp) {
-        List<SanPhamClientDTO> dtos = new ArrayList<>();
-        for (Object[] row : sanphamRepository.getRelatedProduct(idLsp, idSp)) {
->>>>>>> origin/vinhlt
             SanPhamClientDTO spCustom = new SanPhamClientDTO();
             spCustom.setIdSp((Integer) row[0]);
             spCustom.setChatLieus((String) row[1]);
@@ -218,7 +210,32 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
-<<<<<<< HEAD
+    public List<SanPhamClientDTO> relatedProduct(Integer idLsp, Integer idSp) {
+        List<SanPhamClientDTO> dtos = new ArrayList<>();
+        for (Object[] row : sanphamRepository.getRelatedProduct(idLsp, idSp)) {
+            SanPhamClientDTO spCustom = new SanPhamClientDTO();
+            spCustom.setIdSp((Integer) row[0]);
+            spCustom.setChatLieus((String) row[1]);
+            spCustom.setLoaiSPs((String) row[2]);
+            spCustom.setXuatXus((String) row[3]);
+            spCustom.setTayAos((String) row[4]);
+            spCustom.setCoAos((String) row[5]);
+            spCustom.setSizes((String) row[6]);
+            spCustom.setMauSacs((String) row[7]);
+
+            spCustom.setTenSp((String) row[8]);
+            spCustom.setTrangThai((Integer) row[9]);
+            spCustom.setUrl((String) row[10]);
+            spCustom.setGiaMin((BigDecimal) row[11]);
+            spCustom.setGiaMax((BigDecimal) row[12]);
+            spCustom.setGiaThucTe((BigDecimal) row[13]);
+            dtos.add(spCustom);
+        }
+
+        return dtos;
+    }
+
+    @Override
     public List<SanPhamClientDTO> getTopSpBanChayForClient() {
         List<SanPhamClientDTO> dtos = new ArrayList<>();
         for (Object[] row : sanphamRepository.getTopSpBanChayForClient()) {
@@ -246,8 +263,6 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
-=======
->>>>>>> origin/vinhlt
     public List<Object[]> topSptrend() {
         return sanphamRepository.topSptrending();
     }

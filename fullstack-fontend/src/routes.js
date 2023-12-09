@@ -48,6 +48,7 @@ import SelectAllBillOfClient from './pages/client/SelectAllBill';
 import SignUpPage from "./pages/SignUpPage";
 import ForgetPasswordPage from "./pages/ForgetPasswordPage";
 import CartNoAccount from './pages/client/Cart-NoAccount';
+import SaleProductsPage from './pages/client/SaleProductsPage';
 
 // ----------------------------------------------------------------------
 
@@ -129,6 +130,7 @@ export default function Router() {
               { path: 'payment/:id', element: <PaymentPage1 /> },
               { path: 'contact', element: <Contact /> },
               { path: 'products', element: <ProductsPage /> },
+              { path: 'products-sale', element: <SaleProductsPage /> },
               { path: 'client-timeline/:id', element: <OrderClientTimeline /> },
               { path: 'select-bill-client/:idKH', element: <SelectAllBillOfClient /> },
               // { path: 'select-bill-client', element: <SelectAllBillOfClient /> },

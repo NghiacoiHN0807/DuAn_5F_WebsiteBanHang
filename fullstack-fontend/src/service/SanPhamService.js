@@ -39,13 +39,11 @@ const putUpdateSanPham = (idSp, maSp, tenSp, idCl, idLsp, idXx, idCoAo, idTayAo,
 
 const fetchSpForClient = () => custom.get(`/san-pham/getSpForClient`);
 
-<<<<<<< HEAD
 const getTopSpBanChayForClient = () => custom.get(`/san-pham/getTopSpBanChayForClient`);
 
 const getSpGiamGiaForClient = () => custom.get(`/san-pham/getSpGiamGiaForClient`);
-=======
+
 const getRelatedSp = (idLsp, idSp) => custom.get(`/san-pham/sp-lien-quan/${idLsp}/${idSp}`);
->>>>>>> origin/vinhlt
 
 export {
   fetchAllSP,
@@ -56,10 +54,7 @@ export {
   putUpdateSanPham,
   fetchSpWithImg,
   fetchSpForClient,
-<<<<<<< HEAD
   getTopSpBanChayForClient,
-  getSpGiamGiaForClient
-=======
+  getSpGiamGiaForClient,
   getRelatedSp,
->>>>>>> origin/vinhlt
 };

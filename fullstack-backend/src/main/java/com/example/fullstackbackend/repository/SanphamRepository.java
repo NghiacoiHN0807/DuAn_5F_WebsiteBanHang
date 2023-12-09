@@ -1,6 +1,5 @@
 package com.example.fullstackbackend.repository;
 
-import com.example.fullstackbackend.DTO.SanPhamWithMinImageDTO;
 import com.example.fullstackbackend.entity.SanPham;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -162,7 +161,6 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
     List<Object[]> topSptrending();
 
     @Query(value = "SELECT \n" +
-<<<<<<< HEAD
             "                sp.id_sp,\n" +
             "                GROUP_CONCAT(DISTINCT sp.id_cl) as id_cl, \n" +
             "                GROUP_CONCAT(DISTINCT sp.id_loaisp) as id_loaisp,\n" +
@@ -200,23 +198,11 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "    GROUP_CONCAT(DISTINCT sp.id_co_ao) AS id_co_ao, \n" +
             "    GROUP_CONCAT(DISTINCT ct.id_size) AS id_size,\n" +
             "    GROUP_CONCAT(DISTINCT ct.id_ms) AS id_ms,\n" +
-=======
-            "    sp.id_sp,\n" +
-            "    GROUP_CONCAT(DISTINCT sp.id_cl) as id_cl, \n" +
-            "    GROUP_CONCAT(DISTINCT sp.id_loaisp) as id_loaisp,\n" +
-            "    GROUP_CONCAT(DISTINCT sp.id_xx) as id_xx, \n" +
-            "    GROUP_CONCAT(DISTINCT sp.id_tay_ao) as id_tay_ao,\n" +
-            "    GROUP_CONCAT(DISTINCT sp.id_co_ao) as id_co_ao, \n" +
-            "    GROUP_CONCAT(DISTINCT ct.id_size) as id_size,\n" +
-            "    GROUP_CONCAT(DISTINCT ct.id_ms) as id_ms,\n" +
-            "    \n" +
->>>>>>> origin/vinhlt
             "    sp.ten_sp,\n" +
             "    sp.trang_thai,\n" +
             "    (SELECT img.images FROM images img WHERE img.id_sp = sp.id_sp ORDER BY img.id_images LIMIT 1) AS first_image,\n" +
             "    ctsp.min_gia_ban,\n" +
             "    ctsp.max_gia_ban, \n" +
-<<<<<<< HEAD
             "    ctsp.giam_gia,\n" +
             "    SUM(hdct.so_luong) AS so_luong_ban\n" +
             "FROM san_pham sp\n" +
@@ -236,7 +222,22 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "ORDER BY so_luong_ban DESC\n" +
             "LIMIT 20;", nativeQuery = true)
     List<Object[]> getTopSpBanChayForClient();
-=======
+
+    @Query(value = "SELECT \n" +
+            "    sp.id_sp,\n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_cl) as id_cl, \n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_loaisp) as id_loaisp,\n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_xx) as id_xx, \n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_tay_ao) as id_tay_ao,\n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_co_ao) as id_co_ao, \n" +
+            "    GROUP_CONCAT(DISTINCT ct.id_size) as id_size,\n" +
+            "    GROUP_CONCAT(DISTINCT ct.id_ms) as id_ms,\n" +
+            "    \n" +
+            "    sp.ten_sp,\n" +
+            "    sp.trang_thai,\n" +
+            "    (SELECT img.images FROM images img WHERE img.id_sp = sp.id_sp ORDER BY img.id_images LIMIT 1) AS first_image,\n" +
+            "    ctsp.min_gia_ban,\n" +
+            "    ctsp.max_gia_ban, \n" +
             "    ctsp.giam_gia\n" +
             "    \n" +
             "FROM san_pham sp\n" +
@@ -255,5 +256,4 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "GROUP BY sp.id_sp, ctsp.min_gia_ban, ctsp.max_gia_ban, ctsp.giam_gia\n" +
             "LIMIT 8;\n", nativeQuery = true)
     List<Object[]> getRelatedProduct(@Param("idLsp") Integer idLsp, @Param("idSp") Integer idSp);
->>>>>>> origin/vinhlt
 }
