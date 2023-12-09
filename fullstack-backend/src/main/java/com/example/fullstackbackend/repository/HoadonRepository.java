@@ -13,6 +13,11 @@ import java.util.List;
 @Repository
 
 public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
+
+
+    @Query(value = "SELECT x from HoaDon x where x.trangThai = ?1")
+    List<HoaDon> findAllByTrangThai(Integer trangThai);
+
     @Query(value = "SELECT x from HoaDon x where x.maHd = ?1")
     HoaDon findByMaHd(Integer maHD);
 

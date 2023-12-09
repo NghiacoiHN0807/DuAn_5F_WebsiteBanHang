@@ -622,7 +622,16 @@ const CartBillADM = () => {
               <div className="text-information">
                 {listHD.idKH ? (
                   <>
-                    <TextField
+                    <Typography variant="subtitle1" gutterBottom>
+                      Mã Tài Khoản: {listHD.idKH.maTaiKhoan}
+                    </Typography>
+                    <Typography variant="subtitle1" gutterBottom>
+                      Tên Khách Hàng: {`${listHD.idKH.ho} ${listHD.idKH.ten}`}
+                    </Typography>
+                    <Typography variant="subtitle1" gutterBottom>
+                      Số Điện Thoại: {listHD.idKH.sdt}
+                    </Typography>
+                    {/* <TextField
                       id="standard-multiline-flexible"
                       label="Mã Tài Khoản "
                       multiline
@@ -646,6 +655,7 @@ const CartBillADM = () => {
                       fullWidth
                       sx={{ marginTop: 2 }}
                     />
+                    <h1>{listHD.idKH.maTaiKhoan}</h1>
                     <TextField
                       id="standard-multiline-flexible"
                       label="Số Điện Thoại"
@@ -657,7 +667,7 @@ const CartBillADM = () => {
                       fullWidth
                       // value={selectedCustomerEmail}
                       sx={{ marginTop: 2 }}
-                    />
+                    /> */}
                   </>
                 ) : (
                   <Chip label="Khách Lẻ" color="primary" />
@@ -910,6 +920,7 @@ const CartBillADM = () => {
             <ModalAddKhachHang
               open={showModalsKH}
               handleClose={handleCloseAddKH}
+              getDetailHD={getDetailHD}
               // setSelectedCustomerName={setSelectedCustomerName}
               // setSelectedMaTk={setSelectedMaTk}
               // setSelectedCustomerEmail={setSelectedCustomerEmail}
