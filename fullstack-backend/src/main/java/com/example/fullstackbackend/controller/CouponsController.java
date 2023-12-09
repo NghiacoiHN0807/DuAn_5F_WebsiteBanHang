@@ -115,7 +115,7 @@ public class CouponsController {
     ResponseEntity<?> insertHd(@RequestParam("idHd") Integer idHd, @RequestParam("code") String code) {
         Optional<HoaDon> hoaDon = hoadonSevice.detail(idHd);
         if (hoaDon.isPresent()) {
-            if (hoaDon.get().getMaGiamGia() == null || !hoaDon.get().getMaGiamGia().trim().isBlank()) {
+            if (hoaDon.get().getMaGiamGia() == null || hoaDon.get().getMaGiamGia().trim().isBlank()) {
                 if (hoaDon.get().getThanhTien() == null) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                             "Không tìm thấy thành tiền!"

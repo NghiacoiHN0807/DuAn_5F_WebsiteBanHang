@@ -97,34 +97,36 @@ export default function ModalPaymentPage(props) {
       >
         <DialogTitle>{'Chọn Coupon'}</DialogTitle>
         <DialogContent dividers>
-          {coupons.map((coupon, index) => (
-            <Card
-              key={coupon.code}
-              onClick={() => handleCardClick(coupon.code)}
-              sx={{ boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', marginBottom: 2 }}
-            >
-              <CardActionArea sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                {/* You can customize the CardMedia based on your coupon data */}
-                <CardMedia component="img" height="140" image={logo5F} alt={coupon.label} />
-                <CardContent>
-                  <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap', marginRight: 2 }}>
-                    Giảm {`${coupon.phanTram} %`}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap', marginRight: 2 }}>
-                    Đơn Tối Thiểu {formatCurrency(coupon.tienToiThieu)}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap', marginRight: 2 }}>
-                    Số lượng: {coupon.soLuong}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap', marginRight: 2 }}>
-                    Đã được dùng: {coupon.soLuong - coupon.soLuongHienTai}
-                  </Typography>
-                  {/* Add more Typography components as needed */}
-                </CardContent>
-                <Radio checked={selectedValue === coupon.code} />
-              </CardActionArea>
-            </Card>
-          ))}
+          {coupons
+            .filter(coupon => coupon.trangThai === 0)
+            .map((coupon, index) => (
+              <Card
+                key={coupon.code}
+                onClick={() => handleCardClick(coupon.code)}
+                sx={{ boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', marginBottom: 2 }}
+              >
+                <CardActionArea sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  {/* You can customize the CardMedia based on your coupon data */}
+                  <CardMedia component="img" height="140" image={logo5F} alt={coupon.label} />
+                  <CardContent>
+                    <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap', marginRight: 2 }}>
+                      Giảm {`${coupon.phanTram} %`}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap', marginRight: 2 }}>
+                      Đơn Tối Thiểu {formatCurrency(coupon.tienToiThieu)}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap', marginRight: 2 }}>
+                      Số lượng: {coupon.soLuong}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'nowrap', marginRight: 2 }}>
+                      Đã được dùng: {coupon.soLuong - coupon.soLuongHienTai}
+                    </Typography>
+                    {/* Add more Typography components as needed */}
+                  </CardContent>
+                  <Radio checked={selectedValue === coupon.code} />
+                </CardActionArea>
+              </Card>
+            ))}
         </DialogContent>
 
         <DialogActions>

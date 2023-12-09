@@ -579,7 +579,7 @@ const ModelAddNewGiamGia = () => {
                                 value={value.sanPham.idSp}
                                 checked={chiTietList.indexOf(value) !== -1} // Sử dụng chiTietList thay vì checked
                                 onClick={handleToggle(value, false)} // Đặt isLeft là false để xác định là bảng phải
-                                // onChange={handleChange}
+                              // onChange={handleChange}
                               />
                             </TableCell>
                             <TableCell>{index + 1}</TableCell>
