@@ -102,6 +102,13 @@ export default function CouponsPage() {
 
     const [listData, setListData] = useState([]);
 
+    const [startDate, setStartDate] = useState('');
+
+    const [endDate, setEndDate] = useState('');
+
+    const [statusFilter, setStatusFilter] = useState('');
+
+
     // Show Data On Tables
     // const [numberPages, setNumberPages] = useState(0);
     const getListData = async () => {

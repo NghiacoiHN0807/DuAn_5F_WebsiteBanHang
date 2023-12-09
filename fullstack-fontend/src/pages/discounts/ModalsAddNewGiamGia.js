@@ -500,6 +500,7 @@ const ModelAddNewGiamGia = () => {
                     </TableHead>
                     <TableBody>
                       {left
+                        .filter((value) => value.sanPham.trangThai === 0)
                         .slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage)
                         .map((value, index) => (
                           <TableRow key={`left_${value.sanPham.idSp}`} onClick={handleToggle(value, true)}>

@@ -24,14 +24,7 @@ const postUpdateTaiKhoanKhachHang = (idTaiKhoan, maTaiKhoan, ho, ten, sdt, email
 
 const getDetailOneTK = (idTaiKhoan) => custom.get(`/tai-khoan-khach-hang/detail/${idTaiKhoan}`);
 
-
-<<<<<<< HEAD
+const deleteTaiKhoanKH = (id) =>
+  custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
 
 export { fetchAllTKKH, postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoanKH, getDetailOneTK, postSignUp, postForgetPassword };
-=======
-const deleteTaiKhoanKH = (id) =>
-    custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
-
-
-export {fetchAllTKKH, postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoanKH, getDetailOneTK,postSignUp};
->>>>>>> origin/duyvd
