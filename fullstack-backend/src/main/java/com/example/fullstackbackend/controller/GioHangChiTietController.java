@@ -3,6 +3,7 @@ package com.example.fullstackbackend.controller;
 import com.example.fullstackbackend.entity.GioHangChiTiet;
 import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
+import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.repository.HoadonRepository;
 import com.example.fullstackbackend.services.GioHangChiTietSevice;
 import com.example.fullstackbackend.services.HoadonSevice;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +61,22 @@ public class GioHangChiTietController {
         } else {
             gioHangChiTietSevice.updateGHCT(id, updateGHCT);
             return ResponseEntity.ok("Update Thành Công");
+        }
+    }
+
+    @PutMapping("update-product/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable("id") Integer id, @Valid @RequestBody GioHangChiTiet updateGHCT, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.ok("Không Được Để Trống");
+        } else {
+            return ResponseEntity.ok(gioHangChiTietSevice.detail(id).map(
+                    gioHangChiTiet -> {
+                        BigDecimal donGia = gioHangChiTiet.getIdCtsp().getGiaThucTe().multiply(new BigDecimal(updateGHCT.getSoLuong()));
+                                gioHangChiTiet.setIdCtsp(updateGHCT.getIdCtsp());
+                        gioHangChiTiet.setSoLuong(updateGHCT.getSoLuong());
+                        gioHangChiTiet.setDonGia(donGia);
+                        return gioHangChiTietSevice.update(gioHangChiTiet);
+                    }).orElseThrow(() -> new xuatXuNotFoundException(id)));
         }
     }
 

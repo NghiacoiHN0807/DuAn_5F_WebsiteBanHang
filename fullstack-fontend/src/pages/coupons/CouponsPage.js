@@ -23,6 +23,7 @@ import {
     TablePagination,
     Snackbar,
     Alert,
+    Chip,
 } from '@mui/material';
 // components
 import Iconify from '../../components/iconify';
@@ -100,6 +101,13 @@ export default function CouponsPage() {
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
     const [listData, setListData] = useState([]);
+
+    const [startDate, setStartDate] = useState('');
+
+    const [endDate, setEndDate] = useState('');
+
+    const [statusFilter, setStatusFilter] = useState('');
+
 
     // Show Data On Tables
     // const [numberPages, setNumberPages] = useState(0);
@@ -185,7 +193,22 @@ export default function CouponsPage() {
 
     // Set status of trangThai
     function mapTrangThaiToStatus(trangThai) {
-        return trangThai === 0 ? 'Hoạt động' : trangThai === 10 ? 'Ngưng hoạt động' : 'Không xác định';
+        return trangThai === 0 ? <Chip
+            label="Hoạt động"
+            color="primary"
+            variant="outlined"
+            style={{ color: 'white', backgroundColor: 'green', border: 'none' }}
+        /> : trangThai === 10 ? <Chip
+            label="Dừng hoạt động"
+            color="secondary"
+            variant="outlined"
+            style={{ color: 'white', backgroundColor: 'red', border: 'none' }}
+        /> : <Chip
+            label="Không xác định"
+            color="warning"
+            variant="outlined"
+            style={{ color: 'white', backgroundColor: 'red', border: 'none' }}
+        />;
     }
     const navigate = useNavigate();
 

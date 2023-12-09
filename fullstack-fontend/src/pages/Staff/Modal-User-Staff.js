@@ -1,4 +1,4 @@
-import { Link, Navigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 
 // icon
@@ -27,7 +27,6 @@ import {
   Alert,
 } from '@mui/material';
 // components
-import { filter } from 'lodash';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
@@ -36,8 +35,6 @@ import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
 import { taiKhoan } from '../../service/taiKhoanNhanVienService';
 import ModalDeleteDiscount from './Modal-Delete-Staff';
 // import { Navigate } from 'react-router-dom';
-
-
 
 // ----------------------------------------------------------------------
 
@@ -53,35 +50,6 @@ const TABLE_HEAD = [
 ];
 
 // ----------------------------------------------------------------------
-
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-function getComparator(order, orderBy) {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filter(array, (_user) => _user.maTaiKhoan.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
-}
 
 export default function UserStaff() {
   // Select list of users
@@ -138,7 +106,6 @@ export default function UserStaff() {
 
   // Create a new Detail Direct
   const [alertContent, setAlertContent] = useState(null);
-  const [lastGeneratedNumber, setLastGeneratedNumber] = useState(0);
   const [object, setOject] = useState([]);
 
   const handleOpenMenu = (event, row) => {
@@ -235,16 +202,10 @@ export default function UserStaff() {
     setFilterName(query); // Cập nhật trường tìm kiếm
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listData.length) : 0;
-
-  const filteredUsers = applySortFilter(listData, getComparator(order, orderBy), filterName);
-
-  const isNotFound = !filteredUsers.length && !!filterName;
-
   return (
     <>
       <Helmet>
-        <title> Tài Khoản Admin </title>
+        <title> Nhân Viên | 5F store </title>
       </Helmet>
 
       <Container>

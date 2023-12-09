@@ -500,6 +500,7 @@ const ModelAddNewGiamGia = () => {
                     </TableHead>
                     <TableBody>
                       {left
+                        .filter((value) => value.sanPham.trangThai === 0)
                         .slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage)
                         .map((value, index) => (
                           <TableRow key={`left_${value.sanPham.idSp}`} onClick={handleToggle(value, true)}>
@@ -579,7 +580,7 @@ const ModelAddNewGiamGia = () => {
                                 value={value.sanPham.idSp}
                                 checked={chiTietList.indexOf(value) !== -1} // Sử dụng chiTietList thay vì checked
                                 onClick={handleToggle(value, false)} // Đặt isLeft là false để xác định là bảng phải
-                                // onChange={handleChange}
+                              // onChange={handleChange}
                               />
                             </TableCell>
                             <TableCell>{index + 1}</TableCell>

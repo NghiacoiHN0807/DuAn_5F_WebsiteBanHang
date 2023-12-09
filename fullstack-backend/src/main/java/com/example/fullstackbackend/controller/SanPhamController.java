@@ -145,6 +145,18 @@ public class SanPhamController {
         return ResponseEntity.ok(pageSp);
     }
 
+    @GetMapping("getSpGiamGiaForClient")
+    public ResponseEntity<List<SanPhamClientDTO>> getSpGiamGiaForClient() {
+        List<SanPhamClientDTO> pageSp = sanPhamService.getSpGiamGiaForClient();
+        return ResponseEntity.ok(pageSp);
+    }
+
+    @GetMapping("getTopSpBanChayForClient")
+    public ResponseEntity<List<SanPhamClientDTO>> getTopSpBanChayForClient() {
+        List<SanPhamClientDTO> pageSp = sanPhamService.getTopSpBanChayForClient();
+        return ResponseEntity.ok(pageSp);
+    }
+
     @GetMapping("/top-sp-trend")
     public List<Object[]> getTopSpTrend() {
         return sanPhamService.topSptrend();

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import QrReader from 'react-qr-scanner';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box, Button, TextField, FormControl, InputLabel, Select, MenuItem, Snackbar, Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { chucVu } from '../../service/chucVuService';
 import { postAddTaiKhoan } from '../../service/taiKhoanNhanVienService';
+
 
 const AddTKNV = () => {
   const [maTaiKhoan, setMaTaiKhoan] = useState(null);
@@ -19,7 +21,7 @@ const AddTKNV = () => {
   const [alertContent, setAlertContent] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState('No result');
-
+  const [validation, setValidation] = useState("");
   const navigate = useNavigate();
 
   const handleSnackbarClose = (event, reason) => {
@@ -29,27 +31,41 @@ const AddTKNV = () => {
     setAlertContent(null);
   };
 
+  let res;
+
+
+
   const handleSave = async () => {
-    if (!chucVuId || !ho || !ten || !email || !sdt || !soCanCuoc || !matKhau) {
-      setAlertContent({
-        type: 'warning',
-        message: 'Vui lòng nhập đầy đủ thông tin nhân viên!',
-      });
-    } else {
-      const res = await postAddTaiKhoan(maTaiKhoan, chucVuId, ho, ten, sdt, email, soCanCuoc, matKhau, trangThai);
-      if (res && res.idTaiKhoan) {
-        const successMessage = {
-          type: 'success',
-          message: 'Thêm Nhân Viên mới Thành Công!',
-        };
-        localStorage.setItem('successMessage', JSON.stringify(successMessage));
-        navigate('/dashboard/staff');
-      } else {
-        setAlertContent({
-          type: 'error',
-          message: 'Thêm Nhân Viên thất bại!',
-        });
+    try {
+      res = await postAddTaiKhoan(
+        maTaiKhoan,
+        chucVuId,
+        ho,
+        ten,
+        sdt,
+        email,
+        soCanCuoc,
+        matKhau,
+        trangThai);
+    } catch (error) {
+      if (error.response && error.response.data) {
+        console.log(error.response.data);
+        setValidation(error.response.data);
       }
+    }
+
+    if (res && res.idTaiKhoan) {
+      const successMessage = {
+        type: 'success',
+        message: 'Thêm Nhân Viên Thành Công!',
+      };
+      localStorage.setItem('successMessage', JSON.stringify(successMessage));
+      navigate('/dashboard/staff');
+    } else {
+      setAlertContent({
+        type: 'error',
+        message: 'Thêm tài khoản thất bại!',
+      });
     }
   };
 
@@ -97,10 +113,27 @@ const AddTKNV = () => {
     setScanning(false);
   };
 
+  const goback = () => {
+    window.history.back();
+  }
+
   return (
-    <div>
-      <div style={{ textAlign: 'center', margin: '20px 0' }}>
-        <h4>Thêm</h4>
+    <div className="row row-order-management">
+      <div style={{ textAlign: "left", margin: "20px 0" }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={goback}
+          startIcon={<ArrowBackIcon />}
+        >
+          Back
+        </Button>
+      </div>
+      <div
+        className="title"
+        style={{ textAlign: "center", margin: "20px 0" }}
+      >
+        <h4>Thêm Tài Khoản</h4>
       </div>
 
       <div>
@@ -146,14 +179,14 @@ const AddTKNV = () => {
           </Select>
         </FormControl>
 
-        <TextField fullWidth margin="dense" label="Họ" value={ho} onChange={(event) => setHo(event.target.value)} />
-        <TextField fullWidth margin="dense" label="Tên" value={ten} onChange={(event) => setTen(event.target.value)} />
-        <TextField fullWidth margin="dense" label="Mật Khẩu" value={matKhau} onChange={(event) => setMatKhau(event.target.value)} />
-        <TextField fullWidth margin="dense" label="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
-        <TextField fullWidth margin="dense" label="Số Điện Thoại" onChange={(event) => setSdt(event.target.value)} />
-        <TextField fullWidth margin="dense" label="Số Căn Cước" value={soCanCuoc} onChange={(event) => setSoCanCuoc(event.target.value)} />
+        <TextField error={!!validation.ho} helperText={validation.ho} fullWidth margin="dense" label="Họ" value={ho} onChange={(event) => setHo(event.target.value)} />
+        <TextField error={!!validation.ten} helperText={validation.ten} fullWidth margin="dense" label="Tên" value={ten} onChange={(event) => setTen(event.target.value)} />
+        <TextField error={!!validation.matKhau} helperText={validation.matKhau} fullWidth margin="dense" label="Mật Khẩu" value={matKhau} onChange={(event) => setMatKhau(event.target.value)} />
+        <TextField error={!!validation.email} helperText={validation.email} fullWidth margin="dense" label="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
+        <TextField error={!!validation.sdt} helperText={validation.sdt} fullWidth margin="dense" label="Số Điện Thoại" value={sdt} onChange={(event) => setSdt(event.target.value)} />
+        <TextField error={!!validation.soCanCuoc} helperText={validation.soCanCuoc} fullWidth margin="dense" label="Số Căn Cước" value={soCanCuoc} onChange={(event) => setSoCanCuoc(event.target.value)} />
         <Button size="large" variant="contained" color="success" onClick={handleSave} style={{ marginTop: '20px' }}>
-          Thêm tài khoản nhân viên mới
+          Thêm Tài Khoản Nhân Viên
         </Button>
       </Box>
       {alertContent && (

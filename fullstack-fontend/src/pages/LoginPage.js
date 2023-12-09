@@ -9,6 +9,8 @@ import Logo from '../components/logo';
 import Iconify from '../components/iconify';
 // sections
 import { LoginForm } from '../sections/auth/login';
+import {AlertProvider} from "../layouts/dashboard/AlertContext";
+import AlertSnackbar from "../layouts/dashboard/AlertSnackbar";
 
 // ----------------------------------------------------------------------
 
@@ -44,9 +46,11 @@ export default function LoginPage() {
   const mdUp = useResponsive('up', 'md');
 
   return (
-    <>
+    <> <AlertProvider>
+      <AlertSnackbar />
+
       <Helmet>
-        <title> Login | Minimal UI </title>
+        <title> Đăng nhập | 5FStore</title>
       </Helmet>
 
       <StyledRoot>
@@ -61,7 +65,7 @@ export default function LoginPage() {
         {mdUp && (
           <StyledSection>
             <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-              Hi, Welcome Back
+             Chào Mừng Tới 5FStore
             </Typography>
             <img src="/assets/illustrations/illustration_login.png" alt="login" />
           </StyledSection>
@@ -70,29 +74,16 @@ export default function LoginPage() {
         <Container maxWidth="sm">
           <StyledContent>
             <Typography variant="h4" gutterBottom>
-              Đăng ký 5F Store
+              Đăng Nhập 5F Store
             </Typography>
 
-            <Typography variant="body2" sx={{ mb: 5 }}>
+            <Typography variant="body2" sx={{ mb: 1 }}>
               Chưa có tài khoản? {''}
-              <Link variant="subtitle2" href="/signUp" >Get started</Link>
+              <Link variant="subtitle2" href="/signUp" >Đăng Ký</Link>
             </Typography>
 
-            <Stack direction="row" spacing={2}>
-              <Button fullWidth size="large" color="inherit" variant="outlined">
-                <Iconify icon="eva:google-fill" color="#DF3E30" width={22} height={22} />
-              </Button>
 
-              <Button fullWidth size="large" color="inherit" variant="outlined">
-                <Iconify icon="eva:facebook-fill" color="#1877F2" width={22} height={22} />
-              </Button>
-
-              <Button fullWidth size="large" color="inherit" variant="outlined">
-                <Iconify icon="eva:twitter-fill" color="#1C9CEA" width={22} height={22} />
-              </Button>
-            </Stack>
-
-            <Divider sx={{ my: 3 }}>
+            <Divider sx={{ my: 1 }}>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 OR
               </Typography>
@@ -102,6 +93,7 @@ export default function LoginPage() {
           </StyledContent>
         </Container>
       </StyledRoot>
+    </AlertProvider>
     </>
   );
 }

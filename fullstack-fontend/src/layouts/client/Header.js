@@ -52,12 +52,18 @@ const SectionWithButton = styled('div')({
 const Header = () => {
   const [listData, setListData] = useState([]);
 
+  const getLocalStore = localStorage.getItem('userFormToken');
+
   const fetchData = async () => {
     try {
       const getLocalStore = localStorage.getItem('userFormToken');
-      const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
-      const getData = await listProductOnCart(authorities.idTaiKhoan);
-      setListData(getData || []);
+      // const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
+      if (getLocalStore) {
+        const authorities = JSON.parse(getLocalStore).taiKhoan;
+        const getData = await listProductOnCart(authorities.idTaiKhoan);
+        setListData(getData || []);
+      }
+      // const getData = await listProductOnCart(authorities.idTaiKhoan);
     } catch (error) {
       console.error(error);
       setListData([]);
@@ -206,10 +212,10 @@ const Header = () => {
                   <NavLink to="/client/products" className={'nav-link'}>
                     Sản phẩm
                   </NavLink>
-                  <Link to="/" className={'nav-link'}>
+                  <Link to="/client/products-sale" className={'nav-link'}>
                     Giảm Giá
                   </Link>
-                  <NavLink to="/" className={'nav-link'}>
+                  <NavLink to="/client/contact" className={'nav-link'}>
                     Về Chúng Tôi
                   </NavLink>
                 </Nav>
@@ -230,7 +236,7 @@ const Header = () => {
                       <MailIcon />
                     </StyledBadge>
                   </IconButton>
-                  <Link to="/client/cart" className={'nav-link'}>
+                  <Link to={getLocalStore ? '/client/cart' : '/client/cart-noaccount'} className={'nav-link'}>
                     <StyledBadge badgeContent={listData && listData.length} color="secondary">
                       <ShoppingCartIcon />
                     </StyledBadge>

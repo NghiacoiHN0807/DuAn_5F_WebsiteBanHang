@@ -29,11 +29,14 @@
 }
 
 .container-buy-block {
-    width: 1068px;
     position: fixed;
     z-index: 2;
     bottom: 0;
+    right: 0;
+    left: 0;
+    /* Set width to 100% */
 }
+
 
 .delete-product-btn,
 .container-product-price {
@@ -52,9 +55,7 @@
     width: auto;
 }
 
-.margin-product-cart {
-    
-}
+.margin-product-cart {}
 
 .container-product-checkbox {
     margin: 0;
@@ -77,7 +78,8 @@
 }
 
 .product-divider {
-    margin-bottom: 20px; /* Điều chỉnh khoảng cách theo ý muốn */
+    margin-bottom: 20px;
+    /* Điều chỉnh khoảng cách theo ý muốn */
 }
 
 .delete-product-btn:hover {
@@ -101,4 +103,3 @@
     color: #fff;
     border: 1px solid #000;
 }
-  

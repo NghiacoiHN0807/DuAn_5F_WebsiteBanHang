@@ -118,7 +118,7 @@ const ModalUpdateProductOnCart = (props) => {
       await updateCart(getIdHdCt, getOneCTSP, quantity, donGia);
       //   Close the modal
       setSelectedSize(null);
-      handleClose();
+      handleCloseDetai();
       setQuantity(1);
       //   Load new data on cart
       selectDataCart();
@@ -157,10 +157,29 @@ const ModalUpdateProductOnCart = (props) => {
     }
     return null;
   };
+  function formatCurrency(price) {
+    if (!price) return '0';
+
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
+  const handleCloseDetai = () => {
+    setSelectSoLuongTon([]);
+    setIsMSSelected(false);
+    setIsSizeSelected(false);
+    setSelectedMauSac(null);
+    setSelectedSize(null);
+    handleClose(); // Call the original handleClose function
+  };
   return (
     <>
       <div>
-        <Dialog open={show} onClose={handleClose} maxWidth="xl">
+        <Dialog open={show} onClose={handleCloseDetai} maxWidth="xl">
           <DialogTitle>CẬP NHẬP SẢN PHẨM</DialogTitle>
           {itemUpdateClassify.length > 0 && (
             <DialogContent>
@@ -188,7 +207,9 @@ const ModalUpdateProductOnCart = (props) => {
                     <Typography variant="subtitle1" color="text.secondary" component="div">
                       <p>Xuất Xứ: {itemUpdateClassify[0].idSp.idXx.tenNuoc}</p>
                       <p>Chất Liệu: {itemUpdateClassify[0].idSp.idCl.tenCl}</p>
-                      <p>Giá: {selectSoLuongTon.length > 0 ? selectSoLuongTon[0].giaThucTe : priceRange}</p>
+                      <p>
+                        Giá: {selectSoLuongTon.length > 0 ? formatCurrency(selectSoLuongTon[0].giaThucTe) : priceRange}
+                      </p>
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
                       <div>
@@ -279,7 +300,7 @@ const ModalUpdateProductOnCart = (props) => {
             </DialogContent>
           )}
           <DialogActions>
-            <Button onClick={handleClose}>Hủy</Button>
+            <Button onClick={handleCloseDetai}>Hủy</Button>
             <Button onClick={handleChoose}>Hoàn Tất</Button>
           </DialogActions>
         </Dialog>

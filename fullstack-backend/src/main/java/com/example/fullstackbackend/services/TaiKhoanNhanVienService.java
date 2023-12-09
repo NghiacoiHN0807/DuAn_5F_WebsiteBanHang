@@ -9,9 +9,7 @@ import java.util.Optional;
 public interface TaiKhoanNhanVienService {
     List<TaiKhoan> getAll();
 
-//    Page<TaiKhoan> phanTrang(Integer pageNo, Integer size);
-
-    List<TaiKhoan> phanTrang();
+    List<TaiKhoan> chucVu();
 
     TaiKhoan add(TaiKhoan taiKhoan);
 
@@ -25,5 +23,5 @@ public interface TaiKhoanNhanVienService {
 
     Optional<TaiKhoan> detail(Integer id);
 
-    List<TaiKhoan> chucVu();
+
 }
