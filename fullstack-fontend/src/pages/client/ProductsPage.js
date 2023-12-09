@@ -72,17 +72,19 @@ export default function ProductsPage() {
               listSP={listSP}
               onFilter={handleFilter}
             />
-
-            {/* <ProductSort /> */}
           </Stack>
         </Stack>
 
-        {displayProducts.length > 0 ? (
-          <ProductListAll products={displayProducts} sx={{ marginBottom: '50px' }} />
-        ) : (
-          <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', marginBottom: '50px' }}>
-            <SearchOffIcon sx={{ fontSize: 80 }} /> Không tìm thấy sản phẩm phù hợp!
-          </Typography>
+        {listSP.length > 0 && (
+          <div>
+            {displayProducts.length > 0 ? (
+              <ProductListAll products={displayProducts} sx={{ marginBottom: '50px' }} />
+            ) : (
+              <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', marginBottom: '50px' }}>
+                <SearchOffIcon sx={{ fontSize: 80 }} /> Không tìm thấy sản phẩm phù hợp!
+              </Typography>
+            )}
+          </div>
         )}
       </Container>
     </>

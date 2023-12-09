@@ -44,8 +44,10 @@ import {
   FormLabel,
   Backdrop,
   Chip,
+  InputAdornment,
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import SearchIcon from '@mui/icons-material/Search';
 import Iconify from '../../components/iconify';
 import { putUpdateSanPham, detailSP } from '../../service/SanPhamService';
 import { findCtspById, addColorAndSize, updateNumber, detailCTSP } from '../../service/ChiTietSPService';
@@ -57,8 +59,8 @@ import { fetchCL, detailCL, postAddChatLieu, putUpdateChatLieu } from '../../ser
 import { fetchCoAo, detailCoAo, postAddLoaiCoAo, putUpdateLoaiCoAo } from '../../service/LoaiCoAoService';
 import { fetchLSP, detailLSP, postAddLoaiSP, putUpdateLoaiSP } from '../../service/LoaiSPService';
 import { fetchTayAo, detailTayAo, postAddOngTayAo, putUpdateOngTayAo } from '../../service/OngTayAoService';
-import { fetchMS } from '../../service/MauSacService';
-import { fetchSize } from '../../service/SizeService';
+import { fetchMS, detailMS, postAddMauSac, putUpdateMauSac } from '../../service/MauSacService';
+import { fetchSize, detailSize, postAddSize, putUpdateSize } from '../../service/SizeService';
 import '../../scss/UpdateSp.scss';
 import ModalQuickAtt from './ModalQuickAtt';
 
@@ -285,7 +287,7 @@ export default function UpdateSanPham() {
     ) {
       handleAlertClick('Cập nhật thất bại!', 'danger');
     } else {
-      const trangThaiValue = listImg.length === 0 || listCTSP.length === 0 ? 9 : trangThai;
+      const trangThaiValue = listImg.length === 0 || listCTSP.length === 0 ? 9 : trangThai === 9 ? 0 : trangThai;
       const res = await putUpdateSanPham(
         idSpHttp,
         maSp,
@@ -350,16 +352,28 @@ export default function UpdateSanPham() {
     }
   }, [selectedImages, uploadImage]);
 
-  const onDrop = useCallback((acceptedFiles) => {
-    const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
-    setSelectedImages(imageFiles);
-    handleOpenBD();
+  const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
+    if (acceptedFiles.length > 0 && rejectedFiles.length === 0) {
+      const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
+      setSelectedImages(imageFiles);
+      handleOpenBD();
+    }
+    if (acceptedFiles.length === 0 && rejectedFiles.length > 0) {
+      handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
+    }
+    if (acceptedFiles.length > 0 && rejectedFiles.length > 0) {
+      const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
+      setSelectedImages(imageFiles);
+      handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
+      handleOpenBD();
+    }
   }, []);
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: 'image/*',
     multiple: true,
+    maxSize: 1024 * 1024,
   });
 
   const handlDeleteImg = async (idImg, url) => {
@@ -464,6 +478,10 @@ export default function UpdateSanPham() {
         return postAddLoaiCoAo;
       case 'Ống tay áo':
         return postAddOngTayAo;
+      case 'Màu sắc':
+        return postAddMauSac;
+      case 'Size':
+        return postAddSize;
       default:
         return emptyFunc;
     }
@@ -481,6 +499,10 @@ export default function UpdateSanPham() {
         return putUpdateLoaiCoAo;
       case 'Ống tay áo':
         return putUpdateOngTayAo;
+      case 'Màu sắc':
+        return putUpdateMauSac;
+      case 'Size':
+        return putUpdateSize;
       default:
         return emptyFunc;
     }
@@ -498,6 +520,10 @@ export default function UpdateSanPham() {
         return detailCoAo;
       case 'Ống tay áo':
         return detailTayAo;
+      case 'Màu sắc':
+        return detailMS;
+      case 'Size':
+        return detailSize;
       default:
         return emptyFunc;
     }
@@ -528,7 +554,13 @@ export default function UpdateSanPham() {
     if (phanTu.att === 'Ống tay áo') {
       setListAtt(listTayAo);
     }
-  }, [listCL, listLSP, listXX, listTayAo, listCoAo, phanTu]);
+    if (phanTu.att === 'Màu sắc') {
+      setListAtt(listMS);
+    }
+    if (phanTu.att === 'Size') {
+      setListAtt(listSize);
+    }
+  }, [listCL, listLSP, listXX, listTayAo, listCoAo, listMS, listSize, phanTu]);
 
   return (
     <>
@@ -768,10 +800,23 @@ export default function UpdateSanPham() {
 
         <Card sx={{ padding: '25px', marginTop: '15px' }}>
           <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Typography variant="h6" gutterBottom>
                 Cập nhật thuộc tính
               </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                variant="outlined"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                placeholder="Search User..."
+              />
             </Grid>
             <Grid item xs={6} style={{ textAlign: 'right' }}>
               <Button
@@ -783,40 +828,42 @@ export default function UpdateSanPham() {
               </Button>
             </Grid>
             <Grid item xs={12}>
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Màu sắc</TableCell>
-                      <TableCell>Size</TableCell>
-                      <TableCell>Giá nhập</TableCell>
-                      <TableCell>Giá bán</TableCell>
-                      <TableCell>Số lượng tồn</TableCell>
-                      <TableCell>Trạng thái</TableCell>
-                      <TableCell> </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {listCTSP.map((row) => (
-                      <TableRow key={row.idCtsp} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                        <TableCell component="th" scope="row">
-                          {row.idMs.tenMs}
-                        </TableCell>
-                        <TableCell>{row.idSize.tenSize}</TableCell>
-                        <TableCell>{formatCurrency(row.giaNhap)}</TableCell>
-                        <TableCell>{formatCurrency(row.giaBan)}</TableCell>
-                        <TableCell>{row.soLuongTon}</TableCell>
-                        <TableCell>{renderTrangThai(row.trangThai)}</TableCell>
-                        <TableCell>
-                          <IconButton aria-label="add an alarm" onClick={() => handleClickEditAtt(row.idCtsp)}>
-                            <EditIcon />
-                          </IconButton>
-                        </TableCell>
+              {listCTSP.length > 0 && (
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Màu sắc</TableCell>
+                        <TableCell>Size</TableCell>
+                        <TableCell>Giá nhập</TableCell>
+                        <TableCell>Giá bán</TableCell>
+                        <TableCell>Số lượng tồn</TableCell>
+                        <TableCell>Trạng thái</TableCell>
+                        <TableCell> </TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                      {listCTSP.map((row) => (
+                        <TableRow key={row.idCtsp} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                          <TableCell component="th" scope="row">
+                            {row.idMs.tenMs}
+                          </TableCell>
+                          <TableCell>{row.idSize.tenSize}</TableCell>
+                          <TableCell>{formatCurrency(row.giaNhap)}</TableCell>
+                          <TableCell>{formatCurrency(row.giaBan)}</TableCell>
+                          <TableCell>{row.soLuongTon}</TableCell>
+                          <TableCell>{renderTrangThai(row.trangThai)}</TableCell>
+                          <TableCell>
+                            <IconButton aria-label="add an alarm" onClick={() => handleClickEditAtt(row.idCtsp)}>
+                              <EditIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
             </Grid>
           </Grid>
         </Card>
@@ -836,16 +883,16 @@ export default function UpdateSanPham() {
                         <CardActionArea>
                           <Box position="relative">
                             <CardMedia component="img" height="200" image={item.url} alt="green iguana" />
-                            <IconButton
-                              sx={{ position: 'absolute', top: 0, right: 0 }}
-                              size="small"
-                              color="primary"
-                              onClick={() => handlDeleteImg(item.idImage, item.url)}
-                            >
-                              <DeleteIcon sx={{ color: pink[500], fontSize: 40 }} />
-                            </IconButton>
                           </Box>
                         </CardActionArea>
+                        <IconButton
+                          sx={{ position: 'absolute', top: 0, right: 0 }}
+                          size="small"
+                          color="primary"
+                          onClick={() => handlDeleteImg(item.idImage, item.url)}
+                        >
+                          <DeleteIcon sx={{ color: pink[500], fontSize: 40 }} />
+                        </IconButton>
                       </Card>
                     </Grid>
                   ))}
@@ -856,8 +903,8 @@ export default function UpdateSanPham() {
                       <div {...getRootProps()} className="dropzone">
                         <input {...getInputProps()} />
                         <p>
-                          <AddPhotoAlternateIcon sx={{ fontSize: 40 }} /> Kéo hoặc thả ảnh vô đây, hoặc click để chọn
-                          ảnh
+                          <AddPhotoAlternateIcon sx={{ fontSize: 40 }} />
+                          {'Kéo hoặc thả ảnh vô đây, hoặc click để chọn ảnh! (Lưu ý dung lượng ảnh phải <= 1 MB)'}
                         </p>
                       </div>
                     </Card>
@@ -897,45 +944,72 @@ export default function UpdateSanPham() {
         <DialogTitle id="alert-dialog-title">{'Thêm thuộc tính'}</DialogTitle>
         <DialogContent>
           <div className="listMauSac">
-            {listMS.length > 0 && (
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Màu sắc</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Màu sắc"
-                  value={mauSac}
-                  onChange={(event) => setMauSac(event.target.value)}
+            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              <Grid item xs={10}>
+                {listMS.length > 0 && (
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Màu sắc</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Màu sắc"
+                      value={mauSac}
+                      onChange={(event) => setMauSac(event.target.value)}
+                    >
+                      {listMS.map((item, index) => (
+                        <MenuItem value={item.idMs} key={index}>
+                          {item.tenMs}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+              </Grid>
+
+              <Grid item xs={1} sx={{ display: 'flex', marginTop: '4px' }}>
+                <Button
+                  variant="outlined"
+                  size="large"
+                  onClick={() => handleOpenQuickAtt('Màu sắc', 'idMs', 'maMs', 'tenMs')}
                 >
-                  {listMS.map((item, index) => (
-                    <MenuItem value={item.idMs} key={index}>
-                      {item.tenMs}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
+                  <MoreHorizIcon />
+                </Button>
+              </Grid>
+            </Grid>
           </div>
           <div className="listSize">
             <Box sx={{ display: 'flex', alignItems: 'center', pb: 1, marginTop: '50px' }}>
-              <div>
-                Size:{' '}
-                {listSize.map((item, itemIndex) => (
+              {listLSP.length > 0 && (
+                <div>
+                  Size:{' '}
+                  {listSize.map((item, itemIndex) => (
+                    <Button
+                      style={{
+                        marginRight: '4px',
+                        marginBottom: '4px',
+                      }}
+                      key={`size-button-${itemIndex}`}
+                      onClick={() => handleShowSize(item.idSize)}
+                      variant={size === item.idSize ? 'contained' : 'outlined'}
+                      value={size}
+                      size="small"
+                    >
+                      {item.tenSize}
+                    </Button>
+                  ))}
                   <Button
                     style={{
                       marginRight: '4px',
                       marginBottom: '4px',
                     }}
-                    key={`size-button-${itemIndex}`}
-                    onClick={() => handleShowSize(item.idSize)}
-                    variant={size === item.idSize ? 'contained' : 'outlined'}
-                    value={size}
                     size="small"
+                    variant="outlined"
+                    onClick={() => handleOpenQuickAtt('Size', 'idSize', 'maSize', 'tenSize')}
                   >
-                    {item.tenSize}
+                    +
                   </Button>
-                ))}
-              </div>
+                </div>
+              )}
             </Box>
           </div>
         </DialogContent>
