@@ -41,8 +41,6 @@ public class UserService implements UserDetailsService {
         return new CustomUserDetails(taiKhoan);
     }
 
-
-
     @Value("${spring.mail.username}")
     private String formMail;
 
@@ -55,6 +53,7 @@ public class UserService implements UserDetailsService {
         mailSender.send(message);
     }
 
+<<<<<<< HEAD
 
     public TaiKhoanUser forgetPassword(String mail){
 
@@ -68,6 +67,8 @@ public class UserService implements UserDetailsService {
 
     }
 
+=======
+>>>>>>> origin/duyvd
     public TaiKhoanUser add(TaiKhoanUser add) {
         ChucVu vc = new ChucVu(9,"CV03","Khách Hàng", Date.valueOf("2023-07-23"),0);
         add.setIdChucVu(vc);

@@ -8,10 +8,13 @@ import React, { useState, useEffect } from 'react';
 // icon
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faSackDollar } from '@fortawesome/free-solid-svg-icons';
+
+
 // components
 import Iconify from '../components/iconify';
-import { totalRevenue, totalInvoieces, totalTheoNgay, tyLeTraHang, tongSpDaBan } from '../service/bill-service';
-import { topSpTrending } from '../service/san-pham-service';
+import { totalRevenue, totalInvoieces, totalTheoNgay, tyLeTraHang, tongSpDaBan } from '../service/bill-service'
+import { topSpTrending } from '../service/san-pham-service'
+
 // sections
 import {
   AppTasks,
@@ -50,12 +53,13 @@ export default function DashboardAppPage() {
 
       setTotalBill(Number(res));
       setinvoieces(Number(invoiecesResponse));
+      setRate(rateResponse);
       setSpTrending(trendingResponse); // Set trending data
       setRate(Number(rateResponse));
       setheoNgay(response);
       setAllSp(Number(allSpres));
-
-      console.log(hdNgay);
+      setheoNgay(response);
+      setSpTrending(trendingResponse);  // Set trending data
     };
 
     fetchData();
@@ -69,7 +73,7 @@ export default function DashboardAppPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard | Minimal UI </title>
+        <title> Thống Kê | 5F Store </title>
       </Helmet>
 
       <Container maxWidth="xl">
@@ -79,7 +83,7 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={'ant-design:android-filled'} />
+            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={['fas', 'sack-dollar']}  />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>

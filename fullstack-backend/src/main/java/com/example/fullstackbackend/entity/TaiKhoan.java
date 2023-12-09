@@ -59,9 +59,11 @@ public class TaiKhoan {
     private String email;
 
     @Column(name = "mat_khau")
+    @NotEmpty(message = "Không Được Để Trống Mật Khẩu")
     private String matKhau;
 
     @Column(name = "so_can_cuoc")
+    @NotEmpty(message = "Không Được Để Trống Số Căn Cước")
     private String soCanCuoc;
 
     @Column(name = "trang_thai")
