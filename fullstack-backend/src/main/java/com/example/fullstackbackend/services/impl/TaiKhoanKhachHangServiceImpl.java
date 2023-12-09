@@ -2,7 +2,9 @@ package com.example.fullstackbackend.services.impl;
 
 
 import com.example.fullstackbackend.entity.ChucVu;
+import com.example.fullstackbackend.entity.GioHang;
 import com.example.fullstackbackend.entity.TaiKhoan;
+import com.example.fullstackbackend.repository.GioHangReponsitory;
 import com.example.fullstackbackend.repository.TaiKhoanKhachHangRepository;
 import com.example.fullstackbackend.services.TaiKhoanKhachHangSevice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
 
     @Autowired
     private TaiKhoanKhachHangRepository TaiKhoanKhachHangRepository;
+
+    @Autowired
+    private GioHangReponsitory gioHangReponsitory;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -66,6 +71,7 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
         String PassEncode = encoder.encode(pass);
         sendEmail(add.getEmail(), pass);
         add.setMatKhau(PassEncode);
+
         return TaiKhoanKhachHangRepository.save(add);
     }
 

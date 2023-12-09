@@ -1,4 +1,4 @@
-import custom from './custom-axios';
+import custom from "./custom-axios";
 
 const fetchAllSP = (page) => custom.get(`/san-pham/view-all?p=${page}`); // Call API
 
@@ -65,7 +65,10 @@ const putUpdateSanPham = (
 });
 
 const topSpTrending = () => custom.get('/san-pham/top-sp-trend'); // Thay đổi URL dựa trên định nghĩa URL API của bạn
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/longth
 
 export {
   fetchAllSP,

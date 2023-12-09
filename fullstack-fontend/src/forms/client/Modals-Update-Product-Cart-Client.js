@@ -59,12 +59,12 @@ const ModalUpdateProductOnCartClient = (props) => {
   const handleShowMS = (mauSac) => {
     const checkSoLuong = Array.isArray(itemUpdateClassify)
       ? [
-          ...new Set(
-            itemUpdateClassify.filter(
-              (item) => item.idMs.tenMs === mauSac.idMs.tenMs && item.idSize.tenSize === selectedSize
-            )
-          ),
-        ]
+        ...new Set(
+          itemUpdateClassify.filter(
+            (item) => item.idMs.tenMs === mauSac.idMs.tenMs && item.idSize.tenSize === selectedSize
+          )
+        ),
+      ]
       : [];
     console.log('checkSoLuong:', checkSoLuong);
 
@@ -198,12 +198,15 @@ const ModalUpdateProductOnCartClient = (props) => {
               <Card sx={{ display: 'flex' }}>
                 <Carousel interval={null} style={{ maxWidth: 500, margin: '0 auto' }}>
                   <Carousel.Item>
-                    <CardMedia
-                      component="img"
-                      sx={{ maxWidth: 250, height: '100%' }}
-                      image={images && images[0].url}
-                      alt={images && images[0].url}
-                    />
+                    {images.length > 0 && (
+                      <CardMedia
+                        component="img"
+                        sx={{ maxWidth: 250, height: '100%' }}
+                        image={images && images[0].url}
+                        alt={images && images[0].url}
+                      />
+                    )}
+
                   </Carousel.Item>
                 </Carousel>
 
@@ -241,35 +244,35 @@ const ModalUpdateProductOnCartClient = (props) => {
                         Màu Sắc:{' '}
                         {availableColors.length > 0
                           ? // Hiển thị danh sách màu sắc từ availableColors
-                            availableColors.map((mauSac, msIndex) => (
-                              <Button
-                                style={{
-                                  marginRight: '4px',
-                                  marginBottom: '4px',
-                                }}
-                                key={`size-button-${msIndex}`}
-                                onClick={() => handleShowMS(mauSac)}
-                                variant={selectedMauSac === mauSac.idMs.tenMs ? 'contained' : 'outlined'}
-                                size="small"
-                              >
-                                {mauSac.idMs.tenMs}
-                              </Button>
-                            ))
+                          availableColors.map((mauSac, msIndex) => (
+                            <Button
+                              style={{
+                                marginRight: '4px',
+                                marginBottom: '4px',
+                              }}
+                              key={`size-button-${msIndex}`}
+                              onClick={() => handleShowMS(mauSac)}
+                              variant={selectedMauSac === mauSac.idMs.tenMs ? 'contained' : 'outlined'}
+                              size="small"
+                            >
+                              {mauSac.idMs.tenMs}
+                            </Button>
+                          ))
                           : // Hiển thị dữ liệu từ dataDetail
-                            uniqueMS.map((item, index) => (
-                              <Button
-                                style={{
-                                  marginRight: '4px',
-                                  marginBottom: '4px',
-                                }}
-                                key={`size-button-${index}`}
-                                onClick={() => handleShowMS(item)}
-                                variant={selectedMauSac === item ? 'contained' : 'outlined'}
-                                size="small"
-                              >
-                                {item}
-                              </Button>
-                            ))}
+                          uniqueMS.map((item, index) => (
+                            <Button
+                              style={{
+                                marginRight: '4px',
+                                marginBottom: '4px',
+                              }}
+                              key={`size-button-${index}`}
+                              onClick={() => handleShowMS(item)}
+                              variant={selectedMauSac === item ? 'contained' : 'outlined'}
+                              size="small"
+                            >
+                              {item}
+                            </Button>
+                          ))}
                       </div>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>

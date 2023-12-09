@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 // @mui
-import { Grid } from '@mui/material';
-import ShopProductCard from './ProductCard';
+import { Grid, Typography } from '@mui/material';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
+import ShopProductCard from './ProductCardADM';
 import { findById } from '../../../service/BillSevice';
 import ModalDetailProduct from '../../../forms/Modal-Detail-SanPham';
 
@@ -28,21 +29,38 @@ export default function ProductListADM({ products, ...other }) {
   };
   return (
     <>
-      <Grid container spacing={3} {...other}>
-        {products.map((product) => (
-          <Grid key={product.id} item xs={12} sm={6} md={3} onClick={() => handleChoose(product.id, product.cover)}>
-            <ShopProductCard product={product} />
+      {products.length > 0 ? (
+        <div>
+          <Grid container spacing={3} {...other}>
+            {products.map((product) => (
+              <Grid
+                key={product.idSp}
+                item
+                xs={12}
+                sm={6}
+                md={3}
+                onClick={() => handleChoose(product.idSp, product.url)}
+              >
+                <ShopProductCard product={product} />
+              </Grid>
+            ))}
           </Grid>
-        ))}
-      </Grid>
-      <ModalDetailProduct
-        show={showModalDetail}
-        handleCloseDetai={handleCloseDetail}
-        dataDetail={dataDetail}
-        selectDataCart={products[0].selectDataCart}
-        DataCart={products[0].DataCart}
-        listImages={listImages}
-      />
+          <ModalDetailProduct
+            show={showModalDetail}
+            handleCloseDetai={handleCloseDetail}
+            dataDetail={dataDetail}
+            selectDataCart={products[0].selectDataCart}
+            DataCart={products[0].DataCart}
+            listImages={listImages}
+          />
+        </div>
+      ) : (
+        <div>
+          <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', marginBottom: '50px' }}>
+            <SearchOffIcon sx={{ fontSize: 80 }} /> Không tìm thấy sản phẩm phù hợp!
+          </Typography>
+        </div>
+      )}
     </>
   );
 }

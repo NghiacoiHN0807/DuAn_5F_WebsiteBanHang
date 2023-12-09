@@ -8,11 +8,11 @@ import { ProductSort, ProductListAll, ProductfilterSB } from '../../sections/@da
 // mock
 
 //
-import { fetchSpForClient } from '../../service/SanPhamService';
+import { getSpGiamGiaForClient } from '../../service/SanPhamService';
 
 // ----------------------------------------------------------------------
 
-export default function ProductsPage() {
+export default function SaleProductsPage() {
   const [listSP, setListSP] = useState([]);
 
   const [openFilter, setOpenFilter] = useState(false);
@@ -27,13 +27,15 @@ export default function ProductsPage() {
 
   const getListData = async () => {
     try {
-      const res = await fetchSpForClient();
+      const res = await getSpGiamGiaForClient();
       console.log('Check res: ', res);
       setListSP(res);
     } catch (error) {
       console.error('Error in list bill: ', error);
     }
   };
+
+
   useEffect(() => {
     getListData();
   }, []);
@@ -60,7 +62,7 @@ export default function ProductsPage() {
 
       <Container>
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Danh sách sản phẩm
+          Products Sale
         </Typography>
 
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>

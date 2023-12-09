@@ -53,6 +53,19 @@ public class UserService implements UserDetailsService {
         mailSender.send(message);
     }
 
+
+    public TaiKhoanUser forgetPassword(String mail){
+
+            Optional<TaiKhoanUser> tk = findByEmail(mail);
+            String pass = TaiKhoan.generateRandomPassword();
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            String PassEncode = encoder.encode(pass);
+            sendEmail(mail, pass);
+            tk.get().setMatKhau(PassEncode);
+            return userRepository.save(tk.get());
+
+    }
+
     public TaiKhoanUser add(TaiKhoanUser add) {
         ChucVu vc = new ChucVu(9,"CV03","Khách Hàng", Date.valueOf("2023-07-23"),0);
         add.setIdChucVu(vc);
@@ -71,6 +84,9 @@ public class UserService implements UserDetailsService {
 
     public Boolean checkMailExists(String email) {
         return userRepository.existsByEmailAllIgnoreCase(email);
+    }
+    public Boolean checkBan(String email) {
+        return userRepository.checkBan(email);
     }
 
 }

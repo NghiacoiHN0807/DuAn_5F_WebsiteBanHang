@@ -67,17 +67,12 @@ export default function ShopProductCard({ product }) {
             Sale
           </Label>
         )}
-        <StyledProductImg
-          alt={tenSp}
-          src={url}
-          sx={{ height: '250px', cursor: 'pointer' }}
-          onClick={() => hanldOpenDetail(idSp)}
-        />
+        <StyledProductImg alt={tenSp} src={url} sx={{ height: '250px', cursor: 'pointer' }} />
       </Box>
 
       <Stack spacing={2} sx={{ p: 3 }}>
         <Link color="inherit" underline="hover">
-          <Typography variant="subtitle2" noWrap onClick={() => hanldOpenDetail(idSp)} sx={{ cursor: 'pointer' }}>
+          <Typography variant="subtitle2" noWrap>
             {tenSp}
           </Typography>
         </Link>

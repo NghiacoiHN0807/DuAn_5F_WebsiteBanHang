@@ -8,7 +8,9 @@ import useResponsive from '../hooks/useResponsive';
 import Logo from '../components/logo';
 import Iconify from '../components/iconify';
 // sections
-import { LoginForm } from '../sections/auth/login';
+
+// eslint-disable-next-line import/named
+import {SignUpForm} from "../sections/auth/signUp";
 import {AlertProvider} from "../layouts/dashboard/AlertContext";
 import AlertSnackbar from "../layouts/dashboard/AlertSnackbar";
 
@@ -42,15 +44,16 @@ const StyledContent = styled('div')(({ theme }) => ({
 
 // ----------------------------------------------------------------------
 
-export default function LoginPage() {
+export default function SignUpPage() {
   const mdUp = useResponsive('up', 'md');
 
   return (
-    <> <AlertProvider>
-      <AlertSnackbar />
+    <>
+      <AlertProvider>
+        <AlertSnackbar />
 
       <Helmet>
-        <title> Đăng nhập | 5FStore</title>
+        <title> Đăng Ký Tài Khoản  </title>
       </Helmet>
 
       <StyledRoot>
@@ -65,7 +68,7 @@ export default function LoginPage() {
         {mdUp && (
           <StyledSection>
             <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
-             Chào Mừng Tới 5FStore
+              Chào Mừng Tới 5FStore
             </Typography>
             <img src="/assets/illustrations/illustration_login.png" alt="login" />
           </StyledSection>
@@ -73,27 +76,11 @@ export default function LoginPage() {
 
         <Container maxWidth="sm">
           <StyledContent>
-            <Typography variant="h4" gutterBottom>
-              Đăng Nhập 5F Store
-            </Typography>
-
-            <Typography variant="body2" sx={{ mb: 1 }}>
-              Chưa có tài khoản? {''}
-              <Link variant="subtitle2" href="/signUp" >Đăng Ký</Link>
-            </Typography>
-
-
-            <Divider sx={{ my: 1 }}>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                OR
-              </Typography>
-            </Divider>
-
-            <LoginForm />
+            <SignUpForm />
           </StyledContent>
         </Container>
       </StyledRoot>
-    </AlertProvider>
+      </AlertProvider>
     </>
   );
 }

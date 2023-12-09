@@ -358,7 +358,7 @@ export default function Cart() {
                       ))}
                   </div>
                 </div>
-                <div className="container-buy-block box-shadow">
+                <div className="container container-buy-block box-shadow">
                   <div className="container-voucher-block">
                     <div className="container-voucher">
                       <i className="fa-solid fa-clipboard-list voucher-icon" />

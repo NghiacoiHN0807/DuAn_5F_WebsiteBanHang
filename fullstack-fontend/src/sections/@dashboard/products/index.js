@@ -10,3 +10,6 @@ export { default as ProductFilterSidebar } from './ProductFilterSidebar';
 export { default as ProductCardAll } from './ProductCardAll';
 export { default as ProductListAll } from './ProductListAll';
 export { default as ProductfilterSB } from './ProductFilterSB';
+
+// export for ADM
+export { default as ProductCardADM } from './ProductCardADM';
