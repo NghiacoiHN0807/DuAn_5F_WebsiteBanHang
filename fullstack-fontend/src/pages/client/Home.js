@@ -38,7 +38,7 @@ const Home = () => {
   const getListSPBanChay = async () => {
     try {
       const res = await getTopSpBanChayForClient();
-      console.log('Check res: ', res);
+      console.log('getListSPBanChay ', res);
       setListSPBanChay(res);
     } catch (error) {
       console.error('Error in list bill: ', error);
@@ -75,34 +75,49 @@ const Home = () => {
 
   const navigate = useNavigate();
   // Format thanhTien
-  const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+  function formatCurrency(price) {
+    if (!price) return "0";
+
+    const formatter = new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
+
+  function formatCurrencyNull(price) {
+    if (!price) return "";
+
+    const formatter = new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
 
   const handleChoose = async (id, cover) => {
     console.log('HIHIHI', cover, id);
     navigate(`/client/detail/${id}`);
   };
 
-  const PRODUCTS = listData.map((item, index) => {
+  const PRODUCTS = listSPBanChay.map((item, index) => {
     const setIndex = index + 1;
-    const imagesArray = item[0].split(',');
-    const firstImage = imagesArray[0];
-    const arrayPrice = item[4].split(',');
-    const price = arrayPrice.map((price) => parseFloat(price));
-    // find max and min of price
-    const minPrice = formatCurrency(Math.min(...price));
-    const maxPrice = formatCurrency(Math.max(...price));
     // Select price
-    const priceRange = minPrice === maxPrice ? minPrice : `${minPrice} ${maxPrice}`;
+    const priceRange = item.giaMin === item.giaThucTe ? null : item.giaMin;
 
     // const PRODUCT_COLOR = ['#00AB55', '#000000', '#FFFFFF', '#FFC0CB', '#FF4842', '#1890FF', '#94D82D', '#FFC107'];
     const PRODUCT_COLOR = ['#000000', '#FFC0CB', '#94D82D'];
 
     return {
-      id: item[1],
-      cover: firstImage,
-      name: item[3],
-      price: formatCurrency(priceRange),
-      priceSale: formatCurrency(item[1]),
+      id: item.idSp,
+      cover: item.url,
+      name: item.tenSp,
+      price: item.giaMin,
+      priceSale: priceRange,
       colors:
         (setIndex === 1 && PRODUCT_COLOR.slice(0, 2)) ||
         (setIndex === 2 && PRODUCT_COLOR.slice(1, 3)) ||
@@ -171,7 +186,7 @@ const Home = () => {
                               textDecoration: 'line-through',
                             }}
                           >
-                            {formatCurrency(product.priceSale) && formatCurrency(product.priceSale)}
+                            {formatCurrencyNull(product.priceSale) && formatCurrencyNull(product.priceSale)}
                           </Typography>
                           &nbsp;
                           {formatCurrency(product.price)}
@@ -240,18 +255,6 @@ const Home = () => {
         </div>
         <div className="text">
           <p>Có Lẽ Bạn Đang Mong Chờ</p>
-          <h5>MỘT SỐ SẢN PHẨM BÁN CHẠY</h5>
-        </div>
-        <div className="container">
-          {listSPBanChay.length > 0 ? (
-            <ProductListAll products={listSPBanChay} sx={{ marginBottom: '50px' }} />
-          ) : (
-            <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', marginBottom: '50px' }}>
-              <SearchOffIcon sx={{ fontSize: 80 }} /> Không tìm thấy sản phẩm phù hợp!
-            </Typography>
-          )}
-        </div>
-        <div className="text">
           <h5>MỘT SỐ SẢN PHẨM GIẢM GIÁ</h5>
         </div>
         <div className="container">
