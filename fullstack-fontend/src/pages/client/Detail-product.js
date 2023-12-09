@@ -1,14 +1,23 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../../scss/detail-client.scss';
-import { Carousel } from 'react-bootstrap';
+import { Carousel, Row } from 'react-bootstrap';
 import CardMedia from '@mui/material/CardMedia';
-import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
+
+import { Alert, Box, Button, Container, Grid, Snackbar, Typography } from '@mui/material';
 // utils
 // Service
+
 import { listImg } from '../../service/client/Detail-Product';
 import { findById } from '../../service/BillSevice';
+<<<<<<< HEAD
 import { addProductOnCart, listProductOnCart } from '../../service/client/Detail-Cart';
+=======
+import { addProductOnCart } from '../../service/client/Detail-Cart';
+import { getRelatedSp } from '../../service/SanPhamService';
+import { ProductListAll } from '../../sections/@dashboard/products';
+import ShopProductCard from '../../sections/@dashboard/products/ProductCardAll';
+>>>>>>> origin/vinhlt
 
 const DetailProduct = () => {
   // DetailProduct.propTypes = {
@@ -27,7 +36,13 @@ const DetailProduct = () => {
   const [availableColors, setAvailableColors] = useState([]);
   const [selectSoLuongTon, setSelectSoLuongTon] = useState([]);
   const [uniqueSizesHi, setUniqueSizes] = useState([]);
+<<<<<<< HEAD
   const [price, setPrice] = useState('');
+=======
+  // get id of loai sp lien quan
+  const [listLSP, setListLSP] = useState([]);
+
+>>>>>>> origin/vinhlt
   // Select detail product
   const param = useParams();
   const idHdParam = param.id;
@@ -36,6 +51,7 @@ const DetailProduct = () => {
     try {
       const getOneSP = await findById(idHdParam);
       const getOneSP1 = await listImg(idHdParam);
+<<<<<<< HEAD
 
       const giaThucTe = Array.isArray(getOneSP) ? [...new Set(getOneSP.map((item) => item.giaThucTe))] : [];
 
@@ -50,8 +66,12 @@ const DetailProduct = () => {
       setPrice(priceRange);
       console.log('getOneSP: ', getOneSP);
       console.log('getOneSP1: ', getOneSP1);
+=======
+>>>>>>> origin/vinhlt
       setDetailProduct(getOneSP);
       setDetailImg(getOneSP1);
+      const getListLQ = await getRelatedSp(getOneSP[0].idSp.idLsp.idLoaisp, getOneSP[0].idSp.idSp);
+      setListLSP(getListLQ);
     } catch (e) {
       console.error(e);
     }
@@ -205,6 +225,36 @@ const DetailProduct = () => {
     });
 
     return formatter.format(price);
+  }
+
+  // code lon xao
+  const itemsPerSlide = 4; // Number of cards per slide
+
+  const numSlides = Math.ceil(listLSP.length / itemsPerSlide);
+
+  const slides = [];
+  for (let i = 0; i < numSlides; i += 1) {
+    const start = i * itemsPerSlide;
+    const end = (i + 1) * itemsPerSlide;
+
+    const slideProducts = listLSP.slice(start, end);
+    const slide = (
+      <Carousel.Item key={i}>
+        <Container>
+          <Row>
+            <Grid container spacing={3}>
+              {slideProducts.map((product, index) => (
+                <Grid key={index} item xs={12} sm={6} md={3}>
+                  <ShopProductCard product={product} />
+                </Grid>
+              ))}
+            </Grid>
+          </Row>
+        </Container>
+      </Carousel.Item>
+    );
+
+    slides.push(slide);
   }
 
   return (
@@ -395,244 +445,19 @@ const DetailProduct = () => {
           hãy nhắn cho shop liền nha 3 shop rất biết ơn nếu bạn làm điều đó ạ 3
         </p>
       </div>
-      <div className="container d-flex justify-content-center mt-50 mb-50">
-        <div className="row">
-          <div className="col-md-4 mt-2">
-            <div className="card">
-              <div className="card-body">
-                <div className="card-img-actions">
-                  <img
-                    src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                    className="card-img img-fluid"
-                    width={96}
-                    height={350}
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="card-body bg-light text-center">
-                <div className="mb-2">
-                  <h6 className="font-weight-semibold mb-2">
-                    <a href="#" className="text-default mb-2" data-abc="true">
-                      Toshiba Notebook with 500GB HDD &amp; 8GB RAM
-                    </a>
-                  </h6>
-                  <a href="#" className="text-muted" data-abc="true">
-                    Laptops &amp; Notebooks
-                  </a>
-                </div>
-                <h3 className="mb-0 font-weight-semibold">$250.99</h3>
-                <div>
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                </div>
-                <div className="text-muted mb-3">34 reviews</div>
-                <button type="button" className="btn bg-cart">
-                  <i className="fa fa-cart-plus mr-2" />
-                  <div className="buy">Mua ngay</div>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4 mt-2">
-            <div className="card">
-              <div className="card-body">
-                <div className="card-img-actions">
-                  <img
-                    src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                    className="card-img img-fluid"
-                    width={96}
-                    height={350}
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="card-body bg-light text-center">
-                <div className="mb-2">
-                  <h6 className="font-weight-semibold mb-2">
-                    <a href="#" className="text-default mb-2" data-abc="true">
-                      Toshiba Notebook with 500GB HDD &amp; 8GB RAM
-                    </a>
-                  </h6>
-                  <a href="#" className="text-muted" data-abc="true">
-                    Laptops &amp; Notebooks
-                  </a>
-                </div>
-                <h3 className="mb-0 font-weight-semibold">$250.99</h3>
-                <div>
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                </div>
-                <div className="text-muted mb-3">34 reviews</div>
-                <button type="button" className="btn bg-cart">
-                  <i className="fa fa-cart-plus mr-2" />
-                  <div className="buy">Mua ngay</div>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4 mt-2">
-            <div className="card">
-              <div className="card-body">
-                <div className="card-img-actions">
-                  <img
-                    src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                    className="card-img img-fluid"
-                    width={96}
-                    height={350}
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="card-body bg-light text-center">
-                <div className="mb-2">
-                  <h6 className="font-weight-semibold mb-2">
-                    <a href="#" className="text-default mb-2" data-abc="true">
-                      Toshiba Notebook with 500GB HDD &amp; 8GB RAM
-                    </a>
-                  </h6>
-                  <a href="#" className="text-muted" data-abc="true">
-                    Laptops &amp; Notebooks
-                  </a>
-                </div>
-                <h3 className="mb-0 font-weight-semibold">$250.99</h3>
-                <div>
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                </div>
-                <div className="text-muted mb-3">34 reviews</div>
-                <button type="button" className="btn bg-cart">
-                  <i className="fa fa-cart-plus mr-2" />
-                  <div className="buy">Mua ngay</div>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4 mt-2">
-            <div className="card">
-              <div className="card-body">
-                <div className="card-img-actions">
-                  <img
-                    src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                    className="card-img img-fluid"
-                    width={96}
-                    height={350}
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="card-body bg-light text-center">
-                <div className="mb-2">
-                  <h6 className="font-weight-semibold mb-2">
-                    <a href="#" className="text-default mb-2" data-abc="true">
-                      Toshiba Notebook with 500GB HDD &amp; 8GB RAM
-                    </a>
-                  </h6>
-                  <a href="#" className="text-muted" data-abc="true">
-                    Laptops &amp; Notebooks
-                  </a>
-                </div>
-                <h3 className="mb-0 font-weight-semibold">$250.99</h3>
-                <div>
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                </div>
-                <div className="text-muted mb-3">34 reviews</div>
-                <button type="button" className="btn bg-cart">
-                  <i className="fa fa-cart-plus mr-2" />
-                  <div className="buy">Mua ngay</div>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4 mt-2">
-            <div className="card">
-              <div className="card-body">
-                <div className="card-img-actions">
-                  <img
-                    src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                    className="card-img img-fluid"
-                    width={96}
-                    height={350}
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="card-body bg-light text-center">
-                <div className="mb-2">
-                  <h6 className="font-weight-semibold mb-2">
-                    <a href="#" className="text-default mb-2" data-abc="true">
-                      Toshiba Notebook with 500GB HDD &amp; 8GB RAM
-                    </a>
-                  </h6>
-                  <a href="#" className="text-muted" data-abc="true">
-                    Laptops &amp; Notebooks
-                  </a>
-                </div>
-                <h3 className="mb-0 font-weight-semibold">$250.99</h3>
-                <div>
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                </div>
-                <div className="text-muted mb-3">34 reviews</div>
-                <button type="button" className="btn bg-cart">
-                  <i className="fa fa-cart-plus mr-2" />
-                  <div className="buy">Mua ngay</div>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4 mt-2">
-            <div className="card">
-              <div className="card-body">
-                <div className="card-img-actions">
-                  <img
-                    src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                    className="card-img img-fluid"
-                    width={96}
-                    height={350}
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="card-body bg-light text-center">
-                <div className="mb-2">
-                  <h6 className="font-weight-semibold mb-2">
-                    <a href="#" className="text-default mb-2" data-abc="true">
-                      Toshiba Notebook with 500GB HDD &amp; 8GB RAM
-                    </a>
-                  </h6>
-                  <a href="#" className="text-muted" data-abc="true">
-                    Laptops &amp; Notebooks
-                  </a>
-                </div>
-                <h3 className="mb-0 font-weight-semibold">$250.99</h3>
-                <div>
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                </div>
-                <div className="text-muted mb-3">34 reviews</div>
-                <button type="button" className="btn bg-cart">
-                  <i className="fa fa-cart-plus mr-2" />
-                  <div className="buy">Mua ngay</div>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div id="cription">
+        <Typography variant="h4" gutterBottom sx={{ marginBottom: '20px' }}>
+          Sản phẩm liên quan
+        </Typography>
+        {listLSP.length <= 4 ? (
+          <ProductListAll products={listLSP} />
+        ) : (
+          <Carousel data-bs-theme="dark" interval={5000}>
+            {slides}
+          </Carousel>
+        )}
       </div>
+
       {alertContent && (
         <Snackbar
           open

@@ -186,9 +186,15 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
+<<<<<<< HEAD
     public List<SanPhamClientDTO> getSpGiamGiaForClient() {
         List<SanPhamClientDTO> dtos = new ArrayList<>();
         for (Object[] row : sanphamRepository.getSpGiamGiaForClient()) {
+=======
+    public List<SanPhamClientDTO> relatedProduct(Integer idLsp, Integer idSp) {
+        List<SanPhamClientDTO> dtos = new ArrayList<>();
+        for (Object[] row : sanphamRepository.getRelatedProduct(idLsp, idSp)) {
+>>>>>>> origin/vinhlt
             SanPhamClientDTO spCustom = new SanPhamClientDTO();
             spCustom.setIdSp((Integer) row[0]);
             spCustom.setChatLieus((String) row[1]);
@@ -212,6 +218,7 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
+<<<<<<< HEAD
     public List<SanPhamClientDTO> getTopSpBanChayForClient() {
         List<SanPhamClientDTO> dtos = new ArrayList<>();
         for (Object[] row : sanphamRepository.getTopSpBanChayForClient()) {
@@ -239,6 +246,8 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
+=======
+>>>>>>> origin/vinhlt
     public List<Object[]> topSptrend() {
         return sanphamRepository.topSptrending();
     }

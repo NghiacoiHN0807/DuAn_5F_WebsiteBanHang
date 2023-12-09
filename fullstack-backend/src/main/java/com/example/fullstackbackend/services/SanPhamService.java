@@ -44,7 +44,12 @@ public interface SanPhamService {
 
     List<SanPhamDTO> getSanPhamDetails();
 
+<<<<<<< HEAD
     List<SanPhamClientDTO> getSpGiamGiaForClient();
 
     List<SanPhamClientDTO> getTopSpBanChayForClient();
+=======
+    List<SanPhamClientDTO> relatedProduct(Integer idLsp, Integer idSp);
+
+>>>>>>> origin/vinhlt
 }
