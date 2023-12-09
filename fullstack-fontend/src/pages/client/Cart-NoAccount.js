@@ -25,7 +25,7 @@ const StyledProductImg = styled('img')({
   position: 'absolute',
 });
 
-export default function Cart() {
+export default function CartNoAccount() {
   // Select detail product
   const [images, setImages] = useState({});
   const [productOnCart, setProductOnCart] = useState([]);
@@ -68,49 +68,35 @@ export default function Cart() {
   }, [getDetail]);
 
   const [quantity, setQuantity] = useState(1);
-  const [currentItemId, setCurrentItemId] = useState(null);
 
   const handleDecreaseQuantity = (item) => {
     console.log('item: ', item);
     if (item.soLuong > 1) {
       setQuantity(item.soLuong - 1);
-      setCurrentItemId(item.idCtsp.idCtsp);
     }
   };
 
   const handleIncreaseQuantity = (item) => {
     console.log('item: ', item);
-    setCurrentItemId(item.idCtsp.idCtsp);
     setQuantity(item.soLuong + 1);
   };
 
   useEffect(() => {
-    const updateProductOnCart = async () => {
-      if (currentItemId !== null) {
-        try {
-          await upadteProductOnCart(currentItemId, quantity);
-          setCurrentItemId(null);
-          getDetail();
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    };
+    const updateProductOnCart = async () => {};
     updateProductOnCart();
-  }, [quantity, currentItemId, getDetail]);
+  }, [quantity]);
 
   const [alertContent, setAlertContent] = useState(null);
 
   const handleDeleteProduct = async (item) => {
-    try {
-      await deleteProductOnCart(item.idGhct);
-      setAlertContent({
-        type: 'success',
-        message: 'Đã Xóa Sản Phẩm',
-      });
+    const currentCart = JSON.parse(localStorage.getItem('cartProduct'));
+    console.log('itemdfghjkl:', item);
+
+    if (currentCart && currentCart[item.idCtsp.idCtsp]) {
+      delete currentCart[item.idCtsp.idCtsp];
+      localStorage.setItem('cartProduct', JSON.stringify(currentCart));
+      // Cập nhật state hoặc hiển thị thông báo thành công
       getDetail();
-    } catch (error) {
-      console.error(error);
     }
   };
 
