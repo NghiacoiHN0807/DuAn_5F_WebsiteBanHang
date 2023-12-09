@@ -7,14 +7,8 @@ import { useNavigate } from 'react-router-dom';
 
 // Service
 import { listImg } from '../../service/client/Detail-Product';
-import {
-  deleteProductOnCart,
-  listProductOnCart,
-  upadteProductOnCart,
-  postAddBillAddBill,
-  postAddDirectClient,
-} from '../../service/client/Detail-Cart';
-import ModalUpdateProductOnCartClient from '../../forms/client/Modals-Update-Product-Cart-Client';
+import { listProductOnCart, postAddBillAddBill, postAddDirectClient } from '../../service/client/Detail-Cart';
+import ModalUpdateProductOnCartClientNoAccount from '../../forms/client/Modals-Update-Product-Cart-Client-NoAccount';
 import { findById } from '../../service/BillSevice';
 
 const StyledProductImg = styled('img')({
@@ -57,7 +51,6 @@ export default function CartNoAccount() {
       const imgDataArray = await Promise.all(productId.map((productId) => listImg(productId)));
 
       setImages(imgDataArray);
-      console.log('imgData: ', imgDataArray);
     } catch (e) {
       console.error(e);
     }
@@ -73,12 +66,27 @@ export default function CartNoAccount() {
     console.log('item: ', item);
     if (item.soLuong > 1) {
       setQuantity(item.soLuong - 1);
+      const updatedCart = { ...currentCart };
+      const getGia = productOnCart.find((i) => i.idCtsp.idCtsp === item.idCtsp.idCtsp);
+
+      updatedCart[item.idCtsp.idCtsp].soLuong -= 1;
+      updatedCart[item.idCtsp.idCtsp].donGia = getGia.idCtsp.giaThucTe * updatedCart[item.idCtsp.idCtsp].soLuong;
+
+      localStorage.setItem('cartProduct', JSON.stringify(updatedCart));
+      getDetail();
     }
   };
 
   const handleIncreaseQuantity = (item) => {
-    console.log('item: ', item);
     setQuantity(item.soLuong + 1);
+    const updatedCart = { ...currentCart };
+    const getGia = productOnCart.find((i) => i.idCtsp.idCtsp === item.idCtsp.idCtsp);
+
+    updatedCart[item.idCtsp.idCtsp].soLuong += 1;
+    updatedCart[item.idCtsp.idCtsp].donGia = getGia.idCtsp.giaThucTe * updatedCart[item.idCtsp.idCtsp].soLuong;
+
+    localStorage.setItem('cartProduct', JSON.stringify(updatedCart));
+    getDetail();
   };
 
   useEffect(() => {
@@ -88,14 +96,12 @@ export default function CartNoAccount() {
 
   const [alertContent, setAlertContent] = useState(null);
 
-  const handleDeleteProduct = async (item) => {
-    const currentCart = JSON.parse(localStorage.getItem('cartProduct'));
-    console.log('itemdfghjkl:', item);
+  const currentCart = JSON.parse(localStorage.getItem('cartProduct'));
 
+  const handleDeleteProduct = async (item) => {
     if (currentCart && currentCart[item.idCtsp.idCtsp]) {
       delete currentCart[item.idCtsp.idCtsp];
       localStorage.setItem('cartProduct', JSON.stringify(currentCart));
-      // Cập nhật state hoặc hiển thị thông báo thành công
       getDetail();
     }
   };
@@ -197,7 +203,6 @@ export default function CartNoAccount() {
 
   const handleUpdateClassify = async (item) => {
     setShowModalsUpdate(true);
-    console.log('item:', item);
     try {
       const getOneSP = await findById(item.idCtsp.idSp.idSp);
       setItemUpdateClassify(getOneSP);
@@ -523,7 +528,7 @@ export default function CartNoAccount() {
         </Snackbar>
       )}
       {itemUpdate && Object.keys(itemUpdate).length > 0 && (
-        <ModalUpdateProductOnCartClient
+        <ModalUpdateProductOnCartClientNoAccount
           show={showModalsUpdate}
           handleClose={handleCloseUpdateClassify}
           itemUpdateClassify={itemUpdateClassify}

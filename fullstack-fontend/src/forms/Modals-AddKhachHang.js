@@ -86,11 +86,12 @@ const ModalAddKhachHang = (props) => {
   ModalAddKhachHang.propTypes = {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
+    getDetailHD: PropTypes.func.isRequired,
     // setSelectedCustomerName: PropTypes.func.isRequired,
     // setSelectedCustomerEmail: PropTypes.func.isRequired,
     // setSelectedMaTk: PropTypes.func.isRequired,
   };
-  const { open, handleClose } = props;
+  const { open, handleClose, getDetailHD } = props;
   //   open Data on Table
   const [listData, setListData] = useState([]);
 
@@ -187,6 +188,7 @@ const ModalAddKhachHang = (props) => {
     // setSelectedCustomerEmail(`${item.email}`);
     console.log(idHdParam, item.idTaiKhoan);
     await updateKH(idHdParam, item.idTaiKhoan);
+    getDetailHD();
     handleClose();
   };
   return (

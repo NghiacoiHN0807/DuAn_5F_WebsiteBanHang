@@ -2,6 +2,7 @@ package com.example.fullstackbackend.repository;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -48,4 +49,6 @@ public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, In
 
     @Query(value = "SELECT c FROM HoaDonChiTiet c WHERE c.idHd.idKH.idTaiKhoan = ?1")
     Page<HoaDonChiTiet> findByIdHd_IdKH_IdTaiKhoan(Integer idTK, Pageable pageable);
+
+    List<HoaDonChiTiet> findAllByIdHd_TrangThai(Integer trangThai);
 }

@@ -106,6 +106,11 @@ const ModalUpdateProductOnCartClient = (props) => {
         type: 'warning',
         message: 'Vui lòng chọn số lượng lớn hơn 0',
       });
+    } else if (quantity > 20) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Vui Lòng Liên Hệ Với Chúng Tôi Để Mua Sỉ',
+      });
     } else {
       const getIdHdCt = itemUpdate.idGhct;
 
@@ -116,7 +121,7 @@ const ModalUpdateProductOnCartClient = (props) => {
       await updateCartClient(getIdHdCt, getOneCTSP, quantity);
       //   Close the modal
       setSelectedSize(null);
-      handleClose();
+      handleCloseDetai();
       setQuantity(1);
       //   Load new data on cart
       selectDataCart();
@@ -173,10 +178,20 @@ const ModalUpdateProductOnCartClient = (props) => {
   useEffect(() => {
     getDetail();
   }, [getDetail]);
+  const handleCloseDetai = () => {
+    setSelectSoLuongTon([]);
+    setIsMSSelected(false);
+    setIsSizeSelected(false);
+    setSelectedMauSac(null);
+    setSelectedSize(null);
+    setQuantity(1);
+
+    handleClose(); // Call the original handleClose function
+  };
   return (
     <>
       <div>
-        <Dialog open={show} onClose={handleClose} maxWidth="xl">
+        <Dialog open={show} onClose={handleCloseDetai} maxWidth="xl">
           <DialogTitle>CẬP NHẬP SẢN PHẨM</DialogTitle>
           {itemUpdateClassify.length > 0 && (
             <DialogContent>
@@ -291,7 +306,7 @@ const ModalUpdateProductOnCartClient = (props) => {
             </DialogContent>
           )}
           <DialogActions>
-            <Button onClick={handleClose}>Hủy</Button>
+            <Button onClick={handleCloseDetai}>Hủy</Button>
             <Button onClick={handleChoose}>Hoàn Tất</Button>
           </DialogActions>
         </Dialog>

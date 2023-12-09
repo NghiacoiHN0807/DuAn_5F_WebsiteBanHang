@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import '../scss/Modal-Detail-SanPham.scss';
+import { useCallback, useEffect, useState } from 'react';
+import '../../scss/Modal-Detail-SanPham.scss';
 // import { selectAllImgProduct } from "../services/BillSevice";
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Snackbar } from '@mui/material';
 import { Carousel } from 'react-bootstrap';
@@ -11,14 +11,14 @@ import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import PropTypes from 'prop-types';
-import { findByProductNameAndSize } from '../service/BillSevice';
-import { updateCart } from '../service/DirectSaleSevice';
+// import { updateCart } from '../../service/DirectSaleSevice';
+import { listImg } from '../../service/client/Detail-Product';
 
-const ModalUpdateProductOnCart = (props) => {
-  ModalUpdateProductOnCart.propTypes = {
+const ModalUpdateProductOnCartClientNoAccount = (props) => {
+  ModalUpdateProductOnCartClientNoAccount.propTypes = {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
-    itemUpdateClassify: PropTypes.object.isRequired,
+    itemUpdateClassify: PropTypes.array.isRequired,
     selectDataCart: PropTypes.func.isRequired,
     itemUpdate: PropTypes.object.isRequired,
   };
@@ -91,6 +91,8 @@ const ModalUpdateProductOnCart = (props) => {
     setAlertContent(null);
   };
 
+  const currentCart = JSON.parse(localStorage.getItem('cartProduct'));
+
   const handleChoose = async () => {
     const selectedSp = itemUpdateClassify[0].idSp.tenSp;
 
@@ -104,28 +106,28 @@ const ModalUpdateProductOnCart = (props) => {
         type: 'warning',
         message: 'Vui lòng chọn số lượng lớn hơn 0',
       });
+    } else if (quantity > 20) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Vui Lòng Liên Hệ Với Chúng Tôi Để Mua Sỉ',
+      });
     } else {
-      const getIdHdCt = itemUpdate[1];
+      const updatedCart = { ...currentCart };
+      delete updatedCart[itemUpdate.idCtsp.idCtsp];
 
-      const getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize, selectedMauSac);
-      console.log('getOneCTSP: ', getOneCTSP);
-
-      const donGia = getOneCTSP.giaThucTe * quantity;
-      console.log('donGia: ', donGia);
-
-      //   Insert to the cart
-
-      await updateCart(getIdHdCt, getOneCTSP, quantity, donGia);
-      //   Close the modal
-      setSelectedSize(null);
-      handleCloseDetai();
-      setQuantity(1);
+      updatedCart[itemUpdateClassify[0].idCtsp] = {
+        idCtsp: selectSoLuongTon[0],
+        soLuong: quantity,
+        donGia: selectSoLuongTon[0].giaThucTe * quantity,
+      };
+      localStorage.setItem('cartProduct', JSON.stringify(updatedCart));
       //   Load new data on cart
       selectDataCart();
       setAlertContent({
         type: 'success',
         message: 'Cập nhập sản phẩm thành công',
       });
+      handleCloseDetai();
     }
   };
   // Set select one MS and Size
@@ -150,24 +152,24 @@ const ModalUpdateProductOnCart = (props) => {
   const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
   const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
   const priceRange = minPrice === maxPrice ? formattedMinPrice : `${formattedMinPrice} - ${formattedMaxPrice}`;
-  const getFirstImage = (item) => {
-    if (item && item.trim() !== '') {
-      const imagesArray = item.split(',');
-      return imagesArray[0];
+
+  const [images, setImages] = useState([]);
+
+  const getDetail = useCallback(async () => {
+    try {
+      // console.log('itemUpdate131: ', itemUpdate);
+      const imgDataArray = await listImg(itemUpdate.idCtsp.idSp.idSp);
+
+      setImages(imgDataArray);
+      console.log('imgData753: ', imgDataArray);
+    } catch (e) {
+      console.error(e);
     }
-    return null;
-  };
-  function formatCurrency(price) {
-    if (!price) return '0';
+  }, [itemUpdate.idCtsp.idSp.idSp]);
 
-    const formatter = new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-      minimumFractionDigits: 0,
-    });
-
-    return formatter.format(price);
-  }
+  useEffect(() => {
+    getDetail();
+  }, [getDetail]);
   const handleCloseDetai = () => {
     setSelectSoLuongTon([]);
     setIsMSSelected(false);
@@ -186,18 +188,16 @@ const ModalUpdateProductOnCart = (props) => {
             <DialogContent>
               <Card sx={{ display: 'flex' }}>
                 <Carousel interval={null} style={{ maxWidth: 500, margin: '0 auto' }}>
-                  {/* {listImages.map((item, index) => {
-                    return key={`carousel-item-${index}`} ( */}
                   <Carousel.Item>
-                    <CardMedia
-                      component="img"
-                      sx={{ maxWidth: 250, height: 300 }}
-                      image={getFirstImage(itemUpdate[2])}
-                      alt={getFirstImage(itemUpdate[2])}
-                    />
+                    {images.length > 0 && (
+                      <CardMedia
+                        component="img"
+                        sx={{ maxWidth: 250, height: '100%' }}
+                        image={images[0].url}
+                        alt={images[0].url}
+                      />
+                    )}
                   </Carousel.Item>
-                  {/* );
-                  })} */}
                 </Carousel>
 
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -208,9 +208,7 @@ const ModalUpdateProductOnCart = (props) => {
                     <Typography variant="subtitle1" color="text.secondary" component="div">
                       <p>Xuất Xứ: {itemUpdateClassify[0].idSp.idXx.tenNuoc}</p>
                       <p>Chất Liệu: {itemUpdateClassify[0].idSp.idCl.tenCl}</p>
-                      <p>
-                        Giá: {selectSoLuongTon.length > 0 ? formatCurrency(selectSoLuongTon[0].giaThucTe) : priceRange}
-                      </p>
+                      <p>Giá: {selectSoLuongTon.length > 0 ? selectSoLuongTon[0].giaThucTe : priceRange}</p>
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
                       <div>
@@ -321,4 +319,4 @@ const ModalUpdateProductOnCart = (props) => {
     </>
   );
 };
-export default ModalUpdateProductOnCart;
+export default ModalUpdateProductOnCartClientNoAccount;
