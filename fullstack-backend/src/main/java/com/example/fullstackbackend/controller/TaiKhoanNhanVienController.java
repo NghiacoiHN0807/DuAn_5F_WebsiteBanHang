@@ -4,12 +4,7 @@ import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-<<<<<<< HEAD
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-=======
->>>>>>> origin/nghiant0807
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;

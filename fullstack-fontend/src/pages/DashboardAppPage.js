@@ -8,19 +8,13 @@ import React, { useState, useEffect } from 'react';
 // icon
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faSackDollar } from '@fortawesome/free-solid-svg-icons';
-<<<<<<< HEAD
+
 
 // components
 import Iconify from '../components/iconify';
 import { totalRevenue, totalInvoieces, totalTheoNgay, tyLeTraHang, tongSpDaBan } from '../service/bill-service'
 import { topSpTrending } from '../service/san-pham-service'
 
-=======
-// components
-import Iconify from '../components/iconify';
-import { totalRevenue, totalInvoieces, totalTheoNgay, tyLeTraHang, tongSpDaBan } from '../service/bill-service';
-import { topSpTrending } from '../service/san-pham-service';
->>>>>>> origin/nghiant0807
 // sections
 import {
   AppTasks,
@@ -41,15 +35,10 @@ export default function DashboardAppPage() {
   const theme = useTheme();
   const [totalBill, setTotalBill] = useState(0);
   const [invoieces, setinvoieces] = useState(0);
-<<<<<<< HEAD
-=======
   const [spTrending, setSpTrending] = useState([]);
   const [hdNgay, setheoNgay] = useState([]); // State for trending data
->>>>>>> origin/nghiant0807
   const [rate, setRate] = useState(0); // State for
   const [allSp, setAllSp] = useState(0);
-  const [spTrending, setSpTrending] = useState([]);
-  const [hdNgay, setheoNgay] = useState([]);  // State for trending data
 
   theme.palette.info.main = '#4CAF50';
 
@@ -64,13 +53,10 @@ export default function DashboardAppPage() {
 
       setTotalBill(Number(res));
       setinvoieces(Number(invoiecesResponse));
-<<<<<<< HEAD
       setRate(rateResponse);
-=======
       setSpTrending(trendingResponse); // Set trending data
       setRate(Number(rateResponse));
       setheoNgay(response);
->>>>>>> origin/nghiant0807
       setAllSp(Number(allSpres));
       setheoNgay(response);
       setSpTrending(trendingResponse);  // Set trending data
@@ -121,11 +107,7 @@ export default function DashboardAppPage() {
             <AppWebsiteVisits
               title="Tổng Tiền Theo Ngày"
               subheader="Biểu đồ tổng tiền theo ngày"
-<<<<<<< HEAD
-              chartLabels={hdNgay.map(item => item[0])}
-=======
               chartLabels={hdNgay.map((item) => item[0])} // Assuming the first element in each sub-array is the date
->>>>>>> origin/nghiant0807
               chartData={[
                 {
                   name: 'Tổng Tiền',

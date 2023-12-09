@@ -22,14 +22,9 @@ const postUpdateTaiKhoanKhachHang = (idTaiKhoan, maTaiKhoan, ho, ten, sdt, email
 
 const getDetailOneTK = (idTaiKhoan) => custom.get(`/tai-khoan-khach-hang/detail/${idTaiKhoan}`);
 
-const deleteTaiKhoanKH = (id) => custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
 
-<<<<<<< HEAD
 const deleteTaiKhoanKH = (id) =>
     custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
 
 
 export {fetchAllTKKH, postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoanKH, getDetailOneTK,postSignUp};
-=======
-export { fetchAllTKKH, postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoanKH, getDetailOneTK };
->>>>>>> origin/nghiant0807

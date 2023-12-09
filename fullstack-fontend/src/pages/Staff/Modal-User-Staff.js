@@ -56,6 +56,9 @@ export default function UserStaff() {
 
   const [listData, setListData] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'active', 'inactive'
+  const [exportOption, setExportOption] = useState(''); // You can set the default export option as needed
+
 
   const getListData = async (page, query) => {
     try {
@@ -192,7 +195,7 @@ export default function UserStaff() {
       (user.soCanCuoc && user.soCanCuoc.toLowerCase().includes(query)) ||
       (user.email && user.email.toLowerCase().includes(query)) ||
       (user.sdt && user.sdt.toLowerCase().includes(query)) ||
-      (user.trangThai && typeof user.trangThai === 'string' && user.trangThai.toLowerCase().includes(query))
+      (user.trangThai && typeof user.trangThai === 'string' && user.trangThai.toLowerCase().includes(query) && (statusFilter === 'all' || user.trangThai.toLowerCase() === statusFilter))
     );
 
     setFilteredList(filteredUsers); // Cập nhật danh sách đã lọc
@@ -221,11 +224,17 @@ export default function UserStaff() {
         </Stack>
 
         <Card>
+          
           <UserListToolbar
             numSelected={selected.length}
             filterName={filterName}
-            onFilterName={handleFilterByName} // Truyền hàm xử lý tìm kiếm
+            onFilterName={handleFilterByName}
+            statusFilter={statusFilter}
+            onStatusFilterChange={(event) => setStatusFilter(event.target.value)}
+            exportOption={exportOption}
+            onExportOptionChange={(event) => setExportOption(event.target.value)}
           />
+
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
