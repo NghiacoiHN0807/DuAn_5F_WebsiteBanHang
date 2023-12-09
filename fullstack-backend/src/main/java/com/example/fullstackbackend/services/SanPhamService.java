@@ -44,4 +44,6 @@ public interface SanPhamService {
 
     List<SanPhamDTO> getSanPhamDetails();
 
+    List<SanPhamClientDTO> relatedProduct(Integer idLsp, Integer idSp);
+
 }

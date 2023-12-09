@@ -39,6 +39,8 @@ const putUpdateSanPham = (idSp, maSp, tenSp, idCl, idLsp, idXx, idCoAo, idTayAo,
 
 const fetchSpForClient = () => custom.get(`/san-pham/getSpForClient`);
 
+const getRelatedSp = (idLsp, idSp) => custom.get(`/san-pham/sp-lien-quan/${idLsp}/${idSp}`);
+
 export {
   fetchAllSP,
   fetchSP,
@@ -48,4 +50,5 @@ export {
   putUpdateSanPham,
   fetchSpWithImg,
   fetchSpForClient,
+  getRelatedSp,
 };
