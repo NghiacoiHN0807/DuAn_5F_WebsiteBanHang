@@ -39,12 +39,17 @@ import AllAddress from './pages/diaChi/AllAddress';
 import AddressByClient from './pages/diaChi/AddressByClient';
 import AddAddress from './pages/diaChi/AddAddress';
 import UpdateAddress from './pages/diaChi/UpdateAddress';
+<<<<<<< HEAD
 import SignUp from './pages/client/SignUp';
 import AddCoupons from './pages/coupons/AddCoupons';
 import CouponsPage from './pages/coupons/CouponsPage';
 import UpdateCoupons from './pages/coupons/UpdateCoupons';
 import OrderClientTimeline from './pages/client/OrderClient-Timeline';
 import SelectAllBillOfClient from './pages/client/SelectAllBill';
+=======
+import SignUpPage from "./pages/SignUpPage";
+import ForgetPasswordPage from "./pages/ForgetPasswordPage";
+>>>>>>> origin/phuclt
 
 // ----------------------------------------------------------------------
 
@@ -108,7 +113,11 @@ export default function Router() {
     },
     {
       path: 'signUp',
-      element: <SignUp />,
+      element: <SignUpPage />,
+    },
+      {
+      path: 'forgetPassword',
+      element: <ForgetPasswordPage />,
     },
     {
       element: <SimpleLayout />,

@@ -1,4 +1,4 @@
-package com.example.fullstackbackend.config.payload;
+package com.example.fullstackbackend.security.payload;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

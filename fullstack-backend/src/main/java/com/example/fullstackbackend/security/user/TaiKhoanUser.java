@@ -1,14 +1,19 @@
-package com.example.fullstackbackend.config.user;
-
+package com.example.fullstackbackend.security.user;
 
 import com.example.fullstackbackend.entity.ChucVu;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.security.SecureRandom;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -27,17 +32,22 @@ public class TaiKhoanUser {
     @JoinColumn(name = "id_chuc_vu", referencedColumnName = "id_cv")
     private ChucVu idChucVu;
 
-    @Column(name = "ma_tai_khoan", unique = true)
+    @Column(name = "ma_tai_khoan")
     private String maTaiKhoan;
+
 
     @Column(name = "ho")
     private String ho;
 
+
+
     @Column(name = "ten")
     private String ten;
 
+
     @Column(name = "sdt")
     private String sdt;
+
 
     @Column(name = "email")
     private String email;
@@ -45,8 +55,14 @@ public class TaiKhoanUser {
     @Column(name = "mat_khau")
     private String matKhau;
 
+    @Column(name = "so_can_cuoc")
+    private String soCanCuoc;
+
     @Column(name = "trang_thai")
-    private Integer trangThai;
+    private Integer trangThai = 0;
+
+    public TaiKhoanUser(String username, String password, List<GrantedAuthority> authorities) {
+    }
 
     @PrePersist
     public void prePersist() {
@@ -100,6 +116,5 @@ public class TaiKhoanUser {
         // Lấy 6 ký tự đầu của chuỗi UUID
         return "TK" + uuidString.toUpperCase().substring(0, 9);
     }
-
-
 }
+

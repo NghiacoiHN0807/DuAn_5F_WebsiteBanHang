@@ -1,4 +1,4 @@
-package com.example.fullstackbackend.config.jwt;
+package com.example.fullstackbackend.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
