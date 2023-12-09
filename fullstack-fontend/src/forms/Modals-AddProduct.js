@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
-import { sample } from 'lodash';
 import PropTypes from 'prop-types';
 // import ModalDetailProduct from './Modal-Detail-SanPham';
 import { fetchSpForClient } from '../service/SanPhamService';

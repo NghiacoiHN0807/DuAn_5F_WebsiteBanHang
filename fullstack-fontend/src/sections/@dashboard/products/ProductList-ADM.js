@@ -45,18 +45,6 @@ export default function ProductListADM({ products, ...other }) {
               </Grid>
             ))}
           </Grid>
-<<<<<<< HEAD
-        ))}
-      </Grid>
-      <ModalDetailProduct
-        show={showModalDetail}
-        handleCloseDetai={handleCloseDetail}
-        dataDetail={dataDetail}
-        selectDataCart={products[0].selectDataCart}
-        DataCart={products[0].DataCart}
-        listImages={listImages}
-      />
-=======
           <ModalDetailProduct
             show={showModalDetail}
             handleCloseDetai={handleCloseDetail}
@@ -73,7 +61,6 @@ export default function ProductListADM({ products, ...other }) {
           </Typography>
         </div>
       )}
->>>>>>> origin/vinhlt
     </>
   );
 }
