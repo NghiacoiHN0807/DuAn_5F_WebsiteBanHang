@@ -24,7 +24,6 @@ import {
   Alert,
   Chip,
 } from '@mui/material';
-import { CSVLink } from 'react-csv';
 
 // components
 import Iconify from '../components/iconify';

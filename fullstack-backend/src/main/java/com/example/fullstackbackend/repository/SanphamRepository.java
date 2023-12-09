@@ -154,7 +154,7 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "HAVING sp.trang_thai = 0 OR sp.trang_thai = 1;", nativeQuery = true)
     List<Object[]> getSpForClient();
 
-<<<<<<< HEAD
+
     @Query(value = "SELECT sp.id_sp, sp.ten_sp, SUM(hdct.so_luong) AS so_luong_ban\n" +
             "FROM san_pham sp\n" +
             "JOIN chi_tiet_san_pham ctsp ON sp.id_sp = ctsp.id_sp\n" +
@@ -162,12 +162,6 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "GROUP BY sp.id_sp, sp.ten_sp\n" +
             "ORDER BY so_luong_ban DESC\n" +
             "LIMIT 4;", nativeQuery = true)
-=======
-    @Query(value = "select distinct so_luong, ten_sp from duan_5f.san_pham sp , duan_5f.chi_tiet_san_pham  ctsp , duan_5f.hoa_don_chi_tiet hdct\n" +
-            "where sp.id_sp = ctsp.id_sp\n" +
-            "and ctsp.id_ctsp = hdct.id_ctsp\n" +
-            "order by so_luong desc\n" +
-            "limit 4;", nativeQuery = true)
->>>>>>> origin/nghiant0807
+
     List<Object[]> topSptrending();
 }
