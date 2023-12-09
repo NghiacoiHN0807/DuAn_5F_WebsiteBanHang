@@ -34,6 +34,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 
 
+import Card from "@mui/material/Card";
 import {deleteTaiKhoanKH, fetchAllTKKH} from "../../service/taiKhoanKhachHangSevice";
 import Iconify from "../../components/iconify";
 import {useAlert} from "../../layouts/dashboard/AlertContext";
@@ -66,7 +67,7 @@ const ClientPage = () => {
 
 
     const columns = [
-        {field: "index", headerName: "Index", width: 50},
+        {field: "index", headerName: "Index", width: 100},
         {field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 120},
         {field: "tenKh", headerName: "Tên Khách Hàng", width: 180},
         {field: "sdtKh", headerName: "Số Điện Thoại", width: 120,},
@@ -210,15 +211,7 @@ const ClientPage = () => {
     function CustomToolbar() {
         return (
             <GridToolbarContainer>
-                <GridToolbarFilterButton/>
-                <GridToolbarColumnsButton/>
-                <GridToolbarDensitySelector/>
-                <GridToolbarExport
-                    csvOptions={{
-                        fileName: 'Client',
-                        utf8WithBom: true,
-                    }}
-                />
+
 
                 <FormControl variant="standard" sx={{m: 1, minWidth: 120}}>
                     <InputLabel id="status-select">Trạng Thái:</InputLabel>
@@ -235,7 +228,12 @@ const ClientPage = () => {
                         <MenuItem value={2}>Ngưng Hoạt Động</MenuItem>
                     </Select>
                 </FormControl>
-
+                <GridToolbarExport
+                    csvOptions={{
+                        fileName: 'Client',
+                        utf8WithBom: true,
+                    }}
+                />
             </GridToolbarContainer>
         );
     }
@@ -255,23 +253,27 @@ const ClientPage = () => {
                         Tài Khoản Mới
                     </Button>
                 </Stack>
-
-                <TextField
-                    variant="outlined"
-                    sx={{ml: 1, flex: 1}}
-                    placeholder="Tìm Kiếm"
-                    InputProps={{
-                        startAdornment: (
-                            <IconButton type="button" sx={{p: '10px'}} aria-label="search">
-                                <SearchIcon/>
-                            </IconButton>
-                        ),
-                    }}
-                    onChange={(e) => setSearchKeyword(e.target.value)}
-                />
+                <Card variant="outlined">
+                    <TextField
+                        sx={{ml: 1, flex: 1}}
+                        margin="dense"
+                        placeholder="Tìm Kiếm"
+                        InputProps={{
+                            startAdornment: (
+                                <IconButton type="button" sx={{p: '10px'}} aria-label="search">
+                                    <SearchIcon/>
+                                </IconButton>
+                            ),
+                        }}
+                        onChange={(e) => setSearchKeyword(e.target.value)}
+                    />
 
 
                 <DataGrid
+                    margin="dense"
+                    sx={{
+                        border: 'none'
+                    }}
                     rows={rows}
                     columns={columns}
                     initialState={{
@@ -286,7 +288,7 @@ const ClientPage = () => {
                     })}
                     pageSizeOptions={[5, 10, 15]}
                 />
-
+                </Card>
             </Container>
             <Dialog
                 open={open}

@@ -192,15 +192,6 @@ const AllAddress = () => {
     function CustomToolbar() {
         return (
             <GridToolbarContainer>
-                <GridToolbarFilterButton/>
-                <GridToolbarColumnsButton/>
-                <GridToolbarDensitySelector/>
-                <GridToolbarExport
-                    csvOptions={{
-                        fileName: 'address',
-                        utf8WithBom: true,
-                    }}
-                />
 
                 <FormControl variant="standard" sx={{m: 1, minWidth: 120}}>
                     <InputLabel id="status-select">Trạng Thái:</InputLabel>
@@ -232,6 +223,13 @@ const AllAddress = () => {
                         <MenuItem value={1}>Nơi Làm Việc</MenuItem>
                     </Select>
                 </FormControl>
+                <GridToolbarExport
+                    csvOptions={{
+                        fileName: 'address',
+                        utf8WithBom: true,
+                    }}
+                />
+
             </GridToolbarContainer>
         );
     }
@@ -247,8 +245,13 @@ const AllAddress = () => {
                         Thông Tin Tất Cả Địa Chỉ
                     </Typography>
                 </Stack>
+                <Card>
+
+
+
                 <TextField
                     variant="outlined"
+                    margin="dense"
                     sx={{ml: 1, flex: 1}}
                     placeholder="Tìm Kiếm"
                     InputProps={{
@@ -261,6 +264,9 @@ const AllAddress = () => {
                     onChange={(e) => setSearchKeyword(e.target.value)}
                 />
                 <DataGrid
+                    sx={{
+                        border: 'none'
+                    }}
                     rows={rows}
                     columns={columns}
                     initialState={{
@@ -272,6 +278,7 @@ const AllAddress = () => {
                     pageSizeOptions={[5, 10, 15]}
                     onRowClick={(params) => handlClickRow(params.row)}
                 />
+                </Card>
             </Container>
             <AlertSnackbar />
         </>

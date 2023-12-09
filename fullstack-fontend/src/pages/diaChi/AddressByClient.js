@@ -3,16 +3,9 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Helmet} from "react-helmet-async";
 import Badge from "react-bootstrap/Badge";
 import Stack from "@mui/material/Stack";
+import {DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarExport,} from "@mui/x-data-grid";
 import {
-    DataGrid,
-    GridActionsCellItem,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarDensitySelector,
-    GridToolbarExport,
-    GridToolbarFilterButton,
-} from "@mui/x-data-grid";
-import {
+    Box,
     Button,
     Container,
     Dialog,
@@ -31,9 +24,8 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
-// import {toast, ToastContainer} from "react-toastify";
+import Card from "@mui/material/Card";
 import {deleteDiaChi, fetchDiaChiByTK} from "../../service/diaChiSevice";
-import {getPhuongXa, getQuanHuyen, getTinhThanhPho} from "../../service/apiDiaChi";
 import Iconify from "../../components/iconify";
 import {useAlert} from "../../layouts/dashboard/AlertContext";
 
@@ -213,15 +205,6 @@ const AddressByClient = () => {
     function CustomToolbar() {
         return (
             <GridToolbarContainer>
-                <GridToolbarFilterButton/>
-                <GridToolbarColumnsButton/>
-                <GridToolbarDensitySelector/>
-                <GridToolbarExport
-                    csvOptions={{
-                        fileName: 'address',
-                        utf8WithBom: true,
-                    }}
-                />
 
                 <FormControl variant="standard" sx={{m: 1, minWidth: 120}}>
                     <InputLabel id="status-select">Trạng Thái:</InputLabel>
@@ -253,6 +236,13 @@ const AddressByClient = () => {
                         <MenuItem value={1}>Nơi Làm Việc</MenuItem>
                     </Select>
                 </FormControl>
+                <GridToolbarExport
+                    csvOptions={{
+                        fileName: 'address',
+                        utf8WithBom: true,
+                    }}
+                />
+
             </GridToolbarContainer>
         );
     }
@@ -268,25 +258,37 @@ const AddressByClient = () => {
                 <Typography variant="h4" gutterBottom>
                     Thông Tin Địa Chỉ Của Tài Khoản: {idTK}
                 </Typography>
-                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => handAdd()}>
-                    Tạo Địa Chỉ Mới
-                </Button>
             </Stack>
-            <TextField
-                variant="outlined"
-                sx={{ml: 1, flex: 1}}
-                placeholder="Tìm Kiếm"
-                InputProps={{
-                    startAdornment: (
-                        <IconButton type="button" sx={{p: '10px'}} aria-label="search">
-                            <SearchIcon/>
-                        </IconButton>
-                    ),
-                }}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-            />
+            <Card>
+
+            <Box sx={{ display: 'flex' }}>
+                <Box sx={{ flexGrow: 1 }}>
+                    <TextField
+                        margin="dense"
+                        variant="outlined"
+                        sx={{ml: 1, flex: 1}}
+                        placeholder="Tìm Kiếm"
+                        InputProps={{
+                            startAdornment: (
+                                <IconButton type="button" sx={{p: '10px'}} aria-label="search">
+                                    <SearchIcon/>
+                                </IconButton>
+                            ),
+                        }}
+                        onChange={(e) => setSearchKeyword(e.target.value)}
+                    />
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => handAdd()}>
+                        Tạo Địa Chỉ Mới
+                    </Button>
+                </Box>
+            </Box>
 
             <DataGrid
+                sx={{
+                    border: 'none'
+                }}
                 rows={rows}
                 columns={columns}
                 initialState={{
@@ -302,7 +304,7 @@ const AddressByClient = () => {
                 pageSizeOptions={[5, 10, 15]}
             />
 
-
+            </Card>
         </Container>
         <Dialog
             open={open}
