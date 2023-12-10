@@ -8,6 +8,8 @@ import Chip from '@mui/material/Chip';
 import { useEffect, useState } from 'react';
 // @mui
 import {
+  Box,
+  Paper,
   Card,
   Table,
   Stack,
@@ -31,7 +33,7 @@ import {
 } from '@mui/material';
 import { makeStyles } from '@material-ui/core';
 import { filter } from 'lodash';
-
+import { CSVLink } from 'react-csv';
 
 // components
 import Iconify from '../../components/iconify';
@@ -127,6 +129,9 @@ export default function UserStaff() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [statusFilter, setStatusFilter] = useState('');
+
+  const [selectedExports, setSelectedExports] = useState([]);
+
 
   function applySortFilter(array, comparator, query) {
     let filteredArray = array;
@@ -251,12 +256,52 @@ export default function UserStaff() {
       gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 200px))',
       margin: theme.spacing(2),
     },
+    downloadButton: {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.primary.contrastText,
+      '&:hover': {
+        backgroundColor: theme.palette.primary.dark,
+      },
+    },
   }));
 
   const classes = useStyles();
+ 
+
+  const handleExportData = () => {
+    const res = [];
+    if (listData && listData.length > 0) {
+      res.push([
+        'STT',
+        'Mã tài Khoản',
+        'Tên',
+        'Chức vụ',
+        'Số căn cước',
+        'email',
+        'Sdt',
+        'Trạng Thái',
+      ]);
+      listData.map((item, index) => {
+        const array = [];
+        array[0] = index;
+        array[1] = item.maTaiKhoan;
+        array[2] = item.ho + item.ten;
+        array[3] = item.idChucVu.tenCv;
+        array[4] = item.soCanCuoc;
+        array[5] = item.email;
+        array[6] = item.sdt;
+        array[7] = `${item.trangThai === 0 ? 'Hoạt động' : 'Dừng hoạt động'}`;
+        return res.push(array);
+      });
+      setSelectedExports(res);
+      // done();
+    }
+  };
 
   return (
     <>
+    
+    <Box component={Paper} elevation={3} p={3} borderRadius={2}>
       <Helmet>
         <title> Nhân Viên | 5F store </title>
       </Helmet>
@@ -287,8 +332,13 @@ export default function UserStaff() {
               <MenuItem value="10">Dừng Hoạt Động</MenuItem>
             </TextField>
           </Grid>
-
-
+          <CSVLink data={selectedExports} onClick={handleExportData}>
+            <Button 
+            className={classes.downloadButton}
+            >
+              Excel
+            </Button>
+          </CSVLink>
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -411,6 +461,7 @@ export default function UserStaff() {
           </Alert>
         </Snackbar>
       )}
+       </Box>
     </>
   );
 }
