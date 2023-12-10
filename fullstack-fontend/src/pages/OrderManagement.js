@@ -23,8 +23,12 @@ import {
   Snackbar,
   Alert,
   Chip,
+  TextField,
+  Grid,
 } from '@mui/material';
 import { CSVLink } from 'react-csv';
+// import { filter } from 'lodash';
+import { makeStyles } from '@material-ui/core';
 
 // components
 import Iconify from '../components/iconify';
@@ -75,19 +79,7 @@ function filterData(array, query) {
     })
   );
 }
-function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filterData(array, query);
-    // return filter(array, (_user) => _user.maHd.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
-}
+
 const OrderManagement = () => {
   const [listData, setListData] = useState([]);
 
@@ -107,6 +99,55 @@ const OrderManagement = () => {
 
   const [selectedExports, setSelectedExports] = useState([]);
 
+  // Filter
+  const [startDateFilter, setStartDateFilter] = useState('');
+  const [endDateFilter, setEndDateFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  function applySortFilter(array, comparator, query) {
+    let filteredArray = array;
+
+    if (query) {
+      return filterData(array, query);
+    }
+
+    const startDate = startDateFilter ? new Date(startDateFilter) : null;
+    const endDate = endDateFilter ? new Date(endDateFilter) : null;
+
+    filteredArray = filteredArray.filter((_user) => {
+      const userDate = new Date(_user.ngayTao);
+      if (startDate && endDate) {
+        return userDate >= startDate && userDate <= endDate;
+      }
+      if (startDate) {
+        return userDate >= startDate;
+      }
+      if (endDate) {
+        return userDate <= endDate;
+      }
+      return true;
+    });
+
+    const stabilizedThis = filteredArray.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+
+    return stabilizedThis.map((el) => el[0]);
+  }
+
+  const useStyles = makeStyles((theme) => ({
+    filterContainer: {
+      display: 'grid',
+      gap: theme.spacing(2),
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 200px))',
+      margin: theme.spacing(2),
+    },
+  }));
+
+  const classes = useStyles();
+  // Get Data
   const getListData = async () => {
     try {
       const res = await getAllOrderManagement();
@@ -348,6 +389,36 @@ const OrderManagement = () => {
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
+              <Grid container className={classes.filterContainer}>
+                <TextField
+                  label="Ngày Bắt Đầu"
+                  type="date"
+                  value={startDateFilter}
+                  onChange={(event) => setStartDateFilter(event.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <TextField
+                  label="Ngày Kết Thúc"
+                  type="date"
+                  value={endDateFilter}
+                  onChange={(event) => setEndDateFilter(event.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <TextField
+                  select
+                  label="Trạng Thái"
+                  value={statusFilter}
+                  onChange={(event) => setStatusFilter(event.target.value)}
+                >
+                  <MenuItem value="">Tất Cả</MenuItem>
+                  <MenuItem value="0">Hoạt Động</MenuItem>
+                  <MenuItem value="10">Đã Bị Hủy</MenuItem>
+                </TextField>
+              </Grid>
               <Table>
                 <UserListHeadNoCheckBox
                   order={order}
@@ -357,7 +428,11 @@ const OrderManagement = () => {
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
+                  onStatusFilterChange={(event) => setStatusFilter(event.target.value)}
+                  onStartDateFilterChange={(event) => setStartDateFilter(event.target.value)}
+                  onEndDateFilterChange={(event) => setEndDateFilter(event.target.value)}
                 />
+
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                     const { idHd, maHd, thanhTien, ngayTao, kieuHoaDon, trangThai } = row;
