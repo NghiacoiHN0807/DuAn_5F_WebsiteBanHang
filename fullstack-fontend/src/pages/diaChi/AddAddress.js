@@ -1,6 +1,6 @@
 // import {toast} from "react-toastify";
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {Helmet} from "react-helmet-async";
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 import {
@@ -10,7 +10,7 @@ import {
     FormControl,
     FormControlLabel,
     FormHelperText,
-    FormLabel,
+    FormLabel, InputLabel,
     MenuItem,
     Radio,
     RadioGroup,
@@ -19,9 +19,9 @@ import {
     TextField,
     Typography
 } from "@mui/material";
+import axios from "axios";
 import {postAddDiaChi} from "../../service/diaChiSevice";
 import {getDetailOneTK} from "../../service/taiKhoanKhachHangSevice";
-import {getPhuongXa, getQuanHuyen, getTinhThanhPho} from "../../service/apiDiaChi";
 import {useAlert} from "../../layouts/dashboard/AlertContext";
 
 
@@ -33,14 +33,127 @@ const AddAddress = () => {
         const [diaChiCuThe, setDiaChiCuThe] = useState("");
         const [sdt, setSdt] = useState("");
         const [loaiDiaChi, setLoaiDiaChi] = useState("0");
-        const [tinhThanh, setTinhThanh] = useState(null);
-        const [quanHuyen, setQuanHuyen] = useState(null);
-        const [phuongXa, setPhuongXa] = useState(null);
+        const [provinces, setProvinces] = useState([]);
+        const [selectedProvince, setSelectedProvince] = useState('');
+        const [districts, setDistricts] = useState([]);
+        const [selectedDistrict, setSelectedDistrict] = useState('');
+        const [wards, setWards] = useState([]);
+        const [selectedWard, setSelectedWard] = useState('');
         const [trangThai] = useState("0");
+        // const [result, setResult] = useState('');
+        const [diachiCuThe, setDiachiCuThe] = useState('');
 
-        const [listTP, setListTP] = useState([]);
-        const [listQH, setListQH] = useState([]);
-        const [listPX, setListPX] = useState([]);
+         let [selectedProvinceName] = useState('');
+         let [selectedDistrictName] = useState('');
+         let [selectedWardName] = useState('');
+
+
+        const fetchProvinces = async () => {
+            try {
+                const response = await axios.get('https://online-gateway.ghn.vn/shiip/public-api/master-data/province', {
+                    headers: {
+                        token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
+                    },
+                });
+                console.log('response: ', response.data.data);
+                setProvinces(response.data.data);
+            } catch (error) {
+                console.error('Error fetching provinces:', error);
+            }
+        };
+        useEffect(() => {
+            fetchProvinces();
+        }, []);
+
+
+        const callApiDistrict = useCallback(async () => {
+            try {
+                const response = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district`, {
+                    params: {province_id: selectedProvince},
+                    headers: {
+                        token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
+                    },
+                });
+                console.log('Quận/Huyện: ', response.data);
+                setDistricts(response.data.data);
+            } catch (error) {
+                console.error('Error fetching districts:', error);
+            }
+        }, [selectedProvince]);
+
+        useEffect(() => {
+            if (selectedProvince) {
+                console.log('selectedProvince: ', selectedProvince);
+                callApiDistrict();
+            }
+        }, [selectedProvince, callApiDistrict]);
+
+        const callApiWard = useCallback(async () => {
+            try {
+                const response = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/ward`, {
+                    params: {district_id: selectedDistrict},
+                    headers: {
+                        token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
+                    },
+                });
+                setWards(response.data.data);
+            } catch (error) {
+                console.error('Error fetching wards:', error);
+            }
+        }, [selectedDistrict]);
+
+        // API gets service pack information
+        const [tienShip, getTienShip] = useState(0);
+
+        const getSevice = useCallback(async () => {
+            try {
+                const response = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee`, {
+                    params: {
+                        service_type_id: 2,
+                        insurance_value: 500000,
+                        coupon: null,
+                        from_district_id: 1542,
+                        to_district_id: selectedDistrict,
+                        height: 15,
+                        length: 15,
+                        weight: 1000,
+                        width: 15,
+                    },
+                    headers: {
+                        token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
+                        shop_id: 4699724,
+                    },
+                });
+                const totalShip = response.data?.data?.total || 0;
+                console.log('getSevice: ', response);
+                getTienShip(totalShip);
+            } catch (error) {
+                console.error('Error get service:', error);
+            }
+        }, [selectedDistrict]);
+
+        useEffect(() => {
+            if (selectedDistrict) {
+                console.log('selectedProvince: ', selectedDistrict);
+                callApiWard();
+                getSevice();
+            }
+        }, [getSevice, selectedDistrict, callApiWard]);
+
+        useEffect(() => {
+            if (selectedDistrict && selectedProvince && selectedWard) {
+                 selectedProvinceName =
+                    provinces.find((province) => province.ProvinceID === selectedProvince)?.ProvinceName || '';
+
+                 selectedDistrictName =
+                    districts.find((district) => district.DistrictID === selectedDistrict)?.DistrictName || '';
+
+                 selectedWardName = wards.find((ward) => ward.WardCode === selectedWard)?.WardName || '';
+
+                // setResult(`${selectedProvinceName}, ${selectedDistrictName}, ${selectedWardName}, ${diachiCuThe}`);
+            }
+        }, [selectedDistrict, selectedProvince, selectedWard, districts, provinces, wards, diachiCuThe]);
+
 
         // chuyen trang
         const navigate = useNavigate();
@@ -48,42 +161,16 @@ const AddAddress = () => {
         const {showAlert} = useAlert();
 
         useEffect(() => {
-            getListTP();
-            getListQH(tinhThanh);
-            getListPX(quanHuyen);
+
             getTaiKhoan(idTK);
 
-        }, [tinhThanh, quanHuyen, idTK]);
+        }, [idTK]);
         const getTaiKhoan = async (idTK) => {
             const resTK = await getDetailOneTK(idTK);
             console.log(resTK);
             setTaiKhoan(resTK);
         };
 
-        const getListTP = async () => {
-            const resTP = await getTinhThanhPho();
-            if (resTP.status === 200) {
-                setListTP(resTP?.data.results);
-            } else {
-                setListTP(null);
-            }
-        };
-        const getListQH = async (tinhThanh) => {
-
-            const resQH = await getQuanHuyen(tinhThanh);
-            if (resQH.status === 200) {
-                setListQH(resQH?.data.results);
-
-            }
-
-        };
-        const getListPX = async (quanHuyen) => {
-
-            const resPX = await getPhuongXa(quanHuyen);
-            if (resPX.status === 200) {
-                setListPX(resPX?.data.results);
-            }
-        };
 
         const [validationErrors, setValidationErrors] = useState("");
 
@@ -94,11 +181,12 @@ const AddAddress = () => {
                     taiKhoan,
                     diaChiCuThe,
                     loaiDiaChi,
-                    phuongXa,
-                    quanHuyen,
+                    selectedWardName,
+                    selectedDistrictName,
                     sdt,
                     tenNguoiNhan,
-                    tinhThanh,
+                    selectedProvinceName,
+                    tienShip,
                     trangThai
                 );
                 console.log("Check res: ", res);
@@ -121,34 +209,6 @@ const AddAddress = () => {
 
         };
 
-
-        const selectTT = (event) => {
-
-            setQuanHuyen(null);
-            setPhuongXa(null);
-            const selectedValue = event.target.value;
-            console.log(selectedValue);
-            setTinhThanh(selectedValue);
-
-
-        };
-        const selectQH = (event) => {
-
-            const selectedValue = event.target.value;
-            console.log(selectedValue);
-            setQuanHuyen(selectedValue);
-
-
-        };
-        const selectPX = (event) => {
-
-            const selectedValue = event.target.value;
-            console.log(quanHuyen);
-            console.log(selectedValue);
-            setPhuongXa(selectedValue);
-
-
-        };
 
         return (
             <>
@@ -234,59 +294,62 @@ const AddAddress = () => {
                                 flexWrap: "wrap"
                             }}
                         >
-                            <FormControl sx={{m: 1, minWidth: 120}}>
-
+                            <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}>
+                                <InputLabel id="province-label">Tỉnh/Thành Phố</InputLabel>
                                 <Select
-                                    error={!!validationErrors.tinhThanh}
-                                    autoWidth // Loại bỏ giá trị và chỉ giữ tên thuộc tính
-                                    value={tinhThanh || ''}
-                                    onChange={selectTT}
-                                    displayEmpty
+                                    labelId="province-label"
+                                    id="province-select"
+                                    value={selectedProvince}
+                                    onChange={(e) => setSelectedProvince(e.target.value)}
+                                    label="Tỉnh/Thành Phố"
                                 >
-                                    <MenuItem disabled value={''}>Chọn Thành Phố</MenuItem>
-                                    {listTP?.map((item) => (
-                                        <MenuItem key={item?.province_id} value={item?.province_id}>
-                                            {item?.province_name}
+                                    <MenuItem value="">
+                                        <em>Chọn Tỉnh/Thành Phố</em>
+                                    </MenuItem>
+                                    {provinces.map((province) => (
+                                        <MenuItem key={province.ProvinceID} value={province.ProvinceID}>
+                                            {province.ProvinceName}
                                         </MenuItem>
                                     ))}
                                 </Select>
-
-                                <FormHelperText>{validationErrors.tinhThanh}</FormHelperText>
                             </FormControl>
-                            <FormControl sx={{m: 1, minWidth: 120}}>
-
+                            <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}>
+                                <InputLabel id="district-label">Quận/Huyện</InputLabel>
                                 <Select
-                                    error={!!validationErrors.quanHuyen}
-                                    autoWidth // Loại bỏ giá trị và chỉ giữ tên thuộc tính
-                                    value={quanHuyen || ''}
-                                    onChange={selectQH}
-                                    displayEmpty
+                                    labelId="district-label"
+                                    id="district-select"
+                                    value={selectedDistrict}
+                                    onChange={(e) => setSelectedDistrict(e.target.value)}
+                                    label="Quận/Huyện"
                                 >
-                                    <MenuItem disabled value={''}>Chọn Quận Huyện</MenuItem>
-                                    {listQH?.map((item) => (
-                                        <MenuItem key={item?.district_id} value={item?.district_id}>
-                                            {item?.district_name}
+                                    <MenuItem value="">
+                                        <em>Chọn Quận/Huyện</em>
+                                    </MenuItem>
+                                    {districts.map((district) => (
+                                        <MenuItem key={district.DistrictID} value={district.DistrictID}>
+                                            {district.DistrictName}
                                         </MenuItem>
                                     ))}
                                 </Select>
-
-                                <FormHelperText>{validationErrors.quanHuyen}</FormHelperText>
                             </FormControl>
-                            <FormControl sx={{m: 1, minWidth: 120}}>
+                            <FormControl size="small" sx={{m: 0, minWidth: 170, marginTop: 2}}>
+                                <InputLabel id="ward-label">Phường/Xã</InputLabel>
                                 <Select
-                                    autoWidth // Loại bỏ giá trị và chỉ giữ tên thuộc tính
-                                    value={phuongXa || ''}
-                                    onChange={selectPX}
-                                    displayEmpty
+                                    labelId="ward-label"
+                                    id="ward-select"
+                                    value={selectedWard}
+                                    onChange={(e) => setSelectedWard(e.target.value)}
+                                    label="Phường/Xã"
                                 >
-                                    <MenuItem disabled value={''}>Chọn Phường Xã</MenuItem>
-                                    {listPX?.map((item) => (
-                                        <MenuItem key={item?.ward_id} value={item?.ward_id}>
-                                            {item?.ward_name}
+                                    <MenuItem value="">
+                                        <em>Chọn Phường/Xã</em>
+                                    </MenuItem>
+                                    {wards.map((ward) => (
+                                        <MenuItem key={ward.WardCode} value={ward.WardCode}>
+                                            {ward.WardName}
                                         </MenuItem>
                                     ))}
                                 </Select>
-
                             </FormControl>
                         </Box>
 

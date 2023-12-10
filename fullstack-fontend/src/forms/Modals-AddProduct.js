@@ -1,11 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
-import { sample } from 'lodash';
 import PropTypes from 'prop-types';
 // import ModalDetailProduct from './Modal-Detail-SanPham';
-import { fetchAllCTSPBySize } from '../service/BillSevice';
+import { fetchSpForClient } from '../service/SanPhamService';
 // @mui
-import { ProductSort, ProductListADM, ProductFilterSidebar } from '../sections/@dashboard/products';
+import { ProductListADM, ProductfilterSB } from '../sections/@dashboard/products';
 
 const ModalAddProduct = (props) => {
   // Get Props
@@ -20,7 +19,8 @@ const ModalAddProduct = (props) => {
 
   const getAllData = useCallback(async () => {
     try {
-      const getData = await fetchAllCTSPBySize();
+      // const getData = await fetchAllCTSPBySize();
+      const getData = await fetchSpForClient();
       console.log('getDataSanPham: ', getData);
       if (getData) {
         setListData(getData);
@@ -45,44 +45,26 @@ const ModalAddProduct = (props) => {
     setOpenFilter(false);
   };
 
-  const PRODUCTS = listData.map((item, index) => {
-    const setIndex = index + 1;
-    const imagesArray = item[0].split(',');
-    const firstImage = imagesArray[0];
-    const arrayPrice = item[4].split(',');
-    const price = arrayPrice.map((price) => parseFloat(price));
-    // find max and min of price
-    const minPrice = Math.min(...price);
-    const maxPrice = Math.max(...price);
-    // Select price
-    const priceRange = minPrice === maxPrice ? minPrice : `${minPrice} ${maxPrice}`;
+  // filter
+  const [listLoc, setListLoc] = useState([]);
+  const [isFiltered, setIsFiltered] = useState(false);
 
-    const PRODUCT_COLOR = ['#00AB55', '#000000', '#FFFFFF', '#FFC0CB', '#FF4842', '#1890FF', '#94D82D', '#FFC107'];
+  const handleFilter = (filteredProducts) => {
+    setListLoc(filteredProducts);
+    setIsFiltered(true);
+  };
 
-    return {
-      id: item[1],
-      cover: firstImage,
-      name: item[3],
-      price: priceRange,
-      priceSale: item[2],
-      colors:
-        (setIndex === 1 && PRODUCT_COLOR.slice(0, 2)) ||
-        (setIndex === 2 && PRODUCT_COLOR.slice(1, 3)) ||
-        (setIndex === 3 && PRODUCT_COLOR.slice(2, 4)) ||
-        (setIndex === 4 && PRODUCT_COLOR.slice(3, 6)) ||
-        (setIndex === 23 && PRODUCT_COLOR.slice(4, 6)) ||
-        (setIndex === 24 && PRODUCT_COLOR.slice(5, 6)) ||
-        PRODUCT_COLOR,
-      status: sample(['sale', 'new', '', '']),
-      selectDataCart,
-      DataCart,
-    };
-  });
+  const displayProducts = isFiltered ? listLoc : listData;
+
+  const hanldeSetCloser = () => {
+    setIsFiltered(false);
+    handleClose();
+  };
 
   return (
     <>
       <div>
-        <Dialog open={show} onClose={handleClose} maxWidth="xl" fullWidth>
+        <Dialog open={show} onClose={hanldeSetCloser} maxWidth="xl" fullWidth sx={{ zIndex: 1200 }}>
           <DialogTitle>
             <Typography variant="h4" sx={{ mb: 5 }}>
               Danh Sách Sản Phẩm
@@ -91,19 +73,21 @@ const ModalAddProduct = (props) => {
           <DialogContent>
             <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
               <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-                <ProductFilterSidebar
+                <ProductfilterSB
                   openFilter={openFilter}
                   onOpenFilter={handleOpenFilter}
                   onCloseFilter={handleCloseFilter}
+                  listSP={listData}
+                  onFilter={handleFilter}
+                  sx={{ zIndex: 1300 }}
                 />
-                <ProductSort />
               </Stack>
             </Stack>
-            <ProductListADM products={PRODUCTS} />
+            <ProductListADM products={displayProducts} />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Hủy</Button>
-            <Button onClick={handleClose}>Hoàn Tất</Button>
+            <Button onClick={() => hanldeSetCloser()}>Hủy</Button>
+            <Button onClick={() => hanldeSetCloser()}>Hoàn Tất</Button>
           </DialogActions>
         </Dialog>
       </div>

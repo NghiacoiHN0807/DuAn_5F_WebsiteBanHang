@@ -1,10 +1,10 @@
 package com.example.fullstackbackend.controller;
 
-import com.example.fullstackbackend.config.UserService;
-import com.example.fullstackbackend.config.jwt.JwtTokenProvider;
-import com.example.fullstackbackend.config.payload.LoginRequest;
-import com.example.fullstackbackend.config.payload.LoginResponse;
-import com.example.fullstackbackend.config.payload.RandomStuff;
+import com.example.fullstackbackend.services.UserService;
+import com.example.fullstackbackend.security.jwt.JwtTokenProvider;
+import com.example.fullstackbackend.security.payload.LoginRequest;
+import com.example.fullstackbackend.security.payload.LoginResponse;
+import com.example.fullstackbackend.security.payload.RandomStuff;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

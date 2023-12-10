@@ -50,6 +50,8 @@ export default function ProductsPage() {
 
   const displayProducts = isFiltered ? listLoc : listSP;
 
+  console.log("displayProducts: ", displayProducts);
+
   return (
     <>
       <Helmet>
@@ -58,7 +60,7 @@ export default function ProductsPage() {
 
       <Container>
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Products
+          Danh sách sản phẩm
         </Typography>
 
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
@@ -70,17 +72,19 @@ export default function ProductsPage() {
               listSP={listSP}
               onFilter={handleFilter}
             />
-
-            {/* <ProductSort /> */}
           </Stack>
         </Stack>
 
-        {displayProducts.length > 0 ? (
-          <ProductListAll products={displayProducts} sx={{ marginBottom: '50px' }} />
-        ) : (
-          <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', marginBottom: '50px' }}>
-            <SearchOffIcon sx={{ fontSize: 80 }} /> Không tìm thấy sản phẩm phù hợp!
-          </Typography>
+        {listSP.length > 0 && (
+          <div>
+            {displayProducts.length > 0 ? (
+              <ProductListAll products={displayProducts} sx={{ marginBottom: '50px' }} />
+            ) : (
+              <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', marginBottom: '50px' }}>
+                <SearchOffIcon sx={{ fontSize: 80 }} /> Không tìm thấy sản phẩm phù hợp!
+              </Typography>
+            )}
+          </div>
         )}
       </Container>
     </>

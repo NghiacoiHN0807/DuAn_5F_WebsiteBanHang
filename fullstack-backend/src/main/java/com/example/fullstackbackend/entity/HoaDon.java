@@ -98,7 +98,7 @@ public class HoaDon {
     @Column(name = "ngay_giao_thanh_cong")
     private Timestamp ngayGiaoThanhCong;
 
-    @NotNull(message = "Không Được Để Trống")
+//    @NotNull(message = "Không Được Để Trống")
     @Column(name = "kieu_hoa_don")
     private Integer kieuHoaDon;
 

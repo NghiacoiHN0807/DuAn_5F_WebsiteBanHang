@@ -39,13 +39,16 @@ import AllAddress from './pages/diaChi/AllAddress';
 import AddressByClient from './pages/diaChi/AddressByClient';
 import AddAddress from './pages/diaChi/AddAddress';
 import UpdateAddress from './pages/diaChi/UpdateAddress';
-import SignUp from './pages/client/SignUp';
+// import SignUp from './pages/client/SignUp';
 import AddCoupons from './pages/coupons/AddCoupons';
 import CouponsPage from './pages/coupons/CouponsPage';
 import UpdateCoupons from './pages/coupons/UpdateCoupons';
 import OrderClientTimeline from './pages/client/OrderClient-Timeline';
 import SelectAllBillOfClient from './pages/client/SelectAllBill';
+import SignUpPage from "./pages/SignUpPage";
+import ForgetPasswordPage from "./pages/ForgetPasswordPage";
 import CartNoAccount from './pages/client/Cart-NoAccount';
+import SaleProductsPage from './pages/client/SaleProductsPage';
 import PaymentPage from './pages/client/Payment-Page';
 
 // ----------------------------------------------------------------------
@@ -64,35 +67,35 @@ export default function Router() {
       children:
         authorities === 'ROLE_ADMIN'
           ? [
-              { element: <Navigate to="/dashboard/app" />, index: true },
-              { path: 'app', element: <DashboardAppPage /> },
-              { path: 'bills', element: <OrderManagement /> },
-              { path: 'bills/time-line/:id', element: <OrderManagementTimeline /> },
-              { path: 'sales', element: <Sales /> },
-              { path: 'sales/card-bill/:id', element: <CartBillADM /> },
-              { path: 'staff', element: <UserStaff /> },
-              { path: 'addNewTKNV', element: <AddTKNV /> },
-              { path: 'detail/:id', element: <UpdateTkNV /> },
-              { path: 'staff', element: <UserPage /> },
-              { path: 'discounts', element: <DiscountPage /> },
-              { path: 'discount/add', element: <ModelAddNewGiamGia /> },
-              { path: 'discount/update/:id', element: <ModelUpdateGiamGia /> },
-              { path: 'clients', element: <ClientsPage /> },
-              { path: 'clients/add', element: <AddClients /> },
-              { path: 'clients/detail/:id', element: <UpdateClients /> },
-              { path: 'address', element: <AllAddress /> },
-              { path: 'address/:id', element: <AddressByClient /> },
-              { path: 'address/add/:id', element: <AddAddress /> },
-              { path: 'address/detail/:id', element: <UpdateAddress /> },
-              { path: 'products', element: <ProductMain /> },
-              { path: 'products/add', element: <ProductAdd /> },
-              { path: 'products/update/:id', element: <ProductUpdate /> },
-              { path: 'coupons/add', element: <AddCoupons /> },
-              { path: 'coupons', element: <CouponsPage /> },
-              { path: 'coupons/update/:id', element: <UpdateCoupons /> },
-            ]
+            { element: <Navigate to="/dashboard/app" />, index: true },
+            { path: 'app', element: <DashboardAppPage /> },
+            { path: 'bills', element: <OrderManagement /> },
+            { path: 'bills/time-line/:id', element: <OrderManagementTimeline /> },
+            { path: 'sales', element: <Sales /> },
+            { path: 'sales/card-bill/:id', element: <CartBillADM /> },
+            { path: 'staff', element: <UserStaff /> },
+            { path: 'addNewTKNV', element: <AddTKNV /> },
+            { path: 'detail/:id', element: <UpdateTkNV /> },
+            { path: 'staff', element: <UserPage /> },
+            { path: 'discounts', element: <DiscountPage /> },
+            { path: 'discount/add', element: <ModelAddNewGiamGia /> },
+            { path: 'discount/update/:id', element: <ModelUpdateGiamGia /> },
+            { path: 'clients', element: <ClientsPage /> },
+            { path: 'clients/add', element: <AddClients /> },
+            { path: 'clients/detail/:id', element: <UpdateClients /> },
+            { path: 'address', element: <AllAddress /> },
+            { path: 'address/:id', element: <AddressByClient /> },
+            { path: 'address/add/:id', element: <AddAddress /> },
+            { path: 'address/detail/:id', element: <UpdateAddress /> },
+            { path: 'products', element: <ProductMain /> },
+            { path: 'products/add', element: <ProductAdd /> },
+            { path: 'products/update/:id', element: <ProductUpdate /> },
+            { path: 'coupons/add', element: <AddCoupons /> },
+            { path: 'coupons', element: <CouponsPage /> },
+            { path: 'coupons/update/:id', element: <UpdateCoupons /> },
+          ]
           : authorities === 'ROLE_STAFF'
-          ? [
+            ? [
               { element: <Navigate to="/dashboard/app" />, index: true },
               { path: 'app', element: <DashboardAppPage /> },
               { path: 'bills', element: <OrderManagement /> },
@@ -119,7 +122,7 @@ export default function Router() {
               { path: 'coupons', element: <CouponsPage /> },
               { path: 'coupons/update/:id', element: <UpdateCoupons /> },
             ]
-          : [
+            : [
               { element: <Navigate to="/client/home" />, index: true },
               { path: 'home', element: <Home /> },
               { path: 'detail/:id', element: <DetailProduct /> },
@@ -129,6 +132,7 @@ export default function Router() {
               { path: 'payment/:id', element: <PaymentPage1 /> },
               { path: 'contact', element: <Contact /> },
               { path: 'products', element: <ProductsPage /> },
+              { path: 'products-sale', element: <SaleProductsPage /> },
               { path: 'client-timeline/:id', element: <OrderClientTimeline /> },
               { path: 'select-bill-client/:idKH', element: <SelectAllBillOfClient /> },
               // { path: 'select-bill-client', element: <SelectAllBillOfClient /> },
@@ -140,7 +144,11 @@ export default function Router() {
     },
     {
       path: 'signUp',
-      element: <SignUp />,
+      element: <SignUpPage />,
+    },
+    {
+      path: 'forgetPassword',
+      element: <ForgetPasswordPage />,
     },
     {
       element: <SimpleLayout />,

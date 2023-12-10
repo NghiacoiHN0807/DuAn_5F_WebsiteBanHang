@@ -55,7 +55,7 @@ public class XuatXu {
         String uuidString = uuid.toString().replace("-", "");
 
         // Lấy 6 ký tự đầu của chuỗi UUID
-        return "CL" + uuidString.toUpperCase().substring(0, 9);
+        return "XX" + uuidString.toUpperCase().substring(0, 9);
     }
 
 }

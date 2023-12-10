@@ -23,7 +23,10 @@ import {
     TablePagination,
     Snackbar,
     Alert,
+    Chip,
+    TextField,
 } from '@mui/material';
+import { Grid, makeStyles } from '@material-ui/core';
 // components
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
@@ -69,18 +72,6 @@ function getComparator(order, orderBy) {
         : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-function applySortFilter(array, comparator, query) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) return order;
-        return a[1] - b[1];
-    });
-    if (query) {
-        return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-    }
-    return stabilizedThis.map((el) => el[0]);
-}
 
 export default function CouponsPage() {
     // Select list of users
@@ -101,6 +92,52 @@ export default function CouponsPage() {
 
     const [listData, setListData] = useState([]);
 
+
+
+    const [startDateFilter, setStartDateFilter] = useState('');
+    const [endDateFilter, setEndDateFilter] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
+    const [minAmountFilter, setMinAmountFilter] = useState('');
+    const [maxAmountFilter, setMaxAmountFilter] = useState('');
+
+
+
+
+    function applySortFilter(array, comparator, query) {
+        let filteredArray = array;
+
+        if (query) {
+            filteredArray = filter(array, (_user) => _user.tenChuongTrinh.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+        }
+
+        if (startDateFilter) {
+            filteredArray = filteredArray.filter((_user) => _user.thoiGianTao >= startDateFilter);
+        }
+
+        if (endDateFilter) {
+            filteredArray = filteredArray.filter((_user) => _user.thoiGianKetThuc <= endDateFilter);
+        }
+
+        if (statusFilter !== '') {
+            filteredArray = filteredArray.filter((_user) => _user.trangThai.toString() === statusFilter);
+        }
+
+        if (minAmountFilter !== '' && maxAmountFilter !== '') {
+            filteredArray = filteredArray.filter((_user) => {
+                const amount = parseFloat(_user.tienToiThieu);
+                return amount >= parseFloat(minAmountFilter) && amount <= parseFloat(maxAmountFilter);
+            });
+        }
+
+        const stabilizedThis = filteredArray.map((el, index) => [el, index]);
+        stabilizedThis.sort((a, b) => {
+            const order = comparator(a[0], b[0]);
+            if (order !== 0) return order;
+            return a[1] - b[1];
+        });
+
+        return stabilizedThis.map((el) => el[0]);
+    }
     // Show Data On Tables
     // const [numberPages, setNumberPages] = useState(0);
     const getListData = async () => {
@@ -117,7 +154,8 @@ export default function CouponsPage() {
     // const [currentPage, setCurrentPage] = useState(0);
     useEffect(() => {
         getListData();
-    }, []);
+    }, [startDateFilter, endDateFilter, statusFilter, minAmountFilter, maxAmountFilter]);
+
 
     // Open and Close menu
     const [object, getObject] = useState([]);
@@ -185,7 +223,22 @@ export default function CouponsPage() {
 
     // Set status of trangThai
     function mapTrangThaiToStatus(trangThai) {
-        return trangThai === 0 ? 'Hoạt động' : trangThai === 10 ? 'Ngưng hoạt động' : 'Không xác định';
+        return trangThai === 0 ? <Chip
+            label="Hoạt động"
+            color="primary"
+            variant="outlined"
+            style={{ color: 'white', backgroundColor: 'green', border: 'none' }}
+        /> : trangThai === 10 ? <Chip
+            label="Dừng hoạt động"
+            color="secondary"
+            variant="outlined"
+            style={{ color: 'white', backgroundColor: 'red', border: 'none' }}
+        /> : <Chip
+            label="Không xác định"
+            color="warning"
+            variant="outlined"
+            style={{ color: 'white', backgroundColor: 'red', border: 'none' }}
+        />;
     }
     const navigate = useNavigate();
 
@@ -246,6 +299,16 @@ export default function CouponsPage() {
         setOpen(null);
     }
 
+    const useStyles = makeStyles((theme) => ({
+        filterContainer: {
+            display: 'grid',
+            gap: theme.spacing(2),
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 200px))',
+            margin: theme.spacing(2),
+        },
+    }));
+
+    const classes = useStyles();
 
     return (
         <>
@@ -267,6 +330,48 @@ export default function CouponsPage() {
 
                 <Card>
                     <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+                    <Grid container className={classes.filterContainer}>
+                        <TextField
+                            label="Ngày Bắt Đầu"
+                            type="date"
+                            value={startDateFilter}
+                            onChange={(event) => setStartDateFilter(event.target.value)}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                        <TextField
+                            label="Ngày Kết Thúc"
+                            type="date"
+                            value={endDateFilter}
+                            onChange={(event) => setEndDateFilter(event.target.value)}
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                        />
+                        <TextField
+                            select
+                            label="Trạng Thái"
+                            value={statusFilter}
+                            onChange={(event) => setStatusFilter(event.target.value)}
+                        >
+                            <MenuItem value="">Tất Cả</MenuItem>
+                            <MenuItem value="0">Hoạt Động</MenuItem>
+                            <MenuItem value="10">Dừng Hoạt Động</MenuItem>
+                        </TextField>
+                        <TextField
+                            label="Số Tiền Tối Thiểu"
+                            type="number"
+                            value={minAmountFilter}
+                            onChange={(event) => setMinAmountFilter(event.target.value)}
+                        />
+                        <TextField
+                            label="Số Tiền Tối Đa"
+                            type="number"
+                            value={maxAmountFilter}
+                            onChange={(event) => setMaxAmountFilter(event.target.value)}
+                        />
+                    </Grid>
 
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
@@ -279,7 +384,13 @@ export default function CouponsPage() {
                                     numSelected={selected.length}
                                     onRequestSort={handleRequestSort}
                                     onSelectAllClick={handleSelectAllClick}
+                                    onStatusFilterChange={(event) => setStatusFilter(event.target.value)}
+                                    onStartDateFilterChange={(event) => setStartDateFilter(event.target.value)}
+                                    onEndDateFilterChange={(event) => setEndDateFilter(event.target.value)}
+                                    onMinAmountFilterChange={(event) => setMinAmountFilter(event.target.value)}
+                                    onMaxAmountFilterChange={(event) => setMaxAmountFilter(event.target.value)}
                                 />
+
                                 <TableBody>
                                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                                         const { idCoupon, tenChuongTrinh, trangThai, code, moTa, thoiGianKetThuc, thoiGianTao, soLuongHienTai, phanTram, tienToiThieu } = row;

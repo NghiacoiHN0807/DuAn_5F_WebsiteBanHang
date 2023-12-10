@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 // @mui
 import { Box, Card, Link, Typography, Stack } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 // utils
 // components
 import Label from '../../../components/label';
@@ -41,7 +42,12 @@ function formatCurrency(price) {
 }
 
 export default function ShopProductCard({ product }) {
-  const { tenSp, trangThai, url, giaMin, giaMax, giaThucTe } = product;
+  const { idSp, tenSp, trangThai, url, giaMin, giaMax, giaThucTe } = product;
+
+  const navigate = useNavigate();
+  const hanldOpenDetail = async (id) => {
+    navigate(`/client/detail/${id}`);
+  };
 
   return (
     <Card>
@@ -61,12 +67,17 @@ export default function ShopProductCard({ product }) {
             Sale
           </Label>
         )}
-        <StyledProductImg alt={tenSp} src={url} sx={{ height: '250px' }} />
+        <StyledProductImg
+          alt={tenSp}
+          src={url}
+          sx={{ height: '250px', cursor: 'pointer' }}
+          onClick={() => hanldOpenDetail(idSp)}
+        />
       </Box>
 
       <Stack spacing={2} sx={{ p: 3 }}>
         <Link color="inherit" underline="hover">
-          <Typography variant="subtitle2" noWrap>
+          <Typography variant="subtitle2" noWrap onClick={() => hanldOpenDetail(idSp)} sx={{ cursor: 'pointer' }}>
             {tenSp}
           </Typography>
         </Link>

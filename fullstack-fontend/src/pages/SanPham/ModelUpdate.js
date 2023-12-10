@@ -44,8 +44,10 @@ import {
   FormLabel,
   Backdrop,
   Chip,
+  InputAdornment,
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import SearchIcon from '@mui/icons-material/Search';
 import Iconify from '../../components/iconify';
 import { putUpdateSanPham, detailSP } from '../../service/SanPhamService';
 import { findCtspById, addColorAndSize, updateNumber, detailCTSP } from '../../service/ChiTietSPService';
@@ -57,8 +59,8 @@ import { fetchCL, detailCL, postAddChatLieu, putUpdateChatLieu } from '../../ser
 import { fetchCoAo, detailCoAo, postAddLoaiCoAo, putUpdateLoaiCoAo } from '../../service/LoaiCoAoService';
 import { fetchLSP, detailLSP, postAddLoaiSP, putUpdateLoaiSP } from '../../service/LoaiSPService';
 import { fetchTayAo, detailTayAo, postAddOngTayAo, putUpdateOngTayAo } from '../../service/OngTayAoService';
-import { fetchMS } from '../../service/MauSacService';
-import { fetchSize } from '../../service/SizeService';
+import { fetchMS, detailMS, postAddMauSac, putUpdateMauSac } from '../../service/MauSacService';
+import { fetchSize, detailSize, postAddSize, putUpdateSize } from '../../service/SizeService';
 import '../../scss/UpdateSp.scss';
 import ModalQuickAtt from './ModalQuickAtt';
 
@@ -285,7 +287,7 @@ export default function UpdateSanPham() {
     ) {
       handleAlertClick('Cập nhật thất bại!', 'danger');
     } else {
-      const trangThaiValue = listImg.length === 0 || listCTSP.length === 0 ? 9 : trangThai;
+      const trangThaiValue = listImg.length === 0 || listCTSP.length === 0 ? 9 : trangThai === 9 ? 0 : trangThai;
       const res = await putUpdateSanPham(
         idSpHttp,
         maSp,
@@ -351,15 +353,15 @@ export default function UpdateSanPham() {
   }, [selectedImages, uploadImage]);
 
   const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
-    if (acceptedFiles && acceptedFiles.length > 0 && rejectedFiles && rejectedFiles.length === 0) {
+    if (acceptedFiles.length > 0 && rejectedFiles.length === 0) {
       const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
       setSelectedImages(imageFiles);
       handleOpenBD();
     }
-    if (acceptedFiles && acceptedFiles.length === 0 && rejectedFiles && rejectedFiles.length > 0) {
+    if (acceptedFiles.length === 0 && rejectedFiles.length > 0) {
       handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
     }
-    if (acceptedFiles && acceptedFiles.length > 0 && rejectedFiles && rejectedFiles.length > 0) {
+    if (acceptedFiles.length > 0 && rejectedFiles.length > 0) {
       const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
       setSelectedImages(imageFiles);
       handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
@@ -476,6 +478,10 @@ export default function UpdateSanPham() {
         return postAddLoaiCoAo;
       case 'Ống tay áo':
         return postAddOngTayAo;
+      case 'Màu sắc':
+        return postAddMauSac;
+      case 'Size':
+        return postAddSize;
       default:
         return emptyFunc;
     }
@@ -493,6 +499,10 @@ export default function UpdateSanPham() {
         return putUpdateLoaiCoAo;
       case 'Ống tay áo':
         return putUpdateOngTayAo;
+      case 'Màu sắc':
+        return putUpdateMauSac;
+      case 'Size':
+        return putUpdateSize;
       default:
         return emptyFunc;
     }
@@ -510,6 +520,10 @@ export default function UpdateSanPham() {
         return detailCoAo;
       case 'Ống tay áo':
         return detailTayAo;
+      case 'Màu sắc':
+        return detailMS;
+      case 'Size':
+        return detailSize;
       default:
         return emptyFunc;
     }
@@ -540,7 +554,13 @@ export default function UpdateSanPham() {
     if (phanTu.att === 'Ống tay áo') {
       setListAtt(listTayAo);
     }
-  }, [listCL, listLSP, listXX, listTayAo, listCoAo, phanTu]);
+    if (phanTu.att === 'Màu sắc') {
+      setListAtt(listMS);
+    }
+    if (phanTu.att === 'Size') {
+      setListAtt(listSize);
+    }
+  }, [listCL, listLSP, listXX, listTayAo, listCoAo, listMS, listSize, phanTu]);
 
   return (
     <>
@@ -780,10 +800,23 @@ export default function UpdateSanPham() {
 
         <Card sx={{ padding: '25px', marginTop: '15px' }}>
           <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Typography variant="h6" gutterBottom>
                 Cập nhật thuộc tính
               </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                variant="outlined"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                placeholder="Search User..."
+              />
             </Grid>
             <Grid item xs={6} style={{ textAlign: 'right' }}>
               <Button
@@ -937,7 +970,7 @@ export default function UpdateSanPham() {
                 <Button
                   variant="outlined"
                   size="large"
-                  onClick={() => handleOpenQuickAtt('Ống tay áo', 'idTayAo', 'maTayAo', 'loaiTayAo')}
+                  onClick={() => handleOpenQuickAtt('Màu sắc', 'idMs', 'maMs', 'tenMs')}
                 >
                   <MoreHorizIcon />
                 </Button>
@@ -971,6 +1004,7 @@ export default function UpdateSanPham() {
                     }}
                     size="small"
                     variant="outlined"
+                    onClick={() => handleOpenQuickAtt('Size', 'idSize', 'maSize', 'tenSize')}
                   >
                     +
                   </Button>

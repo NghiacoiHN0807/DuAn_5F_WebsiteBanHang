@@ -61,11 +61,13 @@ public class DiaChi {
     @Column(name = "tinh_thanh")
     private String tinhThanh;
 
-    @Column(name = "phi_ship")
+    @Column(name = "phi_ship", precision = 38, scale = 2)
     private BigDecimal phiShip;
 
     @Column(name = "trang_thai")
     private Integer trangThai;
+
+
 
 
 }

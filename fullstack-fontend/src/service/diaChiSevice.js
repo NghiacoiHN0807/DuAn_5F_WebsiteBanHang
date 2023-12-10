@@ -6,16 +6,16 @@ const fetchAllDiaChi = (page) =>
 const fetchDiaChiByTK = (maTaiKhoan, page) =>
     custom.get(`/dia-chi/tai-khoan/?m=${maTaiKhoan}&p=${page}`); // Call API
 
-const postAddDiaChi = (taiKhoan, diaChiCuThe, loaiDiaChi, phuongXa, quanHuyen, sdt, tenNguoiNhan, tinhThanh, trangThai) =>
+const postAddDiaChi = (taiKhoan, diaChiCuThe, loaiDiaChi, phuongXa, quanHuyen, sdt, tenNguoiNhan, tinhThanh,phiShip, trangThai) =>
     custom.post("/dia-chi/add", {
-        taiKhoan, diaChiCuThe, loaiDiaChi, phuongXa, quanHuyen, sdt, tenNguoiNhan, tinhThanh, trangThai
+        taiKhoan, diaChiCuThe, loaiDiaChi, phuongXa, quanHuyen, sdt, tenNguoiNhan, tinhThanh,phiShip, trangThai
     });
 
 const postUpdateDiaChi = (
-    id, taiKhoan, diaChiCuThe, loaiDiaChi, phuongXa, quanHuyen, sdt, tenNguoiNhan, tinhThanh, trangThai) =>
+    id, taiKhoan, diaChiCuThe, loaiDiaChi, phuongXa, quanHuyen, sdt, tenNguoiNhan, tinhThanh,phiShip, trangThai) =>
     custom.post("/dia-chi/update",
         {
-            id, taiKhoan, diaChiCuThe, loaiDiaChi, phuongXa, quanHuyen, sdt, tenNguoiNhan, tinhThanh, trangThai
+            id, taiKhoan, diaChiCuThe, loaiDiaChi, phuongXa, quanHuyen, sdt, tenNguoiNhan, tinhThanh,phiShip, trangThai
         });
 
 const getDiaChiById = (id) =>

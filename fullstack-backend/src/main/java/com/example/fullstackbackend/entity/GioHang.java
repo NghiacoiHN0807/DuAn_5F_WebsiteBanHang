@@ -1,18 +1,14 @@
 package com.example.fullstackbackend.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 @Entity
@@ -48,5 +44,32 @@ public class GioHang {
 
     @Column(name = "trang_thai")
     private Integer trangThai;
+
+
+
+    @PrePersist
+    public void prePersist() {
+        // Tạo mã tài khoản ngẫu nhiên không trùng nhau
+        if (maGioHang == null) {
+            maGioHang = generateMaGioHang();
+        }
+
+        // Tạo mật khẩu ngẫu nhiên nếu trường matKhau là null hoặc trống
+        if (ngayTao == null) {
+            ngayTao =  Timestamp.valueOf(LocalDateTime.now());
+        }
+    }
+
+    private String generateMaGioHang() {
+        // Tạo một UUID mới
+        UUID uuid = UUID.randomUUID();
+
+        // Chuyển UUID thành chuỗi và loại bỏ các ký tự '-'
+        String uuidString = uuid.toString().replace("-", "");
+
+        // Lấy 6 ký tự đầu của chuỗi UUID
+        return "GH" + uuidString.toUpperCase().substring(0, 9);
+    }
+
 
 }

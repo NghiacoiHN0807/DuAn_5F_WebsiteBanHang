@@ -8,54 +8,54 @@ import logoIG from '../../assets/logo-instargram.png';
 const Footer = () => (
   <>
     <footer>
-      <div className="container nav-container-footer">
+      <div className="container nav-container-footer" style={{ paddingTop: '15px' }}>
         <div className="row">
-          <div className="col-2">
+          <div className="col-3">
             <Nav defaultActiveKey="/home" className="flex-column">
-              <Nav.Link eventKey="disabled" disabled className="nav-links">
+              <Nav.Link eventKey="disabled" disabled className="nav-links text-light">
                 FIND OUR STORE
               </Nav.Link>
-              <Nav.Link href="/home" className="nav-links">
+              <Nav.Link href="/home" className="nav-links text-light">
                 SIGN IN
               </Nav.Link>
-              <Nav.Link eventKey="link-1" className="nav-links">
+              <Nav.Link eventKey="link-1" className="nav-links text-light">
                 SIGN UP
               </Nav.Link>
             </Nav>
           </div>
-          <div className="col-2">
+          <div className="col-3">
             <Nav defaultActiveKey="/home" className="flex-column">
-              <Nav.Link eventKey="disabled" disabled className="nav-links">
+              <Nav.Link eventKey="disabled" disabled className="nav-links text-light">
                 GET HELP
               </Nav.Link>
-              <Nav.Link href="/home" className="nav-links">
+              <Nav.Link href="/home" className="nav-links text-light">
                 SEND FEEDBACK
               </Nav.Link>
-              <Nav.Link eventKey="link-1" className="nav-links">
+              <Nav.Link eventKey="link-1" className="nav-links text-light">
                 Link
               </Nav.Link>
-              <Nav.Link eventKey="link-2" className="nav-links">
+              <Nav.Link eventKey="link-2" className="nav-links text-light">
                 Link
               </Nav.Link>
             </Nav>
           </div>
-          <div className="col-2">
+          <div className="col-3">
             <Nav defaultActiveKey="/home" className="flex-column">
-              <Nav.Link eventKey="disabled" disabled className="nav-links">
+              <Nav.Link eventKey="disabled" disabled className="nav-links text-light">
                 ABOUT ME
               </Nav.Link>
-              <Nav.Link href="/home" className="nav-links">
+              <Nav.Link href="/home" className="nav-links text-light">
                 NEWS
               </Nav.Link>
-              <Nav.Link eventKey="link-1" className="nav-links">
+              <Nav.Link eventKey="link-1" className="nav-links text-light">
                 SALES
               </Nav.Link>
-              <Nav.Link eventKey="link-2" className="nav-links">
+              <Nav.Link eventKey="link-2" className="nav-links text-light">
                 PRODUCTS
               </Nav.Link>
             </Nav>
           </div>
-          <div className="col-6">
+          <div className="col-3">
             <Nav.Link type="" className="social-link">
               <img src={logoFB} alt="logofb" className="social-icon" />
             </Nav.Link>

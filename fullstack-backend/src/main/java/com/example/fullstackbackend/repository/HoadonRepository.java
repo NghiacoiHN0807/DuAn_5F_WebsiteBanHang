@@ -54,19 +54,12 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
             "GROUP BY DATE(ngay_thanh_toan)", nativeQuery = true)
     List<Object[]> getTotalRevenueByDay();
 
-    @Query(value = "SELECT DISTINCT \n" +
-            "    (COUNT(DISTINCT hd.id_hd) - COUNT(DISTINCT lsgg.id_hd)) / COUNT(DISTINCT hd.id_hd) * 100 AS TyLeTraHang\n" +
-            "FROM \n" +
-            "    duan_5f.hoa_don hd\n" +
-            "LEFT JOIN \n" +
-            "    duan_5f.hoa_don_chi_tiet hdct ON hd.id_hd = hdct.id_hd\n" +
-            "LEFT JOIN \n" +
-            "    duan_5f.lich_su_giam_gia lsgg ON hd.id_hd = lsgg.id_hd\n" +
-            "WHERE \n" +
-            "    hd.trang_thai = 9 or hd.trang_thai = 5\n" +
-            "GROUP BY \n" +
-            "    hd.id_tai_khoan", nativeQuery = true)
+    @Query(value = "SELECT\n" +
+            "    IFNULL(((COUNT(CASE WHEN trang_thai = 6 THEN 1 END) / COUNT(CASE WHEN trang_thai IN (5, 6) THEN 1 END)) * 100), 0) AS ty_le_tra_hang\n" +
+            "FROM duan_5f.hoa_don\n" +
+            "WHERE trang_thai IN (5, 6);", nativeQuery = true)
     Double getTyLeTraHang();
+
 
     @Query(value = "SELECT SUM(so_luong) AS tong_so_luong_da_ban\n" +
             "FROM duan_5f.hoa_don_chi_tiet  hdct\n" +
