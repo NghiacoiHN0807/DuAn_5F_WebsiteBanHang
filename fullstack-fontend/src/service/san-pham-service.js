@@ -65,11 +65,6 @@ const putUpdateSanPham = (
 });
 
 const topSpTrending = () => custom.get('/san-pham/top-sp-trend'); // Thay đổi URL dựa trên định nghĩa URL API của bạn
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/longth
-
 export {
   fetchAllSP,
   fetchSP,
