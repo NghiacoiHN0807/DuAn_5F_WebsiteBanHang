@@ -11,9 +11,11 @@ import ModalDetailProduct from '../../../forms/Modal-Detail-SanPham';
 
 ProductListADM.propTypes = {
   products: PropTypes.array.isRequired,
+  selectDataCart: PropTypes.func.isRequired,
+  DataCart: PropTypes.array.isRequired,
 };
 
-export default function ProductListADM({ products, ...other }) {
+export default function ProductListADM({ products, selectDataCart, DataCart, ...other }) {
   const [listImages, setListImages] = useState([]);
   const [dataDetail, setDataDetail] = useState([]);
   const [showModalDetail, setShowModalDetail] = useState(false);
@@ -49,8 +51,8 @@ export default function ProductListADM({ products, ...other }) {
             show={showModalDetail}
             handleCloseDetai={handleCloseDetail}
             dataDetail={dataDetail}
-            selectDataCart={products[0].selectDataCart}
-            DataCart={products[0].DataCart}
+            selectDataCart={selectDataCart}
+            DataCart={DataCart}
             listImages={listImages}
           />
         </div>

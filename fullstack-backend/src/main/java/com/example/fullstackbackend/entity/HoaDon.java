@@ -70,16 +70,16 @@ public class HoaDon {
     @Column(name = "ten_kh")
     private String tenKh;
 
-    @Size(min = 10, max = 11, message = "Số Điện Thoại Tối Thiểu 10 Số")
-    @Pattern(message = "Nhập số Điện Thoại Chưa Đúng", regexp = "^(0|\\+84)(\\s|\\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))(\\d)(\\s|\\.)?(\\d{3})(\\s|\\.)?(\\d{3})$")
+//    @Size(min = 10, max = 11, message = "Số Điện Thoại Tối Thiểu 10 Số")
+//    @Pattern(message = "Nhập số Điện Thoại Chưa Đúng", regexp = "^(0|\\+84)(\\s|\\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))(\\d)(\\s|\\.)?(\\d{3})(\\s|\\.)?(\\d{3})$")
     @Column(name = "sdt_kh")
     private String sdtKh;
 
     @Column(name = "ten_ship")
     private String tenShip;
 
-    @Size(min = 10, max = 11, message = "Số Điện Thoại Tối Thiểu 10 Số")
-    @Pattern(message = "Nhập số Điện Thoại Chưa Đúng", regexp = "^(0|\\+84)(\\s|\\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))(\\d)(\\s|\\.)?(\\d{3})(\\s|\\.)?(\\d{3})$")
+//    @Size(min = 10, max = 11, message = "Số Điện Thoại Tối Thiểu 10 Số")
+//    @Pattern(message = "Nhập số Điện Thoại Chưa Đúng", regexp = "^(0|\\+84)(\\s|\\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))(\\d)(\\s|\\.)?(\\d{3})(\\s|\\.)?(\\d{3})$")
     @Column(name = "sdt_ship")
     private String sdtShip;
 

@@ -36,5 +36,7 @@ public interface HoadonchitietSevice {
 
     List<HoaDonChiTiet> getOne(Integer idHd);
 
+    List<HoaDonChiTiet> findAllByIDHD(Integer idHd);
+
     HoaDonChiTiet updateCart(ChiTietSanPham idCTSP, Integer soLuong, BigDecimal donGia, Integer idHD);
 }

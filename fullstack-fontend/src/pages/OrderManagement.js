@@ -110,6 +110,10 @@ const OrderManagement = () => {
       return filterData(array, query);
     }
 
+    if (statusFilter !== '') {
+      filteredArray = filteredArray.filter((_user) => _user.trangThai.toString() === statusFilter);
+    }
+
     const startDate = startDateFilter ? new Date(startDateFilter) : null;
     const endDate = endDateFilter ? new Date(endDateFilter) : null;
 
@@ -355,9 +359,16 @@ const OrderManagement = () => {
         'Kiểu Hóa Đơn',
         'Trạng Thái',
       ]);
-      listData.map((item) => {
+      listData.map((item, index) => {
         const array = [];
-        array[0] = item.idKH.ho;
+        array[0] = index + 1;
+        array[1] = item.maHd;
+        array[2] = item.idKH.ho + item.idKH.ten;
+        array[3] = item.idKH.sdt;
+        array[4] = formatCurrency(item.thanhTien);
+        array[5] = formatDateTime(item.ngayTao);
+        array[6] = renderKieuHoaDon(item.kieuHoaDon).props.label;
+        array[7] = renderTrangThai(item.trangThai).props.label;
         return res.push(array);
       });
       setSelectedExports(res);
@@ -376,9 +387,9 @@ const OrderManagement = () => {
           <Typography variant="h4" gutterBottom>
             Hóa Đơn
           </Typography>
-          {/* <CSVLink data={selectedExports} onClick={handleExportData}>
+          <CSVLink data={selectedExports} onClick={handleExportData}>
             Download me
-          </CSVLink> */}
+          </CSVLink>
           <Button onClick={() => handleAdd()} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Thêm Hóa Đơn
           </Button>
@@ -415,7 +426,14 @@ const OrderManagement = () => {
                   onChange={(event) => setStatusFilter(event.target.value)}
                 >
                   <MenuItem value="">Tất Cả</MenuItem>
-                  <MenuItem value="0">Hoạt Động</MenuItem>
+                  <MenuItem value="0">Đang Chờ Xác Nhận Đơn Hàng</MenuItem>
+                  <MenuItem value="1">Đã Xác Nhận Đơn</MenuItem>
+                  <MenuItem value="2">Đã Xác Nhận Người Mua</MenuItem>
+                  <MenuItem value="3">Đã Chuyển Cho Đơn Vị</MenuItem>
+                  <MenuItem value="4">Đã Xác Nhận Thanh Toán</MenuItem>
+                  <MenuItem value="5">Đã Giao Thành Công</MenuItem>
+                  <MenuItem value="8">Đơn Hàng Bán Tại Quầy</MenuItem>
+                  <MenuItem value="9">Đã Thanh Toán Tại Quầy</MenuItem>
                   <MenuItem value="10">Đã Bị Hủy</MenuItem>
                 </TextField>
               </Grid>

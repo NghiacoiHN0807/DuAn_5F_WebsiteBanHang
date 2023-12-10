@@ -4,6 +4,7 @@ import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
 import com.example.fullstackbackend.entity.LichSuHoaDon;
+import com.example.fullstackbackend.repository.ChitietsanphamRepository;
 import com.example.fullstackbackend.repository.HoadonRepository;
 import com.example.fullstackbackend.repository.HoadonchitietRepository;
 import com.example.fullstackbackend.repository.LichSuHoaDonRepository;
@@ -29,6 +30,9 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     private HoadonchitietRepository hoadonchitietRepository;
 
     @Autowired
+    private ChitietsanphamRepository chitietsanphamRepo;
+
+    @Autowired
     private LichSuHoaDonRepository lichSuHoaDonRepository;
 
     @Override
@@ -52,14 +56,35 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
         return hoadonchitietRepository.findByIdHd_IdKH_IdTaiKhoan(idKH, pageable);
     }
 
+    // Update product if it's exsit
+    public HoaDonChiTiet updateHoaDonChiTiet(List<HoaDonChiTiet> hoaDonChiTiets, HoaDonChiTiet add) {
+        if (hoaDonChiTiets.isEmpty()) {
+            return hoadonchitietRepository.save(add);
+        } else {
+            for (HoaDonChiTiet x : hoaDonChiTiets) {
+                ChiTietSanPham chiTietSanPham = chitietsanphamRepo.findById(x.getIdCtsp().getIdCtsp()).orElseThrow();
+                int newQuantity = x.getSoLuong() + add.getSoLuong();
+                x.setSoLuong(newQuantity);
+                BigDecimal newPrice = chiTietSanPham.getGiaThucTe().multiply(new BigDecimal(newQuantity));
+                x.setDonGia(newPrice);
+                return hoadonchitietRepository.save(x);
+            }
+        }
+        return null;
+    }
+
+
     @Override
     public HoaDonChiTiet add(HoaDonChiTiet add) {
+        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdCtspExsit(add.getIdHd().getIdHd(), add.getIdCtsp().getIdCtsp());
+
+        System.out.println("hoaDonChiTiets: " + hoaDonChiTiets.size());
         HoaDon hoaDon = hoadonRepo.findById(add.getIdHd().getIdHd()).orElseThrow();
         if (hoaDon.getTrangThai() < 8) {
             addLS(add, 1);
-            return hoadonchitietRepository.save(add);
+            return updateHoaDonChiTiet(hoaDonChiTiets, add);
         } else {
-            return hoadonchitietRepository.save(add);
+            return updateHoaDonChiTiet(hoaDonChiTiets, add);
         }
     }
 
@@ -86,12 +111,16 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 
     @Override
     public HoaDonChiTiet update(HoaDonChiTiet update) {
+        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdCtspExsit(update.getIdHd().getIdHd(), update.getIdCtsp().getIdCtsp());
+
         HoaDon hoaDon = hoadonRepo.findById(update.getIdHd().getIdHd()).orElseThrow();
         if (hoaDon.getTrangThai() < 8) {
             addLS(update, 3);
-            return hoadonchitietRepository.save(update);
+            return updateHoaDonChiTiet(hoaDonChiTiets, update);
+
         } else {
-            return hoadonchitietRepository.save(update);
+            return updateHoaDonChiTiet(hoaDonChiTiets, update);
+
         }
 
     }
@@ -190,6 +219,14 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
             ls.setTrangThai(6);
             ls.setMoTa("Trả Sản Phẩm: " + addLS.getIdCtsp().getIdSp().getTenSp() + " Với số lượng: " + addLS.getSoLuong() + "Lý Do Hủy Đơn: " + addLS.getLyDoHuy());
             ls.setNgayThayDoi(currentTimestamp);
+            // Update Inventory number
+            ChiTietSanPham chiTietSanPhams = chitietsanphamRepo.findById(addLS.getIdCtsp().getIdCtsp()).orElseThrow();
+
+            System.out.println("Số Lượng Còn Lại:" + (chiTietSanPhams.getSoLuongTon() + addLS.getSoLuong()));
+            chiTietSanPhams.setSoLuongTon(chiTietSanPhams.getSoLuongTon() + addLS.getSoLuong());
+            System.out.println("GetIDCTSP:" + chiTietSanPhams.getIdCtsp());
+            chitietsanphamRepo.save(chiTietSanPhams);
+
             return lichSuHoaDonRepository.save(ls);
         }
         return null;
@@ -203,6 +240,11 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     @Override
     public List<HoaDonChiTiet> getOne(Integer idHd) {
         return hoadonchitietRepository.detailHDCT(idHd);
+    }
+
+    @Override
+    public List<HoaDonChiTiet> findAllByIDHD(Integer idHd) {
+        return hoadonchitietRepository.findAllByIdHd_IdHdAndTrangThai(idHd, 0);
     }
 
     @Override

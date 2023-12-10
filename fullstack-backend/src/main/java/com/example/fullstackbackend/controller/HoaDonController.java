@@ -2,13 +2,17 @@ package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.config.payment.VNPayService;
 import com.example.fullstackbackend.config.payment.VNPayServiceClient;
+import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.HinhThucThanhToan;
 import com.example.fullstackbackend.entity.HoaDon;
+import com.example.fullstackbackend.entity.HoaDonChiTiet;
 import com.example.fullstackbackend.entity.LichSuHoaDon;
 import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
+import com.example.fullstackbackend.services.ChitietsanphamService;
 import com.example.fullstackbackend.services.HinhThucThanhToanSevice;
 import com.example.fullstackbackend.services.HoadonSevice;
+import com.example.fullstackbackend.services.HoadonchitietSevice;
 import com.example.fullstackbackend.services.LichSuHoaDonService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -52,6 +56,11 @@ public class HoaDonController {
     @Autowired
     private HinhThucThanhToanSevice hinhThucThanhToanSevice;
 
+    @Autowired
+    private HoadonchitietSevice hoadonchitietSer;
+
+    @Autowired
+    private ChitietsanphamService chitietsanphamSer;
     // get datetimenow
     java.util.Date currentDate = new java.util.Date();
     // Chuyển đổi thành Timestamp
@@ -144,6 +153,35 @@ public class HoaDonController {
             return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
 
+        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(newHD1.getIdHd());
+
+        if (newHD.getTrangThai() == 1) {
+            for (HoaDonChiTiet x :
+                    hoaDonChiTiets) {
+                System.out.println("x.getIdCtsp().getIdCtsp():" + x.getIdCtsp().getIdCtsp());
+                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                for (ChiTietSanPham y :
+                        chiTietSanPhams) {
+                    System.out.println("Số Lượng Còn Lại:" + (y.getSoLuongTon() - x.getSoLuong()));
+                    System.out.println("Số Lượng Còn Lại:" + y.getSoLuongTon());
+                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                    System.out.println("y.getIdCtsp(): " + y.getIdCtsp());
+                    chitietsanphamSer.update(y);
+                }
+            }
+        } else if (newHD1.getTrangThai() == 6) {
+            for (HoaDonChiTiet x :
+                    hoaDonChiTiets) {
+                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                for (ChiTietSanPham y :
+                        chiTietSanPhams) {
+                    System.out.println("Số Lượng Còn Lại:" + y.getSoLuongTon());
+                    y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
+                    chitietsanphamSer.update(y);
+                }
+            }
+        }
+
         //Add to history bill
 
         LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
@@ -169,6 +207,21 @@ public class HoaDonController {
             hoaDon.setTrangThai(newHD.getTrangThai());
             return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(newHD1.getIdHd());
+        //Update Inventory number
+
+        if (newHD.getTrangThai() == 9) {
+            for (HoaDonChiTiet x :
+                    hoaDonChiTiets) {
+                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                for (ChiTietSanPham y :
+                        chiTietSanPhams) {
+                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                    chitietsanphamSer.update(y);
+                }
+            }
+        }
 
         //Add to payments
         HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
@@ -253,7 +306,7 @@ public class HoaDonController {
     @PutMapping("update-tien-ship/{id}")
     public HoaDon updateTienShip(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
         return hoadonSevice.detail(id).map(hoaDon -> {
-            if(hoaDon.getSoTienGiamGia() == null) {
+            if (hoaDon.getSoTienGiamGia() == null) {
                 hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
             }
             BigDecimal thanhTien = (hoaDon.getTongTien().add(newHD.getTienShip())).subtract(hoaDon.getSoTienGiamGia());
@@ -351,18 +404,19 @@ public class HoaDonController {
         }
 
     }
+
     // Client
     @PostMapping("submitOrder-client")
     public String submidOrderClient(@RequestParam("amount") BigDecimal orderTotal,
-                              @RequestParam("orderInfo") String orderInfo,
-                              HttpServletRequest request) {
+                                    @RequestParam("orderInfo") String orderInfo,
+                                    HttpServletRequest request) {
         String baseUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort();
-        return vnPayService.createOrder(orderTotal, orderInfo, baseUrl);
+        return vnPayServiceClient.createOrder(orderTotal, orderInfo, baseUrl);
     }
 
     @GetMapping("vnpay-payment-client")
     public ResponseEntity<String> GetMappingClient(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int paymentStatus = vnPayService.orderReturn(request);
+        int paymentStatus = vnPayServiceClient.orderReturn(request);
 
         String orderInfo = request.getParameter("vnp_OrderInfo");
         String totalPrice = request.getParameter("vnp_Amount");

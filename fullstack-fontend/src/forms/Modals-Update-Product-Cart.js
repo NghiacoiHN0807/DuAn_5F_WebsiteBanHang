@@ -55,25 +55,32 @@ const ModalUpdateProductOnCart = (props) => {
   };
 
   const handleShowMS = (mauSac) => {
-    const checkSoLuong = Array.isArray(itemUpdateClassify)
-      ? [
-          ...new Set(
-            itemUpdateClassify.filter(
-              (item) => item.idMs.tenMs === mauSac.idMs.tenMs && item.idSize.tenSize === selectedSize
-            )
-          ),
-        ]
-      : [];
-    console.log('checkSoLuong:', checkSoLuong);
-
-    if (isMSSelected && selectedMauSac === mauSac.idMs.tenMs) {
-      setSelectedMauSac(null);
-      setIsMSSelected(false);
-      setSelectSoLuongTon([]);
+    if (!mauSac || !mauSac.idMs) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Vui Lòng Chọn Size',
+      });
     } else {
-      setSelectSoLuongTon(checkSoLuong);
-      setSelectedMauSac(mauSac.idMs.tenMs);
-      setIsMSSelected(true);
+      const checkSoLuong = Array.isArray(itemUpdateClassify)
+        ? [
+            ...new Set(
+              itemUpdateClassify.filter(
+                (item) => item.idMs.tenMs === mauSac.idMs.tenMs && item.idSize.tenSize === selectedSize
+              )
+            ),
+          ]
+        : [];
+      console.log('checkSoLuong:', checkSoLuong);
+
+      if (isMSSelected && selectedMauSac === mauSac.idMs.tenMs) {
+        setSelectedMauSac(null);
+        setIsMSSelected(false);
+        setSelectSoLuongTon([]);
+      } else {
+        setSelectSoLuongTon(checkSoLuong);
+        setSelectedMauSac(mauSac.idMs.tenMs);
+        setIsMSSelected(true);
+      }
     }
   };
   const [quantity, setQuantity] = useState(1); // Initialize with a default quantity
@@ -170,6 +177,7 @@ const ModalUpdateProductOnCart = (props) => {
   }
   const handleCloseDetai = () => {
     setSelectSoLuongTon([]);
+    setAvailableColors([]);
     setIsMSSelected(false);
     setIsSizeSelected(false);
     setSelectedMauSac(null);

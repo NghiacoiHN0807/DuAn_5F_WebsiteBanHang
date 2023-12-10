@@ -449,7 +449,6 @@ const CartBillADM = () => {
   const [openCreateOnline, setCreateOnline] = useState(false);
   // const [information, setInformation] = useState();
   const handleClick = async () => {
-    console.log('handleClick');
     // const currentDate = new Date();
     // const formattedDate = format(currentDate, 'yyyy-MM-dd');
     if (isDeliveryChecked === false) {

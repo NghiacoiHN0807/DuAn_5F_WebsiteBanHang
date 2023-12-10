@@ -30,6 +30,8 @@ public interface ChitietsanphamService {
 
     Optional<ChiTietSanPham> detail(Integer id);
 
+    List<ChiTietSanPham> finAllByIDCTSP(Integer idCtsp);
+
     Boolean checkExists(Integer id);
 
     ChiTietSanPham addColorAndSize(Integer idSp, Integer idMs, Integer idSize);

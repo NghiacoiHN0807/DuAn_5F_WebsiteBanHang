@@ -83,7 +83,7 @@ const ModalAddProduct = (props) => {
                 />
               </Stack>
             </Stack>
-            <ProductListADM products={displayProducts} />
+            <ProductListADM products={displayProducts} selectDataCart={selectDataCart} DataCart={DataCart} />
           </DialogContent>
           <DialogActions>
             <Button onClick={() => hanldeSetCloser()}>Hủy</Button>
