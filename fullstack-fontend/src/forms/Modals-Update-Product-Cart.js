@@ -174,6 +174,7 @@ const ModalUpdateProductOnCart = (props) => {
     setIsSizeSelected(false);
     setSelectedMauSac(null);
     setSelectedSize(null);
+    setQuantity(1);
     handleClose(); // Call the original handleClose function
   };
   return (

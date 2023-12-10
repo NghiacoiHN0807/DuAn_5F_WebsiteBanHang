@@ -22,10 +22,10 @@ import ButtonBase from '@mui/material/ButtonBase';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 // Service
-import { detailBill, finByProductOnCart, paymentOnline } from '../../service/BillSevice';
+import { detailBill, finByProductOnCart } from '../../service/BillSevice';
 import { updateTienShip, viewAllHTTT } from '../../service/OrderManagementTimeLine';
 import ModalAddAddress from '../../forms/Modals-Add-Address';
-import { selectDiaChiByTK, updateClientPayment } from '../../service/client/Payment';
+import { paymentOnlineClient, selectDiaChiByTK, updateClientPayment } from '../../service/client/Payment';
 import ModalPaymentPage from './Moda-Payment-Page1';
 
 const ImageButton = styled(ButtonBase)(({ theme }) => ({
@@ -186,15 +186,10 @@ export default function PaymentPage1() {
 
   useEffect(() => {
     const calculateTotalPrice = async () => {
-      // const total = DataCart.reduce((accumulator, item) => accumulator + item[9], 0);
-      // const thanhTien = total + tienShip;
-      // setThanhTien(thanhTien);
-
       const updated = await updateTienShip(idHdParam, tienShip);
       if (updated) {
         getDetailHD();
       }
-      // setlistHD();
     };
 
     calculateTotalPrice();
@@ -246,7 +241,7 @@ export default function PaymentPage1() {
 
   // handle payment online
   const handlePaymentOnline = async () => {
-    const paymentOn = await paymentOnline(listHD.thanhTien, idHdParam);
+    const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
     console.log('Check paymentOn: ', paymentOn);
     window.location.href = paymentOn;
 
