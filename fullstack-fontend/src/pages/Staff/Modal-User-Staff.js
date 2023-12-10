@@ -25,7 +25,14 @@ import {
   TablePagination,
   Snackbar,
   Alert,
+  Grid,
+  TextField,
+
 } from '@mui/material';
+import { makeStyles } from '@material-ui/core';
+import { filter } from 'lodash';
+
+
 // components
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
@@ -51,11 +58,27 @@ const TABLE_HEAD = [
 
 // ----------------------------------------------------------------------
 
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function getComparator(order, orderBy) {
+  return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
 export default function UserStaff() {
   // Select list of users
 
   const [listData, setListData] = useState([]);
-  const [filteredList, setFilteredList] = useState([]);
+
 
   const getListData = async (page, query) => {
     try {
@@ -72,7 +95,6 @@ export default function UserStaff() {
     const fetchData = async () => {
       const res = await taiKhoan(0);
       setListData(res);
-      setFilteredList(res); // Cập nhật danh sách đã lọc
 
       const storedMessage = localStorage.getItem('successMessage');
       if (storedMessage) {
@@ -103,6 +125,45 @@ export default function UserStaff() {
   const [filterName, setFilterName] = useState('');
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [statusFilter, setStatusFilter] = useState('');
+
+  function applySortFilter(array, comparator, query) {
+    let filteredArray = array;
+
+    if (query) {
+      filteredArray = filter(array, (_user) => {
+        // Search across all relevant fields
+        const searchableFields = ['maTaiKhoan', 'ten', 'chucVu', 'soCanCuoc', 'email', 'sdt', 'trangThai'];
+
+        return searchableFields.some(field => {
+          const fieldValue = _user[field];
+          if (fieldValue) {
+            console.log(`${field}: ${fieldValue}`);
+            return fieldValue.toLowerCase().includes(query.toLowerCase());
+          }
+          return false;
+        });
+      });
+    }
+
+    if (statusFilter !== '') {
+      filteredArray = filteredArray.filter((_user) => _user.trangThai.toString() === statusFilter);
+    }
+
+    const stabilizedThis = filteredArray.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+
+    return stabilizedThis.map((el) => el[0]);
+  }
+
+
+  const filteredUsers =
+    listData && listData ? applySortFilter(listData, getComparator(order, orderBy), filterName) : [];
 
   // Create a new Detail Direct
   const [alertContent, setAlertContent] = useState(null);
@@ -179,28 +240,20 @@ export default function UserStaff() {
   };
 
   const handleFilterByName = (event) => {
-    // setPage(0);
-    // setFilterName(event.target.value);
-
-    const query = event.target.value.toLowerCase();
-
-    // Lọc danh sách dựa trên tên
-    const filteredUsers = listData.filter((user) =>
-      (user.maTaiKhoan && user.maTaiKhoan.toLowerCase().includes(query)) ||
-      (user.ten && user.ten.toLowerCase().includes(query)) ||
-      (user.chuVu && user.chucVu.toLowerCase().includes(query)) ||
-      (user.soCanCuoc && user.soCanCuoc.toLowerCase().includes(query)) ||
-      (user.email && user.email.toLowerCase().includes(query)) ||
-      (user.sdt && user.sdt.toLowerCase().includes(query)) ||
-      (user.trangThai && typeof user.trangThai === 'string' && user.trangThai.toLowerCase().includes(query))
-    );
-
-    setFilteredList(filteredUsers); // Cập nhật danh sách đã lọc
-
-    setPage(0); // Đặt lại trang khi tìm kiếm
-
-    setFilterName(query); // Cập nhật trường tìm kiếm
+    setPage(0);
+    setFilterName(event.target.value);
   };
+
+  const useStyles = makeStyles((theme) => ({
+    filterContainer: {
+      display: 'grid',
+      gap: theme.spacing(2),
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 200px))',
+      margin: theme.spacing(2),
+    },
+  }));
+
+  const classes = useStyles();
 
   return (
     <>
@@ -221,11 +274,20 @@ export default function UserStaff() {
         </Stack>
 
         <Card>
-          <UserListToolbar
-            numSelected={selected.length}
-            filterName={filterName}
-            onFilterName={handleFilterByName} // Truyền hàm xử lý tìm kiếm
-          />
+          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <Grid container className={classes.filterContainer}>
+            <TextField
+              select
+              label="Trạng Thái"
+              value={statusFilter}
+              onChange={(event) => setStatusFilter(event.target.value)}
+            >
+              <MenuItem value="">Tất Cả</MenuItem>
+              <MenuItem value="0">Hoạt Động</MenuItem>
+              <MenuItem value="10">Dừng Hoạt Động</MenuItem>
+            </TextField>
+          </Grid>
+
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -238,9 +300,11 @@ export default function UserStaff() {
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
+                  onStatusFilterChange={(event) => setStatusFilter(event.target.value)}
+
                 />
                 <TableBody>
-                  {filteredList.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
+                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                     <TableRow key={row.idTaiKhoan}>
                       <TableCell padding="checkbox">
                         <Checkbox
