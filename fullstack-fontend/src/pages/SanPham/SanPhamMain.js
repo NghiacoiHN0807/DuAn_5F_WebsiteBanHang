@@ -11,7 +11,6 @@ import {
   Paper,
   Button,
   Popover,
-  Checkbox,
   TableRow,
   MenuItem,
   TableBody,
@@ -34,16 +33,17 @@ import {
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
-import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
+import { UserListHeadNoCheckBox, UserListToolbar } from '../../sections/@dashboard/user';
 import { fetchSpWithImg, deleteSanPham } from '../../service/SanPhamService';
 
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
+  { id: 'stt', label: 'STT', alignRight: false },
   { id: 'anh', label: 'Ảnh', alignRight: false },
   { id: 'maSp', label: 'Mã', alignRight: false },
   { id: 'tenSp', label: 'Tên', alignRight: false },
-  { id: 'giaBan', label: 'Giá bán', alignRight: false },
+  { id: 'giaThucTe', label: 'Giá bán', alignRight: false },
   { id: 'moTa', label: 'Mô tả', alignRight: false },
   { id: 'trangThai', label: 'Trạng thái', alignRight: false },
   { id: '' },
@@ -67,6 +67,18 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
+function filterData(array, query) {
+  return array.filter((_user) =>
+    ['maSp', 'tenSp', 'moTa'].some((field) => {
+      const fieldValue = _user[field];
+      if (typeof fieldValue === 'string') {
+        return fieldValue.toLowerCase().includes(query.toLowerCase());
+      }
+      return false;
+    })
+  );
+}
+
 function applySortFilter(array, comparator, query) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -75,7 +87,7 @@ function applySortFilter(array, comparator, query) {
     return a[1] - b[1];
   });
   if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+    return filterData(array, query);
   }
   return stabilizedThis.map((el) => el[0]);
 }
@@ -135,8 +147,6 @@ export default function UserPage() {
 
   const [order, setOrder] = useState('asc');
 
-  const [selected, setSelected] = useState([]);
-
   const [orderBy, setOrderBy] = useState('maHd');
 
   const [filterName, setFilterName] = useState('');
@@ -160,9 +170,11 @@ export default function UserPage() {
   }, []);
 
   const [selectedId, setSelectedId] = useState('');
+  const [selectedStatus, setSelectedStatus] = useState('');
 
-  const handleOpenMenu = (event, idSp) => {
+  const handleOpenMenu = (event, idSp, trangThai) => {
     setSelectedId(idSp);
+    setSelectedStatus(trangThai);
     setOpen(event.currentTarget);
   };
 
@@ -176,29 +188,6 @@ export default function UserPage() {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = listSP.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(selected.slice(0, selectedIndex), selected.slice(selectedIndex + 1));
-    }
-    setSelected(newSelected);
-  };
   // Next Page
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -236,8 +225,12 @@ export default function UserPage() {
 
   // Update
   const navigate = useNavigate();
-  const handleUpdate = (idSp) => {
-    navigate(`/dashboard/products/update/${idSp}`);
+  const handleUpdate = (idSp, trangThai) => {
+    if (trangThai === 1) {
+      handleAlertClick('Sản phẩm đang giảm giá không thể sửa!!!', 'warning');
+    } else {
+      navigate(`/dashboard/products/update/${idSp}`);
+    }
   };
 
   const handleAdd = () => {
@@ -293,41 +286,61 @@ export default function UserPage() {
         </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <UserListToolbar filterName={filterName} onFilterName={handleFilterByName} />
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
-                <UserListHead
+                <UserListHeadNoCheckBox
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={listSP.length}
-                  numSelected={selected.length}
                   onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
-                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { idSp, url, maSp, tenSp, giaMin, giaMax, moTa, trangThai } = row;
-                    const selectedUser = selected.indexOf(idSp) !== -1;
+                  {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+                    const { idSp, url, maSp, tenSp, giaMin, giaMax, giaThucTe, moTa, trangThai } = row;
 
                     return (
-                      <TableRow hover key={idSp} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                        <TableCell padding="checkbox">
-                          <Checkbox checked={selectedUser} onChange={(event) => handleClick(event, idSp)} />
-                        </TableCell>
+                      <TableRow hover key={idSp} tabIndex={-1}>
+                        <TableCell>{index + 1}</TableCell>
 
                         <TableCell align="left">
                           <img src={url} alt="Mô tả hình ảnh" width="100" height="100" />
                         </TableCell>
                         <TableCell align="left">{maSp}</TableCell>
                         <TableCell align="left">{tenSp}</TableCell>
-                        <TableCell align="left">{getGia(giaMin, giaMax)}</TableCell>
+                        <TableCell align="left">
+                          {trangThai === 1 ? (
+                            <Typography variant="subtitle2">
+                              <Typography
+                                component="span"
+                                variant="body1"
+                                sx={{
+                                  color: 'text.disabled',
+                                  textDecoration: 'line-through',
+                                }}
+                              >
+                                {formatCurrency(giaThucTe)}
+                              </Typography>
+                              <Typography component="span" variant="subtitle1">
+                                {' '}
+                                {formatCurrency(giaMin)}
+                              </Typography>
+                            </Typography>
+                          ) : (
+                            <Typography variant="subtitle2">{getGia(giaMin, giaMax)}</Typography>
+                          )}
+                        </TableCell>
                         <TableCell align="left">{moTa}</TableCell>
                         <TableCell align="left">{renderTrangThai(trangThai)}</TableCell>
                         <TableCell align="right">
-                          <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, idSp)}>
+                          <IconButton
+                            size="large"
+                            color="inherit"
+                            onClick={(event) => handleOpenMenu(event, idSp, trangThai)}
+                          >
                             <Iconify icon={'eva:more-vertical-fill'} />
                           </IconButton>
                         </TableCell>
@@ -398,7 +411,7 @@ export default function UserPage() {
           },
         }}
       >
-        <MenuItem onClick={() => handleUpdate(selectedId)}>
+        <MenuItem onClick={() => handleUpdate(selectedId, selectedStatus)}>
           <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
           Edit
         </MenuItem>

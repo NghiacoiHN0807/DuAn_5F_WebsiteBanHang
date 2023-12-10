@@ -105,20 +105,21 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
     List<Object[]> getSanPhamDetails();
 
     @Query(value = "SELECT\n" +
-            "    sp.id_sp,\n" +
-            "    sp.ma_sp,\n" +
-            "    sp.ten_sp,\n" +
-            "    sp.mo_ta,\n" +
-            "    sp.trang_thai,\n" +
-            "    (SELECT img.images FROM images img WHERE img.id_sp = sp.id_sp ORDER BY img.id_images LIMIT 1) AS first_image,\n" +
-            "    ctsp.min_gia_ban,\n" +
-            "    ctsp.max_gia_ban\n" +
-            "FROM san_pham sp\n" +
-            "LEFT JOIN (\n" +
-            "    SELECT id_sp, MIN(gia_ban) as min_gia_ban, max(gia_ban) as max_gia_ban\n" +
-            "    FROM chi_tiet_san_pham\n" +
-            "    GROUP BY id_sp\n" +
-            ") ctsp ON sp.id_sp = ctsp.id_sp;\n", nativeQuery = true)
+            "            sp.id_sp,\n" +
+            "            sp.ma_sp,\n" +
+            "            sp.ten_sp,\n" +
+            "            sp.mo_ta,\n" +
+            "            sp.trang_thai,\n" +
+            "            (SELECT img.images FROM images img WHERE img.id_sp = sp.id_sp ORDER BY img.id_images LIMIT 1) AS first_image,\n" +
+            "            ctsp.min_gia_ban,\n" +
+            "            ctsp.max_gia_ban,\n" +
+            "            ctsp.giam_gia\n" +
+            "            FROM san_pham sp\n" +
+            "            LEFT JOIN (\n" +
+            "            SELECT id_sp, MIN(gia_ban) as min_gia_ban, max(gia_ban) as max_gia_ban, min(gia_thuc_te) as giam_gia\n" +
+            "            FROM chi_tiet_san_pham\n" +
+            "            GROUP BY id_sp \n" +
+            "            )ctsp ON sp.id_sp = ctsp.id_sp", nativeQuery = true)
     List<Object[]> getSpWithImg();
 
     @Query(value = "SELECT \n" +

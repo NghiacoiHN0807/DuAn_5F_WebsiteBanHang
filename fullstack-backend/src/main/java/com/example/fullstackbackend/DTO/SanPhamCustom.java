@@ -28,4 +28,6 @@ public class SanPhamCustom {
     private BigDecimal giaMin;
 
     private BigDecimal giaMax;
+
+    private BigDecimal giaThucTe;
 }

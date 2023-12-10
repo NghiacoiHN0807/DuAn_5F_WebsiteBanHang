@@ -55,6 +55,7 @@ public class SanphamServiceImpl implements SanPhamService {
             spCustom.setUrl((String) row[5]);
             spCustom.setGiaMin((BigDecimal) row[6]);
             spCustom.setGiaMax((BigDecimal) row[7]);
+            spCustom.setGiaThucTe((BigDecimal) row[8]);
             dtos.add(spCustom);
         }
 
