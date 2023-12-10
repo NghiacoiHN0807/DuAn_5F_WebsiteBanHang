@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Container,
@@ -8,6 +9,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Snackbar,
   Stack,
   Switch,
   Table,
@@ -23,13 +25,13 @@ import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 
 // Service
 import { detailBill, finByProductOnCart } from '../../service/BillSevice';
-import { updateTongTien } from '../../service/OrderManagementTimeLine';
-import ModalAddAddress from '../../forms/Modals-Add-Address';
+import { updateTienShip } from '../../service/OrderManagementTimeLine';
+import { paymentOnlineClient, updateClientPayment } from '../../service/client/Payment';
 
 const ImageButton = styled(ButtonBase)(({ theme }) => ({
   position: 'relative',
@@ -103,6 +105,11 @@ export default function PaymentPage() {
   const [wards, setWards] = useState([]);
   const [selectedWard, setSelectedWard] = useState('');
   const [diachiCuThe, setDiachiCuThe] = useState('');
+  // Get client information form the input
+  const [selectedFirstName, setSelectedFirstName] = useState('');
+  const [selectedLastName, setSelectedLastName] = useState('');
+  const [selectedNumberPhone, setSelectedNumberPhone] = useState('');
+  const [selectedEmail, setSelectedEmail] = useState('');
 
   // Selet API GHN
 
@@ -261,37 +268,109 @@ export default function PaymentPage() {
   }, [getDetailHD]);
 
   // Show thanhTien
-  const [thanhTien, setThanhTien] = useState();
+  // const [thanhTien, setThanhTien] = useState();
   // const [tienShipNe, setTienShip] = useState();
   // const [tongTien, setTongTien] = useState();
-
   useEffect(() => {
     const calculateTotalPrice = async () => {
-      const total = DataCart.reduce((accumulator, item) => accumulator + item[9], 0);
-      // Set Tong Tien
-      // setTongTien(total);
-      // Set Tien Ship
-      // const totalShip = tienShip === 0 && listHD && listHD.tienShip ? listHD.tienShip : tienShip;
-      // setTienShip(totalShip);
-      // Set Thanh Tien
-      const thanhTien = total + tienShip;
-      setThanhTien(thanhTien);
-
-      await updateTongTien(idHdParam, total, tienShip, thanhTien);
-      // setlistHD();
+      const updated = await updateTienShip(idHdParam, tienShip);
+      if (updated) {
+        getDetailHD();
+      }
     };
 
     calculateTotalPrice();
-  }, [DataCart, idHdParam, tienShip, listHD]);
+  }, [getDetailHD, idHdParam, tienShip]);
 
-  // Select modal address
-  const [showModalsAddress, setShowModalKH] = useState(false);
-  const handleAddAddress = () => {
-    setShowModalKH(true);
+  function formatCurrency(price) {
+    if (!price) return '0';
+
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
+  // Check Validated numberphone
+  function isValidPhoneNumber(phoneNumber) {
+    const phoneRegex = /^(03|09)\d{8}$/;
+    return phoneRegex.test(phoneNumber);
+  }
+  const containsNumber = (text) => /\d/.test(text);
+  const isValidEmail = (email) => {
+    const emailPattern = /^[a-zA-Z0-9._-]+@gmail\.com$/;
+    return emailPattern.test(email);
   };
-  const handleCloseAddress = () => {
-    setShowModalKH(false);
+
+  const [alertContent, setAlertContent] = useState(null);
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setAlertContent(null);
   };
+
+  const navigate = useNavigate();
+
+  const handleSucces = async () => {
+    if (
+      !result.trim() ||
+      selectedDistrict === '' ||
+      selectedWard === '' ||
+      selectedProvince === '' ||
+      diachiCuThe === ''
+    ) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Nhập Địa Chỉ!!!',
+      });
+    } else if (!isValidPhoneNumber(selectedNumberPhone)) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Nhập Đúng Định Dạng Số Của Việt Nam!!!',
+      });
+    } else if (selectedFirstName === '' || selectedLastName === '') {
+      setAlertContent({
+        type: 'warning',
+        message: 'Không Được Để Trống Họ Và Tên!!!',
+      });
+    } else if (containsNumber(selectedFirstName) || containsNumber(selectedLastName)) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Tên Không Được Có Số!!!',
+      });
+    } else if (selectedEmail === '' || !isValidEmail(selectedEmail)) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Email Sai Định Dạng Hoặc Không Phải Email Cá Nhân!!!',
+      });
+    } else if (isDeliveryChecked === true) {
+      setAlertContent({
+        type: 'success',
+        message: 'Hãy Thanh Toán Cảm Ơn!!!',
+      });
+      //   const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
+      // console.log('Check paymentOn: ', paymentOn);
+      // window.location.href = paymentOn;
+    } else {
+      setAlertContent({
+        type: 'success',
+        message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
+      });
+      // navigate(`/`);
+    }
+  };
+  // handle payment online
+  // const handlePaymentOnline = async () => {
+  //   const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
+  //   console.log('Check paymentOn: ', paymentOn);
+  //   window.location.href = paymentOn;
+
+  //   console.log('Đi tới thanh toán');
+  // };
 
   return (
     <>
@@ -337,9 +416,9 @@ export default function PaymentPage() {
                         <br />
                         Màu: {item[11]}
                       </TableCell>
-                      <TableCell align="right">{item[7]}</TableCell>
+                      <TableCell align="right">{formatCurrency(item[7])}</TableCell>
                       <TableCell align="right">{item[8]}</TableCell>
-                      <TableCell align="right">{item[9]}</TableCell>
+                      <TableCell align="right">{formatCurrency(item[9])}</TableCell>
                     </TableRow>
                   );
                 })
@@ -356,13 +435,13 @@ export default function PaymentPage() {
             </TableBody>
           </Table>{' '}
         </TableContainer>
-        <Grid container spacing={3}>
+        <Grid container spacing={3} sx={{ paddingBottom: 3 }}>
           <Grid item xs={12} md={6} lg={8}>
             <Typography variant="h6" sx={{ marginTop: 3 }}>
               Hãy Nhập Thông Tin Của Bạn{' '}
-              <Button onClick={() => handleAddAddress()} color="secondary">
+              {/* <Button onClick={() => handleAddAddress()} color="secondary">
                 Thay Đổi Địa Chỉ
-              </Button>
+              </Button> */}
             </Typography>
             <Box component="form" noValidate autoComplete="off">
               <TextField
@@ -371,26 +450,20 @@ export default function PaymentPage() {
                 multiline
                 required
                 variant="outlined"
+                onChange={(e) => setSelectedLastName(e.target.value)}
                 size="small"
-                InputProps={{
-                  readOnly: true,
-                }}
                 fullWidth
                 sx={{ marginTop: 2 }}
-                defaultValue={listHD.idKH && listHD.idKH.ho}
               />
               <TextField
                 label="Tên"
+                onChange={(e) => setSelectedFirstName(e.target.value)}
                 id="standard-multiline-flexible"
                 multiline
                 variant="outlined"
                 size="small"
-                InputProps={{
-                  readOnly: true,
-                }}
                 fullWidth
                 sx={{ marginTop: 2 }}
-                defaultValue={listHD.idKH && listHD.idKH.ten}
               />
             </Box>
 
@@ -474,29 +547,23 @@ export default function PaymentPage() {
                 label="Số Điện Thoại"
                 id="standard-multiline-flexible"
                 multiline
+                onChange={(e) => setSelectedNumberPhone(e.target.value)}
                 maxRows={4}
                 variant="outlined"
                 size="small"
-                InputProps={{
-                  readOnly: true,
-                }}
                 fullWidth
                 sx={{ marginTop: 2 }}
-                defaultValue={listHD.idKH && listHD.idKH.sdt}
               />
               <TextField
                 label="Email"
+                onChange={(e) => setSelectedEmail(e.target.value)}
                 id="standard-multiline-flexible"
                 multiline
                 maxRows={4}
                 variant="outlined"
                 size="small"
-                InputProps={{
-                  readOnly: true,
-                }}
                 fullWidth
                 sx={{ marginTop: 2 }}
-                defaultValue={listHD.idKH && listHD.idKH.email}
               />
             </Box>
           </Grid>
@@ -508,6 +575,7 @@ export default function PaymentPage() {
             {isDeliveryChecked === true ? (
               <>
                 <ImageButton
+                  // onClick={() => handlePaymentOnline()}
                   sx={{ marginBottom: 3 }}
                   focusRipple
                   style={{
@@ -553,7 +621,7 @@ export default function PaymentPage() {
                 Tổng Tiền{' '}
               </Typography>
               <Typography variant="button" display="block" gutterBottom>
-                {listHD && listHD.tongTien}{' '}
+                {listHD && formatCurrency(listHD.tongTien)}{' '}
               </Typography>
             </Stack>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
@@ -561,7 +629,7 @@ export default function PaymentPage() {
                 Tiền Ship{' '}
               </Typography>
               <Typography variant="button" display="block" gutterBottom>
-                {listHD && tienShip}{' '}
+                {listHD && formatCurrency(listHD.tienShip)}{' '}
               </Typography>
             </Stack>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
@@ -569,13 +637,28 @@ export default function PaymentPage() {
                 Thành Tiền{' '}
               </Typography>
               <Typography variant="button" display="block" gutterBottom>
-                {listHD && thanhTien}{' '}
+                {listHD && formatCurrency(listHD.thanhTien)}{' '}
               </Typography>
             </Stack>
+            <Button onClick={handleSucces} variant="outlined">
+              Đặt Hàng
+            </Button>
           </Grid>
         </Grid>
+        {alertContent && (
+          <Snackbar
+            open
+            autoHideDuration={3000}
+            onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+              {alertContent.message}
+            </Alert>
+          </Snackbar>
+        )}
       </Container>
-      <ModalAddAddress open={showModalsAddress} handleClose={handleCloseAddress} />
+      {/* <ModalAddAddress open={showModalsAddress} handleClose={handleCloseAddress} /> */}
     </>
   );
 }
