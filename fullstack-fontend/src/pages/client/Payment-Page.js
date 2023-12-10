@@ -352,15 +352,17 @@ export default function PaymentPage() {
         type: 'success',
         message: 'Hãy Thanh Toán Cảm Ơn!!!',
       });
-      //   const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
-      // console.log('Check paymentOn: ', paymentOn);
-      // window.location.href = paymentOn;
+      const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
+      console.log('Check paymentOn: ', paymentOn);
+      window.location.href = paymentOn;
     } else {
+      await updateClientPayment(idHdParam, selectedFirstName + selectedLastName, selectedNumberPhone, result);
+
       setAlertContent({
         type: 'success',
         message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
       });
-      // navigate(`/`);
+      navigate(`/`);
     }
   };
   // handle payment online
