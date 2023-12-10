@@ -48,11 +48,8 @@ import SelectAllBillOfClient from './pages/client/SelectAllBill';
 import SignUpPage from "./pages/SignUpPage";
 import ForgetPasswordPage from "./pages/ForgetPasswordPage";
 import CartNoAccount from './pages/client/Cart-NoAccount';
-<<<<<<< HEAD
 import SaleProductsPage from './pages/client/SaleProductsPage';
-=======
 import PaymentPage from './pages/client/Payment-Page';
->>>>>>> origin/nghiant0807
 
 // ----------------------------------------------------------------------
 
