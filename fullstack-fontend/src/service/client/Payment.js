@@ -7,4 +7,6 @@ const updateClientPayment = (idHd, tenKh, sdtKh, diaChi) =>
     sdtKh,
     diaChi,
   });
-export { selectDiaChiByTK, updateClientPayment };
+const paymentOnlineClient = (amount, orderInfo) =>
+  custom.post(`/hoa-don/submitOrder?amount=${amount}&orderInfo=${orderInfo}`);
+export { selectDiaChiByTK, updateClientPayment, paymentOnlineClient };

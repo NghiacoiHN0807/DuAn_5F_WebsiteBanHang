@@ -8,7 +8,7 @@ import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
 // Service
 import { listImg } from '../../service/client/Detail-Product';
 import { findById } from '../../service/BillSevice';
-import { addProductOnCart, listProductOnCart } from '../../service/client/Detail-Cart';
+import { addProductOnCart } from '../../service/client/Detail-Cart';
 
 const DetailProduct = () => {
   // DetailProduct.propTypes = {

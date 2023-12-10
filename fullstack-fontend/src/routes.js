@@ -46,6 +46,7 @@ import UpdateCoupons from './pages/coupons/UpdateCoupons';
 import OrderClientTimeline from './pages/client/OrderClient-Timeline';
 import SelectAllBillOfClient from './pages/client/SelectAllBill';
 import CartNoAccount from './pages/client/Cart-NoAccount';
+import PaymentPage from './pages/client/Payment-Page';
 
 // ----------------------------------------------------------------------
 
@@ -124,6 +125,7 @@ export default function Router() {
               { path: 'detail/:id', element: <DetailProduct /> },
               { path: 'cart', element: <Cart /> },
               { path: 'cart-noaccount', element: <CartNoAccount /> },
+              { path: 'payment-noaccount/:id', element: <PaymentPage /> },
               { path: 'payment/:id', element: <PaymentPage1 /> },
               { path: 'contact', element: <Contact /> },
               { path: 'products', element: <ProductsPage /> },

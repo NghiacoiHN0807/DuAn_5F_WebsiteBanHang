@@ -7,9 +7,14 @@ import { useNavigate } from 'react-router-dom';
 
 // Service
 import { listImg } from '../../service/client/Detail-Product';
-import { listProductOnCart, postAddBillAddBill, postAddDirectClient } from '../../service/client/Detail-Cart';
+import {
+  listProductOnCart,
+  postAddBillAddBill,
+  postAddBillNoAccount,
+  postAddDirectClient,
+} from '../../service/client/Detail-Cart';
 import ModalUpdateProductOnCartClientNoAccount from '../../forms/client/Modals-Update-Product-Cart-Client-NoAccount';
-import { findById } from '../../service/BillSevice';
+import { findById, postAddBill } from '../../service/BillSevice';
 
 const StyledProductImg = styled('img')({
   top: 0,
@@ -182,7 +187,7 @@ export default function CartNoAccount() {
       });
     } else {
       console.log('authorities: ', authorities);
-      const res = await postAddBillAddBill(authorities, totalPayment, 2, 11);
+      const res = await postAddBillNoAccount(totalPayment, 2, 11);
       for (let i = 0; i < selectedItems.length; i += 1) {
         (async () => {
           await postAddDirectClient(res.idHd, selectedItems[i]);
@@ -192,7 +197,7 @@ export default function CartNoAccount() {
         type: 'success',
         message: 'Tạo thành công hóa đơn',
       });
-      navigate(`/client/payment/${res.idHd}`);
+      navigate(`/client/payment-noaccount/${res.idHd}`);
     }
   };
 
