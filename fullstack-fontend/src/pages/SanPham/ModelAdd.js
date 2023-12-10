@@ -117,7 +117,7 @@ export default function AddSanPham() {
       getObjCoAo,
       getObjTayAo,
       moTa,
-      0
+      9
     );
 
     console.log('Check res: ', res);

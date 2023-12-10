@@ -287,7 +287,7 @@ export default function UpdateSanPham() {
     ) {
       handleAlertClick('Cập nhật thất bại!', 'danger');
     } else {
-      const trangThaiValue = listImg.length === 0 || listCTSP.length === 0 ? 9 : trangThai === 9 ? 0 : trangThai;
+      const trangThaiValue = listImg.length === 0 || listCTSP.length === 0 ? 9 : trangThai;
       const res = await putUpdateSanPham(
         idSpHttp,
         maSp,
@@ -399,7 +399,7 @@ export default function UpdateSanPham() {
         setIdCtsp(res.idCtsp);
       }
     } else {
-      handleAlertClick('Cập nhật thất bại!', 'danger');
+      handleAlertClick('Thêm thất bại!', 'danger');
       handleCloseColorAndSize();
     }
   };
@@ -717,60 +717,70 @@ export default function UpdateSanPham() {
                 <MoreHorizIcon />
               </Button>
             </Grid>
-
-            <Grid item xs={5}>
-              {listTayAo.length > 0 && (
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Ống tay áo</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    label="Ống tay áo"
-                    value={tayAo}
-                    onChange={(event) => setTayAo(event.target.value)}
+            <Grid item xs={6}>
+              <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid item xs={10}>
+                  {listTayAo.length > 0 && (
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">Ống tay áo</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Ống tay áo"
+                        value={tayAo}
+                        onChange={(event) => setTayAo(event.target.value)}
+                      >
+                        {listTayAo
+                          .filter((item) => item.trangThai === 0)
+                          .map((option, index) => (
+                            <MenuItem key={index} value={option.idTayAo}>
+                              {option.loaiTayAo}
+                            </MenuItem>
+                          ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                </Grid>
+                <Grid item xs={2} sx={{ display: 'flex', marginTop: '4px' }}>
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    onClick={() => handleOpenQuickAtt('Ống tay áo', 'idTayAo', 'maTayAo', 'loaiTayAo')}
                   >
-                    {listTayAo
-                      .filter((item) => item.trangThai === 0)
-                      .map((option, index) => (
-                        <MenuItem key={index} value={option.idTayAo}>
-                          {option.loaiTayAo}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
-              )}
-              <div>
-                <RadioGroup
-                  row
-                  aria-labelledby="demo-row-radio-buttons-group-label"
-                  name="row-radio-buttons-group"
-                  sx={{ marginTop: '15px' }}
-                >
-                  <FormControlLabel
-                    value="0"
-                    control={<Radio />}
-                    label="Còn bán"
-                    checked={Number(trangThai) === 0}
-                    onChange={(event) => setTrangThai(event.target.value)}
-                  />
-                  <FormControlLabel
-                    value="10"
-                    control={<Radio />}
-                    label="Ngừng kinh doanh"
-                    checked={Number(trangThai) === 10}
-                    onChange={(event) => setTrangThai(event.target.value)}
-                  />
-                </RadioGroup>
-              </div>
-            </Grid>
-            <Grid item xs={1} sx={{ display: 'flex', marginTop: '4px' }}>
-              <Button
-                variant="outlined"
-                size="large"
-                onClick={() => handleOpenQuickAtt('Ống tay áo', 'idTayAo', 'maTayAo', 'loaiTayAo')}
-              >
-                <MoreHorizIcon />
-              </Button>
+                    <MoreHorizIcon />
+                  </Button>
+                </Grid>
+                <Grid item xs={12}>
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    sx={{ marginTop: '15px' }}
+                  >
+                    <FormControlLabel
+                      value="0"
+                      control={<Radio />}
+                      label="Còn bán"
+                      checked={Number(trangThai) === 0}
+                      onChange={(event) => setTrangThai(event.target.value)}
+                    />
+                    <FormControlLabel
+                      value="10"
+                      control={<Radio />}
+                      label="Ngừng kinh doanh"
+                      checked={Number(trangThai) === 10}
+                      onChange={(event) => setTrangThai(event.target.value)}
+                    />
+                    <FormControlLabel
+                      value="9"
+                      control={<Radio />}
+                      label="Đang cập nhật"
+                      checked={Number(trangThai) === 9}
+                      onChange={(event) => setTrangThai(event.target.value)}
+                    />
+                  </RadioGroup>
+                </Grid>
+              </Grid>
             </Grid>
 
             <Grid item xs={6}>

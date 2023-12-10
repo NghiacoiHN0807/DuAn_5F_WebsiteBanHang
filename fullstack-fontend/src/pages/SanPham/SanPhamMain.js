@@ -209,17 +209,22 @@ export default function UserPage() {
   const isNotFound = !filteredUsers.length && !!filterName;
 
   // Delete
-  const handleDelete = async (idSp) => {
-    const res = await deleteSanPham(idSp);
-    console.log('Check res: ', res);
-    if (res && res.idSp) {
-      handleAlertClick('Xóa thành công!', 'success');
-      getListData();
+  const handleDelete = async (idSp, trangThai) => {
+    if (trangThai === 1) {
+      handleAlertClick('Sản phẩm đang giảm giá không thể xóa', 'warning');
       handleClose();
     } else {
-      handleAlertClick('Xóa thất bại!', 'error');
-      getListData();
-      handleClose();
+      const res = await deleteSanPham(idSp);
+      console.log('Check res: ', res);
+      if (res && res.idSp) {
+        handleAlertClick('Xóa thành công!', 'success');
+        getListData();
+        handleClose();
+      } else {
+        handleAlertClick('Xóa thất bại!', 'error');
+        getListData();
+        handleClose();
+      }
     }
   };
 
@@ -437,7 +442,7 @@ export default function UserPage() {
         <DialogActions>
           <Button onClick={handleClose}>Canel</Button>
 
-          <Button onClick={() => handleDelete(selectedId)} autoFocus>
+          <Button onClick={() => handleDelete(selectedId, selectedStatus)} autoFocus>
             Ok
           </Button>
         </DialogActions>
