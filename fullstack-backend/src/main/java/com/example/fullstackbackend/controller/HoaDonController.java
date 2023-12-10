@@ -420,7 +420,8 @@ public class HoaDonController {
             lichSuHoaDonService.add(lichSuHoaDon);
 
             // Switch tab
-            response.sendRedirect("http://localhost:3000/client/client-timeline/" + idHd);
+//            response.sendRedirect("http://localhost:3000/client/client-timeline/" + idHd);
+            response.sendRedirect("http://localhost:3000");
 
             return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
         } else {

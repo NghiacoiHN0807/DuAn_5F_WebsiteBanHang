@@ -10,7 +10,7 @@ import { Alert, Box, Button, Container, Grid, Snackbar, Typography } from '@mui/
 
 import { listImg } from '../../service/client/Detail-Product';
 import { findById } from '../../service/BillSevice';
-import { addProductOnCart, listProductOnCart } from '../../service/client/Detail-Cart';
+import { addProductOnCart } from '../../service/client/Detail-Cart';
 import { getRelatedSp } from '../../service/SanPhamService';
 import { ProductListAll } from '../../sections/@dashboard/products';
 import ShopProductCard from '../../sections/@dashboard/products/ProductCardAll';
