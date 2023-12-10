@@ -1,31 +1,21 @@
 import {Helmet} from "react-helmet-async";
 import React, {useEffect, useRef, useState} from "react";
 import Badge from "react-bootstrap/Badge";
-import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import {useNavigate} from "react-router-dom";
-import {
-    DataGrid,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarDensitySelector,
-    GridToolbarExport,
-    GridToolbarFilterButton
-} from "@mui/x-data-grid";
+import {DataGrid, GridToolbarContainer, GridToolbarExport} from "@mui/x-data-grid";
 import {
     Card,
     Container,
     FormControl,
     IconButton,
-    InputBase,
     InputLabel,
     MenuItem,
-    Paper,
-    Select, TextField,
+    Select,
+    TextField,
     Typography
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import {getPhuongXa, getQuanHuyen, getTinhThanhPho} from "../../service/apiDiaChi";
 import {fetchAllDiaChi} from "../../service/diaChiSevice";
 import AlertSnackbar from "../../layouts/dashboard/AlertSnackbar";
 
