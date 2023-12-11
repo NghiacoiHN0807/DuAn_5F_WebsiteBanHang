@@ -162,8 +162,6 @@ export default function CouponsPage() {
     // Open and Close menu
     const [object, getObject] = useState([]);
     const handleOpenMenu = (event, row) => {
-        console.log('Check event: ', event);
-        console.log('Check row: ', row);
         getObject(row);
 
         setOpen(event.currentTarget);
@@ -345,7 +343,7 @@ export default function CouponsPage() {
                 array[1] = item.tenChuongTrinh;
                 array[2] = item.code;
                 array[3] = item.moTa;
-                array[4] = `${item.thoiGianTao} - ${item.thoiGianKetThuc}`;
+                array[4] = `${formatDate(item.thoiGianTao)} - ${formatDate(item.thoiGianKetThuc)}`;
                 array[5] = item.soLuongHienTai;
                 array[6] = `${item.phanTram} %`;
                 array[7] = formatCurrency(item.tienToiThieu);
