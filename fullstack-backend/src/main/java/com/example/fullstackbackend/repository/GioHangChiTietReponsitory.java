@@ -10,6 +10,7 @@ import java.util.Optional;
 @Repository
 public interface GioHangChiTietReponsitory extends JpaRepository<GioHangChiTiet, Integer> {
 
+
     List<GioHangChiTiet> findByIdGh_IdKh_IdTaiKhoan(Integer idTK);
 
     Optional<GioHangChiTiet> findByIdCtsp_IdCtsp(Integer idCTSP);

@@ -3,6 +3,7 @@ package com.example.fullstackbackend.controller;
 import com.example.fullstackbackend.config.payment.VNPayService;
 import com.example.fullstackbackend.config.payment.VNPayServiceClient;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
+import com.example.fullstackbackend.entity.GioHangChiTiet;
 import com.example.fullstackbackend.entity.HinhThucThanhToan;
 import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
@@ -10,6 +11,7 @@ import com.example.fullstackbackend.entity.LichSuHoaDon;
 import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.ChitietsanphamService;
+import com.example.fullstackbackend.services.GioHangChiTietSevice;
 import com.example.fullstackbackend.services.HinhThucThanhToanSevice;
 import com.example.fullstackbackend.services.HoadonSevice;
 import com.example.fullstackbackend.services.HoadonchitietSevice;
@@ -61,6 +63,9 @@ public class HoaDonController {
 
     @Autowired
     private ChitietsanphamService chitietsanphamSer;
+
+    @Autowired
+    private GioHangChiTietSevice gioHangChiTietSevice;
     // get datetimenow
     java.util.Date currentDate = new java.util.Date();
     // Chuyển đổi thành Timestamp
@@ -267,6 +272,29 @@ public class HoaDonController {
         return newHD1;
     }
 
+    @PutMapping("update-client-payment1/{id}")
+    public HoaDon updateClientThanhToan1(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+            hoaDon.setTenKh(newHD.getTenKh());
+            hoaDon.setSdtKh(newHD.getSdtKh());
+            hoaDon.setDiaChi(newHD.getDiaChi());
+            hoaDon.setNgayTao(currentTimestamp);
+            return hoadonSevice.update(hoaDon);
+        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+        //Add to history bill
+//        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+//        lichSuHoaDon.setIdHd(newHD1);
+//        lichSuHoaDon.setIdTk(newHD1.getIdTK());
+//        lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+//        lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
+//        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+//        lichSuHoaDonService.add(lichSuHoaDon);
+
+        return newHD1;
+    }
+
+
     @PutMapping("update-ship-online/{id}")
     public HoaDon updateShipOnline(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
 
@@ -425,8 +453,8 @@ public class HoaDonController {
 
         if (paymentStatus == 1) {
             //Detail HD by IdHd
-            Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
-            BigDecimal getTongTien = getOne.get().getTongTien();
+            HoaDon getOne = hoadonSevice.detail(idHd).orElseThrow();
+            BigDecimal getTongTien = getOne.getTongTien();
 
             BigDecimal tienMat = getTongTien.subtract(realPrice);
             //Add to updatePaymentOnline
@@ -434,7 +462,7 @@ public class HoaDonController {
             hoaDonDTO1.setNgayThanhToan(currentTimestamp);
             hoaDonDTO1.setTienDua(realPrice);
             int setTrangThai;
-            if (getOne.get().getTrangThai() == 3) {
+            if (getOne.getTrangThai() == 3) {
                 setTrangThai = 4;
             } else {
                 setTrangThai = 9;
@@ -473,13 +501,25 @@ public class HoaDonController {
             lichSuHoaDon.setNgayThayDoi(currentTimestamp);
             lichSuHoaDonService.add(lichSuHoaDon);
 
+            // Delete product on detail cart
+            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(idHd);
+            for (HoaDonChiTiet x :
+                    hoaDonChiTiets) {
+                GioHangChiTiet gioHangChiTiet = gioHangChiTietSevice.finByIDCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
+                gioHangChiTietSevice.deleteGHCT(gioHangChiTiet.getIdGhct());
+            }
+
+            // Update HD to ship
+            getOne.setTrangThai(0);
+            updateStatus(getOne, getOne.getIdHd(), "Thanh Toán Online");
+
             // Switch tab
 //            response.sendRedirect("http://localhost:3000/client/client-timeline/" + idHd);
             response.sendRedirect("http://localhost:3000");
 
             return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
         } else {
-            response.sendRedirect("http://localhost:3000/client/sales/payment/" + idHd);
+            response.sendRedirect("http://localhost:3000/client/payment/" + idHd);
             return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
 
         }

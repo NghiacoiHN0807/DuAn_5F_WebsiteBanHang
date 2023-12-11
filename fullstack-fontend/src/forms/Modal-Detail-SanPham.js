@@ -98,48 +98,8 @@ const ModalDetailProduct = (props) => {
     try {
       const getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize, selectedMauSac);
 
-      console.log('Selected getOneCTSP:', getOneCTSP);
-
-      // console.log(' DataCart:', DataCart);
-
-      // const existingItem = DataCart.find((item) => item.idCtsp === getOneCTSP.idCtsp);
-      // console.log('Selected existingItem:', existingItem);
-
-      // if (selectedSize === null || selectedMauSac === null || selectedSp === '') {
-      //   setAlertContent({
-      //     type: 'warning',
-      //     message: 'Xin mời chọn size và màu sắc của sản phẩm',
-      //   });
-      // } else if (quantity < 1 || quantity === '' || Number.isNaN(quantity)) {
-      //   setAlertContent({
-      //     type: 'warning',
-      //     message: 'Vui lòng chọn số lượng lớn hơn 0',
-      //   });
-      // } else if (existingItem) {
-      //   //   Get IdHdct
-      //   const getIdHdct = existingItem[1];
-      //   //   Get soLuong
-      //   const oldQuantity = existingItem[8];
-      //   const newQuantity = oldQuantity + quantity;
-      //   //   Get donGia
-      //   const donGia = existingItem[7] * newQuantity;
-
-      //   //   Update Product On Cart
-      //   await updateCart(getIdHdct, getOneCTSP, newQuantity, donGia);
-      //   //   Close the modal
-      //   setSelectedSize(null);
-      //   handleClose();
-      //   setQuantity(1);
-      //   //   Load new data on cart
-      //   selectDataCart();
-      //   setAlertContent({
-      //     type: 'warning',
-      //     message: 'Sản phẩm đã có trong giỏ hàng. Chúng tôi đã cộng thêm số lượng vào sản phẩm',
-      //   });
-      // } else {
       //   Insert to the cart
       const donGia = getOneCTSP.giaThucTe * quantity;
-      console.log('Selected getOneCTSP:', getOneCTSP, quantity, donGia, idHdParam, 0);
 
       await postAddDirect(getOneCTSP, quantity, donGia, idHdParam, 0);
       //   Close the modal

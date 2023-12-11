@@ -14,7 +14,8 @@ public interface LichSuHoaDonRepository extends JpaRepository<LichSuHoaDon, Inte
     @Query(value = "SELECT c FROM LichSuHoaDon c WHERE c.idHd.idHd = ?1")
     List<LichSuHoaDon> finByIdHd(Integer idHd);
 
-    List<LichSuHoaDon> findAllByIdHd_TrangThai(Integer trangThai);
+    @Query(value = "SELECT c FROM LichSuHoaDon c WHERE c.idHd.idHd = ?1 AND c.idHd.trangThai =?2 ")
+    List<LichSuHoaDon> findAllByIdHd_TrangThai(Integer idHd, Integer trangThai);
     @Transactional
     LichSuHoaDon deleteLichSuHoaDonByIdLshd(Integer idHd);
 }

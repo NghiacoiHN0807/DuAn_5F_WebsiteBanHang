@@ -52,5 +52,7 @@ public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, In
     @Query(value = "SELECT c FROM HoaDonChiTiet c WHERE c.idHd.idKH.idTaiKhoan = ?1")
     Page<HoaDonChiTiet> findByIdHd_IdKH_IdTaiKhoan(Integer idTK, Pageable pageable);
 
-    List<HoaDonChiTiet> findAllByIdHd_TrangThai(Integer trangThai);
+
+    @Query(value = "SELECT x FROM HoaDonChiTiet x WHERE x.idHd.idHd =?1 AND x.idHd.trangThai = ?2")
+    List<HoaDonChiTiet> findAllByIdHd_TrangThai(Integer idHd, Integer trangThai);
 }

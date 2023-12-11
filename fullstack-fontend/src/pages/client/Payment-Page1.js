@@ -25,7 +25,12 @@ import { Image } from 'react-bootstrap';
 import { detailBill, finByProductOnCart } from '../../service/BillSevice';
 import { updateTienShip, viewAllHTTT } from '../../service/OrderManagementTimeLine';
 import ModalAddAddress from '../../forms/Modals-Add-Address';
-import { paymentOnlineClient, selectDiaChiByTK, updateClientPayment } from '../../service/client/Payment';
+import {
+  paymentOnlineClient,
+  selectDiaChiByTK,
+  updateClientPayment,
+  updateClientPayment1,
+} from '../../service/client/Payment';
 import ModalPaymentPage from './Moda-Payment-Page1';
 
 const ImageButton = styled(ButtonBase)(({ theme }) => ({
@@ -223,28 +228,19 @@ export default function PaymentPage1() {
       navigate(`/client/client-timeline/${idHdParam}`);
     }
     if (isDeliveryChecked === true) {
-      if (listHTTT.length > 0) {
-        await updateClientPayment(idHdParam, tenKH, sdtKH, diaChi);
-
-        navigate(`/client/client-timeline/${idHdParam}`);
-      } else {
-        setAlertContent({
-          type: 'warning',
-          message: 'Hãy Thanh Toán Trước. Cảm Ơn!!!',
-        });
-        console.log('Thanh Toán Online');
-      }
-      // const paymentOn = await paymentOnline(thanhTien, listHD.idHd);
-      // window.location.href = paymentOn;
+      // if (listHTTT.length > 0) {
+      await updateClientPayment1(idHdParam, tenKH, sdtKH, diaChi);
+      setAlertContent({
+        type: 'success',
+        message: 'Hãy Thanh Toán Trước. Cảm Ơn!!!',
+      });
+      const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
+      window.location.href = paymentOn;
     }
   };
 
   // handle payment online
   const handlePaymentOnline = async () => {
-    const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
-    console.log('Check paymentOn: ', paymentOn);
-    window.location.href = paymentOn;
-
     console.log('Đi tới thanh toán');
   };
 

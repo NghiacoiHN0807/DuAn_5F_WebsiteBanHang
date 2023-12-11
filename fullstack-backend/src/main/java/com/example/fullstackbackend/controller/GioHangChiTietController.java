@@ -106,7 +106,7 @@ public class GioHangChiTietController {
         hoaDonChiTiet.setTrangThai(0);
         hoadonchitietSevice.add1(hoaDonChiTiet);
         // Delete product on cart
-        gioHangChiTietSevice.deleteGHCT(newHDCT.getIdGhct());
+//        gioHangChiTietSevice.deleteGHCT(newHDCT.getIdGhct());
         return ResponseEntity.ok("Tạo Hóa Đơn Thành Công!!!");
     }
 

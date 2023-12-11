@@ -7,6 +7,13 @@ const updateClientPayment = (idHd, tenKh, sdtKh, diaChi) =>
     sdtKh,
     diaChi,
   });
+
+const updateClientPayment1 = (idHd, tenKh, sdtKh, diaChi) =>
+  custom.put(`/hoa-don/update-client-payment1/${idHd}`, {
+    tenKh,
+    sdtKh,
+    diaChi,
+  });
 const paymentOnlineClient = (amount, orderInfo) =>
-  custom.post(`/hoa-don/submitOrder?amount=${amount}&orderInfo=${orderInfo}`);
-export { selectDiaChiByTK, updateClientPayment, paymentOnlineClient };
+  custom.post(`/hoa-don/submitOrder-client?amount=${amount}&orderInfo=${orderInfo}`);
+export { selectDiaChiByTK, updateClientPayment, paymentOnlineClient, updateClientPayment1 };
