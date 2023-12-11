@@ -41,8 +41,6 @@ public class UserService implements UserDetailsService {
         return new CustomUserDetails(taiKhoan);
     }
 
-
-
     @Value("${spring.mail.username}")
     private String formMail;
 

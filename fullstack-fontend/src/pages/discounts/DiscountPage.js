@@ -23,6 +23,7 @@ import {
   TablePagination,
   Snackbar,
   Alert,
+  Chip,
 } from '@mui/material';
 // components
 import Iconify from '../../components/iconify';
@@ -183,9 +184,25 @@ export default function DiscountPage() {
     listData && listData ? applySortFilter(listData, getComparator(order, orderBy), filterName) : [];
   const isNotFound = !filteredUsers.length && !!filterName;
 
+
   // Set status of trangThai
   function mapTrangThaiToStatus(trangThai) {
-    return trangThai === 0 ? 'Hoạt động' : trangThai === 10 ? 'Ngưng hoạt động' : 'Không xác định';
+    return trangThai === 0 ? <Chip
+      label="Hoạt động"
+      color="primary"
+      variant="outlined"
+      style={{ color: 'white', backgroundColor: 'green', border: 'none' }}
+    /> : trangThai === 10 ? <Chip
+      label="Dừng hoạt động"
+      color="secondary"
+      variant="outlined"
+      style={{ color: 'white', backgroundColor: 'red', border: 'none' }}
+    /> : <Chip
+      label="Không xác định"
+      color="warning"
+      variant="outlined"
+      style={{ color: 'white', backgroundColor: 'red', border: 'none' }}
+    />;
   }
   const navigate = useNavigate();
 
@@ -254,13 +271,13 @@ export default function DiscountPage() {
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
-  
+
     const dateTime = new Date(dateString);
     const formattedEndDate = format(dateTime, 'HH:mm dd/MM/yyyy');
-  
+
     return formattedEndDate;
   };
-  
+
 
   return (
     <>
@@ -274,9 +291,9 @@ export default function DiscountPage() {
             Giảm giá
           </Typography>
           <Link to={'/dashboard/discount/add'}>
-          <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
-            Thêm Giảm Giá
-          </Button>
+            <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
+              Thêm Giảm Giá
+            </Button>
           </Link>
         </Stack>
 

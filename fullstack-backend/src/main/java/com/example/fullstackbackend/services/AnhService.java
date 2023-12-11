@@ -13,5 +13,4 @@ public interface AnhService {
 
     public Anh delete(Integer id);
 
-    public Boolean checkSL();
 }

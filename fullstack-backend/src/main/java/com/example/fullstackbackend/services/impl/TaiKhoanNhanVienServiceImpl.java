@@ -3,8 +3,13 @@ package com.example.fullstackbackend.services.impl;
 import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.repository.TaiKhoanNhanVienRepository;
 import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,15 +20,29 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
     @Autowired
     private TaiKhoanNhanVienRepository taiKhoanRepository;
 
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Value("${spring.mail.username}")
+    private String formMail;
+
+    public void sendEmail(String mail, String content) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(formMail);
+        message.setTo(mail);
+        message.setSubject("Mật khẩu Mới");
+        message.setText("Mật Khẩu: "+content);
+
+        mailSender.send(message);
+    }
+
     @Override
     public List<TaiKhoan> getAll() {
         return taiKhoanRepository.findAll();
     }
-
-
     @Override
-    public List<TaiKhoan> phanTrang() {
-        return taiKhoanRepository.findAllByTrangThai();
+    public List<TaiKhoan> chucVu() {
+        return taiKhoanRepository.chucVu();
     }
 
     // Mã hóa mật khẩu
@@ -53,6 +72,7 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
         return taiKhoan;
     }
 
+    @Transactional
     @Override
     public TaiKhoan update(TaiKhoan taiKhoan, Integer id) {
         taiKhoan.setMatKhau(hashPassword(taiKhoan.getMatKhau()));
@@ -71,8 +91,5 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
         return taiKhoan;
     }
 
-    @Override
-    public List<TaiKhoan> chucVu() {
-        return taiKhoanRepository.chucVu();
-    }
+
 }

@@ -17,10 +17,12 @@ export default function ModalDeleteProductOnCart(props) {
   ModalDeleteProductOnCart.propTypes = {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
-    itemDelete: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+    // itemDelete: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+    itemDelete: PropTypes.array.isRequired,
+    DataCart: PropTypes.array.isRequired,
     selectDataCart: PropTypes.func.isRequired,
   };
-  const { open, handleClose, itemDelete, selectDataCart } = props;
+  const { open, handleClose, itemDelete, selectDataCart, DataCart } = props;
 
   // Set maHd using useState
 
@@ -44,13 +46,21 @@ export default function ModalDeleteProductOnCart(props) {
   }, [itemDelete]);
   // Handle Delete
   const handleDelete = async () => {
-    await deleteProductOnCart(itemDelete[1]);
-    selectDataCart();
-    setAlertContent({
-      type: 'success',
-      message: 'Xóa Sản Phẩm Thành Công',
-    });
-    handleClose();
+    console.log('DataCart: ', DataCart);
+    if (DataCart.length <= 1) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Sản Phẩm Trong Hóa Đơn Không Thể Trống',
+      });
+    } else {
+      await deleteProductOnCart(itemDelete[1]);
+      selectDataCart();
+      setAlertContent({
+        type: 'success',
+        message: 'Xóa Sản Phẩm Thành Công',
+      });
+      handleClose();
+    }
   };
 
   return (
@@ -72,19 +82,19 @@ export default function ModalDeleteProductOnCart(props) {
             <Button onClick={handleDelete}>Đồng Ý</Button>
           </DialogActions>
         </Dialog>
+        {alertContent && (
+          <Snackbar
+            open
+            autoHideDuration={3000}
+            onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+              {alertContent.message}
+            </Alert>
+          </Snackbar>
+        )}
       </div>
-      {alertContent && (
-        <Snackbar
-          open
-          autoHideDuration={3000}
-          onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
-            {alertContent.message}
-          </Alert>
-        </Snackbar>
-      )}
     </>
   );
 }

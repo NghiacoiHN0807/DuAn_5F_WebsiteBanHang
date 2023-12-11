@@ -3,6 +3,7 @@ package com.example.fullstackbackend.services;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
 import com.example.fullstackbackend.entity.LichSuHoaDon;
+import org.springframework.data.domain.Page;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -15,6 +16,8 @@ public interface HoadonchitietSevice {
 
     List<Object[]> getListProductOncart(Integer idHd);
 
+    Page<HoaDonChiTiet> getListProductByIDKH(Integer idKH, Integer pageNo, Integer size);
+
     HoaDonChiTiet add(HoaDonChiTiet add);
 
     HoaDonChiTiet add1(HoaDonChiTiet add);
@@ -24,6 +27,8 @@ public interface HoadonchitietSevice {
     Boolean checkExists(Integer id);
 
     HoaDonChiTiet update(HoaDonChiTiet update);
+
+    HoaDonChiTiet returnItem(HoaDonChiTiet update);
 
     LichSuHoaDon addLS(HoaDonChiTiet addLS, int status);
 

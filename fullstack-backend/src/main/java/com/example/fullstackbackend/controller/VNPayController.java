@@ -1,6 +1,6 @@
 package com.example.fullstackbackend.controller;
 
-import com.example.fullstackbackend.DTO.VNPayService;
+import com.example.fullstackbackend.config.payment.VNPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;

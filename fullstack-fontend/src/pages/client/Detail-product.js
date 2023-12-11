@@ -1,17 +1,24 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
 import '../../scss/detail-client.scss';
-import { Carousel } from 'react-bootstrap';
+import { Carousel, Row } from 'react-bootstrap';
 import CardMedia from '@mui/material/CardMedia';
-import { Alert, Box, Button, Snackbar, Typography } from '@mui/material';
+
+import { Alert, Box, Button, Container, Grid, Snackbar, Typography } from '@mui/material';
 // utils
 // Service
+
 import { listImg } from '../../service/client/Detail-Product';
 import { findById } from '../../service/BillSevice';
 import { addProductOnCart } from '../../service/client/Detail-Cart';
+import { getRelatedSp } from '../../service/SanPhamService';
+import { ProductListAll } from '../../sections/@dashboard/products';
+import ShopProductCard from '../../sections/@dashboard/products/ProductCardAll';
 
 const DetailProduct = () => {
+  // DetailProduct.propTypes = {
+  //   refetch: PropTypes.func.isRequired,
+  // };
   const [quantity, setQuantity] = useState(1);
   // const [selectedSizes, setSelectedSizes] = useState([]);
   const [detailProduct, setDetailProduct] = useState([]);
@@ -25,6 +32,9 @@ const DetailProduct = () => {
   const [availableColors, setAvailableColors] = useState([]);
   const [selectSoLuongTon, setSelectSoLuongTon] = useState([]);
   const [uniqueSizesHi, setUniqueSizes] = useState([]);
+  const [price, setPrice] = useState('');
+  // get id of loai sp lien quan
+  const [listLSP, setListLSP] = useState([]);
 
   // Select detail product
   const param = useParams();
@@ -34,10 +44,24 @@ const DetailProduct = () => {
     try {
       const getOneSP = await findById(idHdParam);
       const getOneSP1 = await listImg(idHdParam);
+
+      const giaThucTe = Array.isArray(getOneSP) ? [...new Set(getOneSP.map((item) => item.giaThucTe))] : [];
+
+      // Find max and min of price
+      const minPrice = Math.min(...giaThucTe);
+      const maxPrice = Math.max(...giaThucTe);
+
+      // Create the price range string
+      const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
+      const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
+      const priceRange = minPrice === maxPrice ? formattedMinPrice : `${formattedMinPrice} - ${formattedMaxPrice}`;
+      setPrice(priceRange);
       console.log('getOneSP: ', getOneSP);
       console.log('getOneSP1: ', getOneSP1);
       setDetailProduct(getOneSP);
       setDetailImg(getOneSP1);
+      const getListLQ = await getRelatedSp(getOneSP[0].idSp.idLsp.idLoaisp, getOneSP[0].idSp.idSp);
+      setListLSP(getListLQ);
     } catch (e) {
       console.error(e);
     }
@@ -109,25 +133,78 @@ const DetailProduct = () => {
     setQuantity(quantity + 1);
   };
 
-  // Add product on cart
-  // const [product, setProduct] = useState({
-  //   idCtsp: detailProduct.idCtsp,
-  //   soLuong: quantity,
-  // });
   const [alertContent, setAlertContent] = useState(null);
+
+  // const fetchData = async () => {
+  //   try {
+  //     const getLocalStore = localStorage.getItem('userFormToken');
+  //     // const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
+  //     if (getLocalStore) {
+  //       const authorities = JSON.parse(getLocalStore).taiKhoan;
+  //       await listProductOnCart(authorities.idTaiKhoan);
+  //     }
+
+  //     // await listProductOnCart(authorities.idTaiKhoan);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
   const handleAddProduct = async () => {
     // Get Author
     const getLocalStore = localStorage.getItem('userFormToken');
-    const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
-    try {
-      await addProductOnCart(authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
+
+    if (getLocalStore) {
+      const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
+      try {
+        if (selectedMauSac === null && selectedSize === null) {
+          setAlertContent({
+            type: 'warning',
+            message: 'Thuộc Tính Sản Phẩm Trống',
+          });
+        } else {
+          console.log('HIHI: ', authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
+          await addProductOnCart(authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
+          setAlertContent({
+            type: 'success',
+            message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
+          });
+          // fetchData();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    } else if (selectedMauSac === null && selectedSize === null) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Thuộc Tính Sản Phẩm Trống',
+      });
+    } else {
+      // Lấy giá trị hiện tại từ localStorage
+      const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {}; // Nếu chưa có giá trị, tạo một đối tượng rỗng
+      const productId = selectSoLuongTon[0].idCtsp;
+      const selectedItem = currentCart[productId];
+
+      if (selectedItem) {
+        selectedItem.soLuong += quantity;
+        selectedItem.donGia = selectSoLuongTon[0].giaThucTe * selectedItem.soLuong;
+      } else {
+        currentCart[productId] = {
+          idCtsp: selectSoLuongTon[0],
+          soLuong: quantity,
+          donGia: selectSoLuongTon[0].giaThucTe * quantity,
+        };
+      }
+      localStorage.setItem('cartProduct', JSON.stringify(currentCart));
+
       setAlertContent({
         type: 'success',
         message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
       });
-    } catch (error) {
-      console.error(error);
     }
   };
 
@@ -139,15 +216,45 @@ const DetailProduct = () => {
   };
 
   function formatCurrency(price) {
-    if (!price) return "0";
+    if (!price) return '0';
 
-    const formatter = new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
       minimumFractionDigits: 0,
     });
 
     return formatter.format(price);
+  }
+
+  // code lon xao
+  const itemsPerSlide = 4; // Number of cards per slide
+
+  const numSlides = Math.ceil(listLSP.length / itemsPerSlide);
+
+  const slides = [];
+  for (let i = 0; i < numSlides; i += 1) {
+    const start = i * itemsPerSlide;
+    const end = (i + 1) * itemsPerSlide;
+
+    const slideProducts = listLSP.slice(start, end);
+    const slide = (
+      <Carousel.Item key={i}>
+        <Container>
+          <Row>
+            <Grid container spacing={3}>
+              {slideProducts.map((product, index) => (
+                <Grid key={index} item xs={12} sm={6} md={3}>
+                  <ShopProductCard product={product} />
+                </Grid>
+              ))}
+            </Grid>
+          </Row>
+        </Container>
+      </Carousel.Item>
+    );
+
+    slides.push(slide);
   }
 
   return (
@@ -186,17 +293,6 @@ const DetailProduct = () => {
             >
               {detailProduct.length > 0 && detailProduct[0].idSp.tenSp}
             </Typography>
-            {/* <div className="info-sp">
-                        <div className="danhgia">
-                            <p className="danhgia-number underline">49</p>
-                            Đánh giá
-                        </div>
-                        <div className="daban">
-                            <p className="daban-number">1,1k</p>
-                            Đã bán
-                        </div>
-                    </div> */}
-
             <div className="price-product">
               <Typography variant="subtitle1">
                 <Typography
@@ -212,7 +308,7 @@ const DetailProduct = () => {
                   {detailProduct.length > 0 && detailProduct[0].giaBan && formatCurrency(detailProduct[0].giaBan)}
                 </Typography>
                 &nbsp;
-                {detailProduct.length > 0 && formatCurrency(detailProduct[0].giaBan)}
+                {selectSoLuongTon.length > 0 ? formatCurrency(selectSoLuongTon[0].giaThucTe) : price}
               </Typography>
             </div>
             <div className="vanchuyen d-block">
@@ -242,40 +338,40 @@ const DetailProduct = () => {
                 <div>
                   {availableColors.length > 0
                     ? // Hiển thị danh sách màu sắc từ availableColors
-                      availableColors.map((mauSac, msIndex) => (
-                        <Button
-                          style={{
-                            marginRight: '4px',
-                            marginBottom: '4px',
-                            marginLeft: '10px',
-                            height: '25px',
-                          }}
-                          key={`size-button-${msIndex}`}
-                          onClick={() => handleShowMS(mauSac)}
-                          variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
-                          size="small"
-                          className=''
-                        >
-                          {mauSac}
-                        </Button>
-                      ))
+                    availableColors.map((mauSac, msIndex) => (
+                      <Button
+                        style={{
+                          marginRight: '4px',
+                          marginBottom: '4px',
+                          marginLeft: '10px',
+                          height: '25px',
+                        }}
+                        key={`size-button-${msIndex}`}
+                        onClick={() => handleShowMS(mauSac)}
+                        variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
+                        size="small"
+                        className=""
+                      >
+                        {mauSac}
+                      </Button>
+                    ))
                     : // Hiển thị dữ liệu từ dataDetail
-                      uniqueMS.map((item, index) => (
-                        <Button
-                          style={{
-                            marginLeft: '10px',
-                            height: '25px',
-                            marginRight: '4px',
-                            marginBottom: '4px',
-                          }}
-                          key={`size-button-${index}`}
-                          onClick={() => handleShowMS(item)}
-                          variant={selectedMauSac === item ? 'contained' : 'outlined'}
-                          size="small"
-                        >
-                          {item}
-                        </Button>
-                      ))}
+                    uniqueMS.map((item, index) => (
+                      <Button
+                        style={{
+                          marginLeft: '10px',
+                          height: '25px',
+                          marginRight: '4px',
+                          marginBottom: '4px',
+                        }}
+                        key={`size-button-${index}`}
+                        onClick={() => handleShowMS(item)}
+                        variant={selectedMauSac === item ? 'contained' : 'outlined'}
+                        size="small"
+                      >
+                        {item}
+                      </Button>
+                    ))}
                 </div>
               </Box>
             </div>
@@ -304,7 +400,6 @@ const DetailProduct = () => {
               <Button className="add-cart" onClick={handleAddProduct}>
                 Thêm Vào Giỏ Hàng
               </Button>
-              <div className="buy">Mua ngay</div>
             </div>
           </div>
         </div>
@@ -350,244 +445,19 @@ const DetailProduct = () => {
           hãy nhắn cho shop liền nha 3 shop rất biết ơn nếu bạn làm điều đó ạ 3
         </p>
       </div>
-      <div className="container d-flex justify-content-center mt-50 mb-50">
-        <div className="row">
-          <div className="col-md-4 mt-2">
-            <div className="card">
-              <div className="card-body">
-                <div className="card-img-actions">
-                  <img
-                    src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                    className="card-img img-fluid"
-                    width={96}
-                    height={350}
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="card-body bg-light text-center">
-                <div className="mb-2">
-                  <h6 className="font-weight-semibold mb-2">
-                    <a href="#" className="text-default mb-2" data-abc="true">
-                      Toshiba Notebook with 500GB HDD &amp; 8GB RAM
-                    </a>
-                  </h6>
-                  <a href="#" className="text-muted" data-abc="true">
-                    Laptops &amp; Notebooks
-                  </a>
-                </div>
-                <h3 className="mb-0 font-weight-semibold">$250.99</h3>
-                <div>
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                </div>
-                <div className="text-muted mb-3">34 reviews</div>
-                <button type="button" className="btn bg-cart">
-                  <i className="fa fa-cart-plus mr-2" />
-                  <div className="buy">Mua ngay</div>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4 mt-2">
-            <div className="card">
-              <div className="card-body">
-                <div className="card-img-actions">
-                  <img
-                    src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                    className="card-img img-fluid"
-                    width={96}
-                    height={350}
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="card-body bg-light text-center">
-                <div className="mb-2">
-                  <h6 className="font-weight-semibold mb-2">
-                    <a href="#" className="text-default mb-2" data-abc="true">
-                      Toshiba Notebook with 500GB HDD &amp; 8GB RAM
-                    </a>
-                  </h6>
-                  <a href="#" className="text-muted" data-abc="true">
-                    Laptops &amp; Notebooks
-                  </a>
-                </div>
-                <h3 className="mb-0 font-weight-semibold">$250.99</h3>
-                <div>
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                </div>
-                <div className="text-muted mb-3">34 reviews</div>
-                <button type="button" className="btn bg-cart">
-                  <i className="fa fa-cart-plus mr-2" />
-                  <div className="buy">Mua ngay</div>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4 mt-2">
-            <div className="card">
-              <div className="card-body">
-                <div className="card-img-actions">
-                  <img
-                    src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                    className="card-img img-fluid"
-                    width={96}
-                    height={350}
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="card-body bg-light text-center">
-                <div className="mb-2">
-                  <h6 className="font-weight-semibold mb-2">
-                    <a href="#" className="text-default mb-2" data-abc="true">
-                      Toshiba Notebook with 500GB HDD &amp; 8GB RAM
-                    </a>
-                  </h6>
-                  <a href="#" className="text-muted" data-abc="true">
-                    Laptops &amp; Notebooks
-                  </a>
-                </div>
-                <h3 className="mb-0 font-weight-semibold">$250.99</h3>
-                <div>
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                </div>
-                <div className="text-muted mb-3">34 reviews</div>
-                <button type="button" className="btn bg-cart">
-                  <i className="fa fa-cart-plus mr-2" />
-                  <div className="buy">Mua ngay</div>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4 mt-2">
-            <div className="card">
-              <div className="card-body">
-                <div className="card-img-actions">
-                  <img
-                    src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                    className="card-img img-fluid"
-                    width={96}
-                    height={350}
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="card-body bg-light text-center">
-                <div className="mb-2">
-                  <h6 className="font-weight-semibold mb-2">
-                    <a href="#" className="text-default mb-2" data-abc="true">
-                      Toshiba Notebook with 500GB HDD &amp; 8GB RAM
-                    </a>
-                  </h6>
-                  <a href="#" className="text-muted" data-abc="true">
-                    Laptops &amp; Notebooks
-                  </a>
-                </div>
-                <h3 className="mb-0 font-weight-semibold">$250.99</h3>
-                <div>
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                </div>
-                <div className="text-muted mb-3">34 reviews</div>
-                <button type="button" className="btn bg-cart">
-                  <i className="fa fa-cart-plus mr-2" />
-                  <div className="buy">Mua ngay</div>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4 mt-2">
-            <div className="card">
-              <div className="card-body">
-                <div className="card-img-actions">
-                  <img
-                    src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                    className="card-img img-fluid"
-                    width={96}
-                    height={350}
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="card-body bg-light text-center">
-                <div className="mb-2">
-                  <h6 className="font-weight-semibold mb-2">
-                    <a href="#" className="text-default mb-2" data-abc="true">
-                      Toshiba Notebook with 500GB HDD &amp; 8GB RAM
-                    </a>
-                  </h6>
-                  <a href="#" className="text-muted" data-abc="true">
-                    Laptops &amp; Notebooks
-                  </a>
-                </div>
-                <h3 className="mb-0 font-weight-semibold">$250.99</h3>
-                <div>
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                </div>
-                <div className="text-muted mb-3">34 reviews</div>
-                <button type="button" className="btn bg-cart">
-                  <i className="fa fa-cart-plus mr-2" />
-                  <div className="buy">Mua ngay</div>
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="col-md-4 mt-2">
-            <div className="card">
-              <div className="card-body">
-                <div className="card-img-actions">
-                  <img
-                    src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png"
-                    className="card-img img-fluid"
-                    width={96}
-                    height={350}
-                    alt=""
-                  />
-                </div>
-              </div>
-              <div className="card-body bg-light text-center">
-                <div className="mb-2">
-                  <h6 className="font-weight-semibold mb-2">
-                    <a href="#" className="text-default mb-2" data-abc="true">
-                      Toshiba Notebook with 500GB HDD &amp; 8GB RAM
-                    </a>
-                  </h6>
-                  <a href="#" className="text-muted" data-abc="true">
-                    Laptops &amp; Notebooks
-                  </a>
-                </div>
-                <h3 className="mb-0 font-weight-semibold">$250.99</h3>
-                <div>
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                  <i className="fa fa-star star" />
-                </div>
-                <div className="text-muted mb-3">34 reviews</div>
-                <button type="button" className="btn bg-cart">
-                  <i className="fa fa-cart-plus mr-2" />
-                  <div className="buy">Mua ngay</div>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div id="cription">
+        <Typography variant="h4" gutterBottom sx={{ marginBottom: '20px' }}>
+          Sản phẩm liên quan
+        </Typography>
+        {listLSP.length <= 4 ? (
+          <ProductListAll products={listLSP} />
+        ) : (
+          <Carousel data-bs-theme="dark" interval={5000}>
+            {slides}
+          </Carousel>
+        )}
       </div>
+
       {alertContent && (
         <Snackbar
           open

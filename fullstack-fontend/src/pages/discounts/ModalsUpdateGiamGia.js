@@ -8,7 +8,7 @@ import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Alert, Button, Checkbox, Chip, Grid, Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
 import { Col, Image, Table } from 'react-bootstrap';
-import { detail, getAllSanPham, update } from "../../service/giamGiaService";
+import { detail, getAllSanPham, getDetailSanPhamById, update } from "../../service/giamGiaService";
 import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
 
@@ -62,20 +62,39 @@ const ModelUpdateGiamGia = (props) => {
     try {
       const res = await getAllSanPham();
       const resDetail = await detail(id);
-      console.log("data: ", res);
-      console.log("resDetail: ", resDetail.data.idGiamGia);
-      if (resDetail.data.idGiamGia.mucGiamPhanTram !== null) {
-        setSelected("phanTram");
-      } else if (resDetail.data.idGiamGia.mucGiamTienMat !== null) {
-        setSelected("mucGiam");
-      }
-      setGiamGia(resDetail.data.idGiamGia);
-      setLeft(res);
+      console.log("resDetail: ", resDetail.data.idSp.idSp)
+      const resDetailRight = await getDetailSanPhamById(resDetail.data.idSp.idSp);
+      console.log("resDetailRight: ", resDetailRight)
 
+      // Check if resDetailRight is an object
+      if (typeof resDetailRight === 'object' && !Array.isArray(resDetailRight)) {
+        // Handle this situation based on your requirements, e.g., convert to an array.
+        const resDetailRightArray = [resDetailRight];
+        if (resDetail.data.idGiamGia.mucGiamPhanTram !== null) {
+          setSelected("phanTram");
+        } else if (resDetail.data.idGiamGia.mucGiamTienMat !== null) {
+          setSelected("mucGiam");
+        }
+        setGiamGia(resDetail.data.idGiamGia);
+        setLeft(res);
+        setRight(resDetailRightArray); // Set the right state with the data from resDetailRight
+      } else {
+        // If it's already an array, proceed as before
+        if (resDetail.data.idGiamGia.mucGiamPhanTram !== null) {
+          setSelected("phanTram");
+        } else if (resDetail.data.idGiamGia.mucGiamTienMat !== null) {
+          setSelected("mucGiam");
+        }
+        setGiamGia(resDetail.data.idGiamGia);
+        setLeft(res);
+        setRight(resDetailRight); // Set the right state with the data from resDetailRight
+      }
     } catch (error) {
       console.error('Error loading images:', error);
     }
   }
+
+
 
 
   console.log("Img: ", image)
@@ -532,22 +551,25 @@ const ModelUpdateGiamGia = (props) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {left.slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage).map((value, index) =>
-                      (
-                        <TableRow key={`left_${value.sanPham.idSp}`} onClick={handleToggle(value, true)}>
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              value={value.sanPham.idSp}
-                              checked={checked.indexOf(value) !== -1}
+                      {left
+                        .filter((value) => value.sanPham.trangThai === 0)
+                        .slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage)
+                        .map((value, index) =>
+                        (
+                          <TableRow key={`left_${value.sanPham.idSp}`} onClick={handleToggle(value, true)}>
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                value={value.sanPham.idSp}
+                                checked={checked.indexOf(value) !== -1}
 
-                            />
-                          </TableCell>
-                          <TableCell>{index + 1}</TableCell>
-                          <TableCell>{value.sanPham.maSp}</TableCell>
-                          <TableCell>{value.sanPham.tenSp}</TableCell>
-                          <TableCell>{value.sanPham.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
-                        </TableRow>
-                      ))}
+                              />
+                            </TableCell>
+                            <TableCell>{index + 1}</TableCell>
+                            <TableCell>{value.sanPham.maSp}</TableCell>
+                            <TableCell>{value.sanPham.tenSp}</TableCell>
+                            <TableCell>{value.sanPham.trangThai === 0 || value.sanPham.trangThai === 1 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
+                          </TableRow>
+                        ))}
                     </TableBody>
                   </Table>
                 </TableContainer>
@@ -590,6 +612,7 @@ const ModelUpdateGiamGia = (props) => {
                   <Table>
                     <TableHead>
                       <TableRow>
+                        <TableCell> </TableCell>
                         <TableCell>STT</TableCell>
                         <TableCell>Ảnh sản phẩm</TableCell>
                         <TableCell>Mã sản phẩm</TableCell>
@@ -622,8 +645,8 @@ const ModelUpdateGiamGia = (props) => {
                           </TableCell>
                           <TableCell>{value.sanPham.maSp}</TableCell>
                           <TableCell>{value.sanPham.tenSp}</TableCell>
-                          <TableCell>{formatCurrency(value.sanPham.giaBan)}</TableCell>
-                          <TableCell>{value.sanPham.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
+                          <TableCell>{value.sanPham.giaSmall === value.sanPham.giaBig ? formatCurrency(value.sanPham.giaSmall) : `${formatCurrency(value.sanPham.giaSmall)} - ${formatCurrency(value.sanPham.giaBig)}`}</TableCell>
+                          <TableCell>{value.sanPham.trangThai === 0 || value.sanPham.trangThai === 1 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

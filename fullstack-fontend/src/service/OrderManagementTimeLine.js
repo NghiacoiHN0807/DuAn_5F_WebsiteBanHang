@@ -17,10 +17,16 @@ const updatePayment = (idHd, tenKh, sdtKh, ngayThanhToan, thanhTien, tienDua, ti
     trangThai,
   });
 
-const updateTongTien = (idHd, tongTien, tienShip) =>
+const updateTongTien = (idHd, tongTien, tienShip, thanhTien) =>
   custom.put(`/hoa-don/update-tong-tien/${idHd}`, {
     tongTien,
     tienShip,
+    thanhTien,
+  });
+
+const updateTienShip = (idHd, tienShip) =>
+  custom.put(`/hoa-don/update-tien-ship/${idHd}`, {
+    tienShip
   });
 
 const updatePaymentShip = (idHd, tenKh, sdtKh, ngayThanhToan, diaChi, thanhTien, kieuHoaDon, trangThai) =>
@@ -62,4 +68,5 @@ export {
   updatePaymentShip,
   viewAllHTTT,
   updateKH,
+  updateTienShip
 };

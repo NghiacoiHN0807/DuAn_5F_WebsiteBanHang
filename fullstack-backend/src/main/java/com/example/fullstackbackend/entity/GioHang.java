@@ -23,8 +23,8 @@ public class GioHang {
     @Column(name = "id_gio_hang")
     private Integer idGioHang;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_kh")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_kh", referencedColumnName = "id_tai_khoan")
     private TaiKhoan idKh;
 
     @Column(name = "ma_gio_hang")

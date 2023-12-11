@@ -193,6 +193,10 @@ const AddAddress = () => {
             } catch (error) {
                 if (error.response && error.response.data) {
                     setValidationErrors(error.response.data);
+                    showAlert('warning', error.response.data);
+                    showAlert('error', 'Thêm Địa Chỉ Thất Bại !');
+
+
                 } else {
                     console.error("Error:", error);
                 }
@@ -261,7 +265,9 @@ const AddAddress = () => {
                             inputProps={{maxLength: 10}}
                             onChange={(event) => setSdt(event.target.value)}
                         />
-                        <FormControl style={{marginLeft: "10px"}}>
+                        <FormControl style={{marginLeft: "10px"}}
+                                     error={!!validationErrors.loaiDiaChi}
+                                     helperText={validationErrors.loaiDiaChi} >
                             <FormLabel id="demo-radio-buttons-group-label">
                                 Loại Địa Chỉ
                             </FormLabel>
@@ -294,7 +300,9 @@ const AddAddress = () => {
                                 flexWrap: "wrap"
                             }}
                         >
-                            <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}>
+                            <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}
+                                         error={!!validationErrors.tinhThanh}
+                                         helperText={validationErrors.tinhThanh}>
                                 <InputLabel id="province-label">Tỉnh/Thành Phố</InputLabel>
                                 <Select
                                     labelId="province-label"
@@ -313,7 +321,9 @@ const AddAddress = () => {
                                     ))}
                                 </Select>
                             </FormControl>
-                            <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}>
+                            <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}
+                                         error={!!validationErrors.quanHuyen}
+                                 >
                                 <InputLabel id="district-label">Quận/Huyện</InputLabel>
                                 <Select
                                     labelId="district-label"
@@ -321,6 +331,7 @@ const AddAddress = () => {
                                     value={selectedQuanHuyen}
                                     onChange={(e) => setSelectedQuanHuyen(e.target.value)}
                                     label="Quận/Huyện"
+                                    error={!!validationErrors.quanHuyen}
                                 >
                                     <MenuItem value="">
                                         <em>Chọn Quận/Huyện</em>
@@ -332,8 +343,11 @@ const AddAddress = () => {
                                     ))}
                                 </Select>
                             </FormControl>
-                            <FormControl size="small" sx={{m: 0, minWidth: 170, marginTop: 2}}>
-                                <InputLabel id="ward-label">Phường/Xã</InputLabel>
+                            <FormControl size="small" sx={{m: 0, minWidth: 170, marginTop: 2}}
+                                         error={!!validationErrors.phuongXa}
+                                         helperText={validationErrors.phuongXa}
+                            >
+                                <InputLabel id="ward-label" >Phường/Xã</InputLabel>
                                 <Select
                                     labelId="ward-label"
                                     id="ward-select"

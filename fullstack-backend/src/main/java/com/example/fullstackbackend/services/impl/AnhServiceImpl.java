@@ -40,11 +40,4 @@ public class AnhServiceImpl implements AnhService {
         return checkAnh;
     }
 
-    @Override
-    public Boolean checkSL() {
-        if(anhRepository.count() >= 10){
-            return false;
-        }
-        return true;
-    }
 }

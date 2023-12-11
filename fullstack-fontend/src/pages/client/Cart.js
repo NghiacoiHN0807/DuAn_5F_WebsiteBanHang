@@ -14,6 +14,8 @@ import {
   postAddBillAddBill,
   postAddDirectClient,
 } from '../../service/client/Detail-Cart';
+import ModalUpdateProductOnCartClient from '../../forms/client/Modals-Update-Product-Cart-Client';
+import { findById } from '../../service/BillSevice';
 
 const StyledProductImg = styled('img')({
   top: 0,
@@ -33,11 +35,22 @@ export default function Cart() {
 
   const navigate = useNavigate();
 
+  // Get KH
+  const getLocalStore = localStorage.getItem('userFormToken');
+  const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
+
   const getDetail = useCallback(async () => {
     try {
-      const getLocalStore = localStorage.getItem('userFormToken');
-      const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
-      const getOneSP = await listProductOnCart(authorities.idTaiKhoan);
+      let getOneSP = {};
+
+      if (getLocalStore) {
+        getOneSP = await listProductOnCart(authorities.idTaiKhoan);
+      } else {
+        const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {}; // Nếu chưa có giá trị, tạo một đối tượng rỗng
+        console.log('idCtspListđá: ', currentCart);
+        getOneSP = Object.values(currentCart);
+        // getOneSP = currentCart;
+      }
       setProductOnCart(getOneSP);
       console.log('getOneSP: ', getOneSP);
       const productId = getOneSP.map((item) => item.idCtsp.idSp.idSp);
@@ -48,7 +61,7 @@ export default function Cart() {
     } catch (e) {
       console.error(e);
     }
-  }, []);
+  }, [authorities.idTaiKhoan, getLocalStore]);
 
   useEffect(() => {
     getDetail();
@@ -90,7 +103,6 @@ export default function Cart() {
 
   const handleDeleteProduct = async (item) => {
     try {
-      console.log('item: ', item.idGhct);
       await deleteProductOnCart(item.idGhct);
       setAlertContent({
         type: 'success',
@@ -177,14 +189,13 @@ export default function Cart() {
         message: 'Vui Lòng Chọn Sản Phẩm',
       });
     } else {
-      const res = await postAddBillAddBill(2, 0);
+      console.log('authorities: ', authorities);
+      const res = await postAddBillAddBill(authorities, totalPayment, 2, 11);
       for (let i = 0; i < selectedItems.length; i += 1) {
         (async () => {
           await postAddDirectClient(res.idHd, selectedItems[i]);
         })();
       }
-      console.log('selectedItems: ', selectedItems);
-
       setAlertContent({
         type: 'success',
         message: 'Tạo thành công hóa đơn',
@@ -193,6 +204,26 @@ export default function Cart() {
     }
   };
 
+  // Update classify on the cart
+  const [showModalsUpdate, setShowModalsUpdate] = useState(false);
+  const [itemUpdateClassify, setItemUpdateClassify] = useState({});
+  const [itemUpdate, setItemUpdate] = useState({});
+
+  const handleUpdateClassify = async (item) => {
+    setShowModalsUpdate(true);
+    console.log('item:', item);
+    try {
+      const getOneSP = await findById(item.idCtsp.idSp.idSp);
+      setItemUpdateClassify(getOneSP);
+      setItemUpdate(item);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCloseUpdateClassify = () => {
+    setShowModalsUpdate(false);
+  };
   return (
     <>
       <div>
@@ -269,14 +300,15 @@ export default function Cart() {
                                     style={{
                                       fontSize: '12px',
                                     }}
+                                    onClick={() => handleUpdateClassify(item)}
                                     key={`size-button-${item.idCtsp.idMs.idMs}`}
                                     // onClick={() => handleShowMS(item.idCtsp.idMs)}
                                     // variant={selectedMauSac === item.idCtsp.idMs ? 'contained' : 'outlined'}
                                     size="small"
                                     className="ms-size"
                                   >
-                                    {item.idCtsp.idMs.tenMs}
-                                  </Button>
+                                    {item.idCtsp.idMs.tenMs},
+                                    {/* </Button>
                                   ,
                                   <Button
                                     style={{
@@ -287,7 +319,7 @@ export default function Cart() {
                                     // variant={selectedMauSac === item.idCtsp.idSize ? 'contained' : 'outlined'}
                                     size="small"
                                     className="ms-size"
-                                  >
+                                  > */}
                                     {item.idCtsp.idSize.tenSize}
                                   </Button>
                                 </span>
@@ -326,7 +358,7 @@ export default function Cart() {
                       ))}
                   </div>
                 </div>
-                <div className="container-buy-block box-shadow">
+                <div className="container container-buy-block box-shadow">
                   <div className="container-voucher-block">
                     <div className="container-voucher">
                       <i className="fa-solid fa-clipboard-list voucher-icon" />
@@ -503,6 +535,15 @@ export default function Cart() {
             {alertContent.message}
           </Alert>
         </Snackbar>
+      )}
+      {itemUpdate && Object.keys(itemUpdate).length > 0 && (
+        <ModalUpdateProductOnCartClient
+          show={showModalsUpdate}
+          handleClose={handleCloseUpdateClassify}
+          itemUpdateClassify={itemUpdateClassify}
+          selectDataCart={getDetail}
+          itemUpdate={itemUpdate}
+        />
       )}
     </>
   );

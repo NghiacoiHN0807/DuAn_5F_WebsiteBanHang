@@ -1,7 +1,8 @@
 import { Helmet } from 'react-helmet-async';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 // @mui
 import { Container, Stack, Typography } from '@mui/material';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
 // components
 import { ProductSort, ProductListAll, ProductfilterSB } from '../../sections/@dashboard/products';
 // mock
@@ -38,9 +39,18 @@ export default function ProductsPage() {
   }, []);
 
   // filter
-  // const listLoc = listSP.filter((sp) => sp.chatLieus.includes('12'));
 
-  const [filteredList, setFilteredList] = useState([]);
+  const [listLoc, setListLoc] = useState([]);
+  const [isFiltered, setIsFiltered] = useState(false);
+
+  const handleFilter = (filteredProducts) => {
+    setListLoc(filteredProducts);
+    setIsFiltered(true);
+  };
+
+  const displayProducts = isFiltered ? listLoc : listSP;
+
+  console.log("displayProducts: ", displayProducts);
 
   return (
     <>
@@ -50,7 +60,7 @@ export default function ProductsPage() {
 
       <Container>
         <Typography variant="h4" sx={{ mb: 5 }}>
-          Products
+          Danh sách sản phẩm
         </Typography>
 
         <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
@@ -60,16 +70,22 @@ export default function ProductsPage() {
               onOpenFilter={handleOpenFilter}
               onCloseFilter={handleCloseFilter}
               listSP={listSP}
-              // onFilter={(filteredList) => {
-              //   // Lấy kết quả đã lọc từ ProductFilterSB
-              //   setFilteredList(filteredList);
-              // }}
+              onFilter={handleFilter}
             />
-            <ProductSort />
           </Stack>
         </Stack>
 
-        <ProductListAll products={listSP} />
+        {listSP.length > 0 && (
+          <div>
+            {displayProducts.length > 0 ? (
+              <ProductListAll products={displayProducts} sx={{ marginBottom: '50px' }} />
+            ) : (
+              <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', marginBottom: '50px' }}>
+                <SearchOffIcon sx={{ fontSize: 80 }} /> Không tìm thấy sản phẩm phù hợp!
+              </Typography>
+            )}
+          </div>
+        )}
       </Container>
     </>
   );

@@ -7,6 +7,7 @@ const account = {
   displayName: `${authorities.ho} ${authorities.ten}`,
   email: authorities.email,
   photoURL: '/assets/images/avatars/avatar_default.jpg',
+  user: authorities,
 };
 
 export default account;
