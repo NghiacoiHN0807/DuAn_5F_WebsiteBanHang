@@ -467,6 +467,7 @@ export default function PaymentPage1() {
             setDiaChi={setDiaChi}
             setTienShip={setTienShip}
             getDetailHD={getDetailHD}
+            getAllData={getAllData}
           />
         </>
       )}
