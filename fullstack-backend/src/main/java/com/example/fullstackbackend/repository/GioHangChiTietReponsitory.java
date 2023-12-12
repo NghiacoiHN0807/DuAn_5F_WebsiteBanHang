@@ -13,5 +13,7 @@ public interface GioHangChiTietReponsitory extends JpaRepository<GioHangChiTiet,
 
     List<GioHangChiTiet> findByIdGh_IdKh_IdTaiKhoan(Integer idTK);
 
+//    List<GioHangChiTiet> findAllById
+
     Optional<GioHangChiTiet> findByIdCtsp_IdCtsp(Integer idCTSP);
 }

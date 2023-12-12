@@ -23,9 +23,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 // Service
 import { detailBill, finByProductOnCart } from '../../service/BillSevice';
-import { updateTienShip, viewAllHTTT } from '../../service/OrderManagementTimeLine';
+import { updateTienShip } from '../../service/OrderManagementTimeLine';
 import ModalAddAddress from '../../forms/Modals-Add-Address';
 import {
+  deleteProductOnCartPayment,
   paymentOnlineClient,
   selectDiaChiByTK,
   updateClientPayment,
@@ -113,17 +114,14 @@ export default function PaymentPage1() {
   const idHdParam = param.id;
 
   const [DataCart, setDataCart] = useState([]);
-  const [listHTTT, setListHTTT] = useState([]);
 
   const selectDataCart = useCallback(async () => {
     try {
       const res = await finByProductOnCart(idHdParam);
-      const res1 = await viewAllHTTT(idHdParam);
       console.log('res', res);
 
-      if (res || res1) {
+      if (res) {
         setDataCart(res);
-        setListHTTT(res1);
         setInformation(res);
       }
     } catch (error) {
@@ -160,6 +158,7 @@ export default function PaymentPage1() {
   const [diaChi, setDiaChi] = useState('');
   const [tenKH, setTenKH] = useState('');
   const [sdtKH, setSDTKH] = useState('');
+  const [emailKH, setEmailKH] = useState('');
 
   const getAllData = useCallback(async () => {
     try {
@@ -172,6 +171,7 @@ export default function PaymentPage1() {
         setListData(getData);
         setTenKH(getData[0].tenNguoiNhan);
         setSDTKH(getData[0].sdt);
+        setEmailKH(getData[0].email);
         setTienShip(getData[0].phiShip);
         setDiaChi(
           `${getData[0].diaChiCuThe}, ${getData[0].phuongXa}, ${getData[0].quanHuyen}, ${getData[0].tinhThanh}`
@@ -221,15 +221,45 @@ export default function PaymentPage1() {
     setAlertContent(null);
   };
 
+  // Check Validated numberphone
+  function isValidPhoneNumber(phoneNumber) {
+    const phoneRegex = /^(03|09)\d{8}$/;
+    return phoneRegex.test(phoneNumber);
+  }
+  const containsNumber = (text) => /\d/.test(text);
+
+  const isValidEmail = (email) => {
+    const emailPattern = /^[a-zA-Z0-9._-]+@gmail\.com$/;
+    return emailPattern.test(email);
+  };
+
   const handleDatHang = async () => {
-    if (isDeliveryChecked === false) {
-      console.log('Thanh Toán Khi Nhận Hàng');
-      await updateClientPayment(idHdParam, tenKH, sdtKH, diaChi);
+    if (!isValidPhoneNumber(sdtKH)) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Nhập Đúng Định Dạng Số Của Việt Nam!!!',
+      });
+    } else if (containsNumber(sdtKH)) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Không Được Để Trống Họ Và Tên!!!',
+      });
+    } else if (emailKH === '' || !isValidEmail(emailKH)) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Email Sai Định Dạng Hoặc Không Phải Email Cá Nhân!!!',
+      });
+    } else if (isDeliveryChecked === false) {
+      setAlertContent({
+        type: 'success',
+        message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
+      });
+      await deleteProductOnCartPayment(idHdParam);
+      await updateClientPayment(idHdParam, tenKH, sdtKH, emailKH, diaChi);
       navigate(`/client/client-timeline/${idHdParam}`);
-    }
-    if (isDeliveryChecked === true) {
+    } else if (isDeliveryChecked === true) {
       // if (listHTTT.length > 0) {
-      await updateClientPayment1(idHdParam, tenKH, sdtKH, diaChi);
+      await updateClientPayment1(idHdParam, tenKH, sdtKH, emailKH, diaChi);
       setAlertContent({
         type: 'success',
         message: 'Hãy Thanh Toán Trước. Cảm Ơn!!!',

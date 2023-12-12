@@ -163,14 +163,12 @@ public class HoaDonController {
         if (newHD.getTrangThai() == 1) {
             for (HoaDonChiTiet x :
                     hoaDonChiTiets) {
-                System.out.println("x.getIdCtsp().getIdCtsp():" + x.getIdCtsp().getIdCtsp());
                 List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
                 for (ChiTietSanPham y :
                         chiTietSanPhams) {
-                    System.out.println("Số Lượng Còn Lại:" + (y.getSoLuongTon() - x.getSoLuong()));
+
                     System.out.println("Số Lượng Còn Lại:" + y.getSoLuongTon());
                     y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                    System.out.println("y.getIdCtsp(): " + y.getIdCtsp());
                     chitietsanphamSer.update(y);
                 }
             }
@@ -337,6 +335,9 @@ public class HoaDonController {
             if (hoaDon.getSoTienGiamGia() == null) {
                 hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
             }
+            if (hoaDon.getTongTien() == null) {
+                hoaDon.setTongTien(BigDecimal.ZERO);
+            }
             BigDecimal thanhTien = (hoaDon.getTongTien().add(newHD.getTienShip())).subtract(hoaDon.getSoTienGiamGia());
             hoaDon.setTienShip(newHD.getTienShip());
             hoaDon.setThanhTien(thanhTien);
@@ -351,6 +352,14 @@ public class HoaDonController {
             return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
 
+    }
+
+    @PutMapping("update-khach-hang1/{id}")
+    public HoaDon updateKhachHang1(@PathVariable("id") Integer id) {
+        return hoadonSevice.detail(id).map(hoaDon -> {
+            hoaDon.setIdKH(null);
+            return hoadonSevice.update(hoaDon);
+        }).orElseThrow(() -> new xuatXuNotFoundException(id));
     }
 
     // Admin

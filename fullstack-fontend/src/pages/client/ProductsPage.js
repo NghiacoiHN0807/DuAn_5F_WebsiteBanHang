@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Container, Stack, Typography } from '@mui/material';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 // components
-import { ProductSort, ProductListAll, ProductfilterSB } from '../../sections/@dashboard/products';
+import { ProductListAll, ProductfilterSB } from '../../sections/@dashboard/products';
 // mock
 
 //
@@ -50,7 +50,7 @@ export default function ProductsPage() {
 
   const displayProducts = isFiltered ? listLoc : listSP;
 
-  console.log("displayProducts: ", displayProducts);
+  console.log('displayProducts: ', displayProducts);
 
   return (
     <>

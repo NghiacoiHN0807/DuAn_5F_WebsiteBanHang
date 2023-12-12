@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -57,34 +58,81 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     // Update product if it's exsit
-    public HoaDonChiTiet updateHoaDonChiTiet(List<HoaDonChiTiet> hoaDonChiTiets, HoaDonChiTiet add) {
-        if (hoaDonChiTiets.isEmpty()) {
-            return hoadonchitietRepository.save(add);
+    public ResponseEntity<?> updateHoaDonChiTiet(List<HoaDonChiTiet> hoaDonChiTiets, HoaDonChiTiet add) {
+        List<HoaDonChiTiet> hoaDonChiTiets1 = hoadonchitietRepository.findAllByIdCtspExsit(add.getIdHd().getIdHd(), add.getIdCtsp().getIdCtsp());
+
+        if (hoaDonChiTiets1.isEmpty()) {
+            hoadonchitietRepository.save(add);
+            HoaDon hoaDon = hoadonRepo.findById(add.getIdHd().getIdHd()).orElseThrow();
+            BigDecimal tongTien = BigDecimal.ZERO;
+
+            List<HoaDonChiTiet> hoaDonChiTiets2 = hoadonchitietRepository.findAllByIdHdANDTT(add.getIdHd().getIdHd(), 0);
+
+            for (HoaDonChiTiet x : hoaDonChiTiets2) {
+                tongTien = tongTien.add(x.getDonGia());
+            }
+
+            hoaDon.setTongTien(tongTien);
+            System.out.println("tongTien: " + tongTien);
+
+            if (hoaDon.getSoTienGiamGia() == null) {
+                hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
+            }
+            if (hoaDon.getTienShip() == null) {
+                hoaDon.setTienShip(BigDecimal.ZERO);
+            }
+            BigDecimal thanhTien = tongTien.add(hoaDon.getTienShip()).subtract(hoaDon.getSoTienGiamGia());
+            hoaDon.setThanhTien(thanhTien);
+
+            return ResponseEntity.ok(hoadonRepo.save(hoaDon));
         } else {
+            BigDecimal tongTien = BigDecimal.ZERO;
             for (HoaDonChiTiet x : hoaDonChiTiets) {
                 ChiTietSanPham chiTietSanPham = chitietsanphamRepo.findById(x.getIdCtsp().getIdCtsp()).orElseThrow();
                 int newQuantity = x.getSoLuong() + add.getSoLuong();
                 x.setSoLuong(newQuantity);
                 BigDecimal newPrice = chiTietSanPham.getGiaThucTe().multiply(new BigDecimal(newQuantity));
+                System.out.println("newPrice: " + newPrice);
+
                 x.setDonGia(newPrice);
-                return hoadonchitietRepository.save(x);
+
+                hoadonchitietRepository.save(x);
+                // UPdate price in hd
+                tongTien = tongTien.add(x.getDonGia());
+                System.out.println("tongTien: " + tongTien);
             }
+            HoaDon hoaDon = hoadonRepo.findById(add.getIdHd().getIdHd()).orElseThrow();
+            hoaDon.setTongTien(tongTien);
+            System.out.println("tongTien: " + tongTien);
+
+            if (hoaDon.getSoTienGiamGia() == null) {
+                hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
+            }
+            if (hoaDon.getTienShip() == null) {
+                hoaDon.setTienShip(BigDecimal.ZERO);
+            }
+            BigDecimal thanhTien = tongTien.add(hoaDon.getTienShip()).subtract(hoaDon.getSoTienGiamGia());
+            hoaDon.setThanhTien(thanhTien);
+            return ResponseEntity.ok(hoadonRepo.save(hoaDon));
+
         }
-        return null;
+
     }
 
 
     @Override
-    public HoaDonChiTiet add(HoaDonChiTiet add) {
-        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdCtspExsit(add.getIdHd().getIdHd(), add.getIdCtsp().getIdCtsp());
+    public ResponseEntity<?> add(HoaDonChiTiet add) {
+        List<HoaDonChiTiet> hoaDonChiTiets1 = hoadonchitietRepository.findAllByIdHdANDTT(add.getIdHd().getIdHd(), 0);
+        System.out.println("hoaDonChiTiets1: " + hoaDonChiTiets1.size());
+        System.out.println("add.getIdHd().getIdHd(): " + add.getIdHd().getIdHd());
 
-        System.out.println("hoaDonChiTiets: " + hoaDonChiTiets.size());
         HoaDon hoaDon = hoadonRepo.findById(add.getIdHd().getIdHd()).orElseThrow();
         if (hoaDon.getTrangThai() < 8) {
             addLS(add, 1);
-            return updateHoaDonChiTiet(hoaDonChiTiets, add);
+            return updateHoaDonChiTiet(hoaDonChiTiets1, add);
         } else {
-            return updateHoaDonChiTiet(hoaDonChiTiets, add);
+//            List<HoaDonChiTiet> hoaDonChiTiets1 =
+            return updateHoaDonChiTiet(hoaDonChiTiets1, add);
         }
     }
 
@@ -93,14 +141,46 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
         return hoadonchitietRepository.save(add);
     }
 
+    public void updatePriceAnDelete(HoaDonChiTiet detailHDCT) {
+        List<HoaDonChiTiet> hoaDonChiTiets2 = hoadonchitietRepository.findAllByIdHdANDTT(detailHDCT.getIdHd().getIdHd(), 0);
+        HoaDon hoaDon = hoadonRepo.findById(detailHDCT.getIdHd().getIdHd()).orElseThrow();
+
+        BigDecimal tongTien = BigDecimal.ZERO;
+        for (HoaDonChiTiet x : hoaDonChiTiets2) {
+            tongTien = tongTien.add(x.getDonGia());
+        }
+
+        hoaDon.setTongTien(tongTien);
+        System.out.println("tongTien: " + tongTien);
+
+        if (hoaDon.getSoTienGiamGia() == null) {
+            hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
+        }
+        if (hoaDon.getTienShip() == null) {
+            hoaDon.setTienShip(BigDecimal.ZERO);
+        }
+        BigDecimal thanhTien = tongTien.add(hoaDon.getTienShip()).subtract(hoaDon.getSoTienGiamGia());
+        hoaDon.setThanhTien(thanhTien);
+
+        hoadonRepo.save(hoaDon);
+    }
+
     @Override
     public void delete(Integer id) {
         HoaDonChiTiet detailHDCT = detail(id).orElseThrow();
         if (detailHDCT.getIdHd().getTrangThai() < 8) {
+            // Add to history and delete
             addLS(detailHDCT, 2);
             hoadonchitietRepository.deleteById(id);
+            // Update price
+            updatePriceAnDelete(detailHDCT);
+
         } else {
+            // Delete
             hoadonchitietRepository.deleteById(id);
+            // Update price
+            updatePriceAnDelete(detailHDCT);
+
         }
     }
 
@@ -109,17 +189,74 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
         return hoadonchitietRepository.existsById(id);
     }
 
-    @Override
-    public HoaDonChiTiet update(HoaDonChiTiet update) {
-        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdCtspExsit(update.getIdHd().getIdHd(), update.getIdCtsp().getIdCtsp());
+    public void updatePriceAndUpate(HoaDonChiTiet detailHDCT) {
+        HoaDon hoaDon = hoadonRepo.findById(detailHDCT.getIdHd().getIdHd()).orElseThrow();
+        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdHdANDTT(hoaDon.getIdHd(), 0);
+        BigDecimal tongTien = BigDecimal.ZERO;
+        List<HoaDonChiTiet> hoaDonChiTiets1 = hoadonchitietRepository.findAllByIdCtspExsit(detailHDCT.getIdHd().getIdHd(), detailHDCT.getIdCtsp().getIdCtsp());
 
+        if (hoaDonChiTiets1.isEmpty()) {
+            hoadonchitietRepository.save(detailHDCT);
+//            HoaDon hoaDon = hoadonRepo.findById(detailHDCT.getIdHd().getIdHd()).orElseThrow();
+//            BigDecimal tongTien = BigDecimal.ZERO;
+
+            List<HoaDonChiTiet> hoaDonChiTiets2 = hoadonchitietRepository.findAllByIdHdANDTT(detailHDCT.getIdHd().getIdHd(), 0);
+
+            for (HoaDonChiTiet x : hoaDonChiTiets2) {
+                tongTien = tongTien.add(x.getDonGia());
+            }
+
+            hoaDon.setTongTien(tongTien);
+            System.out.println("tongTien: " + tongTien);
+
+            if (hoaDon.getSoTienGiamGia() == null) {
+                hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
+            }
+            if (hoaDon.getTienShip() == null) {
+                hoaDon.setTienShip(BigDecimal.ZERO);
+            }
+            BigDecimal thanhTien = tongTien.add(hoaDon.getTienShip()).subtract(hoaDon.getSoTienGiamGia());
+            hoaDon.setThanhTien(thanhTien);
+
+            hoadonRepo.save(hoaDon);
+        } else {
+            hoadonchitietRepository.save(detailHDCT);
+
+            for (HoaDonChiTiet x : hoaDonChiTiets) {
+                // UPdate price in hd
+                tongTien = tongTien.add(x.getDonGia());
+                System.out.println("tongTien: " + tongTien);
+            }
+            hoaDon.setTongTien(tongTien);
+
+            if (hoaDon.getSoTienGiamGia() == null) {
+                hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
+            }
+            if (hoaDon.getTienShip() == null) {
+                hoaDon.setTienShip(BigDecimal.ZERO);
+            }
+            BigDecimal thanhTien = tongTien.add(hoaDon.getTienShip()).subtract(hoaDon.getSoTienGiamGia());
+            hoaDon.setThanhTien(thanhTien);
+            hoadonRepo.save(hoaDon);
+        }
+
+    }
+
+    @Override
+    public ResponseEntity<?> update(HoaDonChiTiet update) {
+//        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdCtspExsit(update.getIdHd().getIdHd(), update.getIdCtsp().getIdCtsp());
+//
         HoaDon hoaDon = hoadonRepo.findById(update.getIdHd().getIdHd()).orElseThrow();
         if (hoaDon.getTrangThai() < 8) {
+//            hoadonchitietRepository.save(update);
+            updatePriceAndUpate(update);
             addLS(update, 3);
-            return updateHoaDonChiTiet(hoaDonChiTiets, update);
+            return ResponseEntity.ok("Chỉnh Sửa Hóa Đơn Chi Tiết và Lưu Vào Lịch Sử");
 
         } else {
-            return updateHoaDonChiTiet(hoaDonChiTiets, update);
+//            hoadonchitietRepository.save(update);
+            updatePriceAndUpate(update);
+            return ResponseEntity.ok("Chỉnh Sửa Hóa Đơn Chi Tiết");
 
         }
 

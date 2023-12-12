@@ -105,6 +105,11 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
     }
 
     @Override
+    public Optional<ChiTietSanPham> findByIdCTSP(Integer idCTSP) {
+        return chitietsanphamRepository.findById(idCTSP);
+    }
+
+    @Override
     public Boolean checkExists(Integer id) {
         return chitietsanphamRepository.existsById(id);
     }

@@ -19,10 +19,12 @@ const ModalUpdateProductOnCart = (props) => {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     itemUpdateClassify: PropTypes.object.isRequired,
+    getDetailHD: PropTypes.func.isRequired,
+
     selectDataCart: PropTypes.func.isRequired,
     itemUpdate: PropTypes.object.isRequired,
   };
-  const { show, handleClose, itemUpdateClassify, selectDataCart, itemUpdate } = props;
+  const { show, handleClose, itemUpdateClassify, getDetailHD, selectDataCart, itemUpdate } = props;
 
   //   Insert product
   //   Get Name Of Size And Number
@@ -176,6 +178,7 @@ const ModalUpdateProductOnCart = (props) => {
     return formatter.format(price);
   }
   const handleCloseDetai = () => {
+    getDetailHD();
     setSelectSoLuongTon([]);
     setAvailableColors([]);
     setIsMSSelected(false);

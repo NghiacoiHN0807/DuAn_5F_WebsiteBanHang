@@ -43,12 +43,12 @@ export default function ModalCreateBillOnline(props) {
   };
 
   const handleChoose = async () => {
-    await updatePaymentShip(idHdParam, tenKhShip, sdtKHShip, formattedDate, result, thanhTien, 2, 0);
-    navigate(`/dashboard/bills/time-line/${idHdParam}`);
     setAlertContent({
       type: 'success',
       message: 'Đặt Hàng Online Thành Công!!!',
     });
+    await updatePaymentShip(idHdParam, tenKhShip, sdtKHShip, formattedDate, result, thanhTien, 2, 0);
+    navigate(`/dashboard/bills/time-line/${idHdParam}`);
   };
 
   return (

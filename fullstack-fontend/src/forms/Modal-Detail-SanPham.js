@@ -21,9 +21,10 @@ const ModalDetailProduct = (props) => {
     handleCloseDetai: PropTypes.func.isRequired,
     dataDetail: PropTypes.array.isRequired,
     selectDataCart: PropTypes.func.isRequired,
+    getDetailHD: PropTypes.func.isRequired,
     listImages: PropTypes.string.isRequired,
   };
-  const { show, handleCloseDetai, dataDetail, selectDataCart, listImages } = props;
+  const { show, handleCloseDetai, dataDetail, getDetailHD, selectDataCart, listImages } = props;
 
   //   Insert product
   //   Get Name Of Size And Number
@@ -150,6 +151,7 @@ const ModalDetailProduct = (props) => {
   }
 
   const handleClose = () => {
+    getDetailHD();
     setSelectSoLuongTon([]);
     setAvailableColors([]);
     setIsMSSelected(false);

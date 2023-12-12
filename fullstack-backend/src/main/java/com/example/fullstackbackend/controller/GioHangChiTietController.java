@@ -6,7 +6,6 @@ import com.example.fullstackbackend.entity.HoaDonChiTiet;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.repository.HoadonRepository;
 import com.example.fullstackbackend.services.GioHangChiTietSevice;
-import com.example.fullstackbackend.services.HoadonSevice;
 import com.example.fullstackbackend.services.HoadonchitietSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/gio-hang-chi-tiet/")
@@ -72,7 +70,7 @@ public class GioHangChiTietController {
             return ResponseEntity.ok(gioHangChiTietSevice.detail(id).map(
                     gioHangChiTiet -> {
                         BigDecimal donGia = gioHangChiTiet.getIdCtsp().getGiaThucTe().multiply(new BigDecimal(updateGHCT.getSoLuong()));
-                                gioHangChiTiet.setIdCtsp(updateGHCT.getIdCtsp());
+                        gioHangChiTiet.setIdCtsp(updateGHCT.getIdCtsp());
                         gioHangChiTiet.setSoLuong(updateGHCT.getSoLuong());
                         gioHangChiTiet.setDonGia(donGia);
                         return gioHangChiTietSevice.update(gioHangChiTiet);
@@ -92,7 +90,7 @@ public class GioHangChiTietController {
 
     @PostMapping("add-to-hdct/{id}")
     public ResponseEntity<?> addToHDCT(@PathVariable("id") Integer idHD,
-                                       @RequestBody GioHangChiTiet newHDCT){
+                                       @RequestBody GioHangChiTiet newHDCT) {
 
         // Detail HoaDon
         HoaDon hoaDon = hoadonSevice.findById(idHD).orElseThrow();
@@ -108,6 +106,21 @@ public class GioHangChiTietController {
         // Delete product on cart
 //        gioHangChiTietSevice.deleteGHCT(newHDCT.getIdGhct());
         return ResponseEntity.ok("Tạo Hóa Đơn Thành Công!!!");
+    }
+
+    @DeleteMapping("delete-product/{id}")
+    public ResponseEntity<?> deteleproductOnCart(@PathVariable("id") Integer idHD) {
+
+        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSevice.findAllByIDHD(idHD);
+
+        for (HoaDonChiTiet x :
+                hoaDonChiTiets) {
+            GioHangChiTiet gioHangChiTiet = gioHangChiTietSevice.finByIDCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
+            gioHangChiTietSevice.deleteGHCT(gioHangChiTiet.getIdGhct());
+        }
+        // Delete product on cart
+
+        return ResponseEntity.ok("Đã Xóa Sản Phẩm Rea Khỏi Giỏ Hàng!!!");
     }
 
 }

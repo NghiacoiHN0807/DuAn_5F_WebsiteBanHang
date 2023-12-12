@@ -4,6 +4,7 @@ import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
 import com.example.fullstackbackend.entity.LichSuHoaDon;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,7 +19,7 @@ public interface HoadonchitietSevice {
 
     Page<HoaDonChiTiet> getListProductByIDKH(Integer idKH, Integer pageNo, Integer size);
 
-    HoaDonChiTiet add(HoaDonChiTiet add);
+    ResponseEntity<?> add(HoaDonChiTiet add);
 
     HoaDonChiTiet add1(HoaDonChiTiet add);
 
@@ -26,7 +27,7 @@ public interface HoadonchitietSevice {
 
     Boolean checkExists(Integer id);
 
-    HoaDonChiTiet update(HoaDonChiTiet update);
+    ResponseEntity<?> update(HoaDonChiTiet update);
 
     HoaDonChiTiet returnItem(HoaDonChiTiet update);
 

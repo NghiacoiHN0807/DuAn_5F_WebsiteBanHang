@@ -43,7 +43,7 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 import ModalCreateBillOnline from '../forms/Modal-Create-Online';
-import { updateTongTien } from '../service/OrderManagementTimeLine';
+import { updateTienShip } from '../service/OrderManagementTimeLine';
 import ModalAddKhachHang from '../forms/Modals-AddKhachHang';
 import { detailBill, finByProductOnCart, findById, postAddBill, selectAllInvoiceWaiting } from '../service/BillSevice';
 import ModalAddProduct from '../forms/Modals-AddProduct';
@@ -52,6 +52,8 @@ import ModalDeleteProductOnCart from '../forms/Modal-Delete-Product';
 import ModalDeleteAllProductOnCart from '../forms/Modal-Delete-All-Product';
 import ModalPaymentComfirm from '../forms/Modal-Payment-Confirm';
 import Iconify from '../components/iconify';
+import ModalAddAddress from '../forms/Modals-Add-Address';
+import { selectDiaChiByTK } from '../service/client/Payment';
 
 // Dislay invoice waiting
 const AntTabs = styled(Tabs)({
@@ -270,12 +272,16 @@ const CartBillADM = () => {
 
   const handleDeliveryChange = (event) => {
     getTienShip(0);
-    if (isDeliveryChecked === true) {
-      setSelectedProvince('');
-      setSelectedWard('');
-      setSelectedDistrict('');
-      setResult('');
-    }
+    // if (isDeliveryChecked === true) {
+    setSelectedProvince('');
+    setSelectedWard('');
+    setSelectedDistrict('');
+    setResult('');
+    setResult1('');
+    getTenKHShip('');
+    getEmailKHShip('');
+    getSdtKHShip('');
+    // }
 
     setIsDeliveryChecked(event.target.checked);
   };
@@ -287,7 +293,6 @@ const CartBillADM = () => {
   }, []);
 
   // Get API Provinces
-  // const host = 'https://online-gateway.ghn.vn/shiip/public-api/master-data/province';
 
   const [provinces, setProvinces] = useState([]);
   const [selectedProvince, setSelectedProvince] = useState('');
@@ -297,6 +302,7 @@ const CartBillADM = () => {
   const [selectedWard, setSelectedWard] = useState('');
 
   const [result, setResult] = useState('');
+  const [result1, setResult1] = useState('');
 
   const fetchProvinces = async () => {
     try {
@@ -335,6 +341,7 @@ const CartBillADM = () => {
       console.log('selectedProvince: ', selectedProvince);
       callApiDistrict();
     }
+    setResult('');
   }, [selectedProvince, callApiDistrict]);
 
   const callApiWard = useCallback(async () => {
@@ -406,26 +413,16 @@ const CartBillADM = () => {
     }
   }, [selectedDistrict, selectedProvince, selectedWard, districts, provinces, wards, diachiCuThe]);
 
-  // Show thanhTien
-  const [thanhTien, setThanhTien] = useState(0);
-  const [tongTien, setTongTien] = useState(0);
-
   useEffect(() => {
     const calculateTotalPrice = async () => {
-      // let total = 0;
-      const total = DataCart.reduce((accumulator, item) => accumulator + item[9], 0);
-      // Set Tong Tien
-      setTongTien(total);
-      // Set Tien Ship
-      console.log('getDataShip: ', listHD.tienShip);
-      // const totalShip = tienShip === 0 && listHD && listHD.tienShip ? listHD.tienShip : tienShip;
-      // Set Thanh Tien
-      setThanhTien(total + tienShip);
-      await updateTongTien(idHdParam, total, tienShip, thanhTien);
+      const updated = await updateTienShip(idHdParam, tienShip);
+      if (updated) {
+        getDetailHD();
+      }
     };
 
     calculateTotalPrice();
-  }, [DataCart, idHdParam, tienShip, listHD, thanhTien]);
+  }, [getDetailHD, idHdParam, tienShip]);
 
   // Modal add KH
   const [showModalsKH, setShowModalKH] = useState(false);
@@ -444,25 +441,61 @@ const CartBillADM = () => {
   const [sdtKHTT, getSdtKHTT] = useState('');
   const [tenKhShip, getTenKHShip] = useState('');
   const [sdtKHShip, getSdtKHShip] = useState('');
+  const [emailKHShip, getEmailKHShip] = useState('');
 
   const [openPayment, setOpenPayment] = useState(false);
   const [openCreateOnline, setCreateOnline] = useState(false);
-  // const [information, setInformation] = useState();
+
+  // Check Validated numberphone
+  function isValidPhoneNumber(phoneNumber) {
+    const phoneRegex = /^(03|09)\d{8}$/;
+    return phoneRegex.test(phoneNumber);
+  }
+  const containsNumber = (text) => /\d/.test(text);
+  const isValidEmail = (email) => {
+    const emailPattern = /^[a-zA-Z0-9._-]+@gmail\.com$/;
+    return emailPattern.test(email);
+  };
   const handleClick = async () => {
-    // const currentDate = new Date();
-    // const formattedDate = format(currentDate, 'yyyy-MM-dd');
-    if (isDeliveryChecked === false) {
-      setOpenPayment(true);
-    } else if (!tenKhShip.trim() || !sdtKHShip.trim()) {
+    if (
+      (isDeliveryChecked === true && !tenKhShip.trim()) ||
+      (isDeliveryChecked === true && containsNumber(tenKhShip)) ||
+      (isDeliveryChecked === false && containsNumber(tenKhTT))
+    ) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Tên Không Đúng!!!Vui Lòng Nhập Lại ',
+      });
+    } else if ((isDeliveryChecked === true && !tenKhShip.trim()) || (isDeliveryChecked === true && !sdtKHShip.trim())) {
       setAlertContent({
         type: 'warning',
         message: 'Hãy Nhập Thông Tin Người Nhận Hàng!!!',
       });
-    } else if (!selectedWard.trim() || !selectedDistrict.trim() || !selectedProvince.trim()) {
+    } else if (
+      (isDeliveryChecked === true && !isValidPhoneNumber(sdtKHShip)) ||
+      (isDeliveryChecked === false && !sdtKHTT.trim()) ||
+      (isDeliveryChecked === false && !isValidPhoneNumber(sdtKHTT))
+    ) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Nhập Đúng Định Dạng Số Của Việt Nam!!!',
+      });
+    } else if (isDeliveryChecked === true && !result1.trim() && !result.trim()) {
       setAlertContent({
         type: 'warning',
         message: 'Hãy Nhập Địa Chỉ Nhận Hàng!!!',
       });
+    } else if (
+      isDeliveryChecked === true &&
+      !result1.trim() &&
+      (selectedWard === '' || selectedDistrict === '' || selectedProvince === '')
+    ) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Nhập Địa Chỉ Nhận Hàng!!!',
+      });
+    } else if (isDeliveryChecked === false) {
+      setOpenPayment(true);
     } else {
       setCreateOnline(true);
     }
@@ -480,8 +513,38 @@ const CartBillADM = () => {
     setAlertContent(null);
   };
   // Format thanhTien
-  const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+  function formatCurrency(price) {
+    if (!price) return '0';
 
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
+  // Select modal address
+  const [showModalsAddress, setShowModalAddress] = useState(false);
+  const [listData, setListData] = useState([]);
+
+  const handleAddAddress = async () => {
+    if (listHD.idKH.maTaiKhoan) {
+      const getData = await selectDiaChiByTK(listHD.idKH.maTaiKhoan);
+      console.log(getData);
+      setListData(getData);
+      setShowModalAddress(true);
+    } else {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Chọn Tài Khoản Khách Hàng!!!',
+      });
+    }
+  };
+  const handleCloseAddress = () => {
+    getDetailHD();
+    setShowModalAddress(false);
+  };
   return (
     <>
       <Box sx={{ width: '100%' }}>
@@ -596,15 +659,6 @@ const CartBillADM = () => {
                   Delete
                 </Button>
               </div>
-              <div className="col-2">
-                {/* <Stack direction="row" spacing={2} justify="center" alignItems="center">
-                  <Pagination
-                    onChange={(event, page) => handlePageClick(page - 1)}
-                    count={numberPages}
-                    variant="outlined"
-                  />
-                </Stack> */}
-              </div>
             </div>
             <div className="row customer-information">
               <div className="row">
@@ -679,9 +733,15 @@ const CartBillADM = () => {
                   <Typography variant="h5" gutterBottom>
                     Thông Tin Thanh Toán{' '}
                   </Typography>
-                  <Button onClick={() => handleAddKH()} variant="outlined" startIcon={<Iconify icon="eva:plus-fill" />}>
-                    Primary{' '}
-                  </Button>
+                  {listHD.idKH && isDeliveryChecked && (
+                    <Button
+                      onClick={() => handleAddAddress()}
+                      variant="outlined"
+                      startIcon={<Iconify icon="eva:plus-fill" />}
+                    >
+                      Địa Chỉ Khách hàng{' '}
+                    </Button>
+                  )}
                 </Stack>
                 {/* <div className="col-6">
 
@@ -695,7 +755,7 @@ const CartBillADM = () => {
               </div>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6} md={7}>
-                  {isDeliveryChecked ? (
+                  {isDeliveryChecked && !result1 ? (
                     <div className="text-information">
                       <div>
                         <h5>
@@ -733,7 +793,12 @@ const CartBillADM = () => {
                             labelId="province-label"
                             id="province-select"
                             value={selectedProvince}
-                            onChange={(e) => setSelectedProvince(e.target.value)}
+                            onChange={(e) => {
+                              setSelectedProvince(e.target.value);
+                              setSelectedWard('');
+                              setSelectedDistrict('');
+                              setResult('');
+                            }}
                             label="Tỉnh/Thành Phố"
                           >
                             <MenuItem value="">
@@ -752,7 +817,11 @@ const CartBillADM = () => {
                             labelId="district-label"
                             id="district-select"
                             value={selectedDistrict}
-                            onChange={(e) => setSelectedDistrict(e.target.value)}
+                            onChange={(e) => {
+                              setSelectedDistrict(e.target.value);
+                              setSelectedWard('');
+                              setResult('');
+                            }}
                             label="Quận/Huyện"
                           >
                             <MenuItem value="">
@@ -771,7 +840,10 @@ const CartBillADM = () => {
                             labelId="ward-label"
                             id="ward-select"
                             value={selectedWard}
-                            onChange={(e) => setSelectedWard(e.target.value)}
+                            onChange={(e) => {
+                              setSelectedWard(e.target.value);
+                              setResult('');
+                            }}
                             label="Phường/Xã"
                           >
                             <MenuItem value="">
@@ -786,7 +858,6 @@ const CartBillADM = () => {
                         </FormControl>
                         <div id="result">{result}</div>
                       </div>
-
                       <div>
                         <TextField
                           id="standard-multiline-flexible"
@@ -801,6 +872,22 @@ const CartBillADM = () => {
                           onChange={(e) => setDiachiCuThe(e.target.value)}
                         />
                       </div>
+                    </div>
+                  ) : result1 && isDeliveryChecked ? (
+                    <div>
+                      <h5>
+                        <AccountBoxIcon />
+                        Thông Tin Người Nhận
+                      </h5>{' '}
+                      <Typography variant="subtitle1" gutterBottom>
+                        Tên Người Nhận Hàng: {listHD.idKH && tenKhShip}
+                      </Typography>{' '}
+                      <Typography variant="subtitle1" gutterBottom>
+                        SĐT Người Nhận Hàng: {listHD.idKH && sdtKHShip}
+                      </Typography>{' '}
+                      <Typography variant="subtitle1" gutterBottom>
+                        Địa Chỉ Nhận Hàng: {result1 && result1}
+                      </Typography>
                     </div>
                   ) : (
                     <div className="text-information">
@@ -854,7 +941,7 @@ const CartBillADM = () => {
                         Tiền Hàng{' '}
                       </Typography>
                       <Typography variant="h6" gutterBottom>
-                        {formatCurrency(tongTien)}{' '}
+                        {formatCurrency(listHD.tongTien)}{' '}
                       </Typography>
                     </Stack>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
@@ -862,7 +949,7 @@ const CartBillADM = () => {
                         Tiền Ship{' '}
                       </Typography>
                       <Typography variant="h6" gutterBottom>
-                        {tienShip}{' '}
+                        {formatCurrency(listHD.tienShip)}{' '}
                       </Typography>
                     </Stack>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
@@ -870,7 +957,7 @@ const CartBillADM = () => {
                         Thành Tiền{' '}
                       </Typography>
                       <Typography variant="h6" gutterBottom>
-                        {formatCurrency(thanhTien)}{' '}
+                        {formatCurrency(listHD.thanhTien)}{' '}
                       </Typography>
                     </Stack>
                   </div>
@@ -898,6 +985,7 @@ const CartBillADM = () => {
               selectDataCart={selectDataCart}
               handleClose={handleClose}
               DataCart={DataCart}
+              getDetailHD={getDetailHD}
             />
             {/* Modal Update Product */}
             <ModalUpdateProductOnCart
@@ -906,6 +994,7 @@ const CartBillADM = () => {
               itemUpdateClassify={itemUpdateClassify}
               selectDataCart={selectDataCart}
               itemUpdate={itemUpdate}
+              getDetailHD={getDetailHD}
             />
 
             {/* Modal Delete Product  */}
@@ -914,6 +1003,7 @@ const CartBillADM = () => {
               handleClose={handCloseDeleteAll}
               selectDataCart={selectDataCart}
               DataCart={DataCart}
+              getDetailHD={getDetailHD}
             />
             {/* Modal Add Customer */}
             <ModalAddKhachHang
@@ -936,12 +1026,13 @@ const CartBillADM = () => {
                     itemDelete={itemDelete}
                     selectDataCart={selectDataCart}
                     DataCart={DataCart}
+                    getDetailHD={getDetailHD}
                   />
                 )}
                 <ModalPaymentComfirm
                   show={openPayment}
                   handleClose={handlePaymentClose}
-                  thanhTien={thanhTien}
+                  thanhTien={listHD.thanhTien}
                   listHD={listHD}
                   tenKhTT={tenKhTT}
                   sdtKHTT={sdtKHTT}
@@ -950,11 +1041,26 @@ const CartBillADM = () => {
                 <ModalCreateBillOnline
                   open={openCreateOnline}
                   handleClose={handleCloseCreateOnline}
-                  thanhTien={thanhTien}
+                  thanhTien={listHD.thanhTien}
                   listHD={listHD}
                   tenKhShip={tenKhShip}
                   sdtKHShip={sdtKHShip}
-                  result={result}
+                  result={result || result1}
+                />
+              </>
+            )}
+            {listHD.idKH && (
+              <>
+                <ModalAddAddress
+                  open={showModalsAddress}
+                  listData={listData}
+                  handleClose={handleCloseAddress}
+                  setTenKH={getTenKHShip}
+                  setSDTKH={getSdtKHShip}
+                  setDiaChi={setResult1}
+                  setEmailKH={getEmailKHShip}
+                  setTienShip={getTienShip}
+                  getDetailHD={getDetailHD}
                 />
               </>
             )}

@@ -32,6 +32,8 @@ public interface ChitietsanphamService {
 
     List<ChiTietSanPham> finAllByIDCTSP(Integer idCtsp);
 
+    Optional<ChiTietSanPham> findByIdCTSP(Integer idCTSP);
+
     Boolean checkExists(Integer id);
 
     ChiTietSanPham addColorAndSize(Integer idSp, Integer idMs, Integer idSize);

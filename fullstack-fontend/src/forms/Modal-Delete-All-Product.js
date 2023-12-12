@@ -19,8 +19,9 @@ export default function ModalDeleteAllProductOnCart(props) {
     handleClose: PropTypes.func.isRequired,
     selectDataCart: PropTypes.func.isRequired,
     DataCart: PropTypes.array.isRequired,
+    getDetailHD: PropTypes.func.isRequired,
   };
-  const { open, handleClose, selectDataCart, DataCart } = props;
+  const { open, handleClose, getDetailHD, selectDataCart, DataCart } = props;
 
   const [alertContent, setAlertContent] = useState(null);
 
@@ -34,6 +35,7 @@ export default function ModalDeleteAllProductOnCart(props) {
   const handleDelete = async () => {
     const deletePromises = DataCart.map(async (item) => {
       try {
+        console.log('item[1]:', item[1]);
         await deleteProductOnCart(item[1]);
         setAlertContent({
           type: 'success',
@@ -50,6 +52,7 @@ export default function ModalDeleteAllProductOnCart(props) {
 
     // Wait for all deletePromises to complete
     await Promise.all(deletePromises);
+    getDetailHD();
 
     selectDataCart(0);
     handleClose();
