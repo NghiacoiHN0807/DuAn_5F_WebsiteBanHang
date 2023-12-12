@@ -167,4 +167,31 @@ public class CouponsController {
         }
     }
 
+    @PostMapping("/remove-coupon/{idHd}")
+    ResponseEntity<?> removeCoupon(@PathVariable("idHd") Integer idHd) {
+        Optional<HoaDon> hoaDon = hoadonSevice.detail(idHd);
+        if(hoaDon.isPresent()) {
+            if(hoaDon.get().getMaGiamGia() != null) {
+                Boolean remove = couponsService.removeCoupons(idHd);
+                if(remove) {
+                    return ResponseEntity.status(HttpStatus.OK).body(
+                            "Xóa thành công!"
+                    );
+                } else {
+                    return ResponseEntity.status(HttpStatus.OK).body(
+                            "Xóa thất bại!"
+                    );
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        "Có lỗi xảy ra!"
+                );
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    "Không tìm thấy hóa đơn!"
+            );
+        }
+    }
+
 }

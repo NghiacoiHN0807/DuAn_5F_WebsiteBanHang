@@ -33,12 +33,13 @@ import { makeStyles } from '@material-ui/core';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
-import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
+import { UserListHead } from '../../sections/@dashboard/user';
 import ModalDeleteDiscount from './Modal-Delete-Discount';
 // mock
 // import USERLIST from '../_mock/user';
 // import { useEffect } from 'react';
 import { getSanPhamDetails } from '../../service/giamGiaService';
+import UserListToolbarDiscounts from './UserListToolbarDiscounts';
 
 // ----------------------------------------------------------------------
 
@@ -109,7 +110,7 @@ export default function DiscountPage() {
 
 
     if (query) {
-      filteredArray = filter(array, (_user) => _user.tensanpham.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+      return filterData(array, query);
     }
 
     if (startDateFilter) {
@@ -183,18 +184,20 @@ export default function DiscountPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = listData.map((n) => n.idGgct);
+      const newSelecteds = filteredUsers.map((n) => n.idGgct);
       setSelected(newSelecteds);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  console.log(selected);
+
+  const handleClick = (event, idGgct) => {
+    const selectedIndex = selected.indexOf(idGgct);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, idGgct);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -219,6 +222,17 @@ export default function DiscountPage() {
     setFilterName(event.target.value);
   };
 
+  function filterData(array, query) {
+    return array.filter((_user) =>
+      Object.values(_user).some((field) => {
+        if (typeof field === 'string') {
+          return field.toLowerCase().includes(query.toLowerCase());
+        }
+        return false;
+      })
+    );
+  }
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listData.length) : 0;
 
   const filteredUsers =
@@ -226,6 +240,7 @@ export default function DiscountPage() {
   const isNotFound = !filteredUsers.length && !!filterName;
 
 
+  console.log("filteredUsers: ", filteredUsers)
   // Set status of trangThai
   function mapTrangThaiToStatus(trangThai) {
     return trangThai === 0 ? <Chip
@@ -388,7 +403,7 @@ export default function DiscountPage() {
         </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+          <UserListToolbarDiscounts numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} information={selected} getListData={getListData} />
           <Grid container className={classes.filterContainer}>
             <TextField
               label="Ngày Bắt Đầu"

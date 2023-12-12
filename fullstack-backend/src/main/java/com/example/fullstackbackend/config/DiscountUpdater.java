@@ -38,7 +38,10 @@ public class DiscountUpdater {
         List<Coupons> coupons = couponsRepository.findAll();
 
         Date now = new Date();
+
         Date currentTimestamp = new Date(now.getTime());
+
+        boolean tatCaLaTrangThai0 = true;
 
         for (GiamGia giamGia : giamGias) {
             Date ngayKetThuc = giamGia.getNgayKetThuc();
@@ -53,6 +56,20 @@ public class DiscountUpdater {
                     giamGiaChiTietRepository.updateCtsp(giamGiaChiTiet.getIdSp().getIdSp());
                     giamGiaChiTietRepository.updateTrangThaiGiamGia(10, giamGia.getIdGiamGia());
                     giamGiaChiTietRepository.updateTrangThaiGiamGiaChiTiet(10, giamGia.getIdGiamGia());
+                }
+
+                for (GiamGiaChiTiet x : giamGiaChiTietList) {
+                    if (x.getTrangThai() != 10) {
+                        tatCaLaTrangThai0 = false;
+                        break; // Có ít nhất một phần tử không có trạng thái 10, dừng kiểm tra
+                    }
+                }
+                // Kiểm tra nếu tất cả đều có trạng thái 10
+                if (tatCaLaTrangThai0) {
+                    giamGia.setTrangThai(10);
+                    giamGiaRepository.save(giamGia);
+                    // Thực hiện câu lệnh khi tất cả đều có trạng thái 10
+                    // Ví dụ: System.out.println("Tất cả có trạng thái 10");
                 }
             }
         }
