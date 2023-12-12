@@ -194,4 +194,24 @@ public class CouponsController {
         }
     }
 
+    @DeleteMapping("/remove-all")
+    ResponseEntity<?> removeAll(@RequestBody List<Integer> ids) {
+        if(ids.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    "Không tìm thấy id!"
+            );
+        } else {
+            Boolean remove = couponsService.removeAll(ids);
+            if(remove) {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        "Delete success!"
+                );
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        "Delete failed!"
+                );
+            }
+        }
+    }
+
 }

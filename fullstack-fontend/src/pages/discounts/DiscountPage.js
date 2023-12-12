@@ -184,7 +184,7 @@ export default function DiscountPage() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = filteredUsers.map((n) => n.idGgct);
+      const newSelecteds = listData.map((n) => n.idGgct);
       setSelected(newSelecteds);
       return;
     }

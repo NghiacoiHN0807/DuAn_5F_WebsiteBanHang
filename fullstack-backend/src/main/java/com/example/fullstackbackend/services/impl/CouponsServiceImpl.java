@@ -134,6 +134,21 @@ public class CouponsServiceImpl implements CouponsService {
         }
     }
 
+    @Override
+    public Boolean removeAll(List<Integer> ids) {
+        try {
+            for (Integer s : ids) {
+                Coupons coupons = detail(s).orElseThrow();
+                coupons.setTrangThai(10);
+                couponsRepository.save(coupons);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private Boolean checkCoupons(String code) {
         Optional<Coupons> coupons = couponsRepository.findByCode(code);
         if (coupons.isPresent()) {
