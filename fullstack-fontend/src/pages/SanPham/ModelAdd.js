@@ -22,7 +22,7 @@ import {
   Alert,
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { postAddSanPham } from '../../service/SanPhamService';
+import { postAddSanPham, fetchSpForAdmin } from '../../service/SanPhamService';
 import { fetchXX, detailXX, postAddXuatXu, putUpdateXuatXu } from '../../service/XuatXuService';
 import { fetchCL, detailCL, postAddChatLieu, putUpdateChatLieu } from '../../service/ChatLieuService';
 import { fetchCoAo, detailCoAo, postAddLoaiCoAo, putUpdateLoaiCoAo } from '../../service/LoaiCoAoService';
@@ -101,35 +101,64 @@ export default function AddSanPham() {
   const navigate = useNavigate();
 
   const handleSave = async () => {
-    // get object all\
-    const getObjChatLieu = await detailCL(chatLieu);
-    const getObjLoaiSP = await detailLSP(loaiSP);
-    const getObjXuatXu = await detailXX(xuatXu);
-    const getObjTayAo = await detailTayAo(tayAo);
-    const getObjCoAo = await detailCoAo(coAo);
-
-    const res = await postAddSanPham(
-      null,
-      tenSp,
-      getObjChatLieu,
-      getObjLoaiSP,
-      getObjXuatXu,
-      getObjCoAo,
-      getObjTayAo,
-      moTa,
-      9
-    );
-
-    console.log('Check res: ', res);
-    if (res && res.idSp) {
-      handleAlertClick('Thêm thành công!', 'success');
+    if (
+      tenSp.trim() === '' ||
+      listSP.some((item) => item.tenSp === tenSp) ||
+      chatLieu === '' ||
+      loaiSP === '' ||
+      xuatXu === '' ||
+      coAo === '' ||
+      tayAo === ''
+    ) {
+      setEmptyTen(true);
+      setDuplicateAdd(true);
+      checkEmptyCBB();
       handleClose();
-      navigate(`/dashboard/products/update/${res.idSp}`);
     } else {
-      handleAlertClick('Thêm thất bại!', 'danger');
-      handleClose();
+      // get object all\
+      const getObjChatLieu = await detailCL(chatLieu);
+      const getObjLoaiSP = await detailLSP(loaiSP);
+      const getObjXuatXu = await detailXX(xuatXu);
+      const getObjTayAo = await detailTayAo(tayAo);
+      const getObjCoAo = await detailCoAo(coAo);
+
+      const res = await postAddSanPham(
+        null,
+        tenSp,
+        getObjChatLieu,
+        getObjLoaiSP,
+        getObjXuatXu,
+        getObjCoAo,
+        getObjTayAo,
+        moTa,
+        9
+      );
+
+      console.log('Check res: ', res);
+      if (res && res.idSp) {
+        handleAlertClick('Thêm thành công!', 'success');
+        handleClose();
+        navigate(`/dashboard/products/update/${res.idSp}`);
+      } else {
+        handleAlertClick('Thêm thất bại!', 'danger');
+        handleClose();
+      }
     }
   };
+
+  const [listSP, setListSP] = useState([]);
+  const getListFiter = async () => {
+    try {
+      const res = await fetchSpForAdmin();
+      console.log('Check res: ', res);
+      setListSP(res);
+    } catch (error) {
+      console.error('Error in list bill: ', error);
+    }
+  };
+  useEffect(() => {
+    getListFiter();
+  }, []);
 
   // open add att
   const [openQuickAtt, setOpenQuickAtt] = useState(false);
@@ -222,11 +251,46 @@ export default function AddSanPham() {
 
   // validate
   const [emptyTen, setEmptyTen] = useState(false);
+  const [duplicateAdd, setDuplicateAdd] = useState(false);
 
   const handleTenChange = (event) => {
     const { value } = event.target;
     setTenSp(value);
     setEmptyTen(value.trim() === '');
+    const isDuplicate = listSP.some((item) => item.tenSp === value);
+    console.log(listSP, 'listSP');
+    setDuplicateAdd(isDuplicate);
+  };
+
+  const handleAttChange = (value, setFunc, setEmpty) => {
+    setFunc(value);
+    setEmpty(false);
+  };
+
+  // alert
+  const [emptyCL, setEmptyCL] = useState(false);
+  const [emptyLSP, setEmptyLSP] = useState(false);
+  const [emptyXX, setEmptyXX] = useState(false);
+  const [emptyCoAo, setEmptyCoAo] = useState(false);
+  const [emptyTayAo, setEmptyTayAo] = useState(false);
+
+  const checkEmptyCBB = () => {
+    if (chatLieu === '') {
+      setEmptyCL(true);
+    }
+    if (loaiSP === '') {
+      setEmptyLSP(true);
+    }
+    if (xuatXu === '') {
+      setEmptyXX(true);
+    }
+    if (coAo === '') {
+      setEmptyCoAo(true);
+    }
+    if (tayAo === '') {
+      setEmptyTayAo(true);
+    }
+    handleAlertClick('Không được để trống trường', 'warning');
   };
 
   return (
@@ -251,8 +315,8 @@ export default function AddSanPham() {
                 fullWidth
                 value={tenSp}
                 onChange={handleTenChange}
-                error={emptyTen}
-                helperText={emptyTen ? 'Tên không được để trống' : ''}
+                error={emptyTen || duplicateAdd}
+                helperText={emptyTen ? 'Tên không được để trống' : duplicateAdd ? 'Tên đã tồn tại' : ''}
               />
             </Grid>
             <Grid item xs={5}>
@@ -263,7 +327,8 @@ export default function AddSanPham() {
                   id="demo-simple-select"
                   label="Chất liệu"
                   value={chatLieu}
-                  onChange={(event) => setChatLieu(event.target.value)}
+                  onChange={(event) => handleAttChange(event.target.value, setChatLieu, setEmptyCL)}
+                  error={emptyCL}
                 >
                   {listCL
                     .filter((item) => item.trangThai === 0)
@@ -293,7 +358,8 @@ export default function AddSanPham() {
                   id="demo-simple-select"
                   label="Loại sản phẩm"
                   value={loaiSP}
-                  onChange={(event) => setLoaiSP(event.target.value)}
+                  onChange={(event) => handleAttChange(event.target.value, setLoaiSP, setEmptyLSP)}
+                  error={emptyLSP}
                 >
                   {listLSP
                     .filter((item) => item.trangThai === 0)
@@ -323,7 +389,8 @@ export default function AddSanPham() {
                   id="demo-simple-select"
                   label="Xuất xứ"
                   value={xuatXu}
-                  onChange={(event) => setXuatXu(event.target.value)}
+                  onChange={(event) => handleAttChange(event.target.value, setXuatXu, setEmptyXX)}
+                  error={emptyXX}
                 >
                   {listXX
                     .filter((item) => item.trangThai === 0)
@@ -353,7 +420,8 @@ export default function AddSanPham() {
                   id="demo-simple-select"
                   label="Loại cổ áo"
                   value={coAo}
-                  onChange={(event) => setCoAo(event.target.value)}
+                  onChange={(event) => handleAttChange(event.target.value, setCoAo, setEmptyCoAo)}
+                  error={emptyCoAo}
                 >
                   {listCoAo
                     .filter((item) => item.trangThai === 0)
@@ -383,7 +451,8 @@ export default function AddSanPham() {
                   id="demo-simple-select"
                   label="Ống tay áo"
                   value={tayAo}
-                  onChange={(event) => setTayAo(event.target.value)}
+                  onChange={(event) => handleAttChange(event.target.value, setTayAo, setEmptyTayAo)}
+                  error={emptyTayAo}
                 >
                   {listTayAo
                     .filter((item) => item.trangThai === 0)
@@ -408,7 +477,7 @@ export default function AddSanPham() {
             <Grid item xs={6}>
               <TextField
                 id="outlined-multiline-static"
-                label="Mô tả"
+                label="Mô tả (Tùy chọn)"
                 multiline
                 rows={4}
                 fullWidth
@@ -436,7 +505,7 @@ export default function AddSanPham() {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Canel</Button>
+          <Button onClick={() => handleClose()}>Canel</Button>
           <Button onClick={() => handleSave()} autoFocus>
             Ok
           </Button>

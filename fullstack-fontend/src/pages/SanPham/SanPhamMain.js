@@ -1,5 +1,4 @@
 import { Helmet } from 'react-helmet-async';
-import { filter } from 'lodash';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,13 +27,19 @@ import {
   Snackbar,
   Alert,
   Chip,
+  TextField,
+  Grid,
 } from '@mui/material';
+import GetAppIcon from '@mui/icons-material/GetApp';
 // components
+import { CSVLink } from 'react-csv';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
+
 // sections
 import { UserListHeadNoCheckBox, UserListToolbar } from '../../sections/@dashboard/user';
-import { fetchSpWithImg, deleteSanPham } from '../../service/SanPhamService';
+import { fetchSpForAdmin, deleteSanPham } from '../../service/SanPhamService';
+import { ProductfilterSB } from '../../sections/@dashboard/products';
 
 // ----------------------------------------------------------------------
 
@@ -77,19 +82,6 @@ function filterData(array, query) {
       return false;
     })
   );
-}
-
-function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filterData(array, query);
-  }
-  return stabilizedThis.map((el) => el[0]);
 }
 
 function renderTrangThai(trangThai) {
@@ -153,12 +145,73 @@ export default function UserPage() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const [statusFilter, setStatusFilter] = useState('');
+  const [selectedExports, setSelectedExports] = useState([]);
+
   const [listSP, setListSP] = useState([]);
+
+  // filter
+
+  const [openFilter, setOpenFilter] = useState(false);
+
+  const handleOpenFilter = () => {
+    setOpenFilter(true);
+  };
+
+  const handleCloseFilter = () => {
+    setOpenFilter(false);
+  };
+
+  const getListFiter = async () => {
+    try {
+      const res = await fetchSpForAdmin();
+      console.log('Check res: ', res);
+      setListSP(res);
+    } catch (error) {
+      console.error('Error in list bill: ', error);
+    }
+  };
+  useEffect(() => {
+    getListFiter();
+  }, []);
+
+  // filter
+
+  const [listLoc, setListLoc] = useState([]);
+  const [isFiltered, setIsFiltered] = useState(false);
+
+  const handleFilter = (filteredProducts) => {
+    setListLoc(filteredProducts);
+    setIsFiltered(true);
+  };
+
+  const displayProducts = isFiltered ? listLoc : listSP;
+
+  function applySortFilter(array, comparator, query) {
+    let filteredArray = array;
+
+    if (statusFilter !== '') {
+      filteredArray = filteredArray.filter((_user) => _user.trangThai.toString() === statusFilter);
+    }
+
+    if (query) {
+      return filterData(array, query);
+    }
+
+    const stabilizedThis = filteredArray.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+
+    return stabilizedThis.map((el) => el[0]);
+  }
   // Show Data On Tables
   // const [numberPages, setNumberPages] = useState(0);
   const getListData = async () => {
     try {
-      const res = await fetchSpWithImg();
+      const res = await fetchSpForAdmin();
       console.log('Check res: ', res);
       setListSP(res);
     } catch (error) {
@@ -203,9 +256,12 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listSP.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - displayProducts.length) : 0;
 
-  const filteredUsers = listSP && listSP ? applySortFilter(listSP, getComparator(order, orderBy), filterName) : [];
+  const filteredUsers =
+    displayProducts && displayProducts
+      ? applySortFilter(displayProducts, getComparator(order, orderBy), filterName)
+      : [];
   const isNotFound = !filteredUsers.length && !!filterName;
 
   // Delete
@@ -274,6 +330,36 @@ export default function UserPage() {
     setOpenAlert(false);
   };
 
+  // export
+  const handleExportData = () => {
+    const res = [];
+    if (listSP && listSP.length > 0) {
+      res.push(['STT', 'Mã', 'Tên', 'Giá bán', 'Mô tả', 'Trạng thái']);
+      listSP
+        .filter((item) => item.trangThai === 0 || item.trangThai === 1 || item.trangThai === 10)
+        .map((item, index) => {
+          const array = [];
+          array[0] = index;
+          array[1] = item.maSp;
+          array[2] = item.tenSp;
+          array[3] = formatCurrency(item.giaThucTe);
+          array[4] = item.moTa;
+          array[5] = `${
+            item.trangThai === 0
+              ? 'Còn bán'
+              : item.trangThai === 10
+              ? 'Dừng hoạt động'
+              : item.trangThai === 1
+              ? 'Đang giảm giá'
+              : 'Unknow status'
+          }`;
+          return res.push(array);
+        });
+      setSelectedExports(res);
+      // done();
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -291,7 +377,48 @@ export default function UserPage() {
         </Stack>
 
         <Card>
-          <UserListToolbar filterName={filterName} onFilterName={handleFilterByName} />
+          <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Grid item xs={6}>
+              <UserListToolbar filterName={filterName} onFilterName={handleFilterByName} sx={{ width: '500px' }} />
+            </Grid>
+            <Grid item xs={6} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Grid container justifyContent="right" alignItems="center">
+                <CSVLink data={selectedExports} filename={'DSSP.csv'} onClick={handleExportData}>
+                  <Button
+                    aria-label="download"
+                    Button
+                    variant="outlined"
+                    startIcon={<GetAppIcon />}
+                    size="large"
+                    color="success"
+                  >
+                    Export
+                  </Button>
+                </CSVLink>
+                <TextField
+                  select
+                  label="Trạng Thái"
+                  value={statusFilter}
+                  onChange={(event) => setStatusFilter(event.target.value)}
+                  sx={{ width: '200px', margin: '0 20px' }}
+                >
+                  <MenuItem value="">Tất Cả</MenuItem>
+                  <MenuItem value="0">Còn bán</MenuItem>
+                  <MenuItem value="1">Đang giảm giá</MenuItem>
+                  <MenuItem value="9">Đang cập nhật</MenuItem>
+                  <MenuItem value="10">Ngừng kinh doanh</MenuItem>
+                </TextField>
+
+                <ProductfilterSB
+                  openFilter={openFilter}
+                  onOpenFilter={handleOpenFilter}
+                  onCloseFilter={handleCloseFilter}
+                  listSP={listSP}
+                  onFilter={handleFilter}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>

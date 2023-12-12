@@ -50,8 +50,6 @@ export default function ProductsPage() {
 
   const displayProducts = isFiltered ? listLoc : listSP;
 
-  console.log("displayProducts: ", displayProducts);
-
   return (
     <>
       <Helmet>

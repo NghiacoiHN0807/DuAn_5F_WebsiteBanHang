@@ -36,7 +36,6 @@ import {
   TableRow,
   TableCell,
   Paper,
-  TableHead,
   CardActionArea,
   CardMedia,
   Box,
@@ -44,13 +43,14 @@ import {
   FormLabel,
   Backdrop,
   Chip,
-  InputAdornment,
+  TablePagination,
 } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import SearchIcon from '@mui/icons-material/Search';
+import Scrollbar from '../../components/scrollbar';
+import { UserListHeadNoCheckBox, UserListToolbar } from '../../sections/@dashboard/user';
 import Iconify from '../../components/iconify';
 import { putUpdateSanPham, detailSP } from '../../service/SanPhamService';
-import { findCtspById, addColorAndSize, updateNumber, detailCTSP } from '../../service/ChiTietSPService';
+import { fetchListAtt, addColorAndSize, updateNumber, detailCTSP } from '../../service/ChiTietSPService';
 import { deleteAnh, fetchAnh } from '../../service/AnhService';
 import { postAddCloud, deleteCloud } from '../../service/CloudinaryService';
 
@@ -100,6 +100,50 @@ function formatCurrency(price) {
   });
 
   return formatter.format(price);
+}
+
+const TABLE_HEAD = [
+  { id: 'stt', label: 'STT', alignRight: false },
+  { id: 'tenMs', label: 'Màu sắc', alignRight: false },
+  { id: 'tenSize', label: 'Size', alignRight: false },
+  { id: 'giaNhap', label: 'Giá nhập', alignRight: false },
+  { id: 'giaBan', label: 'Giá bán', alignRight: false },
+  { id: 'soLuongTon', label: 'Số Lượng tồn', alignRight: false },
+  { id: 'trangThai', label: 'Trạng thái', alignRight: false },
+  { id: '' },
+];
+
+// ----------------------------------------------------------------------
+
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function getComparator(order, orderBy) {
+  return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+function filterData(array, query) {
+  return array.filter((_user) =>
+    ['tenMs', 'tenSize', 'giaNhap', 'giaBan', 'soLuongTon'].some((field) => {
+      const fieldValue = _user[field];
+      if (typeof fieldValue === 'string') {
+        return fieldValue.toLowerCase().includes(query.toLowerCase());
+      }
+      if (typeof fieldValue === 'number') {
+        return fieldValue.toString().toLowerCase().includes(query.toLowerCase());
+      }
+      return false;
+    })
+  );
 }
 
 export default function UpdateSanPham() {
@@ -177,7 +221,7 @@ export default function UpdateSanPham() {
       setTayAo(res.idTayAo.idTayAo);
       setCoAo(res.idCoAo.idCoAo);
 
-      const resCTSP = await findCtspById(idSpHttp);
+      const resCTSP = await fetchListAtt(idSpHttp);
       setListCTSP(resCTSP);
     } catch (error) {
       console.log('error: ', error);
@@ -407,14 +451,18 @@ export default function UpdateSanPham() {
   // update number
 
   const handlUpdateNumber = async () => {
-    const res = await updateNumber(idCtsp, giaNhap, giaBan, soLuongTon, statusAtt);
-    console.log('Check res: ', res);
-    if (res && res.idCtsp) {
-      handleAlertClick('Cập nhật thành công!', 'success');
-      handleClostEditAtt();
+    if (!!giaBanErr || !!giaNhapErr || !!soLuongErr) {
+      handleAlertClick('Hãy nhập đúng và đủ thông tin!', 'warning');
     } else {
-      handleAlertClick('Cập nhật thất bại!', 'danger');
-      handleClostEditAtt();
+      const res = await updateNumber(idCtsp, giaNhap, giaBan, soLuongTon, statusAtt);
+      console.log('Check res: ', res);
+      if (res && res.idCtsp) {
+        handleAlertClick('Cập nhật thành công!', 'success');
+        handleClostEditAtt();
+      } else {
+        handleAlertClick('Cập nhật thất bại!', 'danger');
+        handleClostEditAtt();
+      }
     }
   };
 
@@ -562,6 +610,85 @@ export default function UpdateSanPham() {
     }
   }, [listCL, listLSP, listXX, listTayAo, listCoAo, listMS, listSize, phanTu]);
 
+  // for sort table
+
+  const [page, setPage] = useState(0);
+
+  const [order, setOrder] = useState('asc');
+
+  const [orderBy, setOrderBy] = useState('maHd');
+
+  const [filterName, setFilterName] = useState('');
+
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  // Next Page
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
+  };
+
+  const handleFilterByName = (event) => {
+    setPage(0);
+    setFilterName(event.target.value);
+  };
+
+  function applySortFilter(array, comparator, query) {
+    if (query) {
+      return filterData(array, query);
+    }
+
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+
+    return stabilizedThis.map((el) => el[0]);
+  }
+
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listCTSP.length) : 0;
+
+  const filteredUsers =
+    listCTSP && listCTSP ? applySortFilter(listCTSP, getComparator(order, orderBy), filterName) : [];
+  const isNotFound = !filteredUsers.length && !!filterName;
+
+  // validate
+  const [emptyTen, setEmptyTen] = useState(false);
+
+  const handleTenChange = (event) => {
+    const { value } = event.target;
+    setTenSp(value);
+    setEmptyTen(value.trim() === '');
+  };
+
+  const [giaNhapErr, setGiaNhapErr] = useState('');
+  const [giaBanErr, setGiaBanErr] = useState('');
+  const [soLuongErr, setSoLuongErr] = useState('');
+  const hanldeCheckGiaSL = (value, setFunc, errFunc, thongBao) => {
+    if (value.trim() === '') {
+      errFunc(`${thongBao} không được để trống.`);
+    }
+    // Kiểm tra nếu giá trị không phải là số hoặc là số âm
+    else if (!/^\d+$/.test(value) || parseInt(value, 10) <= 0) {
+      errFunc(`${thongBao} phải là số nguyên dương.`);
+    } else {
+      errFunc('');
+    }
+    setFunc(value);
+  };
+
   return (
     <>
       <Helmet>
@@ -586,7 +713,9 @@ export default function UpdateSanPham() {
                 id="fullWidth"
                 label="Tên sản phẩm"
                 fullWidth
-                onChange={(event) => setTenSp(event.target.value)}
+                onChange={handleTenChange}
+                error={emptyTen}
+                helperText={emptyTen ? 'Tên không được để trống' : ''}
                 value={tenSp}
               />
             </Grid>
@@ -808,25 +937,15 @@ export default function UpdateSanPham() {
           </div>
         </Card>
 
-        <Card sx={{ padding: '25px', marginTop: '15px' }}>
+        <Card sx={{ marginTop: '15px', padding: '25px' }}>
           <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
             <Grid item xs={12}>
               <Typography variant="h6" gutterBottom>
                 Cập nhật thuộc tính
               </Typography>
             </Grid>
-            <Grid item xs={6}>
-              <TextField
-                variant="outlined"
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-                placeholder="Search User..."
-              />
+            <Grid item xs={6} sx={{ margin: '-24px' }}>
+              <UserListToolbar filterName={filterName} onFilterName={handleFilterByName} sx={{ width: '500px' }} />
             </Grid>
             <Grid item xs={6} style={{ textAlign: 'right' }}>
               <Button
@@ -837,43 +956,82 @@ export default function UpdateSanPham() {
                 Thêm thuộc tính
               </Button>
             </Grid>
-            <Grid item xs={12}>
-              {listCTSP.length > 0 && (
-                <TableContainer component={Paper}>
-                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Màu sắc</TableCell>
-                        <TableCell>Size</TableCell>
-                        <TableCell>Giá nhập</TableCell>
-                        <TableCell>Giá bán</TableCell>
-                        <TableCell>Số lượng tồn</TableCell>
-                        <TableCell>Trạng thái</TableCell>
-                        <TableCell> </TableCell>
-                      </TableRow>
-                    </TableHead>
+            <Grid item xs={12} sx={{ paddingBottom: '15px' }}>
+              <Scrollbar>
+                <TableContainer sx={{ minWidth: 800 }}>
+                  <Table>
+                    <UserListHeadNoCheckBox
+                      order={order}
+                      orderBy={orderBy}
+                      headLabel={TABLE_HEAD}
+                      rowCount={listCTSP.length}
+                      onRequestSort={handleRequestSort}
+                    />
                     <TableBody>
-                      {listCTSP.map((row) => (
-                        <TableRow key={row.idCtsp} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                          <TableCell component="th" scope="row">
-                            {row.idMs.tenMs}
-                          </TableCell>
-                          <TableCell>{row.idSize.tenSize}</TableCell>
-                          <TableCell>{formatCurrency(row.giaNhap)}</TableCell>
-                          <TableCell>{formatCurrency(row.giaBan)}</TableCell>
-                          <TableCell>{row.soLuongTon}</TableCell>
-                          <TableCell>{renderTrangThai(row.trangThai)}</TableCell>
-                          <TableCell>
-                            <IconButton aria-label="add an alarm" onClick={() => handleClickEditAtt(row.idCtsp)}>
-                              <EditIcon />
-                            </IconButton>
+                      {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+                        const { tenMs, tenSize, giaNhap, giaBan, soLuongTon, trangThai } = row;
+                        return (
+                          <TableRow hover key={index} tabIndex={-1}>
+                            <TableCell component="th" scope="row">
+                              {index + 1}
+                            </TableCell>
+                            <TableCell>{tenMs}</TableCell>
+                            <TableCell>{tenSize}</TableCell>
+                            <TableCell>{formatCurrency(giaNhap)}</TableCell>
+                            <TableCell>{formatCurrency(giaBan)}</TableCell>
+                            <TableCell>{soLuongTon}</TableCell>
+                            <TableCell>{renderTrangThai(trangThai)}</TableCell>
+                            <TableCell>
+                              <IconButton aria-label="add an alarm" onClick={() => handleClickEditAtt(row.idCtsp)}>
+                                <EditIcon />
+                              </IconButton>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                      {emptyRows > 0 && (
+                        <TableRow style={{ height: 53 * emptyRows }}>
+                          <TableCell colSpan={3} />
+                        </TableRow>
+                      )}
+                    </TableBody>
+
+                    {isNotFound && (
+                      <TableBody>
+                        <TableRow>
+                          <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                            <Paper
+                              sx={{
+                                textAlign: 'center',
+                              }}
+                            >
+                              <Typography variant="h6" paragraph>
+                                Not found
+                              </Typography>
+
+                              <Typography variant="body2">
+                                No results found for &nbsp;
+                                <strong>&quot;{filterName}&quot;</strong>.
+                                <br /> Try checking for typos or using complete words.
+                              </Typography>
+                            </Paper>
                           </TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
+                      </TableBody>
+                    )}
                   </Table>
                 </TableContainer>
-              )}
+              </Scrollbar>
+
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={listCTSP && listCTSP.length ? listCTSP.length : 0}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </Grid>
           </Grid>
         </Card>
@@ -1049,7 +1207,9 @@ export default function UpdateSanPham() {
               }}
               fullWidth
               value={giaNhap}
-              onChange={(event) => setGiaNhap(event.target.value)}
+              onChange={(event) => hanldeCheckGiaSL(event.target.value, setGiaNhap, setGiaNhapErr, 'Giá nhập')}
+              error={!!giaNhapErr}
+              helperText={giaNhapErr}
             />
           </div>
           <div className="editAtt">
@@ -1062,7 +1222,9 @@ export default function UpdateSanPham() {
               }}
               fullWidth
               value={giaBan}
-              onChange={(event) => setGiaBan(event.target.value)}
+              onChange={(event) => hanldeCheckGiaSL(event.target.value, setGiaBan, setGiaBanErr, 'Giá bán')}
+              error={!!giaBanErr}
+              helperText={giaBanErr}
             />
           </div>
           <div className="editAtt">
@@ -1075,7 +1237,9 @@ export default function UpdateSanPham() {
               }}
               fullWidth
               value={soLuongTon}
-              onChange={(event) => setSoLuongTon(event.target.value)}
+              onChange={(event) => hanldeCheckGiaSL(event.target.value, setSoLuongTon, setSoLuongErr, 'Số lượng tồn')}
+              error={!!soLuongErr}
+              helperText={soLuongErr}
             />
           </div>
           <div className="editAtt">
@@ -1090,6 +1254,7 @@ export default function UpdateSanPham() {
               >
                 <FormControlLabel value="0" control={<Radio />} label="Còn bán" />
                 <FormControlLabel value="10" control={<Radio />} label="Ngừng kinh doanh" />
+                <FormControlLabel value="1" control={<Radio />} label="Đang cập nhật" />
               </RadioGroup>
             </FormControl>
           </div>

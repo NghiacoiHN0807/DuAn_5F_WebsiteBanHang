@@ -19,6 +19,20 @@ public class SanPhamCustom {
 
     private String tenSp;
 
+    private String chatLieus;
+
+    private String loaiSPs;
+
+    private String xuatXus;
+
+    private String tayAos;
+
+    private String coAos;
+
+    private String sizes;
+
+    private String mauSacs;
+
     private String moTa;
 
     private Integer trangThai;
@@ -30,4 +44,5 @@ public class SanPhamCustom {
     private BigDecimal giaMax;
 
     private BigDecimal giaThucTe;
+
 }
