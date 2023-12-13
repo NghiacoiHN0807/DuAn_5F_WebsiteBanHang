@@ -7,49 +7,45 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { useState, useEffect, forwardRef } from 'react';
-import { deleteTaiKhoan } from '../../service/taiKhoanNhanVienService'
+import { deleteTaiKhoan } from '../../service/taiKhoanNhanVienService';
 
 const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
-export default function ModalDeleteDiscount(props) {
+export default function ModalResetTK(props) {
   const { open, handleClose, information } = props;
-  const [idTaiKhoan, setidTaiKhoan] = useState('');
-  const [maTaiKhoan, setMaTaiKhoan] = useState('');
+  const [idTK, setIdTK] = useState('');
   const [alertContent, setAlertContent] = useState(null);
+
 
   useEffect(() => {
     if (information != null) {
-      console.log(information);
-      setidTaiKhoan(information.idTaiKhoan);
-      setMaTaiKhoan(information.maTaiKhoan);
+      setIdTK(information.idTaiKhoan);
     } else {
-      setidTaiKhoan('');
+      setIdTK('');
     }
   }, [information]);
 
   const handleDelete = async () => {
-    // Kiểm tra trạng thái trước khi xóa
-    if (information.trangThai === 0) {
-      // Gửi yêu cầu xóa
-      const del= await deleteTaiKhoan(information.idTaiKhoan, 10);
-      console.log("delete Tt" , del);
-      
-      // Cập nhật giao diện ngay lập tức
+    if (information.trangThai === 10) {
+      console.log("info", information);
+
+      const reset = await deleteTaiKhoan(information.idTaiKhoan, 0);
+      console.log("re", reset);
+
       setAlertContent({
         type: 'success',
-        message: 'Xóa thành công!',
+        message: 'Reset thành công!',
       });
-    } else if (information.trangThai === 10) {
+    } else if (information.trangThai === 0) {
       setAlertContent({
         type: 'warning',
-        message: 'Không thể xóa!!!',
+        message: 'Không thể reset!!!',
       });
     }
     handleClose();
   };
 
-
-  const handleSnackbarClose = (event, reason) => {
+  const handleSnackbarClose = (reason) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -65,9 +61,9 @@ export default function ModalDeleteDiscount(props) {
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{'Xóa Nhân Viên'}</DialogTitle>
+        <DialogTitle>{'Reset Coupon'}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">Xóa Mã Nhân Viên: {maTaiKhoan}</DialogContentText>
+          <DialogContentText id="alert-dialog-slide-description">Reset Coupon Có Mã Là: {idTK}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Hủy</Button>

@@ -55,13 +55,9 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
     List<Object[]> getTotalRevenueByDay();
 
     @Query(value = "SELECT\n" +
-            "  \n" +
-            "  ROUND(COUNT(CASE WHEN lh.trang_thai = 6 THEN 1 END) / COUNT(CASE WHEN lh.trang_thai IN (5, 9) THEN 1 END) * 100, 2) AS ty_le_doi_tra\n" +
-            "FROM\n" +
-            "  lich_su_hoa_don lh\n" +
-            "  JOIN hoa_don hd ON lh.id_hd = hd.id_hd\n" +
-            "WHERE\n" +
-            "  lh.trang_thai IN (5, 9, 6);", nativeQuery = true)
+            "    IFNULL(((COUNT(CASE WHEN trang_thai = 6 THEN 1 END) / COUNT(CASE WHEN trang_thai IN (5, 6) THEN 1 END)) * 100), 0) AS ty_le_tra_hang\n" +
+            "FROM duan_5f.hoa_don\n" +
+            "WHERE trang_thai IN (5, 6);", nativeQuery = true)
     Double getTyLeTraHang();
 
 

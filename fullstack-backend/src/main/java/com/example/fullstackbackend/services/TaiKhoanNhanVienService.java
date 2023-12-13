@@ -15,7 +15,9 @@ public interface TaiKhoanNhanVienService {
 
     Optional<TaiKhoan> getOne(Integer id);
 
-    TaiKhoan delete(Integer id);
+    Boolean delete(Integer id, Integer trangThai);
+
+    Boolean deleteAll(List<Integer> id);
 
     TaiKhoan update(TaiKhoan taiKhoan, Integer id);
 

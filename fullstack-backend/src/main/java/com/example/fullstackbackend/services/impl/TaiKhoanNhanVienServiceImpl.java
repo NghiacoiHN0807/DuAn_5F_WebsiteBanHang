@@ -40,6 +40,7 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
     public List<TaiKhoan> getAll() {
         return taiKhoanRepository.findAll();
     }
+
     @Override
     public List<TaiKhoan> chucVu() {
         return taiKhoanRepository.chucVu();
@@ -64,12 +65,34 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
         return taiKhoanRepository.findById(id);
     }
 
+    @Transactional
     @Override
-    public TaiKhoan delete(Integer id) {
-        TaiKhoan taiKhoan = getOne(id).orElseThrow();
-        taiKhoan.setTrangThai(10);
-        taiKhoanRepository.save(taiKhoan);
-        return taiKhoan;
+    public Boolean delete(Integer id, Integer trangThai) {
+        try {
+            TaiKhoan taiKhoan = getOne(id).orElseThrow();
+            taiKhoan.setTrangThai(trangThai);
+            taiKhoanRepository.save(taiKhoan);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Transactional
+    @Override
+    public Boolean deleteAll(List<Integer> id) {
+       try {
+           for( Integer s : id){
+               TaiKhoan taiKhoan = getOne(s).orElseThrow();
+               taiKhoan.setTrangThai(10);
+               taiKhoanRepository.save(taiKhoan);
+           }
+           return  true;
+       }catch (Exception e){
+           e.printStackTrace();
+           return  false;
+       }
     }
 
     @Transactional
