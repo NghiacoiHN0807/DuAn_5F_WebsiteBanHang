@@ -140,8 +140,10 @@ public class SanPhamController {
     }
 
     @GetMapping("getSpForClient")
-    public ResponseEntity<List<SanPhamClientDTO>> getSpForClient() {
-        List<SanPhamClientDTO> pageSp = sanPhamService.sanPhamForClient();
+    public ResponseEntity<Page<SanPhamClientDTO>> getSpForClient(@RequestParam(defaultValue = "0") Integer page,
+                                                                 @RequestParam(defaultValue = "12") Integer size,
+                                                                 @RequestParam("p") Optional<Integer> p) {
+        Page<SanPhamClientDTO> pageSp = sanPhamService.sanPhamForClient(p.orElse(page), size);
         return ResponseEntity.ok(pageSp);
     }
 

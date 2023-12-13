@@ -10,6 +10,7 @@ import com.example.fullstackbackend.repository.SanphamRepository;
 import com.example.fullstackbackend.services.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -71,9 +72,16 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
-    public List<SanPhamClientDTO> sanPhamForClient() {
+    public Page<SanPhamClientDTO> sanPhamForClient(Integer pageNo, Integer size) {
+        // Tạo đối tượng Pageable
+        Pageable pageable = PageRequest.of(pageNo, size);
+
+        // Lấy dữ liệu từ repository sử dụng trang và kích thước trang
+        List<Object[]> rows = sanphamRepository.getSpForClient();
+
+        // Chuyển đổi dữ liệu sang đối tượng SanPhamClientDTO
         List<SanPhamClientDTO> dtos = new ArrayList<>();
-        for (Object[] row : sanphamRepository.getSpForClient()) {
+        for (Object[] row : rows) {
             SanPhamClientDTO spCustom = new SanPhamClientDTO();
             spCustom.setIdSp((Integer) row[0]);
             spCustom.setChatLieus((String) row[1]);
@@ -93,7 +101,16 @@ public class SanphamServiceImpl implements SanPhamService {
             dtos.add(spCustom);
         }
 
-        return dtos;
+        // Tạo đối tượng Page từ danh sách và Pageable
+        int start = (int) PageRequest.of(pageNo, size).getOffset();
+
+        // Tính chỉ số kết thúc của danh sách cho trang cụ thể
+        int end = Math.min((start + size), dtos.size());
+
+        // Tạo danh sách cho trang cụ thể
+        List<SanPhamClientDTO> subList = dtos.subList(start, end);
+
+        return new PageImpl<>(subList, pageable, dtos.size());
     }
 
     @Override

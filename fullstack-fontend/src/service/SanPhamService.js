@@ -37,7 +37,7 @@ const putUpdateSanPham = (idSp, maSp, tenSp, idCl, idLsp, idXx, idCoAo, idTayAo,
     trangThai,
   });
 
-const fetchSpForClient = () => custom.get(`/san-pham/getSpForClient`);
+const fetchSpForClient = (page) => custom.get(`/san-pham/getSpForClient?p=${page}`);
 
 const getTopSpBanChayForClient = () => custom.get(`/san-pham/getTopSpBanChayForClient`);
 
