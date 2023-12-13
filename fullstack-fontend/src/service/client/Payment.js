@@ -16,7 +16,22 @@ const updateClientPayment1 = (idHd, tenKh, sdtKh, email, diaChi) =>
     email,
     diaChi,
   });
+const updateClientPayment2 = (idHd, tenKh, sdtKh, email, diaChi, tienShip) =>
+  custom.put(`/hoa-don/update-khach-hang2/${idHd}`, {
+    tenKh,
+    sdtKh,
+    email,
+    diaChi,
+    tienShip,
+  });
 const deleteProductOnCartPayment = (idHd) => custom.delete(`/gio-hang-chi-tiet/delete-product/${idHd}`);
 const paymentOnlineClient = (amount, orderInfo) =>
   custom.post(`/hoa-don/submitOrder-client?amount=${amount}&orderInfo=${orderInfo}`);
-export { deleteProductOnCartPayment, selectDiaChiByTK, updateClientPayment, paymentOnlineClient, updateClientPayment1 };
+export {
+  updateClientPayment2,
+  deleteProductOnCartPayment,
+  selectDiaChiByTK,
+  updateClientPayment,
+  paymentOnlineClient,
+  updateClientPayment1,
+};

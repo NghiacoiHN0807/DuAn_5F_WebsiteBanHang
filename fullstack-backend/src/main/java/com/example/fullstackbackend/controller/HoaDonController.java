@@ -362,6 +362,31 @@ public class HoaDonController {
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
     }
 
+    @PutMapping("update-khach-hang2/{id}")
+    public HoaDon updateKhachHang2(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+            hoaDon.setTenKh(newHD.getTenKh());
+            hoaDon.setSdtKh(newHD.getSdtKh());
+            hoaDon.setEmail(newHD.getEmail());
+            hoaDon.setDiaChi(newHD.getDiaChi());
+            BigDecimal thanhTien = hoaDon.getThanhTien().subtract(hoaDon.getTienShip()).add(newHD.getTienShip());
+            hoaDon.setTienShip(newHD.getTienShip());
+            hoaDon.setThanhTien(thanhTien);
+            return hoadonSevice.update(hoaDon);
+        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+        //Add to history bill
+        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+        lichSuHoaDon.setIdHd(newHD1);
+        lichSuHoaDon.setIdTk(newHD1.getIdTK());
+        lichSuHoaDon.setTrangThai(12);
+        lichSuHoaDon.setMoTa("Thay Đổi Thông Tin Khách Hàng: "+ newHD.getDiaChi());
+        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+        lichSuHoaDonService.add(lichSuHoaDon);
+
+        return newHD1;
+    }
+
     // Admin
     @PostMapping("submitOrder")
     public String submidOrder(@RequestParam("amount") BigDecimal orderTotal,

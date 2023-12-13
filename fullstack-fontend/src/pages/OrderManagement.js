@@ -363,8 +363,13 @@ const OrderManagement = () => {
         const array = [];
         array[0] = index + 1;
         array[1] = item.maHd;
-        array[2] = item.idKH.ho + item.idKH.ten;
-        array[3] = item.idKH.sdt;
+        // Kiểm tra và thiết lập giá trị cho array[2]
+        if (item.idKH && item.idKH.ho && item.idKH.ten) {
+          array[2] = item.idKH.ho + item.idKH.ten;
+        } else {
+          array[2] = 'Khách Lẻ';
+        }
+        array[3] = item.idKH?.sdt || '';
         array[4] = formatCurrency(item.thanhTien);
         array[5] = formatDateTime(item.ngayTao);
         array[6] = renderKieuHoaDon(item.kieuHoaDon).props.label;

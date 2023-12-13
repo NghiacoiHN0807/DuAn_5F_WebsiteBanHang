@@ -38,6 +38,8 @@ import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 import ModalAddProduct from '../forms/Modals-AddProduct';
 import ModalDeleteProductOnCart from '../forms/Modal-Delete-Product';
 import ModalUpdateProductOnCart from '../forms/Modals-Update-Product-Cart';
+import ModalChangeAddress from '../forms/Modals-Change-Address';
+import { selectDiaChiByTK } from '../service/client/Payment';
 
 const styles = {
   container: {
@@ -298,6 +300,24 @@ const OrderManagementTimeline = ({ classes }) => {
     setShowModalDelete(false);
     getListData();
   };
+  // Handle Change Address
+  const [showModalsAddress, setShowModalAddress] = useState(false);
+  const [listAddess, setListAddress] = useState([]);
+
+  const handleChangeAddress = async () => {
+    if (listData[0].idHd.idKH) {
+      const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
+      console.log(getData);
+      setListAddress(getData);
+      setShowModalAddress(true);
+    } else {
+      console.log('Sửa Địa Chỉ Mà Không Có Tài Khoản');
+    }
+  };
+  const handleCloseAddress = () => {
+    // getDetailHD();
+    setShowModalAddress(false);
+  };
   // Format thanhTien
   const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
   return (
@@ -360,8 +380,8 @@ const OrderManagementTimeline = ({ classes }) => {
             <Typography variant="h6" gutterBottom>
               Thông Tin Khách Hàng{' '}
             </Typography>
-            <Button disabled={activeIndex >= 1} size="small" variant="outlined">
-              Chỉnh sửa thông tin
+            <Button onClick={() => handleChangeAddress()} disabled={activeIndex >= 1} size="small" variant="outlined">
+              Chỉnh Sửa Thông Tin
             </Button>
           </Stack>
         </div>
@@ -529,9 +549,17 @@ const OrderManagementTimeline = ({ classes }) => {
               </TableBody>
             </Table>{' '}
             {listData.length > 0 && (
-              <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
-                Thành Tiền: {formatCurrency(listData[0].idHd.thanhTien)}
-              </Typography>
+              <>
+                {listData[0].idHd.tienShip && (
+                  <Typography sx={{ textAlign: 'right' }} variant="subtitle2" gutterBottom>
+                    Tiền Ship: {formatCurrency(listData[0].idHd.tienShip)}
+                  </Typography>
+                )}
+
+                <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
+                  Thành Tiền: {formatCurrency(listData[0].idHd.thanhTien)}
+                </Typography>
+              </>
             )}
           </TableContainer>
           {/* Modal Payment */}
@@ -555,6 +583,7 @@ const OrderManagementTimeline = ({ classes }) => {
                   itemDelete={itemDelete}
                   selectDataCart={selectDataCart}
                   DataCart={DataCart}
+                  getDetailHD={getListData}
                 />
               )}
               <ModalUpdateProductOnCart
@@ -563,6 +592,7 @@ const OrderManagementTimeline = ({ classes }) => {
                 itemUpdateClassify={itemUpdateClassify}
                 selectDataCart={selectDataCart}
                 itemUpdate={itemUpdate}
+                getDetailHD={getListData}
               />
             </>
           )}
@@ -572,6 +602,7 @@ const OrderManagementTimeline = ({ classes }) => {
             selectDataCart={selectDataCart}
             handleClose={handleClose2}
             DataCart={DataCart}
+            getDetailHD={getListData}
           />
           {/* Modal update status */}
           <ModalUpdateStatus
@@ -586,6 +617,16 @@ const OrderManagementTimeline = ({ classes }) => {
         </div>
       </div>
       <SelectHistoryBill open={showModalsDT} handleClose={handleCloseAddDT} listData={listData} />
+      {listAddess && (
+        <>
+          <ModalChangeAddress
+            open={showModalsAddress}
+            listData={listAddess}
+            handleClose={handleCloseAddress}
+            getDetailHD={getListData}
+          />
+        </>
+      )}
     </>
   );
 };

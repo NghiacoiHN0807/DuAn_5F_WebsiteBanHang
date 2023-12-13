@@ -86,11 +86,10 @@ const ModalAddKhachHang = (props) => {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     getDetailHD: PropTypes.func.isRequired,
-    setInformationKH: PropTypes.func.isRequired,
     // setSelectedCustomerEmail: PropTypes.func.isRequired,
     // setSelectedMaTk: PropTypes.func.isRequired,
   };
-  const { open, handleClose, getDetailHD, setInformationKH } = props;
+  const { open, handleClose, getDetailHD } = props;
   //   open Data on Table
   const [listData, setListData] = useState([]);
 
@@ -191,7 +190,6 @@ const ModalAddKhachHang = (props) => {
         type: 'success',
         message: 'Đã Chuyển Về Khách Lẻ!!!',
       });
-      setInformationKH();
       await updateKH1(idHdParam);
       getDetailHD();
       handleClose();
@@ -207,7 +205,6 @@ const ModalAddKhachHang = (props) => {
         message: 'Thêm Khách Hàng Thành Công!!!',
       });
       await updateKH(idHdParam, item.idTaiKhoan);
-      setInformationKH(item);
     } catch (error) {
       console.error(error);
     }
