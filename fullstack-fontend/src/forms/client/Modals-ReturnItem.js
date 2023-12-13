@@ -21,6 +21,7 @@ import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import { pink } from '@mui/material/colors';
 import Paper from '@mui/material/Paper';
 import ModalDetailItemReturn from './Modals-DetailReturnItem';
+import ModalAllItemReturn from './Modals-ReturnAllItem';
 
 // @mui
 
@@ -31,7 +32,7 @@ const ModalItemReturn = (props) => {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     selectDataCart: PropTypes.func.isRequired,
-    DataCart: PropTypes.func.isRequired,
+    DataCart: PropTypes.array.isRequired,
     getListData: PropTypes.func.isRequired,
   };
   const { show, handleClose, selectDataCart, DataCart, getListData } = props;
@@ -49,6 +50,7 @@ const ModalItemReturn = (props) => {
 
   // Return one product on cart
   const [showModalsReturnOne, setShowModalReturnOne] = useState(false);
+  const [showModalsReturnAll, setShowModalReturnAll] = useState(false);
   const [itemReturnOne, setIntemReturnOne] = useState();
 
   const handleReturnOne = (item) => {
@@ -61,8 +63,12 @@ const ModalItemReturn = (props) => {
     setShowModalReturnOne(false);
   };
 
-  const handleReturnAll = () => {
-    setShowModalReturnOne(false);
+  const handleReturnAll = async () => {
+    setShowModalReturnAll(true);
+    // await returnAllItem(idHdParam,mota, 6)
+  };
+  const handleCloseModalReturnAll = () => {
+    setShowModalReturnAll(false);
   };
 
   // Format thanhTien
@@ -154,6 +160,12 @@ const ModalItemReturn = (props) => {
           getListData={getListData}
         />
       )}
+      <ModalAllItemReturn
+        show={showModalsReturnAll}
+        selectDataCart={selectDataCart}
+        getListData={getListData}
+        handleClose={handleCloseModalReturnAll}
+      />
     </>
   );
 };

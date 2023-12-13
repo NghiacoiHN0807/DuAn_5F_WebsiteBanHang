@@ -326,7 +326,12 @@ const OrderClientTimeline = ({ classes }) => {
               <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 1}>
                 Hủy Đơn Hàng
               </Button>{' '}
-              <Button variant="outlined" color="error" onClick={handleReturnItem}>
+              <Button
+                variant="outlined"
+                color="error"
+                onClick={handleReturnItem}
+                disabled={activeIndex <= 3 || activeIndex >= 5}
+              >
                 Đổi/Trả Hàng
               </Button>{' '}
               <Button variant="outlined" color="error" onClick={handleSelect}>
