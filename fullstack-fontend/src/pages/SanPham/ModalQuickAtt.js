@@ -28,7 +28,8 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
-import { useState } from 'react';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Iconify from '../../components/iconify';
 
@@ -191,6 +192,27 @@ export default function ModalQuickAtt({
     setEmptyUpdate(value.trim() === '');
   };
 
+  // search
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredItems, setFilteredItems] = useState([]);
+
+  useEffect(() => {
+    const filtered = listAtt.filter((item) => {
+      const maLowerCase = (item[phanTu.ma] || '').toLowerCase();
+      const tenLowerCase = (item[phanTu.ten] || '').toLowerCase();
+
+      return maLowerCase.includes(searchTerm.toLowerCase()) || tenLowerCase.includes(searchTerm.toLowerCase());
+    });
+
+    setFilteredItems(filtered);
+  }, [searchTerm, listAtt, phanTu]);
+
+  const handleCloseAtt = () => {
+    setSearchTerm('');
+    setFilteredItems([]);
+    handleCloseQuickAtt();
+  };
+
   return (
     <>
       <Dialog
@@ -216,7 +238,9 @@ export default function ModalQuickAtt({
                     </InputAdornment>
                   ),
                 }}
-                placeholder="Search User..."
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </Grid>
             <Grid item xs={6} style={{ textAlign: 'right' }}>
@@ -239,29 +263,40 @@ export default function ModalQuickAtt({
                       <TableCell> </TableCell>
                     </TableRow>
                   </TableHead>
-                  <TableBody>
-                    {listAtt.map((row, index) => (
-                      <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                        <TableCell component="th" scope="row">
-                          {phanTu && phanTu.ma && row[phanTu.ma]}
-                        </TableCell>
-                        <TableCell>{phanTu && phanTu.ten && row[phanTu.ten]}</TableCell>
-                        <TableCell>{renderTrangThai(row.trangThai)}</TableCell>
-                        <TableCell>
-                          <IconButton aria-label="add an alarm" onClick={() => handlOpenUpdate(row[phanTu.id])}>
-                            <EditIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
+                  {filteredItems.length > 0 ? (
+                    <TableBody>
+                      {filteredItems.map((row, index) => (
+                        <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                          <TableCell component="th" scope="row">
+                            {phanTu && phanTu.ma && row[phanTu.ma]}
+                          </TableCell>
+                          <TableCell>{phanTu && phanTu.ten && row[phanTu.ten]}</TableCell>
+                          <TableCell>{renderTrangThai(row.trangThai)}</TableCell>
+                          <TableCell>
+                            <IconButton aria-label="add an alarm" onClick={() => handlOpenUpdate(row[phanTu.id])}>
+                              <EditIcon />
+                            </IconButton>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4}>
+                        <Typography variant="h6" gutterBottom sx={{ textAlign: 'center', marginTop: '20px' }}>
+                          <SearchOffIcon sx={{ fontSize: 40 }} /> Không tìm thấy{' '}
+                          {phanTu.att !== null ? phanTu.att.toLowerCase() : ''} phù hợp!
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </Table>
               </TableContainer>
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => handleCloseQuickAtt()}>Đóng</Button>
+          <Button onClick={() => handleCloseAtt()}>Đóng</Button>
         </DialogActions>
       </Dialog>
       <Dialog

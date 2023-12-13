@@ -18,6 +18,7 @@ import {
   Grid,
 } from '@mui/material';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import FilterListIcon from '@mui/icons-material/FilterList';
 // components
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
@@ -213,7 +214,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
   return (
     <>
       <Button disableRipple color="inherit" endIcon={<Iconify icon=" ic:round-filter-list" />} onClick={onOpenFilter}>
-        Filters&nbsp;
+        <FilterListIcon />
       </Button>
 
       <Drawer

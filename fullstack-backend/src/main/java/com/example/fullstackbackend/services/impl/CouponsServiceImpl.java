@@ -50,7 +50,7 @@ public class CouponsServiceImpl implements CouponsService {
             coupons.setTrangThai(trangThai);
             couponsRepository.save(coupons);
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -69,16 +69,16 @@ public class CouponsServiceImpl implements CouponsService {
     @Override
     public CouponsDTO addCoupons(Integer idHd, String code) {
         CouponsDTO couponsDTO = new CouponsDTO();
-        if(checkHd(idHd)) {
+        if (checkHd(idHd)) {
             HoaDon hoaDon = hoadonRepository.findById(idHd).orElseThrow();
             couponsDTO.setHoaDon(hoaDon);
-            if(hoaDon.getMaGiamGia() == null) {
-                if(checkCoupons(code)) {
+            if (hoaDon.getMaGiamGia() == null) {
+                if (checkCoupons(code)) {
                     Coupons coupons = couponsRepository.findByCode(code).orElseThrow();
                     couponsDTO.setCode(code);
                     hoaDon.setMaGiamGia(coupons.getCode());
                     Integer soLuongCpCheck = coupons.getSoLuongHienTai();
-                    if(soLuongCpCheck > 0) {
+                    if (soLuongCpCheck > 0) {
                         coupons.setSoLuongHienTai(soLuongCpCheck - 1);
                         Integer phanTram = coupons.getPhanTram();
                         couponsDTO.setPhanTramGiam(phanTram);
@@ -105,13 +105,53 @@ public class CouponsServiceImpl implements CouponsService {
 
     @Override
     public Boolean removeCoupons(Integer idHd) {
+        try {
+            CouponsDTO couponsDTO = new CouponsDTO();
+            if (checkHd(idHd)) {
+                HoaDon hoaDon = hoadonRepository.findById(idHd).orElseThrow();
+                couponsDTO.setHoaDon(hoaDon);
+                if (hoaDon.getMaGiamGia() != null) {
+                    Coupons coupons = couponsRepository.findByCode(hoaDon.getMaGiamGia()).orElseThrow();
+                    couponsDTO.setCode(null);
+                    hoaDon.setMaGiamGia(null);
+                    Integer soLuongCpCheck = coupons.getSoLuongHienTai();
+                    coupons.setSoLuongHienTai(soLuongCpCheck + 1);
+                    couponsDTO.setPhanTramGiam(null);
+                    BigDecimal thanhTien = hoaDon.getThanhTien().add(hoaDon.getSoTienGiamGia());
+                    hoaDon.setSoTienGiamGia(null);
+                    hoaDon.setThanhTien(thanhTien);
+                    couponsRepository.save(coupons);
+                    hoadonRepository.save(hoaDon);
 
-        return null;
+                } else {
+                    hoadonRepository.save(hoaDon);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public Boolean removeAll(List<Integer> ids) {
+        try {
+            for (Integer s : ids) {
+                Coupons coupons = detail(s).orElseThrow();
+                coupons.setTrangThai(10);
+                couponsRepository.save(coupons);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private Boolean checkCoupons(String code) {
         Optional<Coupons> coupons = couponsRepository.findByCode(code);
-        if(coupons.isPresent()) {
+        if (coupons.isPresent()) {
             return true;
         }
         return false;
@@ -119,7 +159,7 @@ public class CouponsServiceImpl implements CouponsService {
 
     private Boolean checkHd(Integer id) {
         Optional<HoaDon> hoaDon = hoadonRepository.findById(id);
-        if(hoaDon.isPresent()) {
+        if (hoaDon.isPresent()) {
             return true;
         }
         return false;

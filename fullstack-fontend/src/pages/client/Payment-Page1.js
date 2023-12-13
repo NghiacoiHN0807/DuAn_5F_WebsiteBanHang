@@ -27,6 +27,7 @@ import { updateTienShip, viewAllHTTT } from '../../service/OrderManagementTimeLi
 import ModalAddAddress from '../../forms/Modals-Add-Address';
 import { paymentOnlineClient, selectDiaChiByTK, updateClientPayment } from '../../service/client/Payment';
 import ModalPaymentPage from './Moda-Payment-Page1';
+import ModalDeleteCoupon from '../../forms/Modal-Delete-Coupon';
 
 const ImageButton = styled(ButtonBase)(({ theme }) => ({
   position: 'relative',
@@ -96,6 +97,7 @@ export default function PaymentPage1() {
   // Show  payment information
   const [isDeliveryChecked, setIsDeliveryChecked] = useState(false);
   const [openCoupon, setOpenCoupon] = useState(false);
+  const [openDelCoupon, setOpenDelCoupon] = useState(false);
   const [information, setInformation] = useState();
 
   const handleDeliveryChange = (event) => {
@@ -131,6 +133,7 @@ export default function PaymentPage1() {
 
   const handleClose = () => {
     setOpenCoupon(false);
+    setOpenDelCoupon(false);
     selectDataCart();
   };
 
@@ -252,6 +255,10 @@ export default function PaymentPage1() {
     setOpenCoupon(true);
   };
 
+  const handleDelCoupon = () => {
+    setOpenDelCoupon(true);
+  };
+
   // Format thanhTien
   function formatCurrency(price) {
     if (!price) return '0';
@@ -264,6 +271,8 @@ export default function PaymentPage1() {
 
     return formatter.format(price);
   }
+
+  console.log("listHD ", listHD)
   return (
     <>
       <Container sx={{ marginBottom: 10 }}>
@@ -450,7 +459,11 @@ export default function PaymentPage1() {
                 <Button onClick={() => handleDatHang()} variant="contained" color="success">
                   Đặt Hàng
                 </Button>
-                <Button onClick={() => handleCoupon()}>Thêm mã giảm giá tại đây.</Button>
+                {listHD.maGiamGia ? (
+                  <Button onClick={() => handleDelCoupon()}>Xóa mã giảm giá.</Button>
+                ) : (
+                  <Button onClick={() => handleCoupon()}>Thêm mã giảm giá tại đây.</Button>
+                )}
               </Grid>
             </Grid>
           </Grid>
@@ -486,6 +499,12 @@ export default function PaymentPage1() {
         open={openCoupon}
         handleClose={handleClose}
         information={information}
+        getDetailHD={getDetailHD}
+      />
+      <ModalDeleteCoupon
+        open={openDelCoupon}
+        handleClose={handleClose}
+        listHD={listHD}
         getDetailHD={getDetailHD}
       />
     </>

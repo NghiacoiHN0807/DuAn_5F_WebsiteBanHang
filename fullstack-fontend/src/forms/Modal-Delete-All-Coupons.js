@@ -6,46 +6,44 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
-import { useState, useEffect, forwardRef } from 'react';
-import { remove } from '../../service/giamGiaService';
+import { useState, forwardRef } from 'react';
+import { removeAll } from '../service/CouponsService';
 
 const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
-export default function ModalDeleteDiscount(props) {
+export default function ModalDeleteAllCoupons(props) {
   const { open, handleClose, information } = props;
-  const [idGgct, setIdGgct] = useState('');
   const [alertContent, setAlertContent] = useState(null);
 
-
-  useEffect(() => {
-    if (information != null) {
-      setIdGgct(information.idGgct);
-    } else {
-      setIdGgct('');
-    }
-  }, [information]);
+  console.log(information)
 
   const handleDelete = async () => {
-    if (information.trangThai === 0) {
-      console.log(information.idGgct);
-      await remove(information.idGgct);
-      setAlertContent({
-        type: 'success',
-        message: 'Xóa thành công!',
-      });
-    } else if (information.trangThai === 1) {
-      setAlertContent({
-        type: 'warning',
-        message: 'Không thể xóa!!!',
-      });
+    if (information.length !== 0) {
+      console.log('Request Payload:', information);
+      try {
+        const response = await removeAll(information);
+        console.log('Server Response:', response);
+        setAlertContent({
+          type: 'success',
+          message: 'Xóa thành công!',
+        });
+      } catch (error) {
+        console.error('Error from Server:', error);
+        setAlertContent({
+          type: 'error',
+          message: 'Lỗi của chúng tôi!',
+        });
+      }
+      handleClose();
     } else {
       setAlertContent({
         type: 'error',
         message: 'Lỗi của chúng tôi!',
       });
+      handleClose();
     }
-    handleClose();
   };
+
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -63,9 +61,9 @@ export default function ModalDeleteDiscount(props) {
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{'Xóa Giảm Giá'}</DialogTitle>
+        <DialogTitle>{'Xóa Coupons'}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">Xóa Giảm Giá Có Mã Là: {idGgct}</DialogContentText>
+          <DialogContentText id="alert-dialog-slide-description">Xóa Coupons </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Hủy</Button>

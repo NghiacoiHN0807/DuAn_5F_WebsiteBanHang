@@ -24,18 +24,22 @@ import {
   Snackbar,
   Alert,
   Chip,
+  TextField,
+  Grid,
 } from '@mui/material';
+import { CSVLink } from 'react-csv';
+import { makeStyles } from '@material-ui/core';
 // components
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
-import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
+import { UserListHead } from '../../sections/@dashboard/user';
 import ModalDeleteDiscount from './Modal-Delete-Discount';
 // mock
 // import USERLIST from '../_mock/user';
 // import { useEffect } from 'react';
 import { getSanPhamDetails } from '../../service/giamGiaService';
-import ModelUpdateGiamGia from './ModalsUpdateGiamGia';
+import UserListToolbarDiscounts from './UserListToolbarDiscounts';
 
 // ----------------------------------------------------------------------
 
@@ -70,19 +74,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
-}
-
 export default function DiscountPage() {
   // Select list of users
 
@@ -102,6 +93,57 @@ export default function DiscountPage() {
 
   const [listData, setListData] = useState([]);
 
+  const [startDateFilter, setStartDateFilter] = useState('');
+
+  const [endDateFilter, setEndDateFilter] = useState('');
+
+  const [statusFilter, setStatusFilter] = useState('');
+
+  const [minAmountFilter, setMinAmountFilter] = useState('');
+
+  const [maxAmountFilter, setMaxAmountFilter] = useState('');
+
+  const [selectedExports, setSelectedExports] = useState([]);
+
+  function applySortFilter(array, comparator, query) {
+    let filteredArray = array;
+
+
+    if (query) {
+      return filterData(array, query);
+    }
+
+    if (startDateFilter) {
+      const startDate = new Date(startDateFilter);
+      filteredArray = filteredArray.filter((_user) => new Date(_user.ngayBatDau) >= new Date(startDate));
+    }
+
+    if (endDateFilter) {
+      const endDate = new Date(endDateFilter);
+      filteredArray = filteredArray.filter((_user) => new Date(_user.ngayKetThuc) <= new Date(endDate));
+    }
+
+    if (statusFilter !== '') {
+      filteredArray = filteredArray.filter((_user) => _user.trangThai.toString() === statusFilter);
+    }
+
+    if (minAmountFilter !== '' && maxAmountFilter !== '') {
+      filteredArray = filteredArray.filter((_user) => {
+        const amount = parseFloat(_user.giaBanMin);
+        return amount >= parseFloat(minAmountFilter) && amount <= parseFloat(maxAmountFilter);
+      });
+    }
+
+    const stabilizedThis = filteredArray.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+    console.log("filteredArray: ", filteredArray)
+
+    return stabilizedThis.map((el) => el[0]);
+  }
   // Show Data On Tables
   // const [numberPages, setNumberPages] = useState(0);
   const getListData = async () => {
@@ -118,7 +160,7 @@ export default function DiscountPage() {
   // const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
     getListData();
-  }, []);
+  }, [startDateFilter, endDateFilter, statusFilter, minAmountFilter, maxAmountFilter]);
 
   // Open and Close menu
   const [object, getObject] = useState([]);
@@ -149,11 +191,13 @@ export default function DiscountPage() {
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  console.log(selected);
+
+  const handleClick = (event, idGgct) => {
+    const selectedIndex = selected.indexOf(idGgct);
     let newSelected = [];
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, idGgct);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -178,6 +222,17 @@ export default function DiscountPage() {
     setFilterName(event.target.value);
   };
 
+  function filterData(array, query) {
+    return array.filter((_user) =>
+      Object.values(_user).some((field) => {
+        if (typeof field === 'string') {
+          return field.toLowerCase().includes(query.toLowerCase());
+        }
+        return false;
+      })
+    );
+  }
+
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listData.length) : 0;
 
   const filteredUsers =
@@ -185,6 +240,7 @@ export default function DiscountPage() {
   const isNotFound = !filteredUsers.length && !!filterName;
 
 
+  console.log("filteredUsers: ", filteredUsers)
   // Set status of trangThai
   function mapTrangThaiToStatus(trangThai) {
     return trangThai === 0 ? <Chip
@@ -227,10 +283,6 @@ export default function DiscountPage() {
     return `HD${newNumber.toString().padStart(5, '0')}`;
   };
 
-  let getIdHttp;
-
-  const currentDate = new Date();
-  const formattedDate = format(currentDate, 'yyyy-MM-dd');
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -278,7 +330,60 @@ export default function DiscountPage() {
     return formattedEndDate;
   };
 
+  const useStyles = makeStyles((theme) => ({
+    filterContainer: {
+      display: 'grid',
+      gap: theme.spacing(2),
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 200px))',
+      margin: theme.spacing(2),
+    },
+  }));
 
+  const classes = useStyles();
+
+  // const TABLE_HEAD = [
+  //   { id: 'stt', label: 'STT', alignRight: false },
+  //   { id: 'anh', label: 'Ảnh', alignRight: false },
+  //   { id: 'tenchuongtrinh', label: 'Chương Trình', alignRight: false },
+  //   { id: 'tensanpham', label: 'Tên sản phẩm', alignRight: false },
+  //   { id: 'mucgiam', label: 'Mức giảm', alignRight: false },
+  //   { id: 'thoigian', label: 'Thời gian', alignRight: false },
+  //   { id: 'dongia', label: 'Đơn giá', alignRight: false },
+  //   { id: 'sotienconlai', label: 'Số tiền còn lại', alignRight: false },
+  //   { id: 'trangthai', label: 'Trạng Thái', alignRight: false },
+  //   { id: 'thaotac', label: 'Thao Tác', alignRight: false }
+  // ];
+  const handleExportData = () => {
+    const res = [];
+    if (listData && listData.length > 0) {
+      res.push([
+        'STT',
+        'Ảnh',
+        'Chương Trình',
+        'Tên sản phẩm',
+        'Mức giảm',
+        'Thời gian',
+        'Đơn giá',
+        'Số tiền còn lại',
+        'Trạng Thái',
+      ]);
+      listData.map((item, index) => {
+        const array = [];
+        array[0] = index;
+        array[1] = item.urlImage;
+        array[2] = item.tenChuongTrinh;
+        array[3] = item.tenSp;
+        array[4] = `${item.mucGiamTienMat === null ? `${item.mucGiamPhanTram} %` : formatCurrency(item.mucGiamTienMat)}`;
+        array[5] = `${formatDate(item.ngayBatDau)} - ${formatDate(item.ngayKetThuc)}`;
+        array[6] = `${item.giaBanMin === item.giaBanMax ? formatCurrency(item.giaBanMin) : `${formatCurrency(item.giaBanMin)} - ${formatCurrency(item.giaBanMax)}`}`;
+        array[7] = `${item.giaThucTeMin === item.giaThucTeMax ? formatCurrency(item.giaThucTeMin) : `${formatCurrency(item.giaThucTeMin)} - ${formatCurrency(item.giaThucTeMax)}`}`;
+        array[8] = `${item.trangThai === 0 ? 'Hoạt động' : 'Dừng hoạt động'}`;
+        return res.push(array);
+      });
+      setSelectedExports(res);
+      // done();
+    }
+  };
   return (
     <>
       <Helmet>
@@ -298,8 +403,52 @@ export default function DiscountPage() {
         </Stack>
 
         <Card>
-          <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
-
+          <UserListToolbarDiscounts numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} information={selected} getListData={getListData} />
+          <Grid container className={classes.filterContainer}>
+            <TextField
+              label="Ngày Bắt Đầu"
+              type="date"
+              value={startDateFilter}
+              onChange={(event) => setStartDateFilter(event.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <TextField
+              label="Ngày Kết Thúc"
+              type="date"
+              value={endDateFilter}
+              onChange={(event) => setEndDateFilter(event.target.value)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+            <TextField
+              select
+              label="Trạng Thái"
+              value={statusFilter}
+              onChange={(event) => setStatusFilter(event.target.value)}
+            >
+              <MenuItem value="">Tất Cả</MenuItem>
+              <MenuItem value="0">Hoạt Động</MenuItem>
+              <MenuItem value="10">Dừng Hoạt Động</MenuItem>
+            </TextField>
+            <TextField
+              label="Số Tiền Tối Thiểu"
+              type="number"
+              value={minAmountFilter}
+              onChange={(event) => setMinAmountFilter(event.target.value)}
+            />
+            <TextField
+              label="Số Tiền Tối Đa"
+              type="number"
+              value={maxAmountFilter}
+              onChange={(event) => setMaxAmountFilter(event.target.value)}
+            />
+          </Grid>
+          <CSVLink data={selectedExports} onClick={handleExportData}>
+            Download me
+          </CSVLink>
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>
@@ -311,6 +460,11 @@ export default function DiscountPage() {
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
+                  onStatusFilterChange={(event) => setStatusFilter(event.target.value)}
+                  onStartDateFilterChange={(event) => setStartDateFilter(event.target.value)}
+                  onEndDateFilterChange={(event) => setEndDateFilter(event.target.value)}
+                  onMinAmountFilterChange={(event) => setMinAmountFilter(event.target.value)}
+                  onMaxAmountFilterChange={(event) => setMaxAmountFilter(event.target.value)}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
