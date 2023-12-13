@@ -19,4 +19,6 @@ const removeAll = (ids) => custom.delete('/coupons/api/remove-all', {
     },
 })
 
-export { getAll, add, update, del, detail, insertHd, removeAll }
+const delCouponHd = (id) => custom.post(`/coupons/api/remove-coupon/${id}`);
+
+export { getAll, add, update, del, detail, insertHd, removeAll, delCouponHd }
