@@ -25,10 +25,9 @@ const ModalChangeAddressNoAcc = (props) => {
   ModalChangeAddressNoAcc.propTypes = {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
-    listData: PropTypes.array.isRequired,
     getDetailHD: PropTypes.func.isRequired,
   };
-  const { open, handleClose, listData, getDetailHD } = props;
+  const { open, handleClose, getDetailHD } = props;
 
   const [alertContent, setAlertContent] = useState(null);
 
@@ -164,19 +163,58 @@ const ModalChangeAddressNoAcc = (props) => {
   const param = useParams();
   const idHdParam = param.id;
   // Get number
-  const handleChoose = async (item) => {
+  // Check Validated numberphone
+  function isValidPhoneNumber(phoneNumber) {
+    const phoneRegex = /^(03|09)\d{8}$/;
+    return phoneRegex.test(phoneNumber);
+  }
+  const containsNumber = (text) => /\d/.test(text);
+  const isValidEmail = (email) => {
+    const emailPattern = /^[a-zA-Z0-9._-]+@gmail\.com$/;
+    return emailPattern.test(email);
+  };
+  const handleChoose = async () => {
     try {
-      console.log('item: ', item);
-      console.log('item.tienShip: ', item.phiShip);
-      const diaChi = `${item.diaChiCuThe}, ${item.phuongXa}, ${item.quanHuyen}, ${item.tinhThanh}`;
-      await updateClientPayment2(idHdParam, item.tenNguoiNhan, item.sdt, item.taiKhoan.email, diaChi, item.phiShip);
+      if (!tenKhShip.trim() || containsNumber(tenKhShip)) {
+        setAlertContent({
+          type: 'warning',
+          message: 'Tên Không Đúng!!!Vui Lòng Nhập Lại ',
+        });
+      } else if (!tenKhShip.trim() || !sdtKHShip.trim()) {
+        setAlertContent({
+          type: 'warning',
+          message: 'Hãy Nhập Thông Tin Người Nhận Hàng!!!',
+        });
+      } else if (!isValidEmail(emailKHShip)) {
+        setAlertContent({
+          type: 'warning',
+          message: 'Hãy Nhập Đúng Email Cá Nhân!!!',
+        });
+      } else if (!isValidPhoneNumber(sdtKHShip)) {
+        setAlertContent({
+          type: 'warning',
+          message: 'Hãy Nhập Đúng Định Dạng Số Của Việt Nam!!!',
+        });
+      } else if (!result.trim() || result === '' || diachiCuThe === '' || !diachiCuThe.trim()) {
+        setAlertContent({
+          type: 'warning',
+          message: 'Hãy Nhập Đầy Đủ Địa Chỉ Nhận Hàng!!!',
+        });
+      } else if (selectedWard === '' || selectedDistrict === '' || selectedProvince === '') {
+        setAlertContent({
+          type: 'warning',
+          message: 'Hãy Nhập Địa Chỉ Nhận Hàng!!!',
+        });
+      } else {
+        await updateClientPayment2(idHdParam, tenKhShip, sdtKHShip, emailKHShip, result, tienShip);
 
-      setAlertContent({
-        type: 'success',
-        message: 'Cập Nhập Địa Chỉ Thành Công',
-      });
-      handleClose();
-      getDetailHD();
+        setAlertContent({
+          type: 'success',
+          message: 'Cập Nhập Địa Chỉ Thành Công',
+        });
+        handleCloseAll();
+        getDetailHD();
+      }
     } catch (error) {
       setAlertContent({
         type: 'warning',
@@ -186,11 +224,24 @@ const ModalChangeAddressNoAcc = (props) => {
     }
   };
 
+  const handleCloseAll = () => {
+    getTenKHShip('');
+    getSdtKHShip('');
+    getEmailKHShip('');
+    setSelectedWard('');
+    setDiachiCuThe('');
+    setSelectedProvince('');
+    setSelectedDistrict('');
+    setResult('');
+    getTienShip(0);
+    handleClose();
+  };
+
   return (
     <>
       <div>
-        <Dialog open={open} onClose={handleClose} maxWidth="xl" fullWidth>
-          <DialogTitle>DANH SÁCH ĐỊA CHỈ CỦA TÀI KHOẢN</DialogTitle>
+        <Dialog open={open} onClose={handleCloseAll} maxWidth="xl" fullWidth>
+          <DialogTitle>Hãy Nhập Địa Chỉ Muốn Thay Đổi</DialogTitle>
           <DialogContent>
             <TextField
               id="standard-multiline-flexible"
@@ -213,6 +264,17 @@ const ModalChangeAddressNoAcc = (props) => {
               fullWidth
               sx={{ marginTop: 2 }}
               onChange={(e) => getSdtKHShip(e.target.value)}
+            />
+            <TextField
+              id="standard-multiline-flexible"
+              label="Email"
+              multiline
+              maxRows={4}
+              variant="outlined"
+              size="small"
+              fullWidth
+              sx={{ marginTop: 2 }}
+              onChange={(e) => getEmailKHShip(e.target.value)}
             />
             <div className="address">
               <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}>
@@ -302,7 +364,7 @@ const ModalChangeAddressNoAcc = (props) => {
             </div>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Hủy</Button>
+            <Button onClick={handleCloseAll}>Hủy</Button>
             <Button onClick={handleChoose}>Hoàn Tất</Button>
           </DialogActions>
         </Dialog>

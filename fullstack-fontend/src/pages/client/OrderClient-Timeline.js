@@ -40,6 +40,8 @@ import ModalAddProduct from '../../forms/Modals-AddProduct';
 import ModalDeleteProductOnCart from '../../forms/Modal-Delete-Product';
 import ModalUpdateProductOnCart from '../../forms/Modals-Update-Product-Cart';
 import ModalReturnItem from '../../forms/client/Modals-ReturnItem';
+import { selectDiaChiByTK } from '../../service/client/Payment';
+import ModalChangeAddress from '../../forms/Modals-Change-Address';
 
 const styles = {
   container: {
@@ -108,7 +110,7 @@ const OrderClientTimeline = ({ classes }) => {
   function getColorForTrangThai(trangThai) {
     if (trangThai === 10) return '#ff0000';
     if (trangThai === 6) return '#ffff00';
-    if (trangThai === 7) return '#ffA500';
+    if (trangThai === 7 || trangThai === 12) return '#ffA500';
     if (trangThai >= 0) return '#64a338';
     return '#E3E3E3';
   }
@@ -125,6 +127,8 @@ const OrderClientTimeline = ({ classes }) => {
     if (trangThai === 7) return 'Chỉnh Sửa Đơn Hàng';
     if (trangThai === 10) return 'Đơn Hàng Đã Bị Hủy';
     if (trangThai === 11) return 'Tạo Hóa Đơn Treo Thành Công';
+    if (trangThai === 12) return 'Chỉnh Sửa Địa Chỉ';
+
     return 'Trạng Thái Trống';
   }
 
@@ -136,7 +140,7 @@ const OrderClientTimeline = ({ classes }) => {
     if (trangThai === 4 || trangThai === 9) return FcSalesPerformance;
     if (trangThai === 5) return FcHome;
     if (trangThai === 6) return FcProcess;
-    if (trangThai === 7) return FcTodoList;
+    if (trangThai === 7 || trangThai === 12) return FcTodoList;
     if (trangThai === 10) return FcDeleteDatabase;
     return FcCancel;
   }
@@ -301,6 +305,23 @@ const OrderClientTimeline = ({ classes }) => {
     setShowModalDelete(false);
     getListData();
   };
+  // Handle Change Address
+  const [showModalsAddress, setShowModalAddress] = useState(false);
+  const [listAddess, setListAddress] = useState([]);
+  const handleChangeAddress = async () => {
+    if (listData[0].idHd.idKH) {
+      const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
+      console.log(getData);
+      setListAddress(getData);
+      setShowModalAddress(true);
+    } else {
+      console.log('Sửa Địa Chỉ Mà Không Có Tài Khoản');
+    }
+  };
+  const handleCloseAddress = () => {
+    // getDetailHD();
+    setShowModalAddress(false);
+  };
   return (
     <>
       <Container sx={{ marginTop: 5 }}>
@@ -347,7 +368,7 @@ const OrderClientTimeline = ({ classes }) => {
               <Typography variant="h6" gutterBottom>
                 Thông Tin Khách Hàng{' '}
               </Typography>
-              <Button disabled={activeIndex >= 1} size="small" variant="outlined">
+              <Button onClick={() => handleChangeAddress()} disabled={activeIndex >= 1} size="small" variant="outlined">
                 Chỉnh sửa thông tin
               </Button>
             </Stack>
@@ -573,6 +594,16 @@ const OrderClientTimeline = ({ classes }) => {
             /> */}
             {/* Dialog xác nhận xóa */}
             <ModalDeleteDirectSale open={openDelete} handleClose={handleClose1} information={information} />
+            {listAddess && (
+              <>
+                <ModalChangeAddress
+                  open={showModalsAddress}
+                  listData={listAddess}
+                  handleClose={handleCloseAddress}
+                  getDetailHD={getListData}
+                />
+              </>
+            )}
           </div>
         </div>
       </Container>
