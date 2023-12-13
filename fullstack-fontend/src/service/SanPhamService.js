@@ -2,7 +2,7 @@ import custom from './custom-axios';
 
 const fetchAllSP = (page) => custom.get(`/san-pham/view-all?p=${page}`); // Call API
 
-const fetchSpWithImg = () => custom.get(`/san-pham/getSpWithImg`); // Call API
+const fetchSpForAdmin = () => custom.get(`/san-pham/getSpForAdmin`); // Call API
 
 const fetchSP = () => custom.get(`/san-pham/listSP`); // Call API
 
@@ -37,7 +37,7 @@ const putUpdateSanPham = (idSp, maSp, tenSp, idCl, idLsp, idXx, idCoAo, idTayAo,
     trangThai,
   });
 
-const fetchSpForClient = () => custom.get(`/san-pham/getSpForClient`);
+const fetchSpForClient = (page) => custom.get(`/san-pham/getSpForClient?p=${page}`);
 
 const getTopSpBanChayForClient = () => custom.get(`/san-pham/getTopSpBanChayForClient`);
 
@@ -52,7 +52,7 @@ export {
   postAddSanPham,
   deleteSanPham,
   putUpdateSanPham,
-  fetchSpWithImg,
+  fetchSpForAdmin,
   fetchSpForClient,
   getTopSpBanChayForClient,
   getSpGiamGiaForClient,
