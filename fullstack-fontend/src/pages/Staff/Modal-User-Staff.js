@@ -31,6 +31,7 @@ import {
   TextField,
 
 } from '@mui/material';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import { makeStyles } from '@material-ui/core';
 import { filter } from 'lodash';
 import { CSVLink } from 'react-csv';
@@ -273,14 +274,14 @@ export default function UserStaff() {
       gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 200px))',
       margin: theme.spacing(2),
     },
-    downloadButton: {
-      height: "55px",
-      backgroundColor: theme.palette.primary.main,
-      color: theme.palette.primary.contrastText,
-      '&:hover': {
-        backgroundColor: theme.palette.primary.dark,
-      },
-    },
+    // downloadButton: {
+    //   height: "55px",
+    //   backgroundColor: theme.palette.primary.main,
+    //   color: theme.palette.primary.contrastText,
+    //   '&:hover': {
+    //     backgroundColor: theme.palette.primary.dark,
+    //   },
+    // },
   }));
 
 
@@ -362,15 +363,18 @@ export default function UserStaff() {
                 <MenuItem value="1">Quản Lý</MenuItem>
                 <MenuItem value="8">Nhân Viên</MenuItem>
               </TextField>
-              <CSVLink data={selectedExports} onClick={handleExportData}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  className={classes.downloadButton}
-                >
-                  Excel
-                </Button>
-              </CSVLink>
+              <CSVLink data={selectedExports} filename={'DSNV.csv'} onClick={handleExportData}>
+                  <Button
+                    aria-label="download"
+                    Button
+                    variant="outlined"
+                    startIcon={<GetAppIcon />}
+                    size="large"
+                    color="success"
+                  >
+                    Xuất Excel
+                  </Button>
+                </CSVLink>
             </Grid>
 
 

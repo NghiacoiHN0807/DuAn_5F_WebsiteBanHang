@@ -64,7 +64,9 @@ public class TaiKhoan {
 
     @Column(name = "so_can_cuoc")
     @NotEmpty(message = "Không Được Để Trống Số Căn Cước")
+    @Pattern(regexp = "^[0-9]{9,12}$", message = "Số Căn Cước phải có từ 9 đến 12 chữ số")
     private String soCanCuoc;
+
 
     @Column(name = "trang_thai")
     private Integer trangThai = 0;
