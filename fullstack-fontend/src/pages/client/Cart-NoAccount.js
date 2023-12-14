@@ -387,7 +387,7 @@ export default function CartNoAccount() {
           </div>
         </section>
         {/* cart + summary */}
-        <section>
+        {/* <section>
           <div className="container my-5">
             <header className="mb-4">
               <h3>Recommended items</h3>
@@ -517,7 +517,7 @@ export default function CartNoAccount() {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
         {/* Recommended */}
       </div>
       {alertContent && (

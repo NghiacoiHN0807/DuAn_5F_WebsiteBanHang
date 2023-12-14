@@ -67,6 +67,11 @@ export default function ProductsPage() {
 
   const displayProducts = isFiltered ? listLoc : listSP;
 
+<<<<<<< HEAD
+=======
+  console.log('displayProducts: ', displayProducts);
+
+>>>>>>> origin/nghiant0807
   return (
     <>
       <Helmet>

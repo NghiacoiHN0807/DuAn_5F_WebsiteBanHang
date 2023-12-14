@@ -43,6 +43,8 @@ public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, In
             "WHERE ct.trang_thai = 0 AND hd.id_hd = ?1")
     List<Object[]> getListProductOncart(Integer idHd);
 
+    @Query(value = "SELECT x FROM HoaDonChiTiet x WHERE x.idHd.idHd =?1 AND x.idCtsp.idCtsp = ?2 AND x.trangThai = 0")
+    List<HoaDonChiTiet> findAllByIdCtspExsit(Integer idHd, Integer idCtsp);
     List<HoaDonChiTiet> findAllByIdHd_IdHdAndTrangThai(Integer idHd, Integer trangThai);
 
     HoaDonChiTiet findByIdHd_IdHdAndTrangThai(Integer idHd, Integer trangThai);
@@ -50,5 +52,10 @@ public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, In
     @Query(value = "SELECT c FROM HoaDonChiTiet c WHERE c.idHd.idKH.idTaiKhoan = ?1")
     Page<HoaDonChiTiet> findByIdHd_IdKH_IdTaiKhoan(Integer idTK, Pageable pageable);
 
-    List<HoaDonChiTiet> findAllByIdHd_TrangThai(Integer trangThai);
+
+    @Query(value = "SELECT x FROM HoaDonChiTiet x WHERE x.idHd.idHd =?1 AND x.idHd.trangThai = ?2")
+    List<HoaDonChiTiet> findAllByIdHd_TrangThai(Integer idHd, Integer trangThai);
+
+    @Query(value = "SELECT x FROM HoaDonChiTiet x WHERE x.idHd.idHd =?1 AND x.trangThai = ?2")
+    List<HoaDonChiTiet> findAllByIdHdANDTT(Integer idHd, Integer trangThai);
 }

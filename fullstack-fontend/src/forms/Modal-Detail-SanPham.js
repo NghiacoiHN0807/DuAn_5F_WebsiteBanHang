@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../scss/Modal-Detail-SanPham.scss';
 // import { selectAllImgProduct } from "../services/BillSevice";
@@ -13,7 +13,7 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import PropTypes from 'prop-types';
 import { findByProductNameAndSize } from '../service/BillSevice';
-import { postAddDirect, updateCart } from '../service/DirectSaleSevice';
+import { postAddDirect } from '../service/DirectSaleSevice';
 
 const ModalDetailProduct = (props) => {
   ModalDetailProduct.propTypes = {
@@ -21,10 +21,10 @@ const ModalDetailProduct = (props) => {
     handleCloseDetai: PropTypes.func.isRequired,
     dataDetail: PropTypes.array.isRequired,
     selectDataCart: PropTypes.func.isRequired,
-    DataCart: PropTypes.array.isRequired,
+    getDetailHD: PropTypes.func.isRequired,
     listImages: PropTypes.string.isRequired,
   };
-  const { show, handleCloseDetai, dataDetail, selectDataCart, DataCart, listImages } = props;
+  const { show, handleCloseDetai, dataDetail, getDetailHD, selectDataCart, listImages } = props;
 
   //   Insert product
   //   Get Name Of Size And Number
@@ -58,19 +58,26 @@ const ModalDetailProduct = (props) => {
   };
 
   const handleShowMS = (mauSac) => {
-    const checkSoLuong = dataDetail.filter(
-      (item) => item.idMs.tenMs === mauSac && item.idSize.tenSize === selectedSize
-    );
-    console.log('checkSoLuong:', checkSoLuong);
-
-    if (isMSSelected && selectedMauSac === mauSac) {
-      setSelectedMauSac(null);
-      setIsMSSelected(false);
-      setSelectSoLuongTon([]);
+    if (isSizeSelected === false) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Vui Lòng Chọn Size',
+      });
     } else {
-      setSelectSoLuongTon(checkSoLuong);
-      setSelectedMauSac(mauSac);
-      setIsMSSelected(true);
+      const checkSoLuong = dataDetail.filter(
+        (item) => item.idMs.tenMs === mauSac && item.idSize.tenSize === selectedSize
+      );
+      console.log('checkSoLuong:', checkSoLuong);
+
+      if (isMSSelected && selectedMauSac === mauSac) {
+        setSelectedMauSac(null);
+        setIsMSSelected(false);
+        setSelectSoLuongTon([]);
+      } else {
+        setSelectSoLuongTon(checkSoLuong);
+        setSelectedMauSac(mauSac);
+        setIsMSSelected(true);
+      }
     }
   };
 
@@ -87,62 +94,26 @@ const ModalDetailProduct = (props) => {
 
   const handleChoose = async () => {
     const selectedSp = dataDetail[0].idSp.tenSp;
-    console.log('Selected selectedSp:', selectedSp);
+    console.log('Selected selectedSp:', selectedSp, selectedSize, selectedMauSac);
 
     try {
       const getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize, selectedMauSac);
 
-      console.log('Selected getOneCTSP:', getOneCTSP);
+      //   Insert to the cart
+      const donGia = getOneCTSP.giaThucTe * quantity;
 
-      const existingItem = DataCart.find((item) => item[10] === getOneCTSP.idCtsp);
-      console.log('Selected existingItem:', existingItem);
-
-      if (selectedSize === null || selectedMauSac === null || selectedSp === '') {
-        setAlertContent({
-          type: 'warning',
-          message: 'Xin mời chọn size và màu sắc của sản phẩm',
-        });
-      } else if (quantity < 1 || quantity === '' || Number.isNaN(quantity)) {
-        setAlertContent({
-          type: 'warning',
-          message: 'Vui lòng chọn số lượng lớn hơn 0',
-        });
-      } else if (existingItem) {
-        //   Get IdHdct
-        const getIdHdct = existingItem[1];
-        //   Get soLuong
-        const oldQuantity = existingItem[8];
-        const newQuantity = oldQuantity + quantity;
-        //   Get donGia
-        const donGia = existingItem[7] * newQuantity;
-
-        //   Update Product On Cart
-        await updateCart(getIdHdct, getOneCTSP, newQuantity, donGia);
-        //   Close the modal
-        setSelectedSize(null);
-        handleClose();
-        setQuantity(1);
-        //   Load new data on cart
-        selectDataCart();
-        setAlertContent({
-          type: 'warning',
-          message: 'Sản phẩm đã có trong giỏ hàng. Chúng tôi đã cộng thêm số lượng vào sản phẩm',
-        });
-      } else {
-        //   Insert to the cart
-        const donGia = getOneCTSP.giaThucTe * quantity;
-        await postAddDirect(getOneCTSP, quantity, donGia, idHdParam, 0);
-        //   Close the modal
-        setSelectedSize(null);
-        handleClose();
-        setQuantity(1);
-        //   Load new data on cart
-        selectDataCart();
-        setAlertContent({
-          type: 'success',
-          message: 'Thêm sản phẩm thành công',
-        });
-      }
+      await postAddDirect(getOneCTSP, quantity, donGia, idHdParam, 0);
+      //   Close the modal
+      setSelectedSize(null);
+      handleClose();
+      setQuantity(1);
+      //   Load new data on cart
+      selectDataCart();
+      setAlertContent({
+        type: 'success',
+        message: 'Thêm sản phẩm thành công',
+      });
+      // }
     } catch (error) {
       console.log('error: ', error);
     }
@@ -180,7 +151,9 @@ const ModalDetailProduct = (props) => {
   }
 
   const handleClose = () => {
+    getDetailHD();
     setSelectSoLuongTon([]);
+    setAvailableColors([]);
     setIsMSSelected(false);
     setIsSizeSelected(false);
     setSelectedMauSac(null);
@@ -239,7 +212,6 @@ const ModalDetailProduct = (props) => {
                         ))}
                       </div>
                     </Box>
-                    {/* Box mau sac */}
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <div>
                         Màu Sắc:{' '}
