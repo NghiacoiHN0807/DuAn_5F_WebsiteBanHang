@@ -101,6 +101,16 @@ export default function AddSanPham() {
   const navigate = useNavigate();
 
   const handleSave = async () => {
+    if (tenSp.trim() === '') {
+      setEmptyTen(true);
+    }
+    if (listSP.some((item) => item.tenSp === tenSp)) {
+      setDuplicateAdd(true);
+    }
+    if (chatLieu === '' || loaiSP === '' || xuatXu === '' || coAo === '' || tayAo === '') {
+      checkEmptyCBB();
+      handleAlertClick('Không được để trống trường', 'warning');
+    }
     if (
       tenSp.trim() === '' ||
       listSP.some((item) => item.tenSp === tenSp) ||
@@ -110,9 +120,6 @@ export default function AddSanPham() {
       coAo === '' ||
       tayAo === ''
     ) {
-      setEmptyTen(true);
-      setDuplicateAdd(true);
-      checkEmptyCBB();
       handleClose();
     } else {
       // get object all\
@@ -290,7 +297,6 @@ export default function AddSanPham() {
     if (tayAo === '') {
       setEmptyTayAo(true);
     }
-    handleAlertClick('Không được để trống trường', 'warning');
   };
 
   return (

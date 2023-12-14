@@ -386,13 +386,12 @@ export default function UserPage() {
                 <CSVLink data={selectedExports} filename={'DSSP.csv'} onClick={handleExportData}>
                   <Button
                     aria-label="download"
-                    Button
                     variant="outlined"
                     startIcon={<GetAppIcon />}
                     size="large"
                     color="success"
                   >
-                    Export
+                    Xuất Excel
                   </Button>
                 </CSVLink>
                 <TextField
