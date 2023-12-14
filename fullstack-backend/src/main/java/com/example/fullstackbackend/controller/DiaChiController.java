@@ -38,9 +38,19 @@ public class DiaChiController {
     }
 
     @GetMapping("/tai-khoan/")
+    public List<DiaChi> viewAllTK(@RequestParam("m") String maTaiKhoan
+                                  ) {
+        return diaChiSevice.getAllTK(maTaiKhoan);
+    }
+    @GetMapping("/tai-khoan-client/")
     public List<DiaChi> viewAllByTK(@RequestParam("m") String maTaiKhoan
                                   ) {
         return diaChiSevice.getAllByTK(maTaiKhoan);
+    }
+    @GetMapping("/tai-khoan-count/")
+    public Long countDiaChi(@RequestParam("m") String maTaiKhoan
+                                  ) {
+        return diaChiSevice.CheckDiaChi(maTaiKhoan);
     }
 
     @PostMapping("add")
@@ -53,9 +63,14 @@ public class DiaChiController {
             for (FieldError fieldError : fieldErrors) {
                 errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
             }
-
             return ResponseEntity.badRequest().body(errorMap);
         } else {
+            if(diaChiSevice.Check5DiaChi(diaChi.getTaiKhoan().getMaTaiKhoan())){
+                Map<String, String> errorMap = new HashMap<>();
+                errorMap.put("error", "Giới Hạn Địa Chỉ Hoạt Động là 5");
+                return ResponseEntity.badRequest().body(errorMap);
+            }
+
             DiaChi addedDiaChi = diaChiSevice.add(diaChi);
             return ResponseEntity.ok(addedDiaChi);
         }

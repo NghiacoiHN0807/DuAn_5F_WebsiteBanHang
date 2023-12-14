@@ -13,6 +13,8 @@ import java.util.List;
 public interface DiaChiRepository extends JpaRepository<DiaChi, Integer> {
     @Query("select d from DiaChi d where d.taiKhoan.maTaiKhoan = ?1 and d.trangThai between 0 and 4")
     List<DiaChi> findByMaTaiKhoan_MaTaiKhoan(String maTaiKhoan);
+    @Query("select d from DiaChi d where d.taiKhoan.maTaiKhoan = ?1 ")
+    List<DiaChi> findByMaTaiKhoan(String maTaiKhoan);
 
     @Query("select count(d) from DiaChi d where d.taiKhoan.maTaiKhoan = ?1 and d.trangThai between 0 and 4")
     long CountTaiKhoan(String maTaiKhoan);

@@ -46,7 +46,7 @@ export default function ForgetPasswordForm() {
         if (res.ok) {
             showAlert('success', 'Mật khẩu mới đã được gửi');
         } else {
-            showAlert('error', 'Thêm Thất Bại');
+            showAlert('error', 'Sửa mật khẩu Thất Bại');
         }
 
     };
@@ -64,10 +64,10 @@ export default function ForgetPasswordForm() {
                     alignItems: 'center',
                 }}
             >
-                <Typography component="h1" variant="h5">
+                <Typography component="h1" variant="h3">
                    Quên Mật Khẩu
                 </Typography>
-                <Box component="form" sx={{mt: 3}}>
+                <Box component="form" sx={{mt: 3, textAlign: 'center', width: '100%'}}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <TextField
@@ -87,7 +87,7 @@ export default function ForgetPasswordForm() {
                         onClick={() => handleSave()}
                         fullWidth
                         variant="contained"
-                        sx={{mt: 3, mb: 2}}
+                        sx={{mt: 4, mb: 3 ,fontSize: '18px'}}
                     >
                         Quên mật khẩu
                     </Button>

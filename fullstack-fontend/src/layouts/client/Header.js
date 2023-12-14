@@ -14,7 +14,7 @@ import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import MailIcon from '@mui/icons-material/Mail';
 import { Avatar, Box, Chip, ListItemIcon, Menu, MenuItem, Tooltip, AppBar } from '@mui/material';
-import { Logout, PersonAdd, Settings } from '@mui/icons-material';
+import {Logout, PersonAdd, Settings, ShareLocation} from '@mui/icons-material';
 import logo5F from '../../assets/logo_5F.png';
 // utils
 import { bgBlur } from '../../utils/cssStyles';
@@ -97,7 +97,12 @@ const Header = () => {
   const handleSelectAllBill = () => {
     navigate(`/client/select-bill-client/${account.user.idTaiKhoan}`);
   };
-
+  const handleProfile = () => {
+    navigate(`/client/profile`);
+  };
+  const handleLocation = () => {
+    navigate(`/client/address`);
+  };
   return (
     <>
       <SectionWithButton>
@@ -129,7 +134,7 @@ const Header = () => {
                         <Tooltip title="Account settings">
                           <Chip
                             avatar={<Avatar src="/static/images/avatar/1.jpg" />}
-                            label={account.displayName}
+                            label={account.email}
                             onClick={handleClick}
                           />
                         </Tooltip>
@@ -175,11 +180,17 @@ const Header = () => {
                           </ListItemIcon>
                           Hóa Đơn Của Tôi
                         </MenuItem>
-                        <MenuItem onClick={handleClose}>
+                        <MenuItem onClick={handleProfile}>
                           <ListItemIcon>
                             <Settings fontSize="small" />
                           </ListItemIcon>
                           Thông Tin
+                        </MenuItem>
+                        <MenuItem onClick={handleLocation}>
+                          <ListItemIcon>
+                            <ShareLocation fontSize="small" />
+                          </ListItemIcon>
+                          Địa Chỉ
                         </MenuItem>
                         <MenuItem onClick={handleLogout}>
                           <ListItemIcon>

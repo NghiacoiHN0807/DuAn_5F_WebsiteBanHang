@@ -108,7 +108,7 @@ public class LoginController {
             }
             if (!userService.checkMailExists(email)) {
                 Map<String, String> errorMap = new HashMap<>();
-                errorMap.put("email", "Email Không tồn tại");
+                errorMap.put("email", "Email không tồn tại trong website");
                 return ResponseEntity.badRequest().body(errorMap);
             } else if (userService.checkBan(email)) {
                 Map<String, String> errorMap = new HashMap<>();

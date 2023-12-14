@@ -14,4 +14,18 @@ const deleteTaiKhoan = (id) => custom.patch(`/tai-khoan/delete/${id}`);
 
 const detailTaiKhoan = (id) => custom.get(`/tai-khoan/detail/${id}`);
 
-export { taiKhoan, postAddTaiKhoan, deleteTaiKhoan, postUpdateTaiKhoan, detailTaiKhoan, taiKhoan2 };
+const postChangePassTaiKhoan= (idTaiKhoan, maTaiKhoan, idChucVu, ho, ten, sdt, email, matKhau, soCanCuoc, trangThai,pass,passChange) =>
+    custom.post(`/tai-khoan/changePass?pass=${pass}&newPass=${passChange}`, {
+        idTaiKhoan,
+        maTaiKhoan,
+        idChucVu,
+        ho,
+        ten,
+        sdt,
+        email,
+        matKhau,
+        soCanCuoc,
+        trangThai,
+    });
+
+export { taiKhoan, postAddTaiKhoan, deleteTaiKhoan, postUpdateTaiKhoan, detailTaiKhoan, taiKhoan2,postChangePassTaiKhoan };
