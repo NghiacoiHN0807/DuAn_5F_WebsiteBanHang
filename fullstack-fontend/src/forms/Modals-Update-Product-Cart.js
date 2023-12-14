@@ -19,10 +19,12 @@ const ModalUpdateProductOnCart = (props) => {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     itemUpdateClassify: PropTypes.object.isRequired,
+    getDetailHD: PropTypes.func.isRequired,
+
     selectDataCart: PropTypes.func.isRequired,
     itemUpdate: PropTypes.object.isRequired,
   };
-  const { show, handleClose, itemUpdateClassify, selectDataCart, itemUpdate } = props;
+  const { show, handleClose, itemUpdateClassify, getDetailHD, selectDataCart, itemUpdate } = props;
 
   //   Insert product
   //   Get Name Of Size And Number
@@ -55,25 +57,32 @@ const ModalUpdateProductOnCart = (props) => {
   };
 
   const handleShowMS = (mauSac) => {
-    const checkSoLuong = Array.isArray(itemUpdateClassify)
-      ? [
-          ...new Set(
-            itemUpdateClassify.filter(
-              (item) => item.idMs.tenMs === mauSac.idMs.tenMs && item.idSize.tenSize === selectedSize
-            )
-          ),
-        ]
-      : [];
-    console.log('checkSoLuong:', checkSoLuong);
-
-    if (isMSSelected && selectedMauSac === mauSac.idMs.tenMs) {
-      setSelectedMauSac(null);
-      setIsMSSelected(false);
-      setSelectSoLuongTon([]);
+    if (!mauSac || !mauSac.idMs) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Vui Lòng Chọn Size',
+      });
     } else {
-      setSelectSoLuongTon(checkSoLuong);
-      setSelectedMauSac(mauSac.idMs.tenMs);
-      setIsMSSelected(true);
+      const checkSoLuong = Array.isArray(itemUpdateClassify)
+        ? [
+            ...new Set(
+              itemUpdateClassify.filter(
+                (item) => item.idMs.tenMs === mauSac.idMs.tenMs && item.idSize.tenSize === selectedSize
+              )
+            ),
+          ]
+        : [];
+      console.log('checkSoLuong:', checkSoLuong);
+
+      if (isMSSelected && selectedMauSac === mauSac.idMs.tenMs) {
+        setSelectedMauSac(null);
+        setIsMSSelected(false);
+        setSelectSoLuongTon([]);
+      } else {
+        setSelectSoLuongTon(checkSoLuong);
+        setSelectedMauSac(mauSac.idMs.tenMs);
+        setIsMSSelected(true);
+      }
     }
   };
   const [quantity, setQuantity] = useState(1); // Initialize with a default quantity
@@ -169,7 +178,9 @@ const ModalUpdateProductOnCart = (props) => {
     return formatter.format(price);
   }
   const handleCloseDetai = () => {
+    getDetailHD();
     setSelectSoLuongTon([]);
+    setAvailableColors([]);
     setIsMSSelected(false);
     setIsSizeSelected(false);
     setSelectedMauSac(null);

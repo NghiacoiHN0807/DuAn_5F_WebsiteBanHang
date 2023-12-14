@@ -23,8 +23,12 @@ import {
   Snackbar,
   Alert,
   Chip,
+  TextField,
+  Grid,
 } from '@mui/material';
 import { CSVLink } from 'react-csv';
+// import { filter } from 'lodash';
+import { makeStyles } from '@material-ui/core';
 
 // components
 import Iconify from '../components/iconify';
@@ -75,19 +79,7 @@ function filterData(array, query) {
     })
   );
 }
-function applySortFilter(array, comparator, query) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) return order;
-    return a[1] - b[1];
-  });
-  if (query) {
-    return filterData(array, query);
-    // return filter(array, (_user) => _user.maHd.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
-  return stabilizedThis.map((el) => el[0]);
-}
+
 const OrderManagement = () => {
   const [listData, setListData] = useState([]);
 
@@ -107,6 +99,59 @@ const OrderManagement = () => {
 
   const [selectedExports, setSelectedExports] = useState([]);
 
+  // Filter
+  const [startDateFilter, setStartDateFilter] = useState('');
+  const [endDateFilter, setEndDateFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+  function applySortFilter(array, comparator, query) {
+    let filteredArray = array;
+
+    if (query) {
+      return filterData(array, query);
+    }
+
+    if (statusFilter !== '') {
+      filteredArray = filteredArray.filter((_user) => _user.trangThai.toString() === statusFilter);
+    }
+
+    const startDate = startDateFilter ? new Date(startDateFilter) : null;
+    const endDate = endDateFilter ? new Date(endDateFilter) : null;
+
+    filteredArray = filteredArray.filter((_user) => {
+      const userDate = new Date(_user.ngayTao);
+      if (startDate && endDate) {
+        return userDate >= startDate && userDate <= endDate;
+      }
+      if (startDate) {
+        return userDate >= startDate;
+      }
+      if (endDate) {
+        return userDate <= endDate;
+      }
+      return true;
+    });
+
+    const stabilizedThis = filteredArray.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+
+    return stabilizedThis.map((el) => el[0]);
+  }
+
+  const useStyles = makeStyles((theme) => ({
+    filterContainer: {
+      display: 'grid',
+      gap: theme.spacing(2),
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 200px))',
+      margin: theme.spacing(2),
+    },
+  }));
+
+  const classes = useStyles();
+  // Get Data
   const getListData = async () => {
     try {
       const res = await getAllOrderManagement();
@@ -314,9 +359,21 @@ const OrderManagement = () => {
         'Kiểu Hóa Đơn',
         'Trạng Thái',
       ]);
-      listData.map((item) => {
+      listData.map((item, index) => {
         const array = [];
-        array[0] = item.idKH.ho;
+        array[0] = index + 1;
+        array[1] = item.maHd;
+        // Kiểm tra và thiết lập giá trị cho array[2]
+        if (item.idKH && item.idKH.ho && item.idKH.ten) {
+          array[2] = item.idKH.ho + item.idKH.ten;
+        } else {
+          array[2] = 'Khách Lẻ';
+        }
+        array[3] = item.idKH?.sdt || '';
+        array[4] = formatCurrency(item.thanhTien);
+        array[5] = formatDateTime(item.ngayTao);
+        array[6] = renderKieuHoaDon(item.kieuHoaDon).props.label;
+        array[7] = renderTrangThai(item.trangThai).props.label;
         return res.push(array);
       });
       setSelectedExports(res);
@@ -335,9 +392,9 @@ const OrderManagement = () => {
           <Typography variant="h4" gutterBottom>
             Hóa Đơn
           </Typography>
-          {/* <CSVLink data={selectedExports} onClick={handleExportData}>
+          <CSVLink data={selectedExports} onClick={handleExportData}>
             Download me
-          </CSVLink> */}
+          </CSVLink>
           <Button onClick={() => handleAdd()} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Thêm Hóa Đơn
           </Button>
@@ -348,6 +405,43 @@ const OrderManagement = () => {
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
+              <Grid container className={classes.filterContainer}>
+                <TextField
+                  label="Ngày Bắt Đầu"
+                  type="date"
+                  value={startDateFilter}
+                  onChange={(event) => setStartDateFilter(event.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <TextField
+                  label="Ngày Kết Thúc"
+                  type="date"
+                  value={endDateFilter}
+                  onChange={(event) => setEndDateFilter(event.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+                <TextField
+                  select
+                  label="Trạng Thái"
+                  value={statusFilter}
+                  onChange={(event) => setStatusFilter(event.target.value)}
+                >
+                  <MenuItem value="">Tất Cả</MenuItem>
+                  <MenuItem value="0">Đang Chờ Xác Nhận Đơn Hàng</MenuItem>
+                  <MenuItem value="1">Đã Xác Nhận Đơn</MenuItem>
+                  <MenuItem value="2">Đã Xác Nhận Người Mua</MenuItem>
+                  <MenuItem value="3">Đã Chuyển Cho Đơn Vị</MenuItem>
+                  <MenuItem value="4">Đã Xác Nhận Thanh Toán</MenuItem>
+                  <MenuItem value="5">Đã Giao Thành Công</MenuItem>
+                  <MenuItem value="8">Đơn Hàng Bán Tại Quầy</MenuItem>
+                  <MenuItem value="9">Đã Thanh Toán Tại Quầy</MenuItem>
+                  <MenuItem value="10">Đã Bị Hủy</MenuItem>
+                </TextField>
+              </Grid>
               <Table>
                 <UserListHeadNoCheckBox
                   order={order}
@@ -357,7 +451,11 @@ const OrderManagement = () => {
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
+                  onStatusFilterChange={(event) => setStatusFilter(event.target.value)}
+                  onStartDateFilterChange={(event) => setStartDateFilter(event.target.value)}
+                  onEndDateFilterChange={(event) => setEndDateFilter(event.target.value)}
                 />
+
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                     const { idHd, maHd, thanhTien, ngayTao, kieuHoaDon, trangThai } = row;

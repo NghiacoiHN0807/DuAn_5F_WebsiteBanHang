@@ -21,8 +21,9 @@ export default function ModalDeleteProductOnCart(props) {
     itemDelete: PropTypes.array.isRequired,
     DataCart: PropTypes.array.isRequired,
     selectDataCart: PropTypes.func.isRequired,
+    getDetailHD: PropTypes.func.isRequired,
   };
-  const { open, handleClose, itemDelete, selectDataCart, DataCart } = props;
+  const { open, getDetailHD, handleClose, itemDelete, selectDataCart, DataCart } = props;
 
   // Set maHd using useState
 
@@ -59,6 +60,7 @@ export default function ModalDeleteProductOnCart(props) {
         type: 'success',
         message: 'Xóa Sản Phẩm Thành Công',
       });
+      getDetailHD();
       handleClose();
     }
   };

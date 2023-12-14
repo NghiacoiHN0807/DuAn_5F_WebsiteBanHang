@@ -42,7 +42,6 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
         message.setTo(mail);
         message.setSubject("Mật khẩu Mới");
         message.setText("Mật Khẩu: "+content);
-
         mailSender.send(message);
     }
 

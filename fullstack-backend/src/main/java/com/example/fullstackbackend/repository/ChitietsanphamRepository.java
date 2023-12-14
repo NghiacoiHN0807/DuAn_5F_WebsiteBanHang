@@ -36,6 +36,8 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
     @Query("SELECT c FROM ChiTietSanPham c WHERE c.idSp.idSp = :idSp")
     List<ChiTietSanPham> findByProductId(@Param("idSp") Integer idSp);
 
+    List<ChiTietSanPham> findAllByIdCtsp(Integer idCtsp);
+
 //    ChiTietSanPham findByIdSp_IdSp(Integer idSp);
 
     @Query(value = "SELECT GROUP_CONCAT(DISTINCT img.images ORDER BY img.images ASC) AS img, sp.id_sp, sp.ma_sp, sp.ten_sp, GROUP_CONCAT(DISTINCT ct.gia_thuc_te ORDER BY ct.gia_thuc_te ASC) AS gia_thuc_te\n" +

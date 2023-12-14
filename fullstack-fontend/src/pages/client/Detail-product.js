@@ -135,77 +135,67 @@ const DetailProduct = () => {
 
   const [alertContent, setAlertContent] = useState(null);
 
-  // const fetchData = async () => {
-  //   try {
-  //     const getLocalStore = localStorage.getItem('userFormToken');
-  //     // const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
-  //     if (getLocalStore) {
-  //       const authorities = JSON.parse(getLocalStore).taiKhoan;
-  //       await listProductOnCart(authorities.idTaiKhoan);
-  //     }
-
-  //     // await listProductOnCart(authorities.idTaiKhoan);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
-
   const handleAddProduct = async () => {
-    // Get Author
     const getLocalStore = localStorage.getItem('userFormToken');
+    const selectedMauSacIsNull = selectedMauSac === null || selectedSize === null;
 
-    if (getLocalStore) {
-      const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
-      try {
-        if (selectedMauSac === null && selectedSize === null) {
-          setAlertContent({
-            type: 'warning',
-            message: 'Thuộc Tính Sản Phẩm Trống',
-          });
-        } else {
-          console.log('HIHI: ', authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
-          await addProductOnCart(authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
-          setAlertContent({
-            type: 'success',
-            message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
-          });
-          // fetchData();
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    } else if (selectedMauSac === null && selectedSize === null) {
+    if (!getLocalStore || selectedMauSacIsNull) {
       setAlertContent({
         type: 'warning',
         message: 'Thuộc Tính Sản Phẩm Trống',
       });
-    } else {
-      // Lấy giá trị hiện tại từ localStorage
-      const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {}; // Nếu chưa có giá trị, tạo một đối tượng rỗng
-      const productId = selectSoLuongTon[0].idCtsp;
-      const selectedItem = currentCart[productId];
-
-      if (selectedItem) {
-        selectedItem.soLuong += quantity;
-        selectedItem.donGia = selectSoLuongTon[0].giaThucTe * selectedItem.soLuong;
-      } else {
-        currentCart[productId] = {
-          idCtsp: selectSoLuongTon[0],
-          soLuong: quantity,
-          donGia: selectSoLuongTon[0].giaThucTe * quantity,
-        };
-      }
-      localStorage.setItem('cartProduct', JSON.stringify(currentCart));
-
-      setAlertContent({
-        type: 'success',
-        message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
-      });
+      return;
     }
+    if (quantity > 20) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Nếu bạn Muốn Mua Sỉ. Hãy Liên hệ Với Chúng Tôi',
+      });
+      console.log('selectSoLuongTon[0].getSoLuongTon: ', selectSoLuongTon[0].soLuongTon);
+      return;
+    }
+    if (quantity > selectSoLuongTon[0].soLuongTon) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Số Lượng Tồn Không Đủ!!!',
+      });
+      return;
+    }
+
+    const authorities = JSON.parse(getLocalStore).taiKhoan;
+    const productId = selectSoLuongTon[0].idCtsp;
+
+    try {
+      if (!selectedMauSacIsNull) {
+        await addProductOnCart(authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
+        setAlertContent({
+          type: 'success',
+          message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {};
+    const selectedItem = currentCart[productId];
+
+    if (selectedItem) {
+      selectedItem.soLuong += quantity;
+      selectedItem.donGia = selectSoLuongTon[0].giaThucTe * selectedItem.soLuong;
+    } else {
+      currentCart[productId] = {
+        idCtsp: selectSoLuongTon[0],
+        soLuong: quantity,
+        donGia: selectSoLuongTon[0].giaThucTe * quantity,
+      };
+    }
+
+    localStorage.setItem('cartProduct', JSON.stringify(currentCart));
+    setAlertContent({
+      type: 'success',
+      message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
+    });
   };
 
   const handleSnackbarClose = (event, reason) => {
@@ -338,40 +328,40 @@ const DetailProduct = () => {
                 <div>
                   {availableColors.length > 0
                     ? // Hiển thị danh sách màu sắc từ availableColors
-                    availableColors.map((mauSac, msIndex) => (
-                      <Button
-                        style={{
-                          marginRight: '4px',
-                          marginBottom: '4px',
-                          marginLeft: '10px',
-                          height: '25px',
-                        }}
-                        key={`size-button-${msIndex}`}
-                        onClick={() => handleShowMS(mauSac)}
-                        variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
-                        size="small"
-                        className=""
-                      >
-                        {mauSac}
-                      </Button>
-                    ))
+                      availableColors.map((mauSac, msIndex) => (
+                        <Button
+                          style={{
+                            marginRight: '4px',
+                            marginBottom: '4px',
+                            marginLeft: '10px',
+                            height: '25px',
+                          }}
+                          key={`size-button-${msIndex}`}
+                          onClick={() => handleShowMS(mauSac)}
+                          variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
+                          size="small"
+                          className=""
+                        >
+                          {mauSac}
+                        </Button>
+                      ))
                     : // Hiển thị dữ liệu từ dataDetail
-                    uniqueMS.map((item, index) => (
-                      <Button
-                        style={{
-                          marginLeft: '10px',
-                          height: '25px',
-                          marginRight: '4px',
-                          marginBottom: '4px',
-                        }}
-                        key={`size-button-${index}`}
-                        onClick={() => handleShowMS(item)}
-                        variant={selectedMauSac === item ? 'contained' : 'outlined'}
-                        size="small"
-                      >
-                        {item}
-                      </Button>
-                    ))}
+                      uniqueMS.map((item, index) => (
+                        <Button
+                          style={{
+                            marginLeft: '10px',
+                            height: '25px',
+                            marginRight: '4px',
+                            marginBottom: '4px',
+                          }}
+                          key={`size-button-${index}`}
+                          onClick={() => handleShowMS(item)}
+                          variant={selectedMauSac === item ? 'contained' : 'outlined'}
+                          size="small"
+                        >
+                          {item}
+                        </Button>
+                      ))}
                 </div>
               </Box>
             </div>
