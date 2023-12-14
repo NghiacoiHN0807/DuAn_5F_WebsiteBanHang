@@ -22,8 +22,7 @@ import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 import {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import {useAlert} from "../layouts/dashboard/AlertContext";
-import {getDetailOneTK} from "../service/taiKhoanKhachHangSevice";
-import {postAddDiaChi} from "../service/diaChiSevice";
+import {getDiaChiById, postUpdateDiaChi} from "../service/diaChiSevice";
 // components
 // sections
 // APIs
@@ -32,61 +31,76 @@ const ModalAddAddressById = (props) => {
         open: PropTypes.bool.isRequired,
         handleClose: PropTypes.func.isRequired,
         getAllData: PropTypes.func.isRequired,
+        idDC: PropTypes.func.isRequired,
     };
-    const {open, handleClose,getAllData } = props;
-
-    const [idTK, setIdtk] = useState('');
-
-    const getTaiKhoanKH = useCallback(async () => {
-        try {
-            // Get KH
-            const getLocalStore = localStorage.getItem('userFormToken');
-            const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
-            setIdtk(authorities.idTaiKhoan)
-        } catch (error) {
-            console.error(error);
-        }
-    }, []);
-
-    useEffect(() => {
-        getTaiKhoanKH();
-    }, [getTaiKhoanKH]);
-
+    const {open, handleClose, getAllData, idDC} = props;
+    const idDc = idDC.id;
+    const [diaChi, setDiaChi] = useState([]);
     const [taiKhoan, setTaiKhoan] = useState("");
     const [tenNguoiNhan, setTenNguoiNhan] = useState("");
     const [diaChiCuThe, setDiaChiCuThe] = useState("");
     const [sdt, setSdt] = useState("");
-    const [loaiDiaChi, setLoaiDiaChi] = useState("0");
+    const [loaiDiaChi, setLoaiDiaChi] = useState("");
+    const [trangThai, setTrangThai] = useState("");
+
     const [tinhThanh, setTinhThanh] = useState([]);
     const [selectedTinhThanh, setSelectedTinhThanh] = useState('');
     const [quanHuyen, setQuanHuyen] = useState([]);
     const [selectedQuanHuyen, setSelectedQuanHuyen] = useState('');
     const [phuongXa, setPhuongXa] = useState([]);
     const [selectedPhuongXa, setSelectedPhuongXa] = useState('');
-    const [trangThai] = useState("0");
+
 
     const [selectedTinhThanhName, setSelectedTinhThanhName] = useState('');
     const [selectedQuanHuyenName, setSelectedQuanHuyenName] = useState('');
     const [selectedPhuongXaName, setSelectedPhuongXaName] = useState('');
 
 
-    const fetchtinhThanh = async () => {
+    const fetchtinhThanh = useCallback(async () => {
         try {
             const response = await axios.get('https://online-gateway.ghn.vn/shiip/public-api/master-data/province', {
                 headers: {
                     token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
                 },
             });
-            // console.log('response: ', response.data.data);
+            console.log('response: ', response.data.data);
             setTinhThanh(response.data.data);
         } catch (error) {
             console.error('Error fetching tinhThanh:', error);
         }
-    };
+    });
     useEffect(() => {
-        fetchtinhThanh();
-    }, []);
+        if(open) {
+            fetchtinhThanh();
+        }
+    }, [open]);
 
+    function findProvinceIDByName(data, provinceName) {
+        const lowerCaseProvinceName = provinceName.toLowerCase();
+        for (let i = 0; i < data.length; i += 1) {
+            const province = data[i];
+
+
+
+            for (let j = 0; j < province.NameExtension.length; j += 1) {
+                const extension = province.NameExtension[j].toLowerCase();
+
+
+                if (extension.includes(lowerCaseProvinceName)) {
+
+                    return province.ProvinceID;
+                }
+            }
+
+            if (province.ProvinceName.toLowerCase().includes(lowerCaseProvinceName)) {
+
+                return province.ProvinceID;
+            }
+        }
+
+        console.log("Province not found!");
+        return null;
+    }
 
     const callApiDistrict = useCallback(async () => {
         try {
@@ -96,7 +110,7 @@ const ModalAddAddressById = (props) => {
                     token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
                 },
             });
-            // console.log('Quận/Huyện: ', response.data);
+
             setQuanHuyen(response.data.data);
         } catch (error) {
             console.error('Error fetching quanHuyen:', error);
@@ -105,10 +119,33 @@ const ModalAddAddressById = (props) => {
 
     useEffect(() => {
         if (selectedTinhThanh) {
-            // console.log('selectedTinhThanh: ', selectedTinhThanh);
             callApiDistrict();
         }
     }, [selectedTinhThanh, callApiDistrict]);
+
+    function findDistrictIDByName(data, districtName) {
+
+        const lowerCaseDistrictName = districtName.toLowerCase();
+        for (let i = 0; i < data.length; i += 1) {
+            const district = data[i];
+
+
+
+            for (let j = 0; j < district.NameExtension.length; j += 1) {
+                const extension = district.NameExtension[j].toLowerCase();
+
+
+                if (extension.includes(lowerCaseDistrictName)) {
+
+                    return district.DistrictID;
+                }
+            }
+
+        }
+
+        console.log("District not found!");
+        return null;
+    }
 
     const callApiWard = useCallback(async () => {
         try {
@@ -123,6 +160,35 @@ const ModalAddAddressById = (props) => {
             console.error('Error fetching phuongXa:', error);
         }
     }, [selectedQuanHuyen]);
+
+    function findWardCodeByName(data, WardName) {
+
+        const lowerCaseWardName = WardName.toLowerCase();
+        console.log("data phuong xa ", phuongXa)
+        for (let i = 0; i < data.length; i += 1) {
+            const ward = data[i];
+
+            // console.log(`Checking Province: ${province.ProvinceName}`);
+
+            for (let j = 0; j < ward.NameExtension.length; j += 1) {
+                const extension = ward.NameExtension[j].toLowerCase();
+                // console.log(`Checking Extension: ${extension}`);
+
+                if (extension.includes(lowerCaseWardName)) {
+
+                    return ward.WardCode;
+                }
+            }
+
+            if (ward.WardName.toLowerCase().includes(lowerCaseWardName)) {
+
+                return ward.WardCode;
+            }
+        }
+
+        console.log("District not found!");
+        return null;
+    }
 
     // API gets service pack information
     const [tienShip, getTienShip] = useState(0);
@@ -147,7 +213,6 @@ const ModalAddAddressById = (props) => {
                 },
             });
             const totalShip = response.data?.data?.total || 0;
-            // console.log('getSevice: ', response);
             getTienShip(totalShip);
         } catch (error) {
             console.error('Error get service:', error);
@@ -156,7 +221,6 @@ const ModalAddAddressById = (props) => {
 
     useEffect(() => {
         if (selectedQuanHuyen) {
-            // console.log('selectedTinhThanh: ', selectedQuanHuyen);
             callApiWard();
             getSevice();
         }
@@ -175,29 +239,67 @@ const ModalAddAddressById = (props) => {
 
 
     // chuyen trang
-    // const navigate = useNavigate();
 
     const {showAlert} = useAlert();
+    useEffect(() => {
+        if(open) {
+            getDiaChi(idDc);
+        }
+    }, [idDc,open]);
 
     useEffect(() => {
-        // Call getTaiKhoan when open becomes true
-        if (open) {
-            getTaiKhoan(idTK);
+        if(open) {
+            getDiaChiTinhThanh(idDc);
         }
-    }, [open, idTK]);
-    const getTaiKhoan = async (idTK) => {
-            const resTK = await getDetailOneTK(idTK);
-            console.log(resTK);
-            setTaiKhoan(resTK);
+    }, [idDc, tinhThanh,open]);
+
+    useEffect(() => {
+        if(open) {
+            getDiaChiQuanHuyen(idDc);
+        }
+    }, [idDc, quanHuyen,open]);
+
+    useEffect(() => {
+        if(open) {
+            getDiaChiPhuongXa(idDc);
+        }
+    }, [idDc, phuongXa,open]);
+
+    const getDiaChi = async (idDc) => {
+        const resDc = await getDiaChiById(idDc);
+        setDiaChi(resDc);
+        setTaiKhoan(resDc.taiKhoan);
+        setTenNguoiNhan(resDc.tenNguoiNhan);
+        setDiaChiCuThe(resDc.diaChiCuThe);
+        setSdt(resDc.sdt);
+        setLoaiDiaChi(resDc.loaiDiaChi);
+        getTienShip(resDc.phiShip);
+        setTrangThai(resDc.trangThai);
     };
 
+    const getDiaChiTinhThanh = useCallback(async (idDc) => {
+        const resDc = await getDiaChiById(idDc);
+        setSelectedTinhThanh(findProvinceIDByName(tinhThanh, resDc.tinhThanh));
+    }, [tinhThanh]);
+
+    const getDiaChiQuanHuyen = useCallback(async (idDc) => {
+        const resDc = await getDiaChiById(idDc);
+        setSelectedQuanHuyen(findDistrictIDByName(quanHuyen, resDc.quanHuyen));
+    }, [quanHuyen]);
+
+    const getDiaChiPhuongXa = useCallback(async (idDc) => {
+        const resDc = await getDiaChiById(idDc);
+        setSelectedPhuongXa(findWardCodeByName(phuongXa, resDc.phuongXa));
+    }, [phuongXa]);
 
 
     const [validationErrors, setValidationErrors] = useState("");
-
     const handleSave = async () => {
+
+        let res;
         try {
-            const res = await postAddDiaChi(
+            res = await postUpdateDiaChi(
+                diaChi.id,
                 taiKhoan,
                 diaChiCuThe,
                 loaiDiaChi,
@@ -209,48 +311,26 @@ const ModalAddAddressById = (props) => {
                 tienShip,
                 trangThai
             );
-
-            // Reset form data and validation errors on success
-            if (res && res.taiKhoan) {
-                setTenNguoiNhan("");
-                setDiaChiCuThe("");
-                setSdt("");
-                setLoaiDiaChi("0");
-                setSelectedTinhThanh("");
-                setSelectedQuanHuyen("");
-                setSelectedPhuongXa("");
-                setValidationErrors("");
-
-                showAlert('success', 'Thêm Địa Chỉ thành công');
-                handleClose();
-                getAllData();
-            } else {
-                showAlert('warning', 'Chỉ Tối Đa 5 Địa Chỉ !');
-            }
+            console.log("Check res: ", res);
         } catch (error) {
             if (error.response && error.response.data) {
                 setValidationErrors(error.response.data);
-                // showAlert('warning', error.response.data);
-                showAlert('error', 'Thêm Địa Chỉ Thất Bại !');
+                // showAlert('error', error.response.data);
+                showAlert('error', validationErrors.error);
             } else {
                 console.error("Error:", error);
             }
+            return;
         }
-    };
-    const clearText = ()=>{
-        setTenNguoiNhan("");
-        setDiaChiCuThe("");
-        setSdt("");
-        setLoaiDiaChi("0");
-        setSelectedTinhThanh("");
-        setSelectedQuanHuyen("");
-        setSelectedPhuongXa("");
-        setValidationErrors("");
-    }
-    useEffect(() => {
-        clearText()
-    }, [handleClose]);
+        if (res && res.id) {
+            showAlert('success', 'Cập nhập địa chỉ Thành Công');
+            handleClose();
+            getAllData();
+        } else {
+            showAlert('warning', 'Cập nhập thất bại');
+        }
 
+    };
     return (
         <>
             <div>
@@ -277,6 +357,7 @@ const ModalAddAddressById = (props) => {
                                     fullWidth
                                     label="Tên Người Nhận"
                                     id="fullWidth"
+                                    value={tenNguoiNhan}
                                     onChange={(event) => setTenNguoiNhan(event.target.value)}
                                 />
                                 <TextField
@@ -284,8 +365,9 @@ const ModalAddAddressById = (props) => {
                                     helperText={validationErrors.diaChiCuThe}
                                     margin={"dense"}
                                     fullWidth
-                                    label="Địa Chỉ"
+                                    label="Địa Chỉ Cụ Thể"
                                     id="fullWidth"
+                                    value={diaChiCuThe}
                                     onChange={(event) => setDiaChiCuThe(event.target.value)}
                                 />
                                 <TextField
@@ -296,11 +378,12 @@ const ModalAddAddressById = (props) => {
                                     label="Số Điện Thoại"
                                     id="fullWidth"
                                     inputProps={{maxLength: 10}}
+                                    value={sdt}
                                     onChange={(event) => setSdt(event.target.value)}
                                 />
                                 <FormControl style={{marginLeft: "10px"}}
                                              error={!!validationErrors.loaiDiaChi}
-                                             helperText={validationErrors.loaiDiaChi} >
+                                             helperText={validationErrors.loaiDiaChi}>
                                     <FormLabel id="demo-radio-buttons-group-label">
                                         Loại Địa Chỉ
                                     </FormLabel>
@@ -380,7 +463,7 @@ const ModalAddAddressById = (props) => {
                                                  error={!!validationErrors.phuongXa}
                                                  helperText={validationErrors.phuongXa}
                                     >
-                                        <InputLabel id="ward-label" >Phường/Xã</InputLabel>
+                                        <InputLabel id="ward-label">Phường/Xã</InputLabel>
                                         <Select
                                             labelId="ward-label"
                                             id="ward-select"
@@ -407,7 +490,7 @@ const ModalAddAddressById = (props) => {
                                     style={{marginTop: "20px"}} // Make button wider
                                     startIcon={<AddLocationAltIcon/>}
                                 >
-                                    Thêm Địa Chỉ Mới
+                                    Cập Nhật Địa Chỉ
                                 </Button>
                             </Box>
                         </Container>

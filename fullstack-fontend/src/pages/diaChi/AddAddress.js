@@ -43,9 +43,9 @@ const AddAddress = () => {
         // const [result, setResult] = useState('');
         const [diachiCuThe, setDiachiCuThe] = useState('');
 
-         let [selectedTinhThanhName] = useState('');
-         let [selectedQuanHuyenName] = useState('');
-         let [selectedPhuongXaName] = useState('');
+        const [selectedTinhThanhName, setSelectedTinhThanhName] = useState('');
+        const [selectedQuanHuyenName, setSelectedQuanHuyenName] = useState('');
+        const [selectedPhuongXaName, setSelectedPhuongXaName] = useState('');
 
 
         const fetchtinhThanh = async () => {
@@ -142,17 +142,14 @@ const AddAddress = () => {
 
         useEffect(() => {
             if (selectedQuanHuyen && selectedTinhThanh && selectedPhuongXa) {
-                 selectedTinhThanhName =
-                    tinhThanh.find((province) => province.ProvinceID === selectedTinhThanh)?.ProvinceName || '';
+                setSelectedTinhThanhName(tinhThanh.find((province) => province.ProvinceID === selectedTinhThanh)?.ProvinceName || '');
 
-                 selectedQuanHuyenName =
-                    quanHuyen.find((district) => district.DistrictID === selectedQuanHuyen)?.DistrictName || '';
+                setSelectedQuanHuyenName(quanHuyen.find((district) => district.DistrictID === selectedQuanHuyen)?.DistrictName || '');
 
-                 selectedPhuongXaName = phuongXa.find((ward) => ward.WardCode === selectedPhuongXa)?.WardName || '';
+                setSelectedPhuongXaName(phuongXa.find((ward) => ward.WardCode === selectedPhuongXa)?.WardName || '');
 
-                // setResult(`${selectedTinhThanhName}, ${selectedQuanHuyenName}, ${selectedPhuongXaName}, ${diachiCuThe}`);
             }
-        }, [selectedQuanHuyen, selectedTinhThanh, selectedPhuongXa, quanHuyen, tinhThanh, phuongXa, diachiCuThe]);
+        }, [selectedQuanHuyen, selectedTinhThanh, selectedPhuongXa, quanHuyen, tinhThanh, phuongXa, diachiCuThe, loaiDiaChi, sdt, tenNguoiNhan]);
 
 
         // chuyen trang
@@ -192,9 +189,11 @@ const AddAddress = () => {
                 console.log("Check res: ", res);
             } catch (error) {
                 if (error.response && error.response.data) {
+                    // console.log('check tên', selectedTinhThanhName);
                     setValidationErrors(error.response.data);
-                    showAlert('warning', error.response.data);
-                    showAlert('error', 'Thêm Địa Chỉ Thất Bại !');
+                    // showAlert('warning', error.response.data);
+                    // showAlert('error', 'Thêm Địa Chỉ Thất Bại !');
+                    showAlert('error', validationErrors.error);
 
 
                 } else {
@@ -267,7 +266,7 @@ const AddAddress = () => {
                         />
                         <FormControl style={{marginLeft: "10px"}}
                                      error={!!validationErrors.loaiDiaChi}
-                                     helperText={validationErrors.loaiDiaChi} >
+                                     helperText={validationErrors.loaiDiaChi}>
                             <FormLabel id="demo-radio-buttons-group-label">
                                 Loại Địa Chỉ
                             </FormLabel>
@@ -323,7 +322,7 @@ const AddAddress = () => {
                             </FormControl>
                             <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}
                                          error={!!validationErrors.quanHuyen}
-                                 >
+                            >
                                 <InputLabel id="district-label">Quận/Huyện</InputLabel>
                                 <Select
                                     labelId="district-label"
@@ -347,7 +346,7 @@ const AddAddress = () => {
                                          error={!!validationErrors.phuongXa}
                                          helperText={validationErrors.phuongXa}
                             >
-                                <InputLabel id="ward-label" >Phường/Xã</InputLabel>
+                                <InputLabel id="ward-label">Phường/Xã</InputLabel>
                                 <Select
                                     labelId="ward-label"
                                     id="ward-select"

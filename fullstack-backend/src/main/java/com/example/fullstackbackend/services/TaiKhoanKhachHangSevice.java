@@ -24,5 +24,7 @@ public interface TaiKhoanKhachHangSevice {
 
     TaiKhoan update(TaiKhoan update);
 
+    Boolean changePass(TaiKhoan tk,String pass,String passChange);
+
     Optional<TaiKhoan> detail(String idOrMa);
 }

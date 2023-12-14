@@ -21,6 +21,8 @@ public interface TaiKhoanNhanVienService {
 
     Boolean existsById(Integer id);
 
+    Boolean changePass(TaiKhoan tk,String pass,String passChange);
+
     Optional<TaiKhoan> detail(Integer id);
 
 

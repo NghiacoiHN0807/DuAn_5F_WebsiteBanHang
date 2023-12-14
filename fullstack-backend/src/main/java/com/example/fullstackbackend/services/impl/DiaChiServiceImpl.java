@@ -26,6 +26,26 @@ public class DiaChiServiceImpl implements DiaChiSevice {
     }
 
     @Override
+    public Boolean Check5DiaChi(String maTaiKhoan) {
+        if(DiaChiRepository.CountTaiKhoan(maTaiKhoan) >= 5){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    @Override
+    public Long CheckDiaChi(String maTaiKhoan) {
+        return DiaChiRepository.CountTaiKhoan(maTaiKhoan);
+    }
+
+    @Override
+    public List<DiaChi> getAllTK(String maTaiKhoan) {
+
+        return DiaChiRepository.findByMaTaiKhoan(maTaiKhoan );
+    }
+
+    @Override
     public List<DiaChi> getAll() {
 
         return DiaChiRepository.findAll();

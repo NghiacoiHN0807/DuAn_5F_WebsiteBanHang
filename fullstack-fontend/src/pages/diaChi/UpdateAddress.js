@@ -20,10 +20,10 @@ import {
 import {useNavigate, useParams} from "react-router-dom";
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
 import axios from "axios";
-import {getDiaChiById, postUpdateDiaChi} from "../../service/diaChiSevice";
+import {fetchCountDiaChi, getDiaChiById, postUpdateDiaChi} from "../../service/diaChiSevice";
 import {useAlert} from "../../layouts/dashboard/AlertContext";
 
-const UpdateAddress = (callback, deps) => {
+const UpdateAddress = () => {
         const param = useParams();
         const idDc = param.id;
         const [diaChi, setDiaChi] = useState([]);
@@ -32,9 +32,6 @@ const UpdateAddress = (callback, deps) => {
         const [diaChiCuThe, setDiaChiCuThe] = useState("");
         const [sdt, setSdt] = useState("");
         const [loaiDiaChi, setLoaiDiaChi] = useState("");
-        // const [tinhThanh, setTinhThanh] = useState(null);
-        // const [quanHuyen, setQuanHuyen] = useState(null);
-        // const [phuongXa, setPhuongXa] = useState(null);
         const [trangThai, setTrangThai] = useState("");
 
         const [tinhThanh, setTinhThanh] = useState([]);
@@ -43,12 +40,12 @@ const UpdateAddress = (callback, deps) => {
         const [selectedQuanHuyen, setSelectedQuanHuyen] = useState('');
         const [phuongXa, setPhuongXa] = useState([]);
         const [selectedPhuongXa, setSelectedPhuongXa] = useState('');
-        // const [result, setResult] = useState('');
+        const [tong,setTong]=useState([]);
 
 
-        let [selectedTinhThanhName] = useState('');
-        let [selectedQuanHuyenName] = useState('');
-        let [selectedPhuongXaName] = useState('');
+    const [selectedTinhThanhName, setSelectedTinhThanhName] = useState('');
+    const [selectedQuanHuyenName, setSelectedQuanHuyenName] = useState('');
+    const [selectedPhuongXaName, setSelectedPhuongXaName] = useState('');
 
 
         const fetchtinhThanh = useCallback(async () => {
@@ -58,7 +55,6 @@ const UpdateAddress = (callback, deps) => {
                         token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
                     },
                 });
-                console.log('response: ', response.data.data);
                 setTinhThanh(response.data.data);
             } catch (error) {
                 console.error('Error fetching tinhThanh:', error);
@@ -81,13 +77,13 @@ const UpdateAddress = (callback, deps) => {
                     // console.log(`Checking Extension: ${extension}`);
 
                     if (extension.includes(lowerCaseProvinceName)) {
-                        console.log(`Match found! ProvinceID: ${province.ProvinceID}`);
+
                         return province.ProvinceID;
                     }
                 }
 
                 if (province.ProvinceName.toLowerCase().includes(lowerCaseProvinceName)) {
-                    console.log(`Match found! ProvinceID: ${province.ProvinceID}`);
+
                     return province.ProvinceID;
                 }
             }
@@ -104,7 +100,7 @@ const UpdateAddress = (callback, deps) => {
                         token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
                     },
                 });
-                console.log('Quận/Huyện: ', response.data.data);
+
                 setQuanHuyen(response.data.data);
             } catch (error) {
                 console.error('Error fetching quanHuyen:', error);
@@ -132,7 +128,7 @@ const UpdateAddress = (callback, deps) => {
                     // console.log(`Checking Extension: ${extension}`);
 
                     if (extension.includes(lowerCaseDistrictName)) {
-                        console.log(`Match found! DistrictID: ${district.DistrictID}`);
+
                         return district.DistrictID;
                     }
                 }
@@ -151,7 +147,7 @@ const UpdateAddress = (callback, deps) => {
                         token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
                     },
                 });
-                console.log('Phường/Xã: ', response.data.data);
+
                 setPhuongXa(response.data.data);
             } catch (error) {
                 console.error('Error fetching phuongXa:', error);
@@ -172,13 +168,13 @@ const UpdateAddress = (callback, deps) => {
                     // console.log(`Checking Extension: ${extension}`);
 
                     if (extension.includes(lowerCaseWardName)) {
-                        console.log(`Match found! DistrictID: ${ward.WardCode}`);
+
                         return ward.WardCode;
                     }
                 }
 
                 if (ward.WardName.toLowerCase().includes(lowerCaseWardName)) {
-                    console.log(`Match found! DistrictID: ${ward.WardCode}`);
+
                     return ward.WardCode;
                 }
             }
@@ -225,31 +221,28 @@ const UpdateAddress = (callback, deps) => {
             }
         }, [getSevice, selectedQuanHuyen, callApiWard]);
 
-        useEffect(() => {
-            if (selectedQuanHuyen && selectedTinhThanh && selectedPhuongXa) {
-                selectedTinhThanhName =
-                    tinhThanh.find((province) => province.ProvinceID === selectedTinhThanh)?.ProvinceName || '';
+    useEffect(() => {
+        if (selectedQuanHuyen && selectedTinhThanh && selectedPhuongXa) {
+            setSelectedTinhThanhName(tinhThanh.find((province) => province.ProvinceID === selectedTinhThanh)?.ProvinceName || '');
 
-                selectedQuanHuyenName =
-                    quanHuyen.find((district) => district.DistrictID === selectedQuanHuyen)?.DistrictName || '';
+            setSelectedQuanHuyenName(quanHuyen.find((district) => district.DistrictID === selectedQuanHuyen)?.DistrictName || '');
 
-                selectedPhuongXaName = phuongXa.find((ward) => ward.WardCode === selectedPhuongXa)?.WardName || '';
-            }
-        }, [selectedQuanHuyen, selectedTinhThanh, selectedPhuongXa, quanHuyen, tinhThanh, phuongXa,
-            diaChiCuThe,
-            loaiDiaChi,
-            sdt,
-            tenNguoiNhan,
-            trangThai
-        ]);
+            setSelectedPhuongXaName(phuongXa.find((ward) => ward.WardCode === selectedPhuongXa)?.WardName || '');
+
+        }
+    }, [selectedQuanHuyen, selectedTinhThanh, selectedPhuongXa, quanHuyen, tinhThanh, phuongXa, diaChiCuThe, loaiDiaChi, sdt, tenNguoiNhan]);
 
 
-        // chuyen trang
+    // chuyen trang
         const navigate = useNavigate();
         const {showAlert} = useAlert();
         useEffect(() => {
             getDiaChi(idDc);
         }, [idDc]);
+
+        useEffect(() => {
+            getTongDC(taiKhoan)
+        }, [taiKhoan]);
 
         useEffect(() => {
             getDiaChiTinhThanh(idDc);
@@ -265,7 +258,6 @@ const UpdateAddress = (callback, deps) => {
 
         const getDiaChi = async (idDc) => {
             const resDc = await getDiaChiById(idDc);
-            console.log(resDc);
             setDiaChi(resDc);
             setTaiKhoan(resDc.taiKhoan);
             setTenNguoiNhan(resDc.tenNguoiNhan);
@@ -275,6 +267,15 @@ const UpdateAddress = (callback, deps) => {
             getTienShip(resDc.phiShip);
             setTrangThai(resDc.trangThai);
         };
+        const getTongDC = async (taiKhoan) => {
+            const resDc = await fetchCountDiaChi(taiKhoan.maTaiKhoan);
+            if(trangThai === 10){
+                setTong(resDc);
+            }
+
+        };
+
+
 
         const getDiaChiTinhThanh = useCallback(async (idDc) => {
             const resDc = await getDiaChiById(idDc);
@@ -316,7 +317,8 @@ const UpdateAddress = (callback, deps) => {
             } catch (error) {
                 if (error.response && error.response.data) {
                     setValidationErrors(error.response.data);
-                    showAlert('error', error.response.data);
+                    // showAlert('error', error.response.data);
+                    showAlert('error', validationErrors.error);
                 } else {
                     console.error("Error:", error);
                 }
@@ -423,18 +425,14 @@ const UpdateAddress = (callback, deps) => {
                                 <FormControlLabel
                                     value="0"
                                     control={<Radio/>}
-                                    label="Chưa Xác Nhận"
+                                    label="Đang Hoạt Động"
                                 />
                                 <FormControlLabel
-                                    value="1"
+                                    value="10"
                                     control={<Radio/>}
-                                    label="Đã Xác Nhận"
+                                    label="Đã Bị Xóa"
                                 />
-                                <FormControlLabel
-                                    value="4"
-                                    control={<Radio/>}
-                                    label="Ngưng Hoạt Động"
-                                />
+
                             </RadioGroup>
                         </FormControl>
                         <Box
@@ -518,8 +516,9 @@ const UpdateAddress = (callback, deps) => {
                             onClick={() => handleSave()}
                             style={{marginTop: "20px"}} // Make button wider
                             startIcon={<AddLocationAltIcon/>}
+                            disabled={tong >= 5}
                         >
-                            Cập Nhập Địa Chỉ
+                            {tong >= 5 ? 'Đã Khóa, Hãy Xóa đi 1 địa chỉ':'Cập Nhập Địa Chỉ' }
                         </Button>
                     </Box>
                 </Container>

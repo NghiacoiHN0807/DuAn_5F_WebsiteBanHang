@@ -25,7 +25,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import Card from "@mui/material/Card";
-import {deleteDiaChi, fetchDiaChiByTK} from "../../service/diaChiSevice";
+import {deleteDiaChi, fetchCountDiaChi, fetchDiaChiByTkAll} from "../../service/diaChiSevice";
 import Iconify from "../../components/iconify";
 import {useAlert} from "../../layouts/dashboard/AlertContext";
 
@@ -39,14 +39,15 @@ const AddressByClient = () => {
     const [selectedLoaiDiaChi, setSelectedLoaiDiaChi] = useState("Tất cả");
     const [originalListData, setOriginalListData] = useState([]);
     const navigate = useNavigate();
-
-
+    const [tong,setTong]=useState([]);
 
     const {showAlert} = useAlert();
 
-    const getListData = async (idTK, page) => {
+    const getListData = async (idTK) => {
         try {
-            const res = await fetchDiaChiByTK(idTK, page);
+            const res = await fetchDiaChiByTkAll(idTK);
+            const count = await fetchCountDiaChi(idTK);
+            setTong(count);
             setListData(res);
             setOriginalListData(res);
         } catch (error) {
@@ -96,17 +97,17 @@ const AddressByClient = () => {
                 let badgeVariant;
                 let statusText;
                 switch (trangThai) {
-                    case 1:
+                    case 0:
                         badgeVariant = "primary";
-                        statusText = "Đã Xác Nhận";
+                        statusText = "Đang Hoạt Động";
                         break;
-                    case 4:
+                    case 10:
                         badgeVariant = "info";
-                        statusText = "Đã Ngưng hoạt động";
+                        statusText = "Đã Bị Xóa";
                         break;
                     default:
                         badgeVariant = "light";
-                        statusText = "Chưa Xác Nhận";
+                        statusText = "Đang Bị Null";
                         break;
                 }
 
@@ -205,7 +206,6 @@ const AddressByClient = () => {
     function CustomToolbar() {
         return (
             <GridToolbarContainer>
-
                 <FormControl variant="standard" sx={{m: 1, minWidth: 120}}>
                     <InputLabel id="status-select">Trạng Thái:</InputLabel>
                     <Select
@@ -216,9 +216,7 @@ const AddressByClient = () => {
                         onChange={(e) => setSelectedStatus(e.target.value)}
                     >
                         <MenuItem value={"Tất cả"}>Tất Cả</MenuItem>
-                        <MenuItem value={0}>Chưa Kích Hoạt</MenuItem>
-                        <MenuItem value={1}>Đã Kích Hoạt</MenuItem>
-                        <MenuItem value={4}>Ngưng Hoạt Động</MenuItem>
+                        <MenuItem value={0}>Đang Hoạt Động</MenuItem>
                         <MenuItem value={10}>Đã Bị Xóa</MenuItem>
                     </Select>
                 </FormControl>
@@ -258,6 +256,9 @@ const AddressByClient = () => {
                 <Typography variant="h4" gutterBottom>
                     Thông Tin Địa Chỉ Của Tài Khoản: {idTK}
                 </Typography>
+                <Typography variant="h4" gutterBottom>
+                    Số địa chỉ đang hoạt động: {tong}/5
+                </Typography>
             </Stack>
             <Card>
 
@@ -279,7 +280,7 @@ const AddressByClient = () => {
                     />
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => handAdd()}>
+                    <Button disabled={tong >= 5} variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => handAdd()}>
                         Tạo Địa Chỉ Mới
                     </Button>
                 </Box>
@@ -293,7 +294,7 @@ const AddressByClient = () => {
                 columns={columns}
                 initialState={{
                     pagination: {
-                        paginationModel: {page: 0, pageSize: 5},
+                        paginationModel: {page: 0, pageSize: 10},
                     },
                 }}
                 slots={{toolbar: CustomToolbar}}

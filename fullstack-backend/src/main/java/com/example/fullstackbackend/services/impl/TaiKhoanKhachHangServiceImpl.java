@@ -92,7 +92,7 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
 
     @Override
     public TaiKhoan update(TaiKhoan update) {
-        ChucVu vc = new ChucVu(9,"CV03","Khách Hàng", Date.valueOf("2023-07-23"),0);
+        ChucVu vc = new ChucVu(9, "CV03", "Khách Hàng", Date.valueOf("2023-07-23"), 0);
         update.setIdChucVu(vc);
         if (!update.getMatKhau().startsWith("$2a$10$")){
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -102,6 +102,24 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
         }
 
         return TaiKhoanKhachHangRepository.save(update);
+    }
+
+    @Override
+    public Boolean changePass(TaiKhoan tk,String pass,String passChange) {
+        ChucVu vc = new ChucVu(9, "CV03", "Khách Hàng", Date.valueOf("2023-07-23"), 0);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String matKhauMaHoa = tk.getMatKhau();
+        String matKhauBanDau = encoder.matches(pass, matKhauMaHoa) ? pass : null;
+        if (matKhauBanDau == null){
+            return false;
+        }else {
+            String PassEncode = encoder.encode(passChange);
+            tk.setIdChucVu(vc);
+            tk.setMatKhau(PassEncode);
+            TaiKhoanKhachHangRepository.save(tk);
+            return true;
+        }
+
     }
 
     @Override
