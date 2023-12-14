@@ -13,10 +13,10 @@ const ModalAddProductClinet = (props) => {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     selectDataCart: PropTypes.func.isRequired,
-    getDetailHD: PropTypes.func.isRequired,
+    // getDetailHD: PropTypes.func.isRequired,
     DataCart: PropTypes.array.isRequired,
   };
-  const { show, handleClose, selectDataCart, DataCart, getDetailHD } = props;
+  const { show, handleClose, selectDataCart, DataCart } = props;
   const [listData, setListData] = useState([]);
 
   const getAllData = useCallback(async () => {
@@ -86,7 +86,7 @@ const ModalAddProductClinet = (props) => {
               </Stack>
             </Stack>
             <ProductListClinetTimeline
-              getDetailHD={getDetailHD}
+              // getDetailHD={getDetailHD}
               products={displayProducts}
               selectDataCart={selectDataCart}
               DataCart={DataCart}

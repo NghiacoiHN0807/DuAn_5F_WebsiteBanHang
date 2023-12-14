@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useState } from 'react';
 import '../../scss/Modal-Detail-SanPham.scss';
 // import { selectAllImgProduct } from "../services/BillSevice";
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Snackbar } from '@mui/material';
@@ -12,17 +12,15 @@ import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import PropTypes from 'prop-types';
 import { findByProductNameAndSize } from '../../service/BillSevice';
-// import { updateCart } from '../../service/DirectSaleSevice';
-import { listImg } from '../../service/client/Detail-Product';
-import { updateCartClient } from '../../service/client/Detail-Cart';
+import { updateCart } from '../../service/DirectSaleSevice';
 
-const ModalUpdateProductOnCartClient = (props) => {
-  ModalUpdateProductOnCartClient.propTypes = {
+const ModalUpdateProductTimeline = (props) => {
+  ModalUpdateProductTimeline.propTypes = {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
-    itemUpdateClassify: PropTypes.array.isRequired,
+    itemUpdateClassify: PropTypes.object.isRequired,
     selectDataCart: PropTypes.func.isRequired,
-    itemUpdate: PropTypes.array.isRequired,
+    itemUpdate: PropTypes.object.isRequired,
   };
   const { show, handleClose, itemUpdateClassify, selectDataCart, itemUpdate } = props;
 
@@ -60,7 +58,7 @@ const ModalUpdateProductOnCartClient = (props) => {
     if (!mauSac || !mauSac.idMs) {
       setAlertContent({
         type: 'warning',
-        message: 'Xin mời chọn size của sản phẩm',
+        message: 'Vui Lòng Chọn Size',
       });
     } else {
       const checkSoLuong = Array.isArray(itemUpdateClassify)
@@ -118,23 +116,20 @@ const ModalUpdateProductOnCartClient = (props) => {
         type: 'warning',
         message: 'Sản Phẩm Vượt Quá Số Lượng Tồn',
       });
-    } else if (quantity > 20) {
-      setAlertContent({
-        type: 'warning',
-        message: 'Vui Lòng Liên Hệ Với Chúng Tôi Để Mua Sỉ',
-      });
     } else {
-      const getIdHdCt = itemUpdate.idGhct;
+      const getIdHdCt = itemUpdate[1];
 
       const getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize, selectedMauSac);
-      console.log('getOneCTSP: ', getOneCTSP);
+
+      const donGia = getOneCTSP.giaThucTe * quantity;
+
       //   Insert to the cart
 
-      await updateCartClient(getIdHdCt, getOneCTSP, quantity);
+      await updateCart(getIdHdCt, getOneCTSP, quantity, donGia);
       //   Close the modal
-      setSelectedSize(null);
+      // setSelectedSize(null);
       handleCloseDetai();
-      setQuantity(1);
+      // setQuantity(1);
       //   Load new data on cart
       selectDataCart();
       setAlertContent({
@@ -165,22 +160,24 @@ const ModalUpdateProductOnCartClient = (props) => {
   const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
   const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
   const priceRange = minPrice === maxPrice ? formattedMinPrice : `${formattedMinPrice} - ${formattedMaxPrice}`;
-
-  const [images, setImages] = useState([]);
-
-  const getDetail = useCallback(async () => {
-    try {
-      const imgDataArray = await listImg(itemUpdate.idCtsp.idSp.idSp);
-
-      setImages(imgDataArray);
-    } catch (e) {
-      console.error(e);
+  const getFirstImage = (item) => {
+    if (item && item.trim() !== '') {
+      const imagesArray = item.split(',');
+      return imagesArray[0];
     }
-  }, [itemUpdate.idCtsp.idSp.idSp]);
+    return null;
+  };
+  function formatCurrency(price) {
+    if (!price) return '0';
 
-  useEffect(() => {
-    getDetail();
-  }, [getDetail]);
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
   const handleCloseDetai = () => {
     handleClose();
     setSelectSoLuongTon([]);
@@ -201,16 +198,18 @@ const ModalUpdateProductOnCartClient = (props) => {
             <DialogContent>
               <Card sx={{ display: 'flex' }}>
                 <Carousel interval={null} style={{ maxWidth: 500, margin: '0 auto' }}>
+                  {/* {listImages.map((item, index) => {
+                    return key={`carousel-item-${index}`} ( */}
                   <Carousel.Item>
-                    {images.length > 0 && (
-                      <CardMedia
-                        component="img"
-                        sx={{ maxWidth: 250, height: '100%' }}
-                        image={images && images[0].url}
-                        alt={images && images[0].url}
-                      />
-                    )}
+                    <CardMedia
+                      component="img"
+                      sx={{ maxWidth: 250, height: 300 }}
+                      image={getFirstImage(itemUpdate[2])}
+                      alt={getFirstImage(itemUpdate[2])}
+                    />
                   </Carousel.Item>
+                  {/* );
+                  })} */}
                 </Carousel>
 
                 <Box sx={{ display: 'flex', flexDirection: 'column' }}>
@@ -221,7 +220,9 @@ const ModalUpdateProductOnCartClient = (props) => {
                     <Typography variant="subtitle1" color="text.secondary" component="div">
                       <p>Xuất Xứ: {itemUpdateClassify[0].idSp.idXx.tenNuoc}</p>
                       <p>Chất Liệu: {itemUpdateClassify[0].idSp.idCl.tenCl}</p>
-                      <p>Giá: {selectSoLuongTon.length > 0 ? selectSoLuongTon[0].giaThucTe : priceRange}</p>
+                      <p>
+                        Giá: {selectSoLuongTon.length > 0 ? formatCurrency(selectSoLuongTon[0].giaThucTe) : priceRange}
+                      </p>
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
                       <div>
@@ -316,20 +317,20 @@ const ModalUpdateProductOnCartClient = (props) => {
             <Button onClick={handleChoose}>Hoàn Tất</Button>
           </DialogActions>
         </Dialog>
+        {alertContent && (
+          <Snackbar
+            open
+            autoHideDuration={3000}
+            onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+              {alertContent.message}
+            </Alert>
+          </Snackbar>
+        )}
       </div>
-      {alertContent && (
-        <Snackbar
-          open
-          autoHideDuration={3000}
-          onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
-            {alertContent.message}
-          </Alert>
-        </Snackbar>
-      )}
     </>
   );
 };
-export default ModalUpdateProductOnCartClient;
+export default ModalUpdateProductTimeline;

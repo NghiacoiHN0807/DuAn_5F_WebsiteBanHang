@@ -36,12 +36,12 @@ import { finByProductOnCart, findById } from '../../service/BillSevice';
 import { getDetailOneHD } from '../../service/OderManagementSevice';
 import SelectHistoryBill from '../../forms/Modals-SelectHistoryBill';
 import ModalDeleteDirectSale from '../../forms/Modal-Delete-DirectSale';
-import ModalUpdateProductOnCart from '../../forms/Modals-Update-Product-Cart';
 import ModalReturnItem from '../../forms/client/Modals-ReturnItem';
 import { selectDiaChiByTK } from '../../service/client/Payment';
 import ModalChangeAddress from '../../forms/Modals-Change-Address';
 import ModalDeleteProductOnCartClinet from '../../forms/client/Modal-Delete-Product-Client';
 import ModalAddProductClinet from '../../forms/client/Modals-AddProduct-Client';
+import ModalUpdateProductTimeline from '../../forms/client/Modals-Update-Product-TimeLine';
 
 const styles = {
   container: {
@@ -278,7 +278,8 @@ const OrderClientTimeline = ({ classes }) => {
   const [showModalsUpdate, setShowModalsUpdate] = useState(false);
   const [itemUpdateClassify, setItemUpdateClassify] = useState({});
   const [itemUpdate, setItemUpdate] = useState({});
-
+  console.log('itemUpdate', itemUpdate);
+  console.log('itemUpdateClassify', itemUpdateClassify);
   const handleUpdateClassify = async (item) => {
     setShowModalsUpdate(true);
     try {
@@ -538,9 +539,12 @@ const OrderClientTimeline = ({ classes }) => {
               </Table>{' '}
               {listData.length > 0 && (
                 <>
-                  <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
-                    Tiền Giao Hàng: {formatCurrency(listData[0].idHd.tienShip)}
-                  </Typography>
+                  {listData[0].idHd.tienShip && (
+                    <Typography sx={{ textAlign: 'right' }} variant="subtitle2" gutterBottom>
+                      Tiền Ship: {formatCurrency(listData[0].idHd.tienShip)}
+                    </Typography>
+                  )}
+
                   <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
                     Thành Tiền: {formatCurrency(listData[0].idHd.thanhTien)}
                   </Typography>
@@ -571,14 +575,15 @@ const OrderClientTimeline = ({ classes }) => {
                     selectDataCart={selectDataCart}
                   />
                 )}
-
-                <ModalUpdateProductOnCart
-                  show={showModalsUpdate}
-                  handleClose={handleCloseUpdateClassify}
-                  itemUpdateClassify={itemUpdateClassify}
-                  selectDataCart={selectDataCart}
-                  itemUpdate={itemUpdate}
-                />
+                {itemUpdate.length > 0 && (
+                  <ModalUpdateProductTimeline
+                    show={showModalsUpdate}
+                    handleClose={handleCloseUpdateClassify}
+                    itemUpdateClassify={itemUpdateClassify}
+                    selectDataCart={selectDataCart}
+                    itemUpdate={itemUpdate}
+                  />
+                )}
               </>
             )}
             {/* Add Modals */}

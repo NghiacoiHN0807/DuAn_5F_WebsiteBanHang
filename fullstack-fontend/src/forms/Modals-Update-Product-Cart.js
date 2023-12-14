@@ -113,22 +113,25 @@ const ModalUpdateProductOnCart = (props) => {
         type: 'warning',
         message: 'Vui lòng chọn số lượng lớn hơn 0',
       });
+    } else if (quantity > selectSoLuongTon[0].soLuongTon) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Sản Phẩm Vượt Quá Số Lượng Tồn',
+      });
     } else {
       const getIdHdCt = itemUpdate[1];
 
       const getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize, selectedMauSac);
-      console.log('getOneCTSP: ', getOneCTSP);
 
       const donGia = getOneCTSP.giaThucTe * quantity;
-      console.log('donGia: ', donGia);
 
       //   Insert to the cart
 
       await updateCart(getIdHdCt, getOneCTSP, quantity, donGia);
       //   Close the modal
-      setSelectedSize(null);
+      // setSelectedSize(null);
       handleCloseDetai();
-      setQuantity(1);
+      // setQuantity(1);
       //   Load new data on cart
       selectDataCart();
       setAlertContent({
