@@ -57,25 +57,32 @@ const ModalUpdateProductOnCartClient = (props) => {
   };
 
   const handleShowMS = (mauSac) => {
-    const checkSoLuong = Array.isArray(itemUpdateClassify)
-      ? [
-        ...new Set(
-          itemUpdateClassify.filter(
-            (item) => item.idMs.tenMs === mauSac.idMs.tenMs && item.idSize.tenSize === selectedSize
-          )
-        ),
-      ]
-      : [];
-    console.log('checkSoLuong:', checkSoLuong);
-
-    if (isMSSelected && selectedMauSac === mauSac.idMs.tenMs) {
-      setSelectedMauSac(null);
-      setIsMSSelected(false);
-      setSelectSoLuongTon([]);
+    if (!mauSac || !mauSac.idMs) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Xin mời chọn size của sản phẩm',
+      });
     } else {
-      setSelectSoLuongTon(checkSoLuong);
-      setSelectedMauSac(mauSac.idMs.tenMs);
-      setIsMSSelected(true);
+      const checkSoLuong = Array.isArray(itemUpdateClassify)
+        ? [
+            ...new Set(
+              itemUpdateClassify.filter(
+                (item) => item.idMs.tenMs === mauSac.idMs.tenMs && item.idSize.tenSize === selectedSize
+              )
+            ),
+          ]
+        : [];
+      console.log('checkSoLuong:', checkSoLuong);
+
+      if (isMSSelected && selectedMauSac === mauSac.idMs.tenMs) {
+        setSelectedMauSac(null);
+        setIsMSSelected(false);
+        setSelectSoLuongTon([]);
+      } else {
+        setSelectSoLuongTon(checkSoLuong);
+        setSelectedMauSac(mauSac.idMs.tenMs);
+        setIsMSSelected(true);
+      }
     }
   };
   const [quantity, setQuantity] = useState(1); // Initialize with a default quantity
@@ -153,23 +160,14 @@ const ModalUpdateProductOnCartClient = (props) => {
   const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
   const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
   const priceRange = minPrice === maxPrice ? formattedMinPrice : `${formattedMinPrice} - ${formattedMaxPrice}`;
-  // const getFirstImage = (item) => {
-  //   if (item && item.trim() !== '') {
-  //     const imagesArray = item.split(',');
-  //     return imagesArray[0];
-  //   }
-  //   return null;
-  // };
 
   const [images, setImages] = useState([]);
 
   const getDetail = useCallback(async () => {
     try {
-      // console.log('itemUpdate131: ', itemUpdate);
       const imgDataArray = await listImg(itemUpdate.idCtsp.idSp.idSp);
 
       setImages(imgDataArray);
-      console.log('imgData753: ', imgDataArray);
     } catch (e) {
       console.error(e);
     }
@@ -179,14 +177,15 @@ const ModalUpdateProductOnCartClient = (props) => {
     getDetail();
   }, [getDetail]);
   const handleCloseDetai = () => {
+    handleClose();
     setSelectSoLuongTon([]);
+    setAvailableColors([]);
     setIsMSSelected(false);
     setIsSizeSelected(false);
     setSelectedMauSac(null);
     setSelectedSize(null);
     setQuantity(1);
-
-    handleClose(); // Call the original handleClose function
+    // Call the original handleClose function
   };
   return (
     <>
@@ -206,7 +205,6 @@ const ModalUpdateProductOnCartClient = (props) => {
                         alt={images && images[0].url}
                       />
                     )}
-
                   </Carousel.Item>
                 </Carousel>
 
@@ -244,35 +242,35 @@ const ModalUpdateProductOnCartClient = (props) => {
                         Màu Sắc:{' '}
                         {availableColors.length > 0
                           ? // Hiển thị danh sách màu sắc từ availableColors
-                          availableColors.map((mauSac, msIndex) => (
-                            <Button
-                              style={{
-                                marginRight: '4px',
-                                marginBottom: '4px',
-                              }}
-                              key={`size-button-${msIndex}`}
-                              onClick={() => handleShowMS(mauSac)}
-                              variant={selectedMauSac === mauSac.idMs.tenMs ? 'contained' : 'outlined'}
-                              size="small"
-                            >
-                              {mauSac.idMs.tenMs}
-                            </Button>
-                          ))
+                            availableColors.map((mauSac, msIndex) => (
+                              <Button
+                                style={{
+                                  marginRight: '4px',
+                                  marginBottom: '4px',
+                                }}
+                                key={`size-button-${msIndex}`}
+                                onClick={() => handleShowMS(mauSac)}
+                                variant={selectedMauSac === mauSac.idMs.tenMs ? 'contained' : 'outlined'}
+                                size="small"
+                              >
+                                {mauSac.idMs.tenMs}
+                              </Button>
+                            ))
                           : // Hiển thị dữ liệu từ dataDetail
-                          uniqueMS.map((item, index) => (
-                            <Button
-                              style={{
-                                marginRight: '4px',
-                                marginBottom: '4px',
-                              }}
-                              key={`size-button-${index}`}
-                              onClick={() => handleShowMS(item)}
-                              variant={selectedMauSac === item ? 'contained' : 'outlined'}
-                              size="small"
-                            >
-                              {item}
-                            </Button>
-                          ))}
+                            uniqueMS.map((item, index) => (
+                              <Button
+                                style={{
+                                  marginRight: '4px',
+                                  marginBottom: '4px',
+                                }}
+                                key={`size-button-${index}`}
+                                onClick={() => handleShowMS(item)}
+                                variant={selectedMauSac === item ? 'contained' : 'outlined'}
+                                size="small"
+                              >
+                                {item}
+                              </Button>
+                            ))}
                       </div>
                     </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>

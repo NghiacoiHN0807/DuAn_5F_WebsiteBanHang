@@ -178,6 +178,7 @@ const ModalUpdateProductOnCart = (props) => {
     return formatter.format(price);
   }
   const handleCloseDetai = () => {
+    handleClose();
     getDetailHD();
     setSelectSoLuongTon([]);
     setAvailableColors([]);
@@ -186,7 +187,7 @@ const ModalUpdateProductOnCart = (props) => {
     setSelectedMauSac(null);
     setSelectedSize(null);
     setQuantity(1);
-    handleClose(); // Call the original handleClose function
+    // Call the original handleClose function
   };
   return (
     <>

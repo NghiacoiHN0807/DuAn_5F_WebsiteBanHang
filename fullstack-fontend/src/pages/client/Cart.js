@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 // Service
 import { listImg } from '../../service/client/Detail-Product';
 import {
-  deleteProductOnCart,
   listProductOnCart,
   upadteProductOnCart,
   postAddBillAddBill,
@@ -16,6 +15,7 @@ import {
 } from '../../service/client/Detail-Cart';
 import ModalUpdateProductOnCartClient from '../../forms/client/Modals-Update-Product-Cart-Client';
 import { findById } from '../../service/BillSevice';
+import ModalDeleteProductClient from '../../forms/client/Modals-Delete-ProductOnCart';
 
 const StyledProductImg = styled('img')({
   top: 0,
@@ -71,7 +71,6 @@ export default function Cart() {
   const [currentItemId, setCurrentItemId] = useState(null);
 
   const handleDecreaseQuantity = (item) => {
-    console.log('item: ', item);
     if (item.soLuong > 1) {
       setQuantity(item.soLuong - 1);
       setCurrentItemId(item.idCtsp.idCtsp);
@@ -79,9 +78,15 @@ export default function Cart() {
   };
 
   const handleIncreaseQuantity = (item) => {
-    console.log('item: ', item);
-    setCurrentItemId(item.idCtsp.idCtsp);
-    setQuantity(item.soLuong + 1);
+    if (item.soLuong >= 20) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Nếu bạn Muốn Mua Sỉ. Hãy Liên hệ Với Chúng Tôi',
+      });
+    } else {
+      setCurrentItemId(item.idCtsp.idCtsp);
+      setQuantity(item.soLuong + 1);
+    }
   };
 
   useEffect(() => {
@@ -101,17 +106,15 @@ export default function Cart() {
 
   const [alertContent, setAlertContent] = useState(null);
 
+  const [openDialogDelete, setOpenDialogDelete] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState([]);
+
   const handleDeleteProduct = async (item) => {
-    try {
-      await deleteProductOnCart(item.idGhct);
-      setAlertContent({
-        type: 'success',
-        message: 'Đã Xóa Sản Phẩm',
-      });
-      getDetail();
-    } catch (error) {
-      console.error(error);
-    }
+    setOpenDialogDelete(true);
+    setItemToDelete(item);
+  };
+  const handleCloseDelete = () => {
+    setOpenDialogDelete(false);
   };
 
   const handleSnackbarClose = (event, reason) => {
@@ -185,11 +188,15 @@ export default function Cart() {
     // Create a new bill
     if (totalPayment <= 0) {
       setAlertContent({
-        type: 'error',
+        type: 'warning',
         message: 'Vui Lòng Chọn Sản Phẩm',
       });
+    } else if (totalPayment >= 10000000) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hóa Đơn Của Bạn Đã Vượt Quá 10TR. Hãy Liên Hệ Với Chúng Tôi Để Mua Lẻ',
+      });
     } else {
-      console.log('authorities: ', authorities);
       const res = await postAddBillAddBill(authorities, totalPayment, 2, 11);
       for (let i = 0; i < selectedItems.length; i += 1) {
         (async () => {
@@ -211,7 +218,6 @@ export default function Cart() {
 
   const handleUpdateClassify = async (item) => {
     setShowModalsUpdate(true);
-    console.log('item:', item);
     try {
       const getOneSP = await findById(item.idCtsp.idSp.idSp);
       setItemUpdateClassify(getOneSP);
@@ -307,20 +313,7 @@ export default function Cart() {
                                     size="small"
                                     className="ms-size"
                                   >
-                                    {item.idCtsp.idMs.tenMs},
-                                    {/* </Button>
-                                  ,
-                                  <Button
-                                    style={{
-                                      fontSize: '12px',
-                                    }}
-                                    key={`size-button-${index}`}
-                                    // onClick={() => handleShowMS(item.idCtsp.idSize)}
-                                    // variant={selectedMauSac === item.idCtsp.idSize ? 'contained' : 'outlined'}
-                                    size="small"
-                                    className="ms-size"
-                                  > */}
-                                    {item.idCtsp.idSize.tenSize}
+                                    {item.idCtsp.idMs.tenMs},{item.idCtsp.idSize.tenSize}
                                   </Button>
                                 </span>
                               </div>
@@ -390,138 +383,7 @@ export default function Cart() {
             </div>
           </div>
         </section>
-        {/* cart + summary */}
-        {/* <section>
-          <div className="container my-5">
-            <header className="mb-4">
-              <h3>Recommended items</h3>
-            </header>
-            <div className="row">
-              <div className="col-lg-3 col-md-6 col-sm-6">
-                <div className="card px-4 border shadow-0 mb-4 mb-lg-0">
-                  <div className="mask px-2" style={{ height: '50px' }}>
-                    <div className="d-flex justify-content-between">
-                      <h6>
-                        <span className="badge bg-danger pt-1 mt-3 ms-2">New</span>
-                      </h6>
-                      <a href="#">
-                        <i className="fas fa-heart text-primary fa-lg float-end pt-3 m-2" />
-                      </a>
-                    </div>
-                  </div>
-                  <a href="#" className>
-                    <img
-                      alt=""
-                      src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/7.webp"
-                      className="card-img-top rounded-2"
-                    />
-                  </a>
-                  <div className="card-body d-flex flex-column pt-3 border-top">
-                    <a href="#" className="nav-link">
-                      Gaming Headset with Mic
-                    </a>
-                    <div className="price-wrap mb-2">
-                      <strong className>$18.95</strong>
-                      <del className>$24.99</del>
-                    </div>
-                    <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                      <a href="#" className="btn btn-outline-primary w-100">
-                        Add to cart
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-3 col-md-6 col-sm-6">
-                <div className="card px-4 border shadow-0 mb-4 mb-lg-0">
-                  <div className="mask px-2" style={{ height: '50px' }}>
-                    <a href="#">
-                      <i className="fas fa-heart text-primary fa-lg float-end pt-3 m-2" />
-                    </a>
-                  </div>
-                  <a href="#" className>
-                    <img
-                      alt=""
-                      src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/5.webp"
-                      className="card-img-top rounded-2"
-                    />
-                  </a>
-                  <div className="card-body d-flex flex-column pt-3 border-top">
-                    <a href="#" className="nav-link">
-                      Apple Watch Series 1 Sport{' '}
-                    </a>
-                    <div className="price-wrap mb-2">
-                      <strong className>$120.00</strong>
-                    </div>
-                    <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                      <a href="#" className="btn btn-outline-primary w-100">
-                        Add to cart
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-3 col-md-6 col-sm-6">
-                <div className="card px-4 border shadow-0">
-                  <div className="mask px-2" style={{ height: '50px' }}>
-                    <a href="#">
-                      <i className="fas fa-heart text-primary fa-lg float-end pt-3 m-2" />
-                    </a>
-                  </div>
-                  <a href="#" className>
-                    <img
-                      alt=""
-                      src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/9.webp"
-                      className="card-img-top rounded-2"
-                    />
-                  </a>
-                  <div className="card-body d-flex flex-column pt-3 border-top">
-                    <a href="#" className="nav-link">
-                      Men's Denim Jeans Shorts
-                    </a>
-                    <div className="price-wrap mb-2">
-                      <strong className>$80.50</strong>
-                    </div>
-                    <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                      <a href="#" className="btn btn-outline-primary w-100">
-                        Add to cart
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-lg-3 col-md-6 col-sm-6">
-                <div className="card px-4 border shadow-0">
-                  <div className="mask px-2" style={{ height: '50px' }}>
-                    <a href="#">
-                      <i className="fas fa-heart text-primary fa-lg float-end pt-3 m-2" />
-                    </a>
-                  </div>
-                  <a href="#" className>
-                    <img
-                      alt=""
-                      src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/10.webp"
-                      className="card-img-top rounded-2"
-                    />
-                  </a>
-                  <div className="card-body d-flex flex-column pt-3 border-top">
-                    <a href="#" className="nav-link">
-                      Mens T-shirt Cotton Base Layer Slim fit{' '}
-                    </a>
-                    <div className="price-wrap mb-2">
-                      <strong className>$13.90</strong>
-                    </div>
-                    <div className="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                      <a href="#" className="btn btn-outline-primary w-100">
-                        Add to cart
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section> */}
+
         {/* Recommended */}
       </div>
       {alertContent && (
@@ -543,6 +405,14 @@ export default function Cart() {
           itemUpdateClassify={itemUpdateClassify}
           selectDataCart={getDetail}
           itemUpdate={itemUpdate}
+        />
+      )}
+      {itemToDelete && openDialogDelete === true && (
+        <ModalDeleteProductClient
+          getDetail={getDetail}
+          show={openDialogDelete}
+          handleClose={handleCloseDelete}
+          itemToDelete={itemToDelete}
         />
       )}
     </>

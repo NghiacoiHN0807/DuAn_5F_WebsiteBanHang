@@ -36,12 +36,12 @@ import { finByProductOnCart, findById } from '../../service/BillSevice';
 import { getDetailOneHD } from '../../service/OderManagementSevice';
 import SelectHistoryBill from '../../forms/Modals-SelectHistoryBill';
 import ModalDeleteDirectSale from '../../forms/Modal-Delete-DirectSale';
-import ModalAddProduct from '../../forms/Modals-AddProduct';
-import ModalDeleteProductOnCart from '../../forms/Modal-Delete-Product';
 import ModalUpdateProductOnCart from '../../forms/Modals-Update-Product-Cart';
 import ModalReturnItem from '../../forms/client/Modals-ReturnItem';
 import { selectDiaChiByTK } from '../../service/client/Payment';
 import ModalChangeAddress from '../../forms/Modals-Change-Address';
+import ModalDeleteProductOnCartClinet from '../../forms/client/Modal-Delete-Product-Client';
+import ModalAddProductClinet from '../../forms/client/Modals-AddProduct-Client';
 
 const styles = {
   container: {
@@ -562,12 +562,16 @@ const OrderClientTimeline = ({ classes }) => {
             )}
             {listData.length > 0 && (
               <>
-                <ModalDeleteProductOnCart
-                  open={showModalsDelete}
-                  handleClose={handleCloseModalDelelte}
-                  itemDelete={itemDelete}
-                  selectDataCart={selectDataCart}
-                />
+                {itemDelete !== undefined && (
+                  <ModalDeleteProductOnCartClinet
+                    open={showModalsDelete}
+                    handleClose={handleCloseModalDelelte}
+                    DataCart={DataCart}
+                    itemDelete={itemDelete}
+                    selectDataCart={selectDataCart}
+                  />
+                )}
+
                 <ModalUpdateProductOnCart
                   show={showModalsUpdate}
                   handleClose={handleCloseUpdateClassify}
@@ -578,7 +582,7 @@ const OrderClientTimeline = ({ classes }) => {
               </>
             )}
             {/* Add Modals */}
-            <ModalAddProduct
+            <ModalAddProductClinet
               show={showModalsAdd1}
               selectDataCart={selectDataCart}
               handleClose={handleClose2}
