@@ -1,12 +1,7 @@
 import custom from '../custom-axios';
 
-<<<<<<< HEAD
-const selectDiaChiByTK = (maTaiKhoan) => custom.get(`/dia-chi/tai-khoan-client/?m=${maTaiKhoan}`);
-const updateClientPayment = (idHd, tenKh, sdtKh, diaChi) =>
-=======
 const selectDiaChiByTK = (maTaiKhoan) => custom.get(`/dia-chi/tai-khoan/?m=${maTaiKhoan}`);
 const updateClientPayment = (idHd, tenKh, sdtKh, email, diaChi) =>
->>>>>>> origin/nghiant0807
   custom.put(`/hoa-don/update-client-payment/${idHd}`, {
     tenKh,
     sdtKh,
