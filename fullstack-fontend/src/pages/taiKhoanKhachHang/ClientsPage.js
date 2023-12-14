@@ -82,11 +82,11 @@ const ClientPage = () => {
                 let statusText;
 
                 switch (trangThai) {
-                    case 1:
+                    case 0:
                         badgeVariant = "primary";
                         statusText = "Đã kích hoạt";
                         break;
-                    case 4:
+                    case 10:
                         badgeVariant = "info";
                         statusText = "Đã Ngưng hoạt động";
                         break;
@@ -223,9 +223,8 @@ const ClientPage = () => {
                         onChange={(e) => setSelectedStatus(e.target.value)}
                     >
                         <MenuItem value={"Tất cả"}>Tất Cả</MenuItem>
-                        <MenuItem value={0}>Chưa Kích Hoạt</MenuItem>
-                        <MenuItem value={1}>Đã Kích Hoạt</MenuItem>
-                        <MenuItem value={2}>Ngưng Hoạt Động</MenuItem>
+                        <MenuItem value={0}>Đang Hoạt Động</MenuItem>
+                        <MenuItem value={10}>Đã Bị Khóa</MenuItem>
                     </Select>
                 </FormControl>
                 <GridToolbarExport

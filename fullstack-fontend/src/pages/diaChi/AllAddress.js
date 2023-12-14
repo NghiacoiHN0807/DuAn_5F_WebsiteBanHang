@@ -96,13 +96,9 @@ const AllAddress = () => {
                 let badgeVariant
                 let statusText;
                 switch (trangThai) {
-                    case 1:
+                    case 0:
                         badgeVariant = "primary";
-                        statusText = "Đã Xác Nhận";
-                        break;
-                    case 4:
-                        badgeVariant = "info";
-                        statusText = "Đã Ngưng hoạt động";
+                        statusText = "Đang Hoạt Động";
                         break;
                     case 10:
                         badgeVariant = "danger";
@@ -110,7 +106,7 @@ const AllAddress = () => {
                         break;
                     default:
                         badgeVariant = "light";
-                        statusText = "Chưa Xác Nhận";
+                        statusText = "Đang Bị Null";
                         break;
                 }
 
@@ -193,9 +189,7 @@ const AllAddress = () => {
                         onChange={(e) => setSelectedStatus(e.target.value)}
                     >
                         <MenuItem value={"Tất cả"}>Tất Cả</MenuItem>
-                        <MenuItem value={0}>Chưa Kích Hoạt</MenuItem>
-                        <MenuItem value={1}>Đã Kích Hoạt</MenuItem>
-                        <MenuItem value={4}>Ngưng Hoạt Động</MenuItem>
+                        <MenuItem value={0}>Đang Hoạt Động</MenuItem>
                         <MenuItem value={10}>Đã Bị Xóa</MenuItem>
                     </Select>
                 </FormControl>
@@ -236,9 +230,6 @@ const AllAddress = () => {
                     </Typography>
                 </Stack>
                 <Card>
-
-
-
                 <TextField
                     variant="outlined"
                     margin="dense"
