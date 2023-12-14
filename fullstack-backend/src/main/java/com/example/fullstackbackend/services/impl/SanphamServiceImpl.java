@@ -72,14 +72,10 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
-    public Page<SanPhamClientDTO> sanPhamForClient(Integer pageNo, Integer size) {
-        // Tạo đối tượng Pageable
-        Pageable pageable = PageRequest.of(pageNo, size);
+    public List<SanPhamClientDTO> sanPhamForClient() {
 
-        // Lấy dữ liệu từ repository sử dụng trang và kích thước trang
         List<Object[]> rows = sanphamRepository.getSpForClient();
 
-        // Chuyển đổi dữ liệu sang đối tượng SanPhamClientDTO
         List<SanPhamClientDTO> dtos = new ArrayList<>();
         for (Object[] row : rows) {
             SanPhamClientDTO spCustom = new SanPhamClientDTO();
@@ -101,16 +97,7 @@ public class SanphamServiceImpl implements SanPhamService {
             dtos.add(spCustom);
         }
 
-        // Tạo đối tượng Page từ danh sách và Pageable
-        int start = (int) PageRequest.of(pageNo, size).getOffset();
-
-        // Tính chỉ số kết thúc của danh sách cho trang cụ thể
-        int end = Math.min((start + size), dtos.size());
-
-        // Tạo danh sách cho trang cụ thể
-        List<SanPhamClientDTO> subList = dtos.subList(start, end);
-
-        return new PageImpl<>(subList, pageable, dtos.size());
+        return dtos;
     }
 
     @Override

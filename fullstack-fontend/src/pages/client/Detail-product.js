@@ -56,8 +56,6 @@ const DetailProduct = () => {
       const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
       const priceRange = minPrice === maxPrice ? formattedMinPrice : `${formattedMinPrice} - ${formattedMaxPrice}`;
       setPrice(priceRange);
-      console.log('getOneSP: ', getOneSP);
-      console.log('getOneSP1: ', getOneSP1);
       setDetailProduct(getOneSP);
       setDetailImg(getOneSP1);
       const getListLQ = await getRelatedSp(getOneSP[0].idSp.idLsp.idLoaisp, getOneSP[0].idSp.idSp);
@@ -87,7 +85,6 @@ const DetailProduct = () => {
     const checkSoLuong = detailProduct.filter(
       (item) => item.idSize.tenSize === size && item.idMs.tenMs === selectedMauSac
     );
-    console.log('checkSoLuong:', checkSoLuong);
 
     if (isSizeSelected && selectedSize === size) {
       setSelectedSize(null);
@@ -139,63 +136,58 @@ const DetailProduct = () => {
     const getLocalStore = localStorage.getItem('userFormToken');
     const selectedMauSacIsNull = selectedMauSac === null || selectedSize === null;
 
-    if (!getLocalStore || selectedMauSacIsNull) {
+    if (!getLocalStore || selectedMauSacIsNull || selectSoLuongTon.length === 0) {
       setAlertContent({
         type: 'warning',
         message: 'Thuộc Tính Sản Phẩm Trống',
       });
-      return;
-    }
-    if (quantity > 20) {
+    } else if (quantity > 20) {
       setAlertContent({
         type: 'warning',
         message: 'Nếu bạn Muốn Mua Sỉ. Hãy Liên hệ Với Chúng Tôi',
       });
       console.log('selectSoLuongTon[0].getSoLuongTon: ', selectSoLuongTon[0].soLuongTon);
-      return;
-    }
-    if (quantity > selectSoLuongTon[0].soLuongTon) {
+    } else if (quantity > selectSoLuongTon[0].soLuongTon) {
       setAlertContent({
         type: 'warning',
         message: 'Số Lượng Tồn Không Đủ!!!',
       });
-      return;
-    }
-
-    const authorities = JSON.parse(getLocalStore).taiKhoan;
-    const productId = selectSoLuongTon[0].idCtsp;
-
-    try {
-      if (!selectedMauSacIsNull) {
-        await addProductOnCart(authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
-        setAlertContent({
-          type: 'success',
-          message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-
-    const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {};
-    const selectedItem = currentCart[productId];
-
-    if (selectedItem) {
-      selectedItem.soLuong += quantity;
-      selectedItem.donGia = selectSoLuongTon[0].giaThucTe * selectedItem.soLuong;
     } else {
-      currentCart[productId] = {
-        idCtsp: selectSoLuongTon[0],
-        soLuong: quantity,
-        donGia: selectSoLuongTon[0].giaThucTe * quantity,
-      };
-    }
+      const authorities = JSON.parse(getLocalStore).taiKhoan;
+      const productId = selectSoLuongTon[0].idCtsp;
 
-    localStorage.setItem('cartProduct', JSON.stringify(currentCart));
-    setAlertContent({
-      type: 'success',
-      message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
-    });
+      try {
+        if (!selectedMauSacIsNull) {
+          await addProductOnCart(authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
+          setAlertContent({
+            type: 'success',
+            message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {};
+      const selectedItem = currentCart[productId];
+
+      if (selectedItem) {
+        selectedItem.soLuong += quantity;
+        selectedItem.donGia = selectSoLuongTon[0].giaThucTe * selectedItem.soLuong;
+      } else {
+        currentCart[productId] = {
+          idCtsp: selectSoLuongTon[0],
+          soLuong: quantity,
+          donGia: selectSoLuongTon[0].giaThucTe * quantity,
+        };
+      }
+
+      localStorage.setItem('cartProduct', JSON.stringify(currentCart));
+      setAlertContent({
+        type: 'success',
+        message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
+      });
+    }
   };
 
   const handleSnackbarClose = (event, reason) => {

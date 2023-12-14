@@ -380,7 +380,7 @@ public class HoaDonController {
         lichSuHoaDon.setIdHd(newHD1);
         lichSuHoaDon.setIdTk(newHD1.getIdTK());
         lichSuHoaDon.setTrangThai(12);
-        lichSuHoaDon.setMoTa("Thay Đổi Thông Tin Khách Hàng: "+ newHD.getDiaChi());
+        lichSuHoaDon.setMoTa("Thay Đổi Thông Tin Khách Hàng: " + newHD.getDiaChi());
         lichSuHoaDon.setNgayThayDoi(currentTimestamp);
         lichSuHoaDonService.add(lichSuHoaDon);
 

@@ -1,17 +1,32 @@
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect, useCallback } from 'react';
 // @mui
-import { Container, Stack, Typography } from '@mui/material';
+import { Container, Grid, InputAdornment, OutlinedInput, Typography, alpha, styled } from '@mui/material';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import Iconify from '../../components/iconify';
+
 // components
 import { ProductListAll, ProductfilterSB } from '../../sections/@dashboard/products';
 // mock
-
-//
 import { fetchSpForClient } from '../../service/SanPhamService';
 
 // ----------------------------------------------------------------------
+
+const StyledSearch = styled(OutlinedInput)(({ theme }) => ({
+  width: 240,
+  transition: theme.transitions.create(['box-shadow', 'width'], {
+    easing: theme.transitions.easing.easeInOut,
+    duration: theme.transitions.duration.shorter,
+  }),
+  '&.Mui-focused': {
+    width: 320,
+    boxShadow: theme.customShadows.z8,
+  },
+  '& fieldset': {
+    borderWidth: `1px !important`,
+    borderColor: `${alpha(theme.palette.grey[500], 0.32)} !important`,
+  },
+}));
 
 export default function ProductsPage() {
   const [listSP, setListSP] = useState([]);
@@ -26,30 +41,15 @@ export default function ProductsPage() {
     setOpenFilter(false);
   };
 
-  const [currentPage, setCurrentPage] = useState(0);
   const getListData = useCallback(async () => {
     try {
-      const res = await fetchSpForClient(currentPage);
+      const res = await fetchSpForClient();
       console.log('Check res: ', res);
-      setListSP((prevList) => [...prevList, ...res.content]);
-      setSoTrangDaHasagi(res.totalPages);
+      setListSP(res);
     } catch (error) {
       console.error('Error in list bill: ', error);
     }
-  }, [currentPage]);
-
-  const [soTrangDaHasagi, setSoTrangDaHasagi] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const fetchMoreData = () => {
-    console.log(soTrangDaHasagi, 'hasagi');
-    console.log(currentPage, 'currentPage');
-    if (soTrangDaHasagi - 1 <= currentPage) {
-      setHasMore(false);
-    } else {
-      setCurrentPage((prevPage) => prevPage + 1);
-    }
-  };
-  console.log(listSP.length, 'length');
+  }, []);
 
   useEffect(() => {
     getListData();
@@ -65,7 +65,30 @@ export default function ProductsPage() {
     setIsFiltered(true);
   };
 
-  const displayProducts = isFiltered ? listLoc : listSP;
+  const [dsList, setDsList] = useState([]);
+
+  // search
+  const [searchInput, setSearchInput] = useState('');
+
+  const handleSearchChange = (event) => {
+    setSearchInput(event.target.value);
+  };
+
+  const filteredProducts = dsList.filter((product) => product.tenSp.toLowerCase().includes(searchInput.toLowerCase()));
+
+  // helptext
+
+  const handleClearAll = (isPressed) => {
+    setIsFiltered(isPressed);
+  };
+
+  useEffect(() => {
+    if (isFiltered) {
+      setDsList(listLoc);
+    } else {
+      setDsList(listSP);
+    }
+  }, [isFiltered, listLoc, listSP]);
 
   return (
     <>
@@ -77,37 +100,45 @@ export default function ProductsPage() {
         <Typography variant="h4" sx={{ mb: 5 }}>
           Danh sách sản phẩm
         </Typography>
-        <InfiniteScroll
-          dataLength={listSP && listSP.length}
-          next={fetchMoreData}
-          hasMore={hasMore}
-          loader={<p style={{ textAlign: 'center' }}>Loading...</p>}
-          endMessage={<p style={{ textAlign: 'center' }}>Đã tải hết sản phẩm !!!</p>}
-        >
-          <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
-            <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-              <ProductfilterSB
-                openFilter={openFilter}
-                onOpenFilter={handleOpenFilter}
-                onCloseFilter={handleCloseFilter}
-                listSP={listSP}
-                onFilter={handleFilter}
-              />
-            </Stack>
-          </Stack>
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} sx={{ marginBottom: '40px' }}>
+          <Grid item xs={6}>
+            <StyledSearch
+              placeholder="Tìm kiếm ..."
+              startAdornment={
+                <InputAdornment position="start">
+                  <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
+                </InputAdornment>
+              }
+              value={searchInput}
+              onChange={handleSearchChange}
+            />
+            <Typography variant="caption" display="block" gutterBottom sx={{ margin: '10px' }}>
+              {isFiltered ? 'Đang tìm theo lọc' : ''}
+            </Typography>
+          </Grid>
+          <Grid item xs={6} sx={{ textAlign: 'right' }}>
+            <ProductfilterSB
+              openFilter={openFilter}
+              onOpenFilter={handleOpenFilter}
+              onCloseFilter={handleCloseFilter}
+              listSP={listSP}
+              onFilter={handleFilter}
+              onClearAll={handleClearAll}
+            />
+          </Grid>
+        </Grid>
 
-          {listSP.length > 0 && (
-            <div>
-              {displayProducts.length > 0 ? (
-                <ProductListAll products={displayProducts} sx={{ marginBottom: '50px' }} />
-              ) : (
-                <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', marginBottom: '50px' }}>
-                  <SearchOffIcon sx={{ fontSize: 80 }} /> Không tìm thấy sản phẩm phù hợp!
-                </Typography>
-              )}
-            </div>
-          )}
-        </InfiniteScroll>
+        {listSP.length > 0 && (
+          <div>
+            {filteredProducts.length > 0 ? (
+              <ProductListAll products={filteredProducts} sx={{ marginBottom: '50px' }} />
+            ) : (
+              <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', marginBottom: '50px' }}>
+                <SearchOffIcon sx={{ fontSize: 80 }} /> Không tìm thấy sản phẩm phù hợp!
+              </Typography>
+            )}
+          </div>
+        )}
       </Container>
     </>
   );

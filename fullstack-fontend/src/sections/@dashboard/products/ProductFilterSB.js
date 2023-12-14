@@ -67,9 +67,10 @@ ShopFilterSidebar.propTypes = {
   onCloseFilter: PropTypes.func,
   onFilter: PropTypes.func,
   listSP: PropTypes.array,
+  onClearAll: PropTypes.func,
 };
 
-export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter, onFilter, listSP }) {
+export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter, onFilter, listSP, onClearAll }) {
   const [listCL, setListCL] = useState([]);
   const [listLSP, setListLSP] = useState([]);
   const [listXX, setListXX] = useState([]);
@@ -121,6 +122,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
     setLocLsp('all');
     setLocGia('all');
     onFilter(listSP);
+    onClearAll(false);
   };
 
   // loc checkbox
