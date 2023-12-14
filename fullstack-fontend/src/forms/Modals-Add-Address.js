@@ -104,6 +104,7 @@ const ModalAddAddress = (props) => {
 
     const [rowsPerPage, setRowsPerPage] = useState(5);
 
+    const tong = listData.length;
     const handleRequestSort = (event, property) => {
         const isAsc = orderBy === property && order === 'asc';
         setOrder(isAsc ? 'desc' : 'asc');
@@ -178,8 +179,9 @@ const ModalAddAddress = (props) => {
                                         color: "black",
                                     },
                                 }}
+                                disabled={tong ===5}
                             >
-                                Thêm Địa Chỉ Mới
+                                {tong >=5 ? 'Khóa Thêm Địa Chỉ':'Thêm Địa Chỉ Mới' }
                             </Button>
                             <UserListToolbar
                                 numSelected={selected.length}

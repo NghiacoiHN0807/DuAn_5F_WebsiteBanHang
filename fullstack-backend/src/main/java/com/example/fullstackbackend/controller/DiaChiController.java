@@ -100,12 +100,13 @@ public class DiaChiController {
     public ResponseEntity<?> update(@Valid @RequestBody DiaChi diaChi,
                                     BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            List<String> errorMessages = fieldErrors.stream()
-                    .map(error -> error.getDefaultMessage())
-                    .collect(Collectors.toList());
 
-            return ResponseEntity.badRequest().body(errorMessages);
+            for (FieldError fieldError : fieldErrors) {
+                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+            return ResponseEntity.badRequest().body(errorMap);
         } else {
             DiaChi updatedDiaChi = diaChiSevice.update(diaChi);
             return ResponseEntity.ok(updatedDiaChi);

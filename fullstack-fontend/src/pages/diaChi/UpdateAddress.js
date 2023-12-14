@@ -6,7 +6,7 @@ import {
     Button,
     Container,
     FormControl,
-    FormControlLabel,
+    FormControlLabel, FormHelperText,
     FormLabel,
     InputLabel,
     MenuItem,
@@ -295,9 +295,6 @@ const UpdateAddress = () => {
 
         const [validationErrors, setValidationErrors] = useState("");
         const handleSave = async () => {
-            console.log("name px",selectedPhuongXa)
-            console.log("name qh",selectedQuanHuyen)
-            console.log("name tt",selectedTinhThanh)
             let res;
             try {
                 res = await postUpdateDiaChi(
@@ -318,7 +315,7 @@ const UpdateAddress = () => {
                 if (error.response && error.response.data) {
                     setValidationErrors(error.response.data);
                     // showAlert('error', error.response.data);
-                    showAlert('error', validationErrors.error);
+                    showAlert('error', 'Thêm Địa Chỉ Thất Bại !');
                 } else {
                     console.error("Error:", error);
                 }
@@ -454,7 +451,6 @@ const UpdateAddress = () => {
                                     value={selectedTinhThanh}
                                     onChange={(e) => setSelectedTinhThanh(e.target.value)}
                                     label="Tỉnh/Thành Phố"
-
                                 >
                                     <MenuItem value="">
                                         <em>Chọn Tỉnh/Thành Phố</em>
@@ -465,10 +461,11 @@ const UpdateAddress = () => {
                                         </MenuItem>
                                     ))}
                                 </Select>
+                                <FormHelperText error>{validationErrors.tinhThanh}</FormHelperText>
                             </FormControl>
                             <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}  error={!!validationErrors.quanHuyen}
                                          helperText={validationErrors.quanHuyen}>
-                                <InputLabel id="district-label">Quận/Huyện</InputLabel>
+                                <InputLabel id="district-label" >Quận/Huyện</InputLabel>
                                 <Select
                                     labelId="district-label"
                                     id="district-select"
@@ -477,7 +474,7 @@ const UpdateAddress = () => {
                                     label="Quận/Huyện"
 
                                 >
-                                    <MenuItem value="">
+                                    <MenuItem value="" >
                                         <em>Chọn Quận/Huyện</em>
                                     </MenuItem>
                                     {quanHuyen.map((district) => (
@@ -486,6 +483,7 @@ const UpdateAddress = () => {
                                         </MenuItem>
                                     ))}
                                 </Select>
+                                <FormHelperText error>{validationErrors.quanHuyen}</FormHelperText>
                             </FormControl>
                             <FormControl size="small" sx={{m: 0, minWidth: 170, marginTop: 2}}   error={!!validationErrors.phuongXa}
                                          helperText={validationErrors.phuongXa}>
@@ -507,6 +505,7 @@ const UpdateAddress = () => {
                                         </MenuItem>
                                     ))}
                                 </Select>
+                                <FormHelperText error>{validationErrors.phuongXa}</FormHelperText>
                             </FormControl>
                         </Box>
 

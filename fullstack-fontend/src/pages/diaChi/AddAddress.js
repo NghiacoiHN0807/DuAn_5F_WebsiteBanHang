@@ -192,8 +192,8 @@ const AddAddress = () => {
                     // console.log('check tên', selectedTinhThanhName);
                     setValidationErrors(error.response.data);
                     // showAlert('warning', error.response.data);
-                    // showAlert('error', 'Thêm Địa Chỉ Thất Bại !');
-                    showAlert('error', validationErrors.error);
+                    showAlert('error', 'Thêm Địa Chỉ Thất Bại !');
+
 
 
                 } else {
@@ -261,6 +261,7 @@ const AddAddress = () => {
                             fullWidth
                             label="Số Điện Thoại"
                             id="fullWidth"
+                            type="number"
                             inputProps={{maxLength: 10}}
                             onChange={(event) => setSdt(event.target.value)}
                         />
@@ -319,6 +320,8 @@ const AddAddress = () => {
                                         </MenuItem>
                                     ))}
                                 </Select>
+                                <FormHelperText error={validationErrors.tinhThanh}>{validationErrors.tinhThanh}</FormHelperText>
+
                             </FormControl>
                             <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}
                                          error={!!validationErrors.quanHuyen}
@@ -341,6 +344,9 @@ const AddAddress = () => {
                                         </MenuItem>
                                     ))}
                                 </Select>
+                                <FormHelperText  error={!!validationErrors.quanHuyen}>{validationErrors.quanHuyen}</FormHelperText>
+
+
                             </FormControl>
                             <FormControl size="small" sx={{m: 0, minWidth: 170, marginTop: 2}}
                                          error={!!validationErrors.phuongXa}
@@ -363,6 +369,8 @@ const AddAddress = () => {
                                         </MenuItem>
                                     ))}
                                 </Select>
+                                <FormHelperText error={!!validationErrors.phuongXa}>{validationErrors.phuongXa}</FormHelperText>
+
                             </FormControl>
                         </Box>
 
