@@ -8,7 +8,7 @@ import {
     DialogContent,
     DialogTitle,
     FormControl,
-    FormControlLabel,
+    FormControlLabel, FormHelperText,
     FormLabel,
     InputLabel,
     MenuItem,
@@ -316,7 +316,7 @@ const ModalAddAddressById = (props) => {
             if (error.response && error.response.data) {
                 setValidationErrors(error.response.data);
                 // showAlert('error', error.response.data);
-                showAlert('error', validationErrors.error);
+                showAlert('error', "Cập Nhập Địa Chỉ Thất Bại");
             } else {
                 console.error("Error:", error);
             }
@@ -331,6 +331,22 @@ const ModalAddAddressById = (props) => {
         }
 
     };
+    const clearText = ()=>{
+        setTenNguoiNhan("");
+        setDiaChiCuThe("");
+        setSdt("");
+        setLoaiDiaChi("0");
+        setSelectedTinhThanh("");
+        setSelectedQuanHuyen("");
+        setSelectedPhuongXa("");
+        setSelectedTinhThanhName("");
+        setSelectedPhuongXaName("");
+        setSelectedQuanHuyenName("");
+        setValidationErrors("");
+    }
+    useEffect(() => {
+        clearText()
+    }, [handleClose]);
     return (
         <>
             <div>
@@ -379,6 +395,7 @@ const ModalAddAddressById = (props) => {
                                     id="fullWidth"
                                     inputProps={{maxLength: 10}}
                                     value={sdt}
+                                    type="number"
                                     onChange={(event) => setSdt(event.target.value)}
                                 />
                                 <FormControl style={{marginLeft: "10px"}}
@@ -436,6 +453,7 @@ const ModalAddAddressById = (props) => {
                                                 </MenuItem>
                                             ))}
                                         </Select>
+                                        <FormHelperText error>{validationErrors.tinhThanh}</FormHelperText>
                                     </FormControl>
                                     <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}
                                                  error={!!validationErrors.quanHuyen}
@@ -458,6 +476,7 @@ const ModalAddAddressById = (props) => {
                                                 </MenuItem>
                                             ))}
                                         </Select>
+                                        <FormHelperText error>{validationErrors.quanHuyen}</FormHelperText>
                                     </FormControl>
                                     <FormControl size="small" sx={{m: 0, minWidth: 170, marginTop: 2}}
                                                  error={!!validationErrors.phuongXa}
@@ -480,6 +499,7 @@ const ModalAddAddressById = (props) => {
                                                 </MenuItem>
                                             ))}
                                         </Select>
+                                        <FormHelperText error>{validationErrors.phuongXa}</FormHelperText>
                                     </FormControl>
                                 </Box>
 
