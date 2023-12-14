@@ -40,6 +40,7 @@ import ModalDeleteProductOnCart from '../forms/Modal-Delete-Product';
 import ModalUpdateProductOnCart from '../forms/Modals-Update-Product-Cart';
 import ModalChangeAddress from '../forms/Modals-Change-Address';
 import { selectDiaChiByTK } from '../service/client/Payment';
+import ModalChangeAddressNoAcc from '../forms/Modals-Change-AddressNoAcc';
 
 const styles = {
   container: {
@@ -62,11 +63,7 @@ const OrderManagementTimeline = ({ classes }) => {
   const getListData = useCallback(async () => {
     try {
       const res = await getDetailOneHD(idHdParam);
-      console.log('res: ', res);
-
       const res1 = await viewAllHTTT(idHdParam);
-      console.log('res1: ', res1);
-
       setListData(res);
       setListHTTT(res1);
       setActiveIndex(res[0].idHd.trangThai);
@@ -84,7 +81,6 @@ const OrderManagementTimeline = ({ classes }) => {
     try {
       const res = await finByProductOnCart(idHdParam);
       if (res) {
-        console.log('Check DataCart: ', res);
         setDataCart(res);
       }
     } catch (error) {
@@ -110,7 +106,7 @@ const OrderManagementTimeline = ({ classes }) => {
   function getColorForTrangThai(trangThai) {
     if (trangThai === 10) return '#ff0000';
     if (trangThai === 6) return '#ffff00';
-    if (trangThai === 7) return '#ffA500';
+    if (trangThai === 7 || trangThai === 12) return '#ffA500';
     if (trangThai >= 0) return '#64a338';
     return '#E3E3E3';
   }
@@ -127,6 +123,7 @@ const OrderManagementTimeline = ({ classes }) => {
     if (trangThai === 7) return 'Chỉnh Sửa Đơn Hàng';
     if (trangThai === 10) return 'Đơn Hàng Đã Bị Hủy';
     if (trangThai === 11) return 'Tạo Hóa Đơn Treo Thành Công';
+    if (trangThai === 12) return 'Chỉnh Sửa Địa Chỉ';
     return 'Trạng Thái Trống';
   }
 
@@ -138,7 +135,7 @@ const OrderManagementTimeline = ({ classes }) => {
     if (trangThai === 4 || trangThai === 9) return FcSalesPerformance;
     if (trangThai === 5) return FcHome;
     if (trangThai === 6) return FcProcess;
-    if (trangThai === 7) return FcTodoList;
+    if (trangThai === 7 || trangThai === 12) return FcTodoList;
     if (trangThai === 10) return FcDeleteDatabase;
     return FcCancel;
   }
@@ -303,6 +300,7 @@ const OrderManagementTimeline = ({ classes }) => {
   // Handle Change Address
   const [showModalsAddress, setShowModalAddress] = useState(false);
   const [listAddess, setListAddress] = useState([]);
+  const [showModalsAddress1, setShowModalAddress1] = useState(false);
 
   const handleChangeAddress = async () => {
     if (listData[0].idHd.idKH) {
@@ -311,12 +309,17 @@ const OrderManagementTimeline = ({ classes }) => {
       setListAddress(getData);
       setShowModalAddress(true);
     } else {
+      setShowModalAddress1(true);
       console.log('Sửa Địa Chỉ Mà Không Có Tài Khoản');
     }
   };
+
   const handleCloseAddress = () => {
     // getDetailHD();
     setShowModalAddress(false);
+  };
+  const handleCloseAddress1 = () => {
+    setShowModalAddress1(false);
   };
   // Format thanhTien
   const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
@@ -627,6 +630,16 @@ const OrderManagementTimeline = ({ classes }) => {
           />
         </>
       )}
+      <ModalChangeAddressNoAcc
+        open={showModalsAddress1}
+        handleClose={handleCloseAddress1}
+        // setTenKH={getTenKHShip}
+        // setSDTKH={getSdtKHShip}
+        // setDiaChi={setResult1}
+        // setEmailKH={getEmailKHShip}
+        // setTienShip={getTienShip}
+        getDetailHD={getListData}
+      />
     </>
   );
 };

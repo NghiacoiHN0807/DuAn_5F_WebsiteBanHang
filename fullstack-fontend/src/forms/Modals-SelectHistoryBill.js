@@ -157,6 +157,8 @@ const SelectHistoryBill = (props) => {
     if (trangThai === 7) return 'Chỉnh Sửa Đơn Hàng';
     if (trangThai === 10) return 'Đơn Hàng Đã Bị Hủy';
     if (trangThai === 11) return 'Tạo Hóa Đơn Treo Thành Công';
+    if (trangThai === 12) return 'Chỉnh Sửa Địa Chỉ';
+
     return 'Trạng Thái Trống';
   }
 
@@ -168,7 +170,7 @@ const SelectHistoryBill = (props) => {
     if (trangThai === 4 || trangThai === 9) return FcSalesPerformance;
     if (trangThai === 5) return FcHome;
     if (trangThai === 6) return FcProcess;
-    if (trangThai === 7) return FcTodoList;
+    if (trangThai === 7 || trangThai === 12) return FcTodoList;
     if (trangThai === 10) return FcDeleteDatabase;
     return FcCancel;
   }
@@ -176,7 +178,7 @@ const SelectHistoryBill = (props) => {
   function getColorForTrangThai(trangThai) {
     if (trangThai === 10) return '#ff0000';
     if (trangThai === 6) return '#ffff00';
-    if (trangThai === 7) return '#ffA500';
+    if (trangThai === 7 || trangThai === 12) return '#ffA500';
     if (trangThai >= 0) return '#64a338';
     return '#E3E3E3';
   }

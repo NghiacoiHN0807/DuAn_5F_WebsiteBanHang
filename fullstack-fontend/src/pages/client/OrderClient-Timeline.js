@@ -36,10 +36,12 @@ import { finByProductOnCart, findById } from '../../service/BillSevice';
 import { getDetailOneHD } from '../../service/OderManagementSevice';
 import SelectHistoryBill from '../../forms/Modals-SelectHistoryBill';
 import ModalDeleteDirectSale from '../../forms/Modal-Delete-DirectSale';
-import ModalAddProduct from '../../forms/Modals-AddProduct';
-import ModalDeleteProductOnCart from '../../forms/Modal-Delete-Product';
-import ModalUpdateProductOnCart from '../../forms/Modals-Update-Product-Cart';
 import ModalReturnItem from '../../forms/client/Modals-ReturnItem';
+import { selectDiaChiByTK } from '../../service/client/Payment';
+import ModalChangeAddress from '../../forms/Modals-Change-Address';
+import ModalDeleteProductOnCartClinet from '../../forms/client/Modal-Delete-Product-Client';
+import ModalAddProductClinet from '../../forms/client/Modals-AddProduct-Client';
+import ModalUpdateProductTimeline from '../../forms/client/Modals-Update-Product-TimeLine';
 
 const styles = {
   container: {
@@ -108,7 +110,7 @@ const OrderClientTimeline = ({ classes }) => {
   function getColorForTrangThai(trangThai) {
     if (trangThai === 10) return '#ff0000';
     if (trangThai === 6) return '#ffff00';
-    if (trangThai === 7) return '#ffA500';
+    if (trangThai === 7 || trangThai === 12) return '#ffA500';
     if (trangThai >= 0) return '#64a338';
     return '#E3E3E3';
   }
@@ -125,6 +127,8 @@ const OrderClientTimeline = ({ classes }) => {
     if (trangThai === 7) return 'Chỉnh Sửa Đơn Hàng';
     if (trangThai === 10) return 'Đơn Hàng Đã Bị Hủy';
     if (trangThai === 11) return 'Tạo Hóa Đơn Treo Thành Công';
+    if (trangThai === 12) return 'Chỉnh Sửa Địa Chỉ';
+
     return 'Trạng Thái Trống';
   }
 
@@ -136,7 +140,7 @@ const OrderClientTimeline = ({ classes }) => {
     if (trangThai === 4 || trangThai === 9) return FcSalesPerformance;
     if (trangThai === 5) return FcHome;
     if (trangThai === 6) return FcProcess;
-    if (trangThai === 7) return FcTodoList;
+    if (trangThai === 7 || trangThai === 12) return FcTodoList;
     if (trangThai === 10) return FcDeleteDatabase;
     return FcCancel;
   }
@@ -274,7 +278,8 @@ const OrderClientTimeline = ({ classes }) => {
   const [showModalsUpdate, setShowModalsUpdate] = useState(false);
   const [itemUpdateClassify, setItemUpdateClassify] = useState({});
   const [itemUpdate, setItemUpdate] = useState({});
-
+  console.log('itemUpdate', itemUpdate);
+  console.log('itemUpdateClassify', itemUpdateClassify);
   const handleUpdateClassify = async (item) => {
     setShowModalsUpdate(true);
     try {
@@ -300,6 +305,23 @@ const OrderClientTimeline = ({ classes }) => {
   const handleCloseModalDelelte = () => {
     setShowModalDelete(false);
     getListData();
+  };
+  // Handle Change Address
+  const [showModalsAddress, setShowModalAddress] = useState(false);
+  const [listAddess, setListAddress] = useState([]);
+  const handleChangeAddress = async () => {
+    if (listData[0].idHd.idKH) {
+      const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
+      console.log(getData);
+      setListAddress(getData);
+      setShowModalAddress(true);
+    } else {
+      console.log('Sửa Địa Chỉ Mà Không Có Tài Khoản');
+    }
+  };
+  const handleCloseAddress = () => {
+    // getDetailHD();
+    setShowModalAddress(false);
   };
   return (
     <>
@@ -347,7 +369,7 @@ const OrderClientTimeline = ({ classes }) => {
               <Typography variant="h6" gutterBottom>
                 Thông Tin Khách Hàng{' '}
               </Typography>
-              <Button disabled={activeIndex >= 1} size="small" variant="outlined">
+              <Button onClick={() => handleChangeAddress()} disabled={activeIndex >= 1} size="small" variant="outlined">
                 Chỉnh sửa thông tin
               </Button>
             </Stack>
@@ -517,9 +539,12 @@ const OrderClientTimeline = ({ classes }) => {
               </Table>{' '}
               {listData.length > 0 && (
                 <>
-                  <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
-                    Tiền Giao Hàng: {formatCurrency(listData[0].idHd.tienShip)}
-                  </Typography>
+                  {listData[0].idHd.tienShip && (
+                    <Typography sx={{ textAlign: 'right' }} variant="subtitle2" gutterBottom>
+                      Tiền Ship: {formatCurrency(listData[0].idHd.tienShip)}
+                    </Typography>
+                  )}
+
                   <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
                     Thành Tiền: {formatCurrency(listData[0].idHd.thanhTien)}
                   </Typography>
@@ -541,23 +566,28 @@ const OrderClientTimeline = ({ classes }) => {
             )}
             {listData.length > 0 && (
               <>
-                <ModalDeleteProductOnCart
-                  open={showModalsDelete}
-                  handleClose={handleCloseModalDelelte}
-                  itemDelete={itemDelete}
-                  selectDataCart={selectDataCart}
-                />
-                <ModalUpdateProductOnCart
-                  show={showModalsUpdate}
-                  handleClose={handleCloseUpdateClassify}
-                  itemUpdateClassify={itemUpdateClassify}
-                  selectDataCart={selectDataCart}
-                  itemUpdate={itemUpdate}
-                />
+                {itemDelete !== undefined && (
+                  <ModalDeleteProductOnCartClinet
+                    open={showModalsDelete}
+                    handleClose={handleCloseModalDelelte}
+                    DataCart={DataCart}
+                    itemDelete={itemDelete}
+                    selectDataCart={selectDataCart}
+                  />
+                )}
+                {itemUpdate.length > 0 && (
+                  <ModalUpdateProductTimeline
+                    show={showModalsUpdate}
+                    handleClose={handleCloseUpdateClassify}
+                    itemUpdateClassify={itemUpdateClassify}
+                    selectDataCart={selectDataCart}
+                    itemUpdate={itemUpdate}
+                  />
+                )}
               </>
             )}
             {/* Add Modals */}
-            <ModalAddProduct
+            <ModalAddProductClinet
               show={showModalsAdd1}
               selectDataCart={selectDataCart}
               handleClose={handleClose2}
@@ -573,6 +603,16 @@ const OrderClientTimeline = ({ classes }) => {
             /> */}
             {/* Dialog xác nhận xóa */}
             <ModalDeleteDirectSale open={openDelete} handleClose={handleClose1} information={information} />
+            {listAddess && (
+              <>
+                <ModalChangeAddress
+                  open={showModalsAddress}
+                  listData={listAddess}
+                  handleClose={handleCloseAddress}
+                  getDetailHD={getListData}
+                />
+              </>
+            )}
           </div>
         </div>
       </Container>

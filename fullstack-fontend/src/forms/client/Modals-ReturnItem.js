@@ -37,17 +37,6 @@ const ModalItemReturn = (props) => {
   };
   const { show, handleClose, selectDataCart, DataCart, getListData } = props;
 
-  //   Select card product
-  // const [openFilter, setOpenFilter] = useState(false);
-
-  // const handleOpenFilter = () => {
-  //   setOpenFilter(true);
-  // };
-
-  // const handleCloseFilter = () => {
-  //   setOpenFilter(false);
-  // };
-
   // Return one product on cart
   const [showModalsReturnOne, setShowModalReturnOne] = useState(false);
   const [showModalsReturnAll, setShowModalReturnAll] = useState(false);
@@ -65,7 +54,6 @@ const ModalItemReturn = (props) => {
 
   const handleReturnAll = async () => {
     setShowModalReturnAll(true);
-    // await returnAllItem(idHdParam,mota, 6)
   };
   const handleCloseModalReturnAll = () => {
     setShowModalReturnAll(false);
