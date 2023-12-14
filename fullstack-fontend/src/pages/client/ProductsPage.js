@@ -67,8 +67,6 @@ export default function ProductsPage() {
 
   const [dsList, setDsList] = useState([]);
 
-<<<<<<< HEAD
-=======
   // search
   const [searchInput, setSearchInput] = useState('');
 
@@ -92,7 +90,6 @@ export default function ProductsPage() {
     }
   }, [isFiltered, listLoc, listSP]);
 
->>>>>>> origin/vinhlt
   return (
     <>
       <Helmet>
