@@ -5,12 +5,6 @@ import AppBar from '@mui/material/AppBar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
-import Zoom from '@mui/material/Zoom';
-import Fab from '@mui/material/Fab';
-import AddIcon from '@mui/icons-material/Add';
-import EditIcon from '@mui/icons-material/Edit';
-import UpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { green } from '@mui/material/colors';
 import Box from '@mui/material/Box';
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -59,20 +53,6 @@ function a11yProps(index) {
     'aria-controls': `action-tabpanel-${index}`,
   };
 }
-
-const fabStyle = {
-  position: 'absolute',
-  bottom: 16,
-  right: 16,
-};
-
-const fabGreenStyle = {
-  color: 'common.white',
-  bgcolor: green[500],
-  '&:hover': {
-    bgcolor: green[600],
-  },
-};
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
@@ -106,31 +86,6 @@ export default function SelectAllBillOfClient() {
     setValue(index);
   };
 
-  const transitionDuration = {
-    enter: theme.transitions.duration.enteringScreen,
-    exit: theme.transitions.duration.leavingScreen,
-  };
-
-  const fabs = [
-    {
-      color: 'primary',
-      sx: fabStyle,
-      icon: <AddIcon />,
-      label: 'Add',
-    },
-    {
-      color: 'secondary',
-      sx: fabStyle,
-      icon: <EditIcon />,
-      label: 'Edit',
-    },
-    {
-      color: 'inherit',
-      sx: { ...fabStyle, ...fabGreenStyle },
-      icon: <UpIcon />,
-      label: 'Expand',
-    },
-  ];
   // Select All Bill
   const param = useParams();
   const idParam = param.idKH;
@@ -264,36 +219,55 @@ export default function SelectAllBillOfClient() {
   const renderTabPanel = (indexTab) => (
     <TabPanel value={value} index={indexTab} dir={theme.direction}>
       <Grid container spacing={3}>
-        <TableContainer sx={{ marginTop: 3, marginLeft: 2 }} component={Paper}>
-          <Table sx={{ minWidth: 700 }} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell>Mã Hóa Đơn</StyledTableCell>
-                <StyledTableCell align="center">Tên Người Nhận Hàng</StyledTableCell>
-                <StyledTableCell align="center">Số Điện Thoại Người Nhận</StyledTableCell>
-                <StyledTableCell align="center">Địa Chỉ Người Nhận</StyledTableCell>
-                <StyledTableCell align="center">Ngày Tạo</StyledTableCell>
-                <StyledTableCell align="center">Thành Tiền</StyledTableCell>
-                <StyledTableCell align="center">Trạng Thái</StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {DataCart.map((item) => (
-                <StyledTableRow key={item.idHd} onClick={() => handleClick(item)}>
-                  <StyledTableCell component="th" scope="row">
-                    {item.idHd}
-                  </StyledTableCell>
-                  <StyledTableCell align="center">{item.tenKh}</StyledTableCell>
-                  <StyledTableCell align="center">{item.sdtKh}</StyledTableCell>
-                  <StyledTableCell align="center">{item.diaChi}</StyledTableCell>
-                  <StyledTableCell align="center">{formatDateTime(item.ngayTao)}</StyledTableCell>
-                  <StyledTableCell align="center">{formatCurrency(item.thanhTien)}</StyledTableCell>
-                  <StyledTableCell align="center">{renderTrangThai(item.trangThai)}</StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        {DataCart && DataCart.length > 0 ? (
+          <TableContainer sx={{ marginTop: 3, marginLeft: 2 }} component={Paper}>
+            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell>Mã Hóa Đơn</StyledTableCell>
+                  <StyledTableCell align="center">Tên Người Nhận Hàng</StyledTableCell>
+                  <StyledTableCell align="center">Số Điện Thoại Người Nhận</StyledTableCell>
+                  <StyledTableCell align="center">Địa Chỉ Người Nhận</StyledTableCell>
+                  <StyledTableCell align="center">Ngày Tạo</StyledTableCell>
+                  <StyledTableCell align="center">Thành Tiền</StyledTableCell>
+                  <StyledTableCell align="center">Trạng Thái</StyledTableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {DataCart.map((item) => (
+                  <StyledTableRow key={item.idHd} onClick={() => handleClick(item)}>
+                    <StyledTableCell component="th" scope="row">
+                      {item.idHd}
+                    </StyledTableCell>
+                    <StyledTableCell align="center">{item.tenKh}</StyledTableCell>
+                    <StyledTableCell align="center">{item.sdtKh}</StyledTableCell>
+                    <StyledTableCell align="center">{item.diaChi}</StyledTableCell>
+                    <StyledTableCell align="center">{formatDateTime(item.ngayTao)}</StyledTableCell>
+                    <StyledTableCell align="center">{formatCurrency(item.thanhTien)}</StyledTableCell>
+                    <StyledTableCell align="center">{renderTrangThai(item.trangThai)}</StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
+            <Paper
+              sx={{
+                textAlign: 'center',
+              }}
+            >
+              <Typography variant="h6" paragraph>
+                Dữ Liệu Trống
+              </Typography>
+
+              <Typography variant="body2">
+                Bạn Không Có Hóa Đơn Nào Ở Trạng Thái Này &nbsp;
+                <br /> Xin Vui Lòng Đặt Hàng.
+              </Typography>
+            </Paper>
+          </Grid>
+        )}
       </Grid>
     </TabPanel>
   );
