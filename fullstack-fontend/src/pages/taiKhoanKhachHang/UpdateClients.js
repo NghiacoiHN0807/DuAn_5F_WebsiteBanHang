@@ -153,28 +153,7 @@ const UpdateClients = () => {
                         inputProps={{ maxLength: 10 }}
                         onChange={(event) => setSdt(event.target.value)}
                     />
-                    <TextField
-                        margin={"dense"}
-                        autoComplete="current-password"
-                        fullWidth
-                        type={showPassword ? "text" : "password"}
-                        id="password"
-                        label="Mật Khẩu"
-                        value={matKhau}
-                        onChange={(event) => setMatKhau(event.target.value)}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        onClick={() => setShowPassword(!showPassword)} // Khi nhấn vào nút, đảo ngược trạng thái
-                                        onMouseDown={(event) => event.preventDefault()}
-                                    >
-                                        {showPassword ? <Visibility/> : <VisibilityOff/>}
-                                    </IconButton>
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
+
 
                     <FormControl style={{marginLeft: "10px"}}
                                  margin={"dense"}>
@@ -191,15 +170,10 @@ const UpdateClients = () => {
                             <FormControlLabel
                                 value="0"
                                 control={<Radio/>}
-                                label="Chưa Kích Hoạt"
+                                label="Hoạt Động"
                             />
                             <FormControlLabel
-                                value="1"
-                                control={<Radio/>}
-                                label="Được Kích Hoạt"
-                            />
-                            <FormControlLabel
-                                value="4"
+                                value="10"
                                 control={<Radio/>}
                                 label="Ngưng Hoạt Động"
                             />

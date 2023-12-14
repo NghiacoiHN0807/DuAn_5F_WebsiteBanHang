@@ -89,12 +89,12 @@ const ModalPaymentComfirm = (props) => {
             message: 'Tiền Khách Đưa Chưa Đủ',
           });
         } else {
-          await updatePayment(idHdParam, tenKhTT, sdtKHTT, formattedDate, thanhTien, cashGiven, change, 1, 9);
+          await updatePayment(idHdParam, tenKhTT, sdtKHTT, formattedDate, thanhTien, cashGiven, change, 9);
           setAlertContent({
             type: 'success',
             message: 'Thanh Toán Tại Quầy Thành Công!!!',
           });
-          navigate(`/order-management-timeline/${idHdParam}`);
+          navigate(`/dashboard/bills/time-line/${idHdParam}`);
         }
       }
     } catch (e) {

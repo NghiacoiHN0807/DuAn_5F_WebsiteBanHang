@@ -33,7 +33,7 @@ const ModalDetailItemReturn = (props) => {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     itemReturnOne: PropTypes.array.isRequired,
-    selectDataCart: PropTypes.func.isRequired,
+    selectDataCart: PropTypes.array.isRequired,
     getListData: PropTypes.func.isRequired,
   };
   const { show, handleClose, itemReturnOne, selectDataCart, getListData } = props;

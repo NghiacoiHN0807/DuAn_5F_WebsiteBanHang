@@ -109,6 +109,21 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
     }
 
     @Override
+    public Boolean changePass(TaiKhoan tk, String pass, String passChange) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String matKhauMaHoa = tk.getMatKhau();
+        String matKhauBanDau = encoder.matches(pass, matKhauMaHoa) ? pass : null;
+        if (matKhauBanDau == null){
+            return false;
+        }else {
+            String PassEncode = encoder.encode(passChange);
+            tk.setMatKhau(PassEncode);
+            taiKhoanRepository.save(tk);
+            return true;
+        }
+    }
+
+    @Override
     public Optional<TaiKhoan> detail(Integer id) {
         Optional<TaiKhoan> taiKhoan = taiKhoanRepository.findById(id);
         return taiKhoan;

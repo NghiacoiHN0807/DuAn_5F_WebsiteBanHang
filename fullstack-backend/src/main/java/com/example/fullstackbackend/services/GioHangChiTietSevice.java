@@ -19,6 +19,8 @@ public interface GioHangChiTietSevice {
 
     void deleteGHCT(Integer idGHCT);
 
+    Optional<GioHangChiTiet> finByIDCTSP(Integer idCtsp);
+
     void transferHDCT(Integer idHd, ChiTietSanPham chiTietSanPham);
 
 }

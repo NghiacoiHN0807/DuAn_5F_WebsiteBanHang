@@ -27,6 +27,7 @@ import {
   TextField,
   Grid,
 } from '@mui/material';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import { CSVLink } from 'react-csv';
 import { makeStyles } from '@material-ui/core';
 // components
@@ -445,10 +446,20 @@ export default function DiscountPage() {
               value={maxAmountFilter}
               onChange={(event) => setMaxAmountFilter(event.target.value)}
             />
+            <CSVLink data={selectedExports} filename={'DSSP.csv'} onClick={handleExportData}>
+              <Button
+                aria-label="download"
+                Button
+                variant="outlined"
+                startIcon={<GetAppIcon />}
+                size="large"
+                color="success"
+              >
+                Xuất Excel
+              </Button>
+            </CSVLink>
           </Grid>
-          <CSVLink data={selectedExports} onClick={handleExportData}>
-            Download me
-          </CSVLink>
+
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
               <Table>

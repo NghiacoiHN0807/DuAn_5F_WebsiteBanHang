@@ -211,12 +211,20 @@ export default function UserPage() {
   const [alertContent, setAlertContent] = useState(null);
 
   const handleAdd = async () => {
-    const res = await postAddBill(1, 8);
-    setAlertContent({
-      type: 'success',
-      message: 'Tạo thành công hóa đơn',
-    });
-    navigate(`/dashboard/sales/card-bill/${res.idHd}`);
+    if (listBill.length >= 5) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Đã Tồn Tại 5 Hóa Đơn Chờ. Vui Lòng Thanh Toán!!!',
+      });
+    } else {
+      setAlertContent({
+        type: 'success',
+        message: 'Tạo thành công hóa đơn',
+      });
+      const res = await postAddBill(1, 8);
+
+      navigate(`/dashboard/sales/card-bill/${res.idHd}`);
+    }
   };
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -262,7 +270,7 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> Sales | Minimal UI </title>
+        <title> Sales | 5F Store </title>
       </Helmet>
 
       <Container>

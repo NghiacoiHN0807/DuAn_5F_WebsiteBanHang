@@ -103,6 +103,11 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietSevice {
     }
 
     @Override
+    public Optional<GioHangChiTiet> finByIDCTSP(Integer idCtsp) {
+        return gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(idCtsp);
+    }
+
+    @Override
     public void transferHDCT(Integer idHd, ChiTietSanPham chiTietSanPham) {
         // Create New Bill
 

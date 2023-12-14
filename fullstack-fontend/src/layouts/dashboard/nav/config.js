@@ -4,6 +4,8 @@ import SvgColor from '../../../components/svg-color';
 // ----------------------------------------------------------------------
 
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
+const getLocalStore = localStorage.getItem('userFormToken');
+const authorities = getLocalStore && JSON.parse(getLocalStore).authorities[0].authority;
 
 const navConfig = [
   {
@@ -51,11 +53,15 @@ const navConfig = [
     path: '/dashboard/staff',
     icon: icon('ic_lock'),
   },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic_disabled'),
-  },
-];
+].filter((item) => {
+  if (authorities === 'ROLE_ADMIN') {
+    return true; // Hiển thị tất cả cho ROLE_ADMIN
+  }
+  if (authorities === 'ROLE_STAFF') {
+    // Ẩn phần tử 'Nhân Viên' cho ROLE_STAFF
+    return item.title !== 'Nhân Viên';
+  }
+  return false; // Trường hợp còn lại không trả về gì cả
+});
 
 export default navConfig;
