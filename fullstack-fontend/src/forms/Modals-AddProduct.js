@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 // import ModalDetailProduct from './Modal-Detail-SanPham';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { fetchSpForClient } from '../service/SanPhamService';
 // @mui
 import { ProductListADM, ProductfilterSB } from '../sections/@dashboard/products';
@@ -18,18 +19,32 @@ const ModalAddProduct = (props) => {
   const { show, handleClose, selectDataCart, DataCart, getDetailHD } = props;
   const [listData, setListData] = useState([]);
 
+  const [currentPage, setCurrentPage] = useState(0);
   const getAllData = useCallback(async () => {
     try {
       // const getData = await fetchAllCTSPBySize();
-      const getData = await fetchSpForClient();
+      const getData = await fetchSpForClient(currentPage);
       console.log('getDataSanPham: ', getData);
       if (getData) {
-        setListData(getData);
+        setListData((prevList) => [...prevList, ...getData.content]);
+        setLastPage(getData.totalPages);
       }
     } catch (error) {
       console.error(error);
     }
-  }, []);
+  }, [currentPage]);
+
+  const [lastPage, setLastPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const fetchMoreData = () => {
+    console.log('lastPage: ', lastPage);
+    console.log('currentPage: ', currentPage);
+    if (lastPage - 1 <= currentPage) {
+      setHasMore(false);
+    } else {
+      setCurrentPage((prevPage) => prevPage + 1);
+    }
+  };
 
   useEffect(() => {
     getAllData();
@@ -72,24 +87,46 @@ const ModalAddProduct = (props) => {
             </Typography>
           </DialogTitle>
           <DialogContent>
-            <Stack direction="row" flexWrap="wrap-reverse" alignItems="center" justifyContent="flex-end" sx={{ mb: 5 }}>
-              <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-                <ProductfilterSB
-                  openFilter={openFilter}
-                  onOpenFilter={handleOpenFilter}
-                  onCloseFilter={handleCloseFilter}
-                  listSP={listData}
-                  onFilter={handleFilter}
-                  sx={{ zIndex: 1300 }}
+            <div
+              style={{
+                overflowY: 'auto',
+                maxHeight: '500px', // Đặt chiều cao tùy ý
+              }}
+            >
+              <InfiniteScroll
+                dataLength={listData && listData.length}
+                next={fetchMoreData}
+                hasMore={hasMore}
+                loader={<p style={{ textAlign: 'center' }}>Loading...</p>}
+                endMessage={<p style={{ textAlign: 'center' }}>Đã tải hết sản phẩm !!!</p>}
+              >
+                <Stack
+                  direction="row"
+                  flexWrap="wrap-reverse"
+                  alignItems="center"
+                  justifyContent="flex-end"
+                  sx={{ mb: 5 }}
+                >
+                  <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
+                    <ProductfilterSB
+                      openFilter={openFilter}
+                      onOpenFilter={handleOpenFilter}
+                      onCloseFilter={handleCloseFilter}
+                      listSP={listData}
+                      onFilter={handleFilter}
+                      sx={{ zIndex: 1300 }}
+                    />
+                  </Stack>
+                </Stack>
+
+                <ProductListADM
+                  getDetailHD={getDetailHD}
+                  products={displayProducts}
+                  selectDataCart={selectDataCart}
+                  DataCart={DataCart}
                 />
-              </Stack>
-            </Stack>
-            <ProductListADM
-              getDetailHD={getDetailHD}
-              products={displayProducts}
-              selectDataCart={selectDataCart}
-              DataCart={DataCart}
-            />
+              </InfiniteScroll>
+            </div>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => hanldeSetCloser()}>Hủy</Button>

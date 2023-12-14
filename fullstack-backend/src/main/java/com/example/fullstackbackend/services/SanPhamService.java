@@ -22,7 +22,7 @@ public interface SanPhamService {
 
     List<SanPhamCustom> sanPhamCustom();
 
-    Page<SanPhamClientDTO> sanPhamForClient(Integer pageNo, Integer size);
+    List<SanPhamClientDTO> sanPhamForClient();
 
     SanPham add(SanPham add);
 
