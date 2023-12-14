@@ -26,12 +26,9 @@ import {
   TextField,
   Grid,
 } from '@mui/material';
-<<<<<<< HEAD
-=======
 import { CSVLink } from 'react-csv';
 // import { filter } from 'lodash';
 import { makeStyles } from '@material-ui/core';
->>>>>>> origin/longth
 
 // components
 import Iconify from '../components/iconify';
