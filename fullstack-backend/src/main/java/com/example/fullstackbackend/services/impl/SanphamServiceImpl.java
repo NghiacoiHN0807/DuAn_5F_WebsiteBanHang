@@ -94,6 +94,7 @@ public class SanphamServiceImpl implements SanPhamService {
             spCustom.setGiaMin((BigDecimal) row[11]);
             spCustom.setGiaMax((BigDecimal) row[12]);
             spCustom.setGiaThucTe((BigDecimal) row[13]);
+            spCustom.setMaxThucTe((BigDecimal) row[14]);
             dtos.add(spCustom);
         }
 
