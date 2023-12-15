@@ -462,14 +462,15 @@ const CartBillADM = () => {
     return emailPattern.test(email);
   };
   const handleClick = async () => {
-    if (
-      (isDeliveryChecked === true && !tenKhShip.trim()) ||
-      (isDeliveryChecked === true && containsNumber(tenKhShip)) ||
-      (isDeliveryChecked === false && containsNumber(tenKhTT))
-    ) {
+    if (isDeliveryChecked === false && containsNumber(tenKhTT) && tenKhTT.trim()) {
       setAlertContent({
         type: 'warning',
-        message: 'Tên Không Đúng!!!Vui Lòng Nhập Lại ',
+        message: 'Hãy Nhập Đúng Tên Khách Hàng Để Thanh Toán Tại Quầy ',
+      });
+    } else if (isDeliveryChecked === false && !isValidPhoneNumber(sdtKHTT) && sdtKHTT.trim()) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Nhập Đúng SDT Khách Hàng Để Thanh Toán Tại Quầy ',
       });
     } else if ((isDeliveryChecked === true && !tenKhShip.trim()) || (isDeliveryChecked === true && !sdtKHShip.trim())) {
       setAlertContent({
@@ -477,13 +478,13 @@ const CartBillADM = () => {
         message: 'Hãy Nhập Thông Tin Người Nhận Hàng!!!',
       });
     } else if (
-      (isDeliveryChecked === true && !isValidPhoneNumber(sdtKHShip)) ||
-      (isDeliveryChecked === false && !sdtKHTT.trim()) ||
-      (isDeliveryChecked === false && !isValidPhoneNumber(sdtKHTT))
+      (isDeliveryChecked === true && !tenKhShip.trim()) ||
+      (isDeliveryChecked === true && containsNumber(tenKhShip)) ||
+      (isDeliveryChecked === true && !isValidPhoneNumber(sdtKHShip))
     ) {
       setAlertContent({
         type: 'warning',
-        message: 'Hãy Nhập Đúng Định Dạng Số Của Việt Nam!!!',
+        message: 'Hãy Nhập Đúng Thông Tin Khách Hàng Để Giao Hàng!!!',
       });
     } else if (isDeliveryChecked === true && !result1.trim() && !result.trim()) {
       setAlertContent({
