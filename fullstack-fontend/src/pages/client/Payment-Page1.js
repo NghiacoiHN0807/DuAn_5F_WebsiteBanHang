@@ -174,7 +174,7 @@ export default function PaymentPage1() {
         setListData(getData);
         setTenKH(getData[0].tenNguoiNhan);
         setSDTKH(getData[0].sdt);
-        setEmailKH(getData[0].email);
+        setEmailKH(getData[0].taiKhoan.email);
         setTienShip(getData[0].phiShip);
         setDiaChi(
           `${getData[0].diaChiCuThe}, ${getData[0].phuongXa}, ${getData[0].quanHuyen}, ${getData[0].tinhThanh}`
@@ -243,12 +243,12 @@ export default function PaymentPage1() {
         type: 'warning',
         message: 'Hãy Nhập Đúng Định Dạng Số Của Việt Nam!!!',
       });
-    } else if (containsNumber(sdtKH)) {
+    } else if (containsNumber(tenKH) || !tenKH.trim()) {
       setAlertContent({
         type: 'warning',
         message: 'Không Được Để Trống Họ Và Tên!!!',
       });
-    } else if (emailKH === '' || !isValidEmail(emailKH)) {
+    } else if (!isValidEmail(emailKH)) {
       setAlertContent({
         type: 'warning',
         message: 'Email Sai Định Dạng Hoặc Không Phải Email Cá Nhân!!!',
