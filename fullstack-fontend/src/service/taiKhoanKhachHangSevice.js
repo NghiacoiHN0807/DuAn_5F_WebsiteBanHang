@@ -21,10 +21,21 @@ const postUpdateTaiKhoanKhachHang = (idTaiKhoan, maTaiKhoan, ho, ten, sdt, email
     matKhau,
     trangThai,
   });
+const postChangePassTaiKhoanKhachHang = (idTaiKhoan, maTaiKhoan, ho, ten, sdt, email, matKhau, trangThai,pass,passChange) =>
+  custom.post(`/tai-khoan-khach-hang/changePass?pass=${pass}&newPass=${passChange}`, {
+    idTaiKhoan,
+    maTaiKhoan,
+    ho,
+    ten,
+    sdt,
+    email,
+    matKhau,
+    trangThai,
+  });
 
 const getDetailOneTK = (idTaiKhoan) => custom.get(`/tai-khoan-khach-hang/detail/${idTaiKhoan}`);
 
 const deleteTaiKhoanKH = (id) =>
   custom.delete(`/tai-khoan-khach-hang/delete/${id}`);
 
-export { fetchAllTKKH, postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoanKH, getDetailOneTK, postSignUp, postForgetPassword };
+export { fetchAllTKKH, postUpdateTaiKhoanKhachHang, postAddTaiKhoanKhachHang, deleteTaiKhoanKH, getDetailOneTK, postSignUp, postForgetPassword ,postChangePassTaiKhoanKhachHang};

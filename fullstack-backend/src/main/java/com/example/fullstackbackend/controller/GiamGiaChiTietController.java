@@ -78,6 +78,26 @@ public class GiamGiaChiTietController {
         );
     }
 
+    @DeleteMapping("remove-all")
+    ResponseEntity<?> removeAll(@RequestBody List<Integer> idsToRemove) {
+        if (idsToRemove == null || idsToRemove.isEmpty()) {
+            return ResponseEntity.badRequest().body(
+                    new ReponObject("Bad Request", "List of IDs is empty or null", "")
+            );
+        }
+
+        Boolean exists = giamGiaChiTietService.removeAll(idsToRemove);
+        if (!exists) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    new ReponObject("Not found!", "Not could found entity", "")
+            );
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new ReponObject("Ok!", "Delete success ", "")
+        );
+    }
+
     @PostMapping("insert")
     GiamGiaChiTiet add(@RequestBody GiamGiaChiTiet giamGiaChiTiet) {
         return giamGiaChiTietService.add(giamGiaChiTiet);

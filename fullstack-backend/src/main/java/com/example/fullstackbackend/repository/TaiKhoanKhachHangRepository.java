@@ -13,11 +13,11 @@ import java.util.Optional;
 
 @Repository
 public interface TaiKhoanKhachHangRepository extends JpaRepository<TaiKhoan, Integer> {
-    @Query("select t from TaiKhoan t where t.idChucVu.idCv = 9  and t.trangThai between 0 and 4 order by t.idTaiKhoan DESC ")
+    @Query("select t from TaiKhoan t where t.idChucVu.idCv = 9 order by t.idTaiKhoan DESC ")
     @Override
     Page<TaiKhoan> findAll(Pageable pageable);
 
-    @Query("SELECT g FROM TaiKhoan g WHERE g.idChucVu.idCv = 9 and g.trangThai between 0 and 4 order by g.idTaiKhoan DESC")
+    @Query("SELECT g FROM TaiKhoan g WHERE g.idChucVu.idCv = 9 order by g.idTaiKhoan DESC")
     List<TaiKhoan> findAllKhachHang();
 
     @Query("select t from TaiKhoan t where  t.maTaiKhoan = ?1 order by t.idTaiKhoan DESC")

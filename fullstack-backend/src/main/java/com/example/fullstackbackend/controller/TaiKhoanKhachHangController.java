@@ -9,14 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -108,6 +101,23 @@ public class TaiKhoanKhachHangController {
             TaiKhoan updateTK = TaiKhoanKhachHangKHSevice.update(taiKhoankh);
             return ResponseEntity.ok(updateTK);
         }
+    }
+
+    @PostMapping("changePass")
+    public ResponseEntity<?> changePass(@Valid @RequestBody TaiKhoan taiKhoankh, @RequestParam("pass") String pass,
+                                        @RequestParam("newPass") String newPass
+    ) {
+        Map<String, String> textTo = new HashMap<>();
+        Boolean check = TaiKhoanKhachHangKHSevice.changePass(taiKhoankh, pass, newPass);
+
+        if (check) {
+            textTo.put("Check", "Mật Khẩu Đã Được Đổi");
+            return ResponseEntity.ok(textTo);
+        }
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("matKhau", "Mật khẩu không đúng");
+        return ResponseEntity.badRequest().body(errorMap);
+
     }
 
 

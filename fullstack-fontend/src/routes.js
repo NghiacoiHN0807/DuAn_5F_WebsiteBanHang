@@ -50,6 +50,11 @@ import ForgetPasswordPage from "./pages/ForgetPasswordPage";
 import CartNoAccount from './pages/client/Cart-NoAccount';
 import SaleProductsPage from './pages/client/SaleProductsPage';
 import PaymentPage from './pages/client/Payment-Page';
+import ProfileClient from "./pages/client/ProfileClient";
+import AddressClinet from "./pages/client/AddressClinet";
+import Profile from "./pages/Profile";
+import ChangePassClient from "./pages/client/ChangePassClient";
+import ChangePass from "./pages/ChangePass";
 
 // ----------------------------------------------------------------------
 
@@ -93,6 +98,8 @@ export default function Router() {
             { path: 'coupons/add', element: <AddCoupons /> },
             { path: 'coupons', element: <CouponsPage /> },
             { path: 'coupons/update/:id', element: <UpdateCoupons /> },
+            { path: 'profile', element: <Profile /> },
+            { path: 'changePass', element: <ChangePass /> },
           ]
           : authorities === 'ROLE_STAFF'
             ? [
@@ -121,6 +128,8 @@ export default function Router() {
               { path: 'coupons/add', element: <AddCoupons /> },
               { path: 'coupons', element: <CouponsPage /> },
               { path: 'coupons/update/:id', element: <UpdateCoupons /> },
+              { path: 'profile', element: <Profile /> },
+              { path: 'changePass', element: <ChangePass /> },
             ]
             : [
               { element: <Navigate to="/client/home" />, index: true },
@@ -135,6 +144,9 @@ export default function Router() {
               { path: 'products-sale', element: <SaleProductsPage /> },
               { path: 'client-timeline/:id', element: <OrderClientTimeline /> },
               { path: 'select-bill-client/:idKH', element: <SelectAllBillOfClient /> },
+              { path: 'profile', element: <ProfileClient /> },
+              { path: 'address', element: <AddressClinet /> },
+              { path: 'changePass', element: <ChangePassClient /> },
               // { path: 'select-bill-client', element: <SelectAllBillOfClient /> },
             ],
     },

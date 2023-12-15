@@ -77,7 +77,7 @@ export default function SignUpForm() {
                     alignItems: 'center',
                 }}
             >
-                <Typography component="h1" variant="h5">
+                <Typography component="h1" variant="h3">
                     Đăng Ký Tài Khoản Mới
                 </Typography>
                 <Box component="form" sx={{mt: 3}}>

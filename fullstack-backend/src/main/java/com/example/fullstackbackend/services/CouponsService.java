@@ -26,4 +26,6 @@ public interface CouponsService {
 
     Boolean removeCoupons(Integer idHd);
 
+    Boolean removeAll(List<Integer> ids);
+
 }
