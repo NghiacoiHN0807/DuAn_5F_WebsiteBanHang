@@ -23,6 +23,8 @@ public interface HoadonSevice {
 
     void delete(Integer id);
 
+    void deleteHDOver(Integer idHd);
+
     Boolean checkExists(Integer id);
 
     HoaDon update(HoaDon update);

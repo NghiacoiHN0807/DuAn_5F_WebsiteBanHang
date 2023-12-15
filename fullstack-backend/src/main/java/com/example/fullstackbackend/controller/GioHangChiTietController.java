@@ -69,10 +69,8 @@ public class GioHangChiTietController {
         } else {
             return ResponseEntity.ok(gioHangChiTietSevice.detail(id).map(
                     gioHangChiTiet -> {
-                        BigDecimal donGia = gioHangChiTiet.getIdCtsp().getGiaThucTe().multiply(new BigDecimal(updateGHCT.getSoLuong()));
                         gioHangChiTiet.setIdCtsp(updateGHCT.getIdCtsp());
                         gioHangChiTiet.setSoLuong(updateGHCT.getSoLuong());
-                        gioHangChiTiet.setDonGia(donGia);
                         return gioHangChiTietSevice.update(gioHangChiTiet);
                     }).orElseThrow(() -> new xuatXuNotFoundException(id)));
         }

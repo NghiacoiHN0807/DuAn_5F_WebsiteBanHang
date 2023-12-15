@@ -77,12 +77,10 @@ export default function SelectAllBillOfClient() {
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
-    console.log('newValue: ', newValue);
     setValue(newValue);
   };
 
   const handleChangeIndex = (index) => {
-    console.log('Hihi: ', index);
     setValue(index);
   };
 
@@ -237,7 +235,7 @@ export default function SelectAllBillOfClient() {
                 {DataCart.map((item) => (
                   <StyledTableRow key={item.idHd} onClick={() => handleClick(item)}>
                     <StyledTableCell component="th" scope="row">
-                      {item.idHd}
+                      {item.maHd}
                     </StyledTableCell>
                     <StyledTableCell align="center">{item.tenKh}</StyledTableCell>
                     <StyledTableCell align="center">{item.sdtKh}</StyledTableCell>

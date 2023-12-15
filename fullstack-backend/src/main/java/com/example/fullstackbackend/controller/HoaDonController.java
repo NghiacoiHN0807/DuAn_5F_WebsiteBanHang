@@ -27,6 +27,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -175,6 +176,59 @@ public class HoaDonController {
                                @RequestParam String moTa) {
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTrangThai(newHD.getTrangThai());
+            if(hoaDon.getEmail() != null && hoaDon.getEmail().isEmpty()){
+                if (hoaDon.getTrangThai() == 1){
+                    String trangThai = "Hóa đơn đã được xác nhận";
+                    SimpleMailMessage message = new SimpleMailMessage();
+                    message.setFrom(formMail);
+                    message.setTo(hoaDon.getEmail());
+                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
+                    mailSender.send(message);
+                }  if (hoaDon.getTrangThai() == 3){
+                    String trangThai = "Đơn hàng đã chuyển cho đơn vị vận chuyển";
+                    SimpleMailMessage message = new SimpleMailMessage();
+                    message.setFrom(formMail);
+                    message.setTo(hoaDon.getEmail());
+                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
+                    mailSender.send(message);
+                } if (hoaDon.getTrangThai() == 4){
+                    String trangThai = "Đơn hàng đã được xác nhận thanh toán";
+                    SimpleMailMessage message = new SimpleMailMessage();
+                    message.setFrom(formMail);
+                    message.setTo(hoaDon.getEmail());
+                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
+                    mailSender.send(message);
+                }
+                if (hoaDon.getTrangThai() == 5){
+                    String trangThai = "Đơn hàng đã được nhận thành công";
+                    SimpleMailMessage message = new SimpleMailMessage();
+                    message.setFrom(formMail);
+                    message.setTo(hoaDon.getEmail());
+                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
+                    mailSender.send(message);
+                } if (hoaDon.getTrangThai() == 6){
+                    String trangThai = "Đơn hàng đã được xác nhận đổi trả";
+                    SimpleMailMessage message = new SimpleMailMessage();
+                    message.setFrom(formMail);
+                    message.setTo(hoaDon.getEmail());
+                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
+                    mailSender.send(message);
+                }   if (hoaDon.getTrangThai() == 10){
+                    String trangThai = "Đơn hàng đã bị hủy";
+                    SimpleMailMessage message = new SimpleMailMessage();
+                    message.setFrom(formMail);
+                    message.setTo(hoaDon.getEmail());
+                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
+                    mailSender.send(message);
+                }
+            }
+
             return hoadonSevice.update(hoaDon);
         }).orElseThrow(() -> new xuatXuNotFoundException(id));
 
@@ -214,58 +268,6 @@ public class HoaDonController {
         lichSuHoaDon.setMoTa(moTa);
         lichSuHoaDon.setNgayThayDoi(currentTimestamp);
         lichSuHoaDonService.add(lichSuHoaDon);
-        if(!newHD1.getEmail().isEmpty()){
-            if (newHD1.getTrangThai() == 1){
-                String trangThai = "Hóa đơn đã được xác nhận";
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setFrom(formMail);
-                message.setTo(newHD1.getEmail());
-                message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                message.setText( buildEmailContent(newHD1.getMaHd(), String.valueOf(currentTimestamp),trangThai));
-                mailSender.send(message);
-            }  if (newHD1.getTrangThai() == 3){
-                String trangThai = "Đơn hàng đã chuyển cho đơn vị vận chuyển";
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setFrom(formMail);
-                message.setTo(newHD1.getEmail());
-                message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                message.setText( buildEmailContent(newHD1.getMaHd(), String.valueOf(currentTimestamp),trangThai));
-                mailSender.send(message);
-            } if (newHD1.getTrangThai() == 4){
-                String trangThai = "Đơn hàng đã được xác nhận thanh toán";
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setFrom(formMail);
-                message.setTo(newHD1.getEmail());
-                message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                message.setText( buildEmailContent(newHD1.getMaHd(), String.valueOf(currentTimestamp),trangThai));
-                mailSender.send(message);
-            }
-            if (newHD1.getTrangThai() == 5){
-                String trangThai = "Đơn hàng đã được nhận thành công";
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setFrom(formMail);
-                message.setTo(newHD1.getEmail());
-                message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                message.setText( buildEmailContent(newHD1.getMaHd(), String.valueOf(currentTimestamp),trangThai));
-                mailSender.send(message);
-            } if (newHD1.getTrangThai() == 6){
-                String trangThai = "Đơn hàng đã được xác nhận đổi trả";
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setFrom(formMail);
-                message.setTo(newHD1.getEmail());
-                message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                message.setText( buildEmailContent(newHD1.getMaHd(), String.valueOf(currentTimestamp),trangThai));
-                mailSender.send(message);
-            }   if (newHD1.getTrangThai() == 10){
-                String trangThai = "Đơn hàng đã bị hủy";
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setFrom(formMail);
-                message.setTo(newHD1.getEmail());
-                message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                message.setText( buildEmailContent(newHD1.getMaHd(), String.valueOf(currentTimestamp),trangThai));
-                mailSender.send(message);
-            }
-        }
 
 
         return newHD1;
@@ -657,6 +659,12 @@ public class HoaDonController {
     @GetMapping("/view-bill-idkh/{idKH}")
     public ResponseEntity<?> viewAllHDByIDKH(@PathVariable("idKH") Integer idKH) {
         return ResponseEntity.ok(hoadonSevice.findAllByIDKH(idKH));
+    }
+
+    @DeleteMapping("/delete-over-time/{idHd}")
+    public ResponseEntity<?> deleteOverTime(@PathVariable("idHd") Integer idHd) {
+        hoadonSevice.deleteHDOver(idHd);
+        return ResponseEntity.ok("Xóa Hóa Đơn Quá Thời Gian Thanh Toán");
     }
 
     @GetMapping("/total-revenue")

@@ -18,6 +18,9 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
     @Query(value = "SELECT x from HoaDon x where x.trangThai = ?1")
     List<HoaDon> findAllByTrangThai(Integer trangThai);
 
+    @Query(value = "SELECT x from HoaDon x where x.idHd =?1 and x.trangThai = ?2")
+    List<HoaDon> findAllByIDAndTrangThai(Integer idHd, Integer trangThai);
+
     @Query(value = "SELECT x from HoaDon x where x.maHd = ?1")
     HoaDon findByMaHd(Integer maHD);
 

@@ -10,7 +10,7 @@ import { Alert, Box, Button, Container, Grid, Snackbar, Typography } from '@mui/
 
 import { listImg } from '../../service/client/Detail-Product';
 import { findById } from '../../service/BillSevice';
-import { addProductOnCart } from '../../service/client/Detail-Cart';
+import { addProductOnCart, listProductOnCart } from '../../service/client/Detail-Cart';
 import { getRelatedSp } from '../../service/SanPhamService';
 import { ProductListAll } from '../../sections/@dashboard/products';
 import ShopProductCard from '../../sections/@dashboard/products/ProductCardAll';
@@ -134,23 +134,35 @@ const DetailProduct = () => {
 
   const handleAddProduct = async () => {
     const getLocalStore = localStorage.getItem('userFormToken');
+    const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
+
     const selectedMauSacIsNull = selectedMauSac === null || selectedSize === null;
 
+    let existsProduct = [];
+    if (selectSoLuongTon.length > 0) {
+      const getProduct = await listProductOnCart(authorities.idTaiKhoan);
+
+      existsProduct = getProduct.filter((product) => product.idCtsp.idCtsp === selectSoLuongTon[0].idCtsp);
+    }
     if (!getLocalStore || selectedMauSacIsNull || selectSoLuongTon.length === 0) {
       setAlertContent({
         type: 'warning',
         message: 'Thuộc Tính Sản Phẩm Trống',
       });
-    } else if (quantity > 20) {
+    } else if (quantity > 20 || (existsProduct.length > 0 && quantity + existsProduct[0].soLuong > 20)) {
       setAlertContent({
         type: 'warning',
         message: 'Nếu bạn Muốn Mua Sỉ. Hãy Liên hệ Với Chúng Tôi',
       });
-      console.log('selectSoLuongTon[0].getSoLuongTon: ', selectSoLuongTon[0].soLuongTon);
     } else if (quantity > selectSoLuongTon[0].soLuongTon) {
       setAlertContent({
         type: 'warning',
         message: 'Số Lượng Tồn Không Đủ!!!',
+      });
+    } else if (quantity * selectSoLuongTon[0].giaThucTe > 10000000) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Giá Tiền Đã Vượt Quá 10TR. Hãy Liên Hệ Với Nhân Viên Để Đặt Thêm Hàng!!!',
       });
     } else {
       const authorities = JSON.parse(getLocalStore).taiKhoan;
