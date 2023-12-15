@@ -16,10 +16,10 @@ import java.util.Optional;
 
 @Repository
 public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, Integer> {
-    @Query(value = "SELECT id_hdct, id_ctsp, id_hd, so_luong, don_gia, ly_do_huy, trang_thai FROM duan_5f.hoa_don_chi_tiet where id_hd = ?1", nativeQuery = true)
+    @Query(value = "SELECT id_hdct, id_ctsp, id_hd, so_luong, don_gia, ly_do_huy, trang_thai FROM duan_5f.hoa_don_chi_tiet where id_hd = ?1 AND trang_thai = 0", nativeQuery = true)
     List<HoaDonChiTiet> detailHDCT(Integer id);
 
-    @Query(value = "UPDATE HoaDonChiTiet hdct SET hdct.idCtsp=?1,hdct.soLuong =?2, hdct.donGia =?3 where hdct.idHd =?4")
+    @Query(value = "UPDATE HoaDonChiTiet hdct SET hdct.idCtsp=?1,hdct.soLuong =?2, hdct.donGia =?3 where hdct.idHd =?4 AND hdct.trangThai = 0")
     HoaDonChiTiet updateCart(ChiTietSanPham idCTSP, Integer soLuong, BigDecimal donGia, Integer idHD);
 
     @Query(value = "SELECT hd.id_hd, hdct.id_hdct, GROUP_CONCAT(DISTINCT img.images ORDER BY img.images ASC) AS img, sp.id_sp, sp.ma_sp, sp.ten_sp, GROUP_CONCAT(DISTINCT s.ten_size ORDER BY s.ten_size ASC) AS size, ct.gia_thuc_te, hdct.so_luong, hdct.don_gia, ct.id_ctsp, GROUP_CONCAT(DISTINCT ms.ten_ms ORDER BY ms.ten_ms ASC) AS mau_sac\n" +
@@ -45,11 +45,14 @@ public interface HoadonchitietRepository extends JpaRepository<HoaDonChiTiet, In
 
     @Query(value = "SELECT x FROM HoaDonChiTiet x WHERE x.idHd.idHd =?1 AND x.idCtsp.idCtsp = ?2 AND x.trangThai = 0")
     List<HoaDonChiTiet> findAllByIdCtspExsit(Integer idHd, Integer idCtsp);
+
+    @Query(value = "SELECT x FROM HoaDonChiTiet x WHERE x.idHd.idHd =?1 AND x.idCtsp.idCtsp = ?2 AND x.trangThai = 0")
+    Optional<HoaDonChiTiet> findByIdCtspExsit(Integer idHd, Integer idCtsp);
     List<HoaDonChiTiet> findAllByIdHd_IdHdAndTrangThai(Integer idHd, Integer trangThai);
 
     HoaDonChiTiet findByIdHd_IdHdAndTrangThai(Integer idHd, Integer trangThai);
 
-    @Query(value = "SELECT c FROM HoaDonChiTiet c WHERE c.idHd.idKH.idTaiKhoan = ?1")
+    @Query(value = "SELECT c FROM HoaDonChiTiet c WHERE c.idHd.idKH.idTaiKhoan = ?1 AND c.trangThai = 0")
     Page<HoaDonChiTiet> findByIdHd_IdKH_IdTaiKhoan(Integer idTK, Pageable pageable);
 
 
