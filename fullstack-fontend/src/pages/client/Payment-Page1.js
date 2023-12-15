@@ -27,6 +27,7 @@ import { detailBill, finByProductOnCart } from '../../service/BillSevice';
 import { updateTienShip } from '../../service/OrderManagementTimeLine';
 import ModalAddAddress from '../../forms/Modals-Add-Address';
 import {
+  deleteOverTime,
   deleteProductOnCartPayment,
   paymentOnlineClient,
   selectDiaChiByTK,
@@ -119,7 +120,6 @@ export default function PaymentPage1() {
   const selectDataCart = useCallback(async () => {
     try {
       const res = await finByProductOnCart(idHdParam);
-      console.log('res324', res);
 
       if (res) {
         setDataCart(res);
@@ -145,8 +145,6 @@ export default function PaymentPage1() {
     try {
       const getData = await detailBill(idHdParam);
       if (getData.trangThai === 11) {
-        console.log('getData324', getData);
-
         setlistHD(getData);
       }
     } catch (error) {
@@ -296,22 +294,24 @@ export default function PaymentPage1() {
 
     return formatter.format(price);
   }
-  useEffect(
-    () => {
+
+  // const navigate = useNavigate();
+
+  useEffect(() => {
+    if (listHD.trangThai === 11) {
       const timeoutId = setTimeout(async () => {
         setAlertContent({
           type: 'warning',
           message: 'Hóa Đơn Đã Bị Xóa Vì Trong Vòng 10 Phút Không Thanh Toán',
         });
-        console.log('Hóa Đơn Đã Bị Xóa ');
+        await deleteOverTime(idHdParam);
+        navigate(-1);
       }, 1 * 60 * 1000);
-
       return () => clearTimeout(timeoutId);
-    },
-    [
-      /* Dependency Array */
-    ]
-  );
+    }
+    return () => {};
+  }, [idHdParam, listHD.trangThai, navigate]);
+
   return (
     <>
       <Container sx={{ marginBottom: 10 }}>

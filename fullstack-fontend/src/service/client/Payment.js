@@ -24,6 +24,8 @@ const updateClientPayment2 = (idHd, tenKh, sdtKh, email, diaChi, tienShip) =>
     diaChi,
     tienShip,
   });
+const deleteOverTime = (idHd) => custom.delete(`/hoa-don/delete-over-time/${idHd}`);
+
 const deleteProductOnCartPayment = (idHd) => custom.delete(`/gio-hang-chi-tiet/delete-product/${idHd}`);
 const paymentOnlineClient = (amount, orderInfo) =>
   custom.post(`/hoa-don/submitOrder-client?amount=${amount}&orderInfo=${orderInfo}`);
@@ -34,4 +36,5 @@ export {
   updateClientPayment,
   paymentOnlineClient,
   updateClientPayment1,
+  deleteOverTime,
 };

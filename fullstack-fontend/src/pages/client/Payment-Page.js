@@ -32,7 +32,12 @@ import { Image } from 'react-bootstrap';
 // Service
 import { detailBill, finByProductOnCart } from '../../service/BillSevice';
 import { updateTienShip } from '../../service/OrderManagementTimeLine';
-import { paymentOnlineClient, updateClientPayment, updateClientPayment1 } from '../../service/client/Payment';
+import {
+  deleteOverTime,
+  paymentOnlineClient,
+  updateClientPayment,
+  updateClientPayment1,
+} from '../../service/client/Payment';
 
 const ImageButton = styled(ButtonBase)(({ theme }) => ({
   position: 'relative',
@@ -389,6 +394,20 @@ export default function PaymentPage() {
 
   //   console.log('Đi tới thanh toán');
   // };
+  useEffect(() => {
+    if (listHD.trangThai === 11) {
+      const timeoutId = setTimeout(async () => {
+        setAlertContent({
+          type: 'warning',
+          message: 'Hóa Đơn Đã Bị Xóa Vì Trong Vòng 10 Phút Không Thanh Toán',
+        });
+        await deleteOverTime(idHdParam);
+        navigate(-1);
+      }, 10 * 60 * 1000);
+      return () => clearTimeout(timeoutId);
+    }
+    return () => {};
+  }, [idHdParam, listHD.trangThai, navigate]);
 
   return (
     <>

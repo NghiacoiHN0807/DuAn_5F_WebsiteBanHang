@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -583,6 +584,12 @@ public class HoaDonController {
     @GetMapping("/view-bill-idkh/{idKH}")
     public ResponseEntity<?> viewAllHDByIDKH(@PathVariable("idKH") Integer idKH) {
         return ResponseEntity.ok(hoadonSevice.findAllByIDKH(idKH));
+    }
+
+    @DeleteMapping("/delete-over-time/{idHd}")
+    public ResponseEntity<?> deleteOverTime(@PathVariable("idHd") Integer idHd) {
+        hoadonSevice.deleteHDOver(idHd);
+        return ResponseEntity.ok("Xóa Hóa Đơn Quá Thời Gian Thanh Toán");
     }
 
     @GetMapping("/total-revenue")
