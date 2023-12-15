@@ -289,6 +289,20 @@ const CartBillADM = () => {
     setIsDeliveryChecked(event.target.checked);
   };
 
+  const resetInformation = () => {
+    getTienShip(0);
+
+    setIsDeliveryChecked(false);
+    setSelectedProvince('');
+    setSelectedWard('');
+    setSelectedDistrict('');
+    setResult('');
+    setResult1('');
+    getTenKHShip('');
+    getEmailKHShip('');
+    getSdtKHShip('');
+  };
+
   // Fetch list of provinces on component mount
   const [diachiCuThe, setDiachiCuThe] = useState('');
   useEffect(() => {
@@ -472,6 +486,11 @@ const CartBillADM = () => {
         type: 'warning',
         message: 'Hãy Nhập Đúng SDT Khách Hàng Để Thanh Toán Tại Quầy ',
       });
+    } else if (isDeliveryChecked === true && !isValidEmail(emailKHShip)) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Nhập Đúng Email Để Đặt Hàng Online',
+      });
     } else if ((isDeliveryChecked === true && !tenKhShip.trim()) || (isDeliveryChecked === true && !sdtKHShip.trim())) {
       setAlertContent({
         type: 'warning',
@@ -479,12 +498,16 @@ const CartBillADM = () => {
       });
     } else if (
       (isDeliveryChecked === true && !tenKhShip.trim()) ||
-      (isDeliveryChecked === true && containsNumber(tenKhShip)) ||
-      (isDeliveryChecked === true && !isValidPhoneNumber(sdtKHShip))
+      (isDeliveryChecked === true && containsNumber(tenKhShip))
     ) {
       setAlertContent({
         type: 'warning',
-        message: 'Hãy Nhập Đúng Thông Tin Khách Hàng Để Giao Hàng!!!',
+        message: 'Hãy Nhập Đúng Tên Khách Hàng Để Giao Hàng!!!',
+      });
+    } else if (isDeliveryChecked === true && !isValidPhoneNumber(sdtKHShip)) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Nhập Đúng SDT Khách Hàng Để Giao Hàng!!!',
       });
     } else if (isDeliveryChecked === true && !result1.trim() && !result.trim()) {
       setAlertContent({
@@ -802,6 +825,17 @@ const CartBillADM = () => {
                           sx={{ marginTop: 2 }}
                           onChange={(e) => getSdtKHShip(e.target.value)}
                         />
+                        <TextField
+                          id="standard-multiline-flexible"
+                          label="Email"
+                          multiline
+                          maxRows={4}
+                          variant="outlined"
+                          size="small"
+                          fullWidth
+                          sx={{ marginTop: 2 }}
+                          onChange={(e) => getEmailKHShip(e.target.value)}
+                        />
                         <div className="address">
                           <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}>
                             <InputLabel id="province-label">Tỉnh/Thành Phố</InputLabel>
@@ -1026,6 +1060,7 @@ const CartBillADM = () => {
                 open={showModalsKH}
                 handleClose={handleCloseAddKH}
                 getDetailHD={getDetailHD}
+                resetInformation={resetInformation}
                 // setSelectedCustomerName={setSelectedCustomerName}
                 // setSelectedMaTk={setSelectedMaTk}
                 // setSelectedCustomerEmail={setSelectedCustomerEmail}
@@ -1061,6 +1096,7 @@ const CartBillADM = () => {
                     listHD={listHD}
                     tenKhShip={tenKhShip}
                     sdtKHShip={sdtKHShip}
+                    emailKHShip={emailKHShip}
                     result={result || result1}
                   />
                 </>

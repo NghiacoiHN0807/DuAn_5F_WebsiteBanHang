@@ -300,7 +300,8 @@ public class HoaDonController {
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTenKh(newHD.getTenKh());
             hoaDon.setSdtKh(newHD.getSdtKh());
-            hoaDon.setNgayThanhToan(newHD.getNgayThanhToan());
+            hoaDon.setEmail(newHD.getEmail());
+            hoaDon.setNgayThanhToan(currentTimestamp);
             hoaDon.setDiaChi(newHD.getDiaChi());
             hoaDon.setThanhTien(newHD.getThanhTien());
             hoaDon.setKieuHoaDon(newHD.getKieuHoaDon());

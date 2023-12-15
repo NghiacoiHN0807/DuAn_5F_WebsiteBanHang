@@ -306,7 +306,7 @@ export default function PaymentPage1() {
         });
         await deleteOverTime(idHdParam);
         navigate(-1);
-      }, 1 * 60 * 1000);
+      }, 10 * 60 * 1000);
       return () => clearTimeout(timeoutId);
     }
     return () => {};
