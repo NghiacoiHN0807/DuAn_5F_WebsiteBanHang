@@ -101,6 +101,11 @@ const ModalUpdateProductOnCartClient = (props) => {
   };
 
   const handleChoose = async () => {
+    // const productExistsInItemUpdate = selectSoLuongTon.find((product) => product.idCtsp === itemUpdate.idCtsp.idCtsp);
+
+    const productExistsInItemUpdate = selectSoLuongTon.find((product) => product.idCtsp === itemUpdate.idCtsp.idCtsp);
+    console.log('productExistsInItemUpdate:', productExistsInItemUpdate);
+
     const selectedSp = itemUpdateClassify[0].idSp.tenSp;
 
     if (selectedSize === null || selectedSp === '') {
@@ -118,7 +123,7 @@ const ModalUpdateProductOnCartClient = (props) => {
         type: 'warning',
         message: 'Sản Phẩm Vượt Quá Số Lượng Tồn',
       });
-    } else if (quantity > 20) {
+    } else if (quantity > 20 || (productExistsInItemUpdate && itemUpdate.soLuong + quantity > 20)) {
       setAlertContent({
         type: 'warning',
         message: 'Vui Lòng Liên Hệ Với Chúng Tôi Để Mua Sỉ',

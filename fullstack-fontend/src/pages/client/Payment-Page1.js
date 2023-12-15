@@ -5,6 +5,7 @@ import {
   Container,
   FormControlLabel,
   Grid,
+  Paper,
   Snackbar,
   Stack,
   Switch,
@@ -118,7 +119,7 @@ export default function PaymentPage1() {
   const selectDataCart = useCallback(async () => {
     try {
       const res = await finByProductOnCart(idHdParam);
-      console.log('res', res);
+      console.log('res324', res);
 
       if (res) {
         setDataCart(res);
@@ -143,7 +144,11 @@ export default function PaymentPage1() {
   const getDetailHD = useCallback(async () => {
     try {
       const getData = await detailBill(idHdParam);
-      setlistHD(getData);
+      if (getData.trangThai === 11) {
+        console.log('getData324', getData);
+
+        setlistHD(getData);
+      }
     } catch (error) {
       console.error('Error: ', error);
     }
@@ -191,14 +196,15 @@ export default function PaymentPage1() {
 
   useEffect(() => {
     const calculateTotalPrice = async () => {
-      const updated = await updateTienShip(idHdParam, tienShip);
-      if (updated) {
-        getDetailHD();
+      if (listHD.trangThai === 11) {
+        const updated = await updateTienShip(idHdParam, tienShip);
+        if (updated) {
+          getDetailHD();
+        }
       }
     };
-
     calculateTotalPrice();
-  }, [getDetailHD, idHdParam, tienShip]);
+  }, [getDetailHD, idHdParam, listHD.trangThai, tienShip]);
 
   // Select modal address
   const [showModalsAddress, setShowModalKH] = useState(false);
@@ -290,197 +296,232 @@ export default function PaymentPage1() {
 
     return formatter.format(price);
   }
+  useEffect(
+    () => {
+      const timeoutId = setTimeout(async () => {
+        setAlertContent({
+          type: 'warning',
+          message: 'Hóa Đơn Đã Bị Xóa Vì Trong Vòng 10 Phút Không Thanh Toán',
+        });
+        console.log('Hóa Đơn Đã Bị Xóa ');
+      }, 1 * 60 * 1000);
+
+      return () => clearTimeout(timeoutId);
+    },
+    [
+      /* Dependency Array */
+    ]
+  );
   return (
     <>
       <Container sx={{ marginBottom: 10 }}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 5, backgroundColor: 'white' }}>
-            <Typography variant="h6" sx={{ marginTop: 1 }}>
-              Thông Tin Nhận Hàng{' '}
-            </Typography>
-            <Box component="form" noValidate autoComplete="off" sx={{ marginTop: 3 }}>
-              <Typography sx={{ fontSize: 16, display: 'inline' }} variant="button" gutterBottom>
-                {listHD.idKH && tenKH}
-              </Typography>{' '}
-              <Typography sx={{ fontSize: 16, display: 'inline', paddingLeft: 2 }} variant="button" gutterBottom>
-                {listHD.idKH && sdtKH}
-              </Typography>{' '}
-              <Typography sx={{ fontSize: 16, display: 'inline', paddingLeft: 4 }} variant="body2" gutterBottom>
-                {diaChi && diaChi}
-              </Typography>{' '}
-              <Button
-                sx={{ fontSize: 12, display: 'inline', paddingLeft: 2 }}
-                onClick={() => handleAddAddress()}
-                color="secondary"
-              >
-                Thay Đổi Địa Chỉ
-              </Button>
-            </Box>
-          </Grid>
+        {listHD.trangThai === 11 ? (
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 5, backgroundColor: 'white' }}>
+              <Typography variant="h6" sx={{ marginTop: 1 }}>
+                Thông Tin Nhận Hàng{' '}
+              </Typography>
+              <Box component="form" noValidate autoComplete="off" sx={{ marginTop: 3 }}>
+                <Typography sx={{ fontSize: 16, display: 'inline' }} variant="button" gutterBottom>
+                  {listHD.idKH && tenKH}
+                </Typography>{' '}
+                <Typography sx={{ fontSize: 16, display: 'inline', paddingLeft: 2 }} variant="button" gutterBottom>
+                  {listHD.idKH && sdtKH}
+                </Typography>{' '}
+                <Typography sx={{ fontSize: 16, display: 'inline', paddingLeft: 4 }} variant="body2" gutterBottom>
+                  {diaChi && diaChi}
+                </Typography>{' '}
+                <Button
+                  sx={{ fontSize: 12, display: 'inline', paddingLeft: 2 }}
+                  onClick={() => handleAddAddress()}
+                  color="secondary"
+                >
+                  Thay Đổi Địa Chỉ
+                </Button>
+              </Box>
+            </Grid>
 
-          <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
-            <Typography variant="h6" sx={{ marginTop: 3, mb: 3 }}>
-              Hi, Bạn Có Muốn Thanh Toán Hóa Đơn Của Bạn?
-            </Typography>
-            <Button variant="outlined" disabled>
-              Giao Hàng
-            </Button>
-            <TableContainer sx={{ marginTop: 2, marginBottom: 2 }}>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Ảnh</TableCell>
-                    <TableCell>Mã Sản Phẩm</TableCell>
-                    <TableCell align="right">Sản Phẩm</TableCell>
-                    <TableCell align="right">Thuộc tính</TableCell>
-                    <TableCell align="right">Giá</TableCell>
-                    <TableCell align="right">Số Lượng</TableCell>
-                    <TableCell align="right">Tổng</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {DataCart && DataCart.length > 0 ? (
-                    DataCart.map((item, index) => {
-                      const imagesArray = item[2].split(',');
-                      const firstImage = imagesArray[0];
-                      return (
-                        <TableRow
-                          key={index}
+            <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
+              <Typography variant="h6" sx={{ marginTop: 3, mb: 3 }}>
+                Hi, Bạn Có Muốn Thanh Toán Hóa Đơn Của Bạn?
+              </Typography>
+              <Button variant="outlined" disabled>
+                Giao Hàng
+              </Button>
+              <TableContainer sx={{ marginTop: 2, marginBottom: 2 }}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Ảnh</TableCell>
+                      <TableCell>Mã Sản Phẩm</TableCell>
+                      <TableCell align="right">Sản Phẩm</TableCell>
+                      <TableCell align="right">Thuộc tính</TableCell>
+                      <TableCell align="right">Giá</TableCell>
+                      <TableCell align="right">Số Lượng</TableCell>
+                      <TableCell align="right">Tổng</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {DataCart && DataCart.length > 0 ? (
+                      DataCart.map((item, index) => {
+                        const imagesArray = item[2].split(',');
+                        const firstImage = imagesArray[0];
+                        return (
+                          <TableRow
+                            key={index}
+                            sx={{
+                              '&:last-child td, &:last-child th': { border: 0 },
+                            }}
+                          >
+                            <TableCell>
+                              <Image rounded style={{ width: '150px', height: 'auto' }} src={firstImage} />
+                            </TableCell>
+                            <TableCell>{item[4]}</TableCell>
+                            <TableCell align="right">{item[5]}</TableCell>
+                            <TableCell align="right">
+                              Size: {item[6]}
+                              <br />
+                              Màu: {item[11]}
+                            </TableCell>
+                            <TableCell align="right">{formatCurrency(item[7])}</TableCell>
+                            <TableCell align="right">{item[8]}</TableCell>
+                            <TableCell align="right">{formatCurrency(item[9])}</TableCell>
+                          </TableRow>
+                        );
+                      })
+                    ) : (
+                      <TableRow>
+                        <TableCell align="right" colSpan={8}>
+                          KHÔNG CÓ DỮ LIỆU
+                        </TableCell>
+                      </TableRow>
+                    )}
+                    <TableRow>
+                      <TableCell rowSpan={3} />
+                    </TableRow>
+                  </TableBody>
+                </Table>{' '}
+              </TableContainer>
+            </Grid>
+
+            <Grid
+              item
+              xs={12}
+              md={6}
+              lg={12}
+              sx={{ marginTop: 5, backgroundColor: 'white' }}
+              className="d-flex justify-content-between"
+            >
+              <Grid item xs={12} md={6} lg={4}>
+                <Typography variant="h6" sx={{ marginTop: 1 }} gutterBottom>
+                  Phương Thức Thanh Toán{' '}
+                  <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Thanh Toán Bằng Thẻ" />
+                </Typography>
+                {isDeliveryChecked === true ? (
+                  <>
+                    <ImageButton
+                      onClick={() => handlePaymentOnline()}
+                      sx={{ marginBottom: 3 }}
+                      focusRipple
+                      style={{
+                        width: '50%',
+                      }}
+                    >
+                      <ImageSrc
+                        style={{
+                          backgroundImage: `url('https://assets.topdev.vn/images/2020/08/25/VNPAY-Logo-yGapP.png')`,
+                          backgroundSize: '50%',
+                          width: 380,
+                        }}
+                      />
+
+                      <ImageBackdrop className="MuiImageBackdrop-root" />
+                      <Image1>
+                        <Typography
+                          component="span"
+                          variant="subtitle1"
+                          color="inherit"
                           sx={{
-                            '&:last-child td, &:last-child th': { border: 0 },
+                            position: 'relative',
+                            p: 4,
+                            pt: 2,
+                            pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
                           }}
                         >
-                          <TableCell>
-                            <Image rounded style={{ width: '150px', height: 'auto' }} src={firstImage} />
-                          </TableCell>
-                          <TableCell>{item[4]}</TableCell>
-                          <TableCell align="right">{item[5]}</TableCell>
-                          <TableCell align="right">
-                            Size: {item[6]}
-                            <br />
-                            Màu: {item[11]}
-                          </TableCell>
-                          <TableCell align="right">{formatCurrency(item[7])}</TableCell>
-                          <TableCell align="right">{item[8]}</TableCell>
-                          <TableCell align="right">{formatCurrency(item[9])}</TableCell>
-                        </TableRow>
-                      );
-                    })
-                  ) : (
-                    <TableRow>
-                      <TableCell align="right" colSpan={8}>
-                        KHÔNG CÓ DỮ LIỆU
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  <TableRow>
-                    <TableCell rowSpan={3} />
-                  </TableRow>
-                </TableBody>
-              </Table>{' '}
-            </TableContainer>
-          </Grid>
-
-          <Grid
-            item
-            xs={12}
-            md={6}
-            lg={12}
-            sx={{ marginTop: 5, backgroundColor: 'white' }}
-            className="d-flex justify-content-between"
-          >
-            <Grid item xs={12} md={6} lg={4}>
-              <Typography variant="h6" sx={{ marginTop: 1 }} gutterBottom>
-                Phương Thức Thanh Toán{' '}
-                <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Thanh Toán Bằng Thẻ" />
-              </Typography>
-              {isDeliveryChecked === true ? (
-                <>
-                  <ImageButton
-                    onClick={() => handlePaymentOnline()}
-                    sx={{ marginBottom: 3 }}
-                    focusRipple
-                    style={{
-                      width: '50%',
-                    }}
-                  >
-                    <ImageSrc
-                      style={{
-                        backgroundImage: `url('https://assets.topdev.vn/images/2020/08/25/VNPAY-Logo-yGapP.png')`,
-                        backgroundSize: '50%',
-                        width: 380,
-                      }}
-                    />
-
-                    <ImageBackdrop className="MuiImageBackdrop-root" />
-                    <Image1>
-                      <Typography
-                        component="span"
-                        variant="subtitle1"
-                        color="inherit"
-                        sx={{
-                          position: 'relative',
-                          p: 4,
-                          pt: 2,
-                          pb: (theme) => `calc(${theme.spacing(1)} + 6px)`,
-                        }}
-                      >
-                        VNPAY
-                        <ImageMarked className="MuiImageMarked-root" />
-                      </Typography>
-                    </Image1>
-                  </ImageButton>
-                </>
-              ) : (
-                <>
-                  <Typography variant="button" sx={{ marginBottom: 3, marginTop: 2 }} display="block" gutterBottom>
-                    Thanh Toán Khi Nhập Hàng. Bên Vận Chuyển Sẽ Giao Hàng Tới Cho Bạn{' '}
+                          VNPAY
+                          <ImageMarked className="MuiImageMarked-root" />
+                        </Typography>
+                      </Image1>
+                    </ImageButton>
+                  </>
+                ) : (
+                  <>
+                    <Typography variant="button" sx={{ marginBottom: 3, marginTop: 2 }} display="block" gutterBottom>
+                      Thanh Toán Khi Nhập Hàng. Bên Vận Chuyển Sẽ Giao Hàng Tới Cho Bạn{' '}
+                    </Typography>
+                  </>
+                )}
+              </Grid>
+              <Grid item xs={12} md={6} lg={4}>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+                  <Typography variant="button" display="block" gutterBottom>
+                    Tổng Tiền{' '}
                   </Typography>
-                </>
-              )}
-            </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
-                <Typography variant="button" display="block" gutterBottom>
-                  Tổng Tiền{' '}
-                </Typography>
-                <Typography variant="button" display="block" gutterBottom>
-                  {listHD && formatCurrency(listHD.tongTien)}{' '}
-                </Typography>
-              </Stack>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
-                <Typography variant="button" display="block" gutterBottom>
-                  Tiền Ship{' '}
-                </Typography>
-                <Typography variant="button" display="block" gutterBottom>
-                  {listHD && formatCurrency(listHD.tienShip)}{' '}
-                </Typography>
-              </Stack>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
-                <Typography variant="button" display="block" gutterBottom>
-                  Số Tiền Giảm{' '}
-                </Typography>
-                <Typography variant="button" display="block" gutterBottom>
-                  {listHD && formatCurrency(listHD.soTienGiamGia)}{' '}
-                </Typography>
-              </Stack>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
-                <Typography variant="button" display="block" gutterBottom>
-                  Thành Tiền{' '}
-                </Typography>
-                <Typography variant="button" display="block" gutterBottom>
-                  {listHD && formatCurrency(listHD.thanhTien)}{' '}
-                </Typography>
-              </Stack>
-              <Grid sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Button onClick={() => handleDatHang()} variant="contained" color="success">
-                  Đặt Hàng
-                </Button>
-                <Button onClick={() => handleCoupon()}>Thêm mã giảm giá tại đây.</Button>
+                  <Typography variant="button" display="block" gutterBottom>
+                    {listHD && formatCurrency(listHD.tongTien)}{' '}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+                  <Typography variant="button" display="block" gutterBottom>
+                    Tiền Ship{' '}
+                  </Typography>
+                  <Typography variant="button" display="block" gutterBottom>
+                    {listHD && formatCurrency(listHD.tienShip)}{' '}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+                  <Typography variant="button" display="block" gutterBottom>
+                    Số Tiền Giảm{' '}
+                  </Typography>
+                  <Typography variant="button" display="block" gutterBottom>
+                    {listHD && formatCurrency(listHD.soTienGiamGia)}{' '}
+                  </Typography>
+                </Stack>
+                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+                  <Typography variant="button" display="block" gutterBottom>
+                    Thành Tiền{' '}
+                  </Typography>
+                  <Typography variant="button" display="block" gutterBottom>
+                    {listHD && formatCurrency(listHD.thanhTien)}{' '}
+                  </Typography>
+                </Stack>
+                <Grid sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Button onClick={() => handleDatHang()} variant="contained" color="success">
+                    Đặt Hàng
+                  </Button>
+                  <Button onClick={() => handleCoupon()}>Thêm mã giảm giá tại đây.</Button>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
+        ) : (
+          <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
+            <Paper
+              sx={{
+                textAlign: 'center',
+              }}
+            >
+              <Typography variant="h6" paragraph>
+                Dữ Liệu Trống
+              </Typography>
+
+              <Typography variant="body2">
+                Bạn Không Có Hóa Đơn Nào Ở Trạng Thái Này &nbsp;
+                <br /> Xin Vui Lòng Đặt Hàng.
+              </Typography>
+            </Paper>
+          </Grid>
+        )}
       </Container>
       {listData && (
         <>
