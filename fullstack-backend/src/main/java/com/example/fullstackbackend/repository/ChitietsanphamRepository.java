@@ -62,5 +62,19 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
                                    @Param("idMs") Integer idMs,
                                    @Param("idSize") Integer idSize);
 
+    @Query(value = "SELECT ctsp.id_ctsp, ms.ten_ms,\n" +
+            "sz.ten_size,\n" +
+            "ctsp.gia_nhap,\n" +
+            "ctsp.gia_ban,\n" +
+            "ctsp.so_luong_ton,\n" +
+            "ctsp.trang_thai\n" +
+            "FROM \n" +
+            "  chi_tiet_san_pham ctsp\n" +
+            "JOIN \n" +
+            "  mau_sac ms ON ctsp.id_ms = ms.id_ms\n" +
+            "JOIN \n" +
+            "  size sz ON ctsp.id_size = sz.id_size\n" +
+            "WHERE id_sp = :idSp",nativeQuery = true)
+    List<Object[]> ctspForAd(@Param("idSp") Integer idSp);
 
 }

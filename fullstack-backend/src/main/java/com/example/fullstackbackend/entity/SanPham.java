@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.NumberFormat;
 
 import java.util.UUID;
 
@@ -61,7 +62,7 @@ public class SanPham {
 
     @Column(name = "mo_ta")
     private String moTa;
-
+    
     @NotNull(message = "Trạng thái không được để trống")
     @Column(name = "trang_thai")
     private Integer trangThai;

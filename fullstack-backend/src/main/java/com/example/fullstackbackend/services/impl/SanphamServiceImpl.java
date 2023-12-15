@@ -10,6 +10,7 @@ import com.example.fullstackbackend.repository.SanphamRepository;
 import com.example.fullstackbackend.services.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -45,16 +46,25 @@ public class SanphamServiceImpl implements SanPhamService {
     @Override
     public List<SanPhamCustom> sanPhamCustom() {
         List<SanPhamCustom> dtos = new ArrayList<>();
-        for (Object[] row : sanphamRepository.getSpWithImg()) {
+        for (Object[] row : sanphamRepository.getSpForAdmin()) {
             SanPhamCustom spCustom = new SanPhamCustom();
             spCustom.setIdSp((Integer) row[0]);
-            spCustom.setMaSp((String) row[1]);
-            spCustom.setTenSp((String) row[2]);
-            spCustom.setMoTa((String) row[3]);
-            spCustom.setTrangThai((Integer) row[4]);
-            spCustom.setUrl((String) row[5]);
-            spCustom.setGiaMin((BigDecimal) row[6]);
-            spCustom.setGiaMax((BigDecimal) row[7]);
+            spCustom.setTenSp((String) row[1]);
+            spCustom.setMaSp((String) row[2]);
+            spCustom.setChatLieus((String) row[3]);
+            spCustom.setLoaiSPs((String) row[4]);
+            spCustom.setXuatXus((String) row[5]);
+            spCustom.setTayAos((String) row[6]);
+            spCustom.setCoAos((String) row[7]);
+            spCustom.setSizes((String) row[8]);
+            spCustom.setMauSacs((String) row[9]);
+
+            spCustom.setMoTa((String) row[10]);
+            spCustom.setTrangThai((Integer) row[11]);
+            spCustom.setUrl((String) row[12]);
+            spCustom.setGiaMin((BigDecimal) row[13]);
+            spCustom.setGiaMax((BigDecimal) row[14]);
+            spCustom.setGiaThucTe((BigDecimal) row[15]);
             dtos.add(spCustom);
         }
 
@@ -63,8 +73,11 @@ public class SanphamServiceImpl implements SanPhamService {
 
     @Override
     public List<SanPhamClientDTO> sanPhamForClient() {
+
+        List<Object[]> rows = sanphamRepository.getSpForClient();
+
         List<SanPhamClientDTO> dtos = new ArrayList<>();
-        for (Object[] row : sanphamRepository.getSpForClient()) {
+        for (Object[] row : rows) {
             SanPhamClientDTO spCustom = new SanPhamClientDTO();
             spCustom.setIdSp((Integer) row[0]);
             spCustom.setChatLieus((String) row[1]);
@@ -81,6 +94,7 @@ public class SanphamServiceImpl implements SanPhamService {
             spCustom.setGiaMin((BigDecimal) row[11]);
             spCustom.setGiaMax((BigDecimal) row[12]);
             spCustom.setGiaThucTe((BigDecimal) row[13]);
+            spCustom.setMaxThucTe((BigDecimal) row[14]);
             dtos.add(spCustom);
         }
 

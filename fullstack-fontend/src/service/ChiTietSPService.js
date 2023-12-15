@@ -6,6 +6,8 @@ const fetchAllCTSP = (page) => {
 
 const findCtspById = (id) => custom.get(`chi-tiet-san-pham/select-ctsp-byId/${id}`);
 
+const fetchListAtt = (id) => custom.get(`chi-tiet-san-pham/getCstpForAd/${id}`);
+
 const detailCTSP = (id) => custom.get(`chi-tiet-san-pham/detail/${id}`);
 
 const postAddCTSP = (idSp, idSize, soLuongTon, trangThai, soLuong) =>
@@ -52,4 +54,5 @@ export {
   addColorAndSize,
   updateNumber,
   detailCTSP,
+  fetchListAtt,
 };

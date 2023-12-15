@@ -133,7 +133,7 @@ public class SanPhamController {
         }
     }
 
-    @GetMapping("getSpWithImg")
+    @GetMapping("getSpForAdmin")
     public ResponseEntity<List<SanPhamCustom>> getSanPhamDetail() {
         List<SanPhamCustom> pageSp = sanPhamService.sanPhamCustom();
         return ResponseEntity.ok(pageSp);

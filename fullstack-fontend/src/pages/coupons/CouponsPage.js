@@ -27,6 +27,7 @@ import {
     TextField,
 } from '@mui/material';
 import { Grid, makeStyles } from '@material-ui/core';
+import { CSVLink } from 'react-csv';
 // components
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
@@ -92,16 +93,17 @@ export default function CouponsPage() {
 
     const [listData, setListData] = useState([]);
 
-
-
     const [startDateFilter, setStartDateFilter] = useState('');
+
     const [endDateFilter, setEndDateFilter] = useState('');
+
     const [statusFilter, setStatusFilter] = useState('');
+
     const [minAmountFilter, setMinAmountFilter] = useState('');
+
     const [maxAmountFilter, setMaxAmountFilter] = useState('');
 
-
-
+    const [selectedExports, setSelectedExports] = useState([]);
 
     function applySortFilter(array, comparator, query) {
         let filteredArray = array;
@@ -310,6 +312,51 @@ export default function CouponsPage() {
 
     const classes = useStyles();
 
+    // onst TABLE_HEAD = [
+    //     { id: 'stt', label: 'STT', alignRight: false },
+    //     { id: 'tenChuongTrinh', label: 'Chương Trình', alignRight: false },
+    //     { id: 'code', label: 'Code', alignRight: false },
+    //     { id: 'moTa', label: 'Mô Tả', alignRight: false },
+    //     { id: 'thoigian', label: 'Thời Gian', alignRight: false },
+    //     { id: 'soLuongHienTai', label: 'Số Lượng', alignRight: false },
+    //     { id: 'phanTram', label: 'Mức Giảm', alignRight: false },
+    //     { id: 'tienToiThieu', label: 'Số Tiền Tối Thiểu', alignRight: false },
+    //     { id: 'trangthai', label: 'Trạng Thái', alignRight: false },
+    //     { id: 'thaotac', label: 'Thao Tác', alignRight: false }
+    // ];
+
+    const handleExportData = () => {
+        const res = [];
+        if (listData && listData.length > 0) {
+            res.push([
+                'STT',
+                'Chương Trình',
+                'Code',
+                'Mô Tả',
+                'Thời Gian',
+                'Số Lượng',
+                'Mức Giảm',
+                'Số Tiền Tối Thiểu',
+                'Trạng Thái',
+            ]);
+            listData.map((item, index) => {
+                const array = [];
+                array[0] = index;
+                array[1] = item.tenChuongTrinh;
+                array[2] = item.code;
+                array[3] = item.moTa;
+                array[4] = `${item.thoiGianTao} - ${item.thoiGianKetThuc}`;
+                array[5] = item.soLuongHienTai;
+                array[6] = `${item.phanTram} %`;
+                array[7] = formatCurrency(item.tienToiThieu);
+                array[8] = `${item.trangThai === 0 ? 'Hoạt động' : 'Dừng hoạt động'}`;
+                return res.push(array);
+            });
+            setSelectedExports(res);
+            // done();
+        }
+    };
+
     return (
         <>
             <Helmet>
@@ -372,7 +419,9 @@ export default function CouponsPage() {
                             onChange={(event) => setMaxAmountFilter(event.target.value)}
                         />
                     </Grid>
-
+                    <CSVLink data={selectedExports} onClick={handleExportData}>
+                        Download me
+                    </CSVLink>
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>

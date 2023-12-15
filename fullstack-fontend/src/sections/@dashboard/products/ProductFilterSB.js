@@ -18,6 +18,7 @@ import {
   Grid,
 } from '@mui/material';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import FilterListIcon from '@mui/icons-material/FilterList';
 // components
 import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
@@ -66,9 +67,10 @@ ShopFilterSidebar.propTypes = {
   onCloseFilter: PropTypes.func,
   onFilter: PropTypes.func,
   listSP: PropTypes.array,
+  onClearAll: PropTypes.func,
 };
 
-export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter, onFilter, listSP }) {
+export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFilter, onFilter, listSP, onClearAll }) {
   const [listCL, setListCL] = useState([]);
   const [listLSP, setListLSP] = useState([]);
   const [listXX, setListXX] = useState([]);
@@ -120,6 +122,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
     setLocLsp('all');
     setLocGia('all');
     onFilter(listSP);
+    onClearAll(false);
   };
 
   // loc checkbox
@@ -176,9 +179,11 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
       }
       const { min, max } = parsePriceRange(range);
       if (range.includes('+')) {
-        return product.giaThucTe >= min || product.giaMax >= min;
+        return product.giaThucTe >= min || product.maxThucTe >= min;
       }
-      return (product.giaThucTe >= min && product.giaThucTe <= max) || (product.giaMax >= min && product.giaMax <= max);
+      return (
+        (product.giaThucTe >= min && product.giaThucTe <= max) || (product.maxThucTe >= min && product.maxThucTe <= max)
+      );
     };
     return listSP.filter((product) => {
       const chatLieuMatched = listLocCL.length === 0 || listLocCL.some((check) => product.chatLieus.includes(check));
@@ -213,7 +218,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
   return (
     <>
       <Button disableRipple color="inherit" endIcon={<Iconify icon=" ic:round-filter-list" />} onClick={onOpenFilter}>
-        Filters&nbsp;
+        <FilterListIcon />
       </Button>
 
       <Drawer

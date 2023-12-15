@@ -1,10 +1,12 @@
 package com.example.fullstackbackend.controller;
 
+import com.example.fullstackbackend.DTO.CTSPCustom;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.services.ChitietsanphamService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -107,6 +109,12 @@ public class ChitietsanphamController {
                                        @PathVariable("soLuongTon") Integer soLuongTon,
                                        @PathVariable("trangThai") Integer trangThai) {
         return chitietsanphamSevice.updateNumber(idCtsp,giaNhap, giaBan, soLuongTon, trangThai);
+    }
+
+    @GetMapping("getCstpForAd/{idSp}")
+    public ResponseEntity<List<CTSPCustom>> getCtspForAd(@PathVariable("idSp") Integer idSp) {
+        List<CTSPCustom> pageSp = chitietsanphamSevice.getCtspForAd(idSp);
+        return ResponseEntity.ok(pageSp);
     }
 
 }
