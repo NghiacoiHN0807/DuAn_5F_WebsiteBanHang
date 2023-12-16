@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,7 @@ public class ChucVu {
     private String maCv;
 
     @Column(name = "ten_cv")
+    @NotEmpty(message = "Không Được Để Trống Chức Vụ")
     private String tenCv;
 
     @Column(name = "ngay_tao")

@@ -2,22 +2,22 @@ import React, { useEffect, useState } from 'react';
 import QrReader from 'react-qr-scanner';
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Box, Button, TextField, FormControl, InputLabel, Select, MenuItem, Snackbar, Alert } from '@mui/material';
+import { Box, Button, TextField, FormControl, InputLabel, Select, MenuItem, Snackbar, Alert, FormHelperText, FormGroup, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { chucVu } from '../../service/chucVuService';
 import { postAddTaiKhoan } from '../../service/taiKhoanNhanVienService';
 
 
 const AddTKNV = () => {
-  const [maTaiKhoan, setMaTaiKhoan] = useState(null);
+  const [maTaiKhoan] = useState(null);
   const [ho, setHo] = useState('');
   const [ten, setTen] = useState('');
-  const [chucVuId, setChucVuId] = useState('');
+  const [chucVuId, setChucVuId] = useState(8);
   const [sdt, setSdt] = useState('');
   const [email, setEmail] = useState('');
   const [soCanCuoc, setSoCanCuoc] = useState('');
-  const [matKhau, setMatKhau] = useState('');
-  const [trangThai, setTrangThai] = useState(0);
+  const [matKhau] = useState(null);
+  const [trangThai] = useState(0);
   const [alertContent, setAlertContent] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState('No result');
@@ -31,15 +31,78 @@ const AddTKNV = () => {
     setAlertContent(null);
   };
 
-  let res;
 
+
+  const cccdRegex = /^\d{9,12}$/;
+  const validateFields = () => {
+    let isValid = true;
+    const newValidation = {};
+
+    if (!ho) {
+      newValidation.ho = 'Họ không được để trống';
+      isValid = false;
+    }
+
+    if (!ten) {
+      newValidation.ten = 'Tên không được để trống';
+      isValid = false;
+    }
+
+    if (!sdt) {
+      newValidation.sdt = 'Số điện thoại không được để trống';
+      isValid = false;
+    }
+    if (!email) {
+      newValidation.email = 'Email không được để trống';
+      isValid = false;
+    }
+
+    if (!soCanCuoc) {
+      newValidation.soCanCuoc = 'Không được để trống số căn cước';
+      isValid = false;
+    } else
+      if (!cccdRegex.test(soCanCuoc)) {
+        newValidation.soCanCuoc = 'Số Căn Cước phải có từ 9 đến 12 chữ số';
+        isValid = false;
+      }
+
+    setValidation(newValidation);
+
+    return isValid;
+  };
+
+  useEffect(() => {
+    setValidation((prevErrors) => ({ ...prevErrors, ho: '' }));
+  }, [ho]);
+  useEffect(() => {
+    setValidation((prevErrors) => ({ ...prevErrors, ten: '' }));
+  }, [ten]);
+  useEffect(() => {
+    setValidation((prevErrors) => ({ ...prevErrors, sdt: '' }));
+  }, [sdt]);
+  useEffect(() => {
+    setValidation((prevErrors) => ({ ...prevErrors, email: '' }));
+  }, [email]);
+  useEffect(() => {
+    setValidation((prevErrors) => ({ ...prevErrors, soCanCuoc: '' }));
+  }, [soCanCuoc]);
+  useEffect(() => {
+    setValidation((prevErrors) => ({ ...prevErrors, matKhau: '' }));
+  }, [matKhau]);
 
 
   const handleSave = async () => {
+    handleClose();
+    if (!validateFields()) {
+      // Validation failed, do not proceed with the API call
+      return;
+    }
+    let res;
     try {
+      const filteredChucVu = myChucVu.find(item => item.idCv === chucVuId);
       res = await postAddTaiKhoan(
         maTaiKhoan,
-        chucVuId,
+        filteredChucVu,
         ho,
         ten,
         sdt,
@@ -52,8 +115,8 @@ const AddTKNV = () => {
         console.log(error.response.data);
         setValidation(error.response.data);
       }
-    }
 
+    }
     if (res && res.idTaiKhoan) {
       const successMessage = {
         type: 'success',
@@ -69,11 +132,14 @@ const AddTKNV = () => {
     }
   };
 
+
+
   const [myChucVu, setMyChucVu] = useState([]);
 
   const getAllChucVu = async () => {
     const rs = await chucVu(0);
     setMyChucVu(rs);
+    console.log(rs);
   };
 
   useEffect(() => {
@@ -101,6 +167,14 @@ const AddTKNV = () => {
     }
   };
 
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  
   const handleError = (err) => {
     console.error(err);
   };
@@ -168,27 +242,48 @@ const AddTKNV = () => {
       >
         <FormControl fullWidth margin="dense">
           <InputLabel>Chức Vụ</InputLabel>
-          <Select value={chucVuId} onChange={(event) => setChucVuId(event.target.value)}>
-            {myChucVu
-              .filter((item) => item.idCv === 1 || item.idCv === 8)
-              .map((item, index) => (
-                <MenuItem key={index} value={item}>
-                  {item.tenCv}
-                </MenuItem>
-              ))}
+          <Select defaultValue={chucVuId}
+            onChange={(e) => {
+              setChucVuId(e.target.value);
+            }}>
+            <MenuItem value={8}>
+              Nhân Viên
+            </MenuItem>
+            <MenuItem value={1}>
+              Quản Lý
+            </MenuItem>
           </Select>
         </FormControl>
 
-        <TextField error={!!validation.ho} helperText={validation.ho} fullWidth margin="dense" label="Họ" value={ho} onChange={(event) => setHo(event.target.value)} />
-        <TextField error={!!validation.ten} helperText={validation.ten} fullWidth margin="dense" label="Tên" value={ten} onChange={(event) => setTen(event.target.value)} />
-        <TextField error={!!validation.matKhau} helperText={validation.matKhau} fullWidth margin="dense" label="Mật Khẩu" value={matKhau} onChange={(event) => setMatKhau(event.target.value)} />
-        <TextField error={!!validation.email} helperText={validation.email} fullWidth margin="dense" label="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
-        <TextField error={!!validation.sdt} helperText={validation.sdt} fullWidth margin="dense" label="Số Điện Thoại" value={sdt} onChange={(event) => setSdt(event.target.value)} />
-        <TextField error={!!validation.soCanCuoc} helperText={validation.soCanCuoc} fullWidth margin="dense" label="Số Căn Cước" value={soCanCuoc} onChange={(event) => setSoCanCuoc(event.target.value)} />
-        <Button size="large" variant="contained" color="success" onClick={handleSave} style={{ marginTop: '20px' }}>
+        <TextField error={!!validation.ho} helperText={validation.ho} fullWidth margin="dense" label="Họ" onChange={(event) => setHo(event.target.value)} />
+        <TextField error={!!validation.ten} helperText={validation.ten} fullWidth margin="dense" label="Tên" onChange={(event) => setTen(event.target.value)} />
+        <TextField error={!!validation.email} helperText={validation.email} fullWidth margin="dense" label="Email" onChange={(event) => setEmail(event.target.value)} />
+        <TextField error={!!validation.sdt} helperText={validation.sdt} fullWidth margin="dense" type='number' label="Số Điện Thoại" onChange={(event) => setSdt(event.target.value)} />
+        <TextField error={!!validation.soCanCuoc} helperText={validation.soCanCuoc} fullWidth type='number' margin="dense" label="Số Căn Cước" onChange={(event) => setSoCanCuoc(event.target.value)} />
+
+        <Button size="large" variant="contained" color="success" onClick={() => handleClickOpen()} style={{ marginTop: '20px' }}>
           Thêm Tài Khoản Nhân Viên
         </Button>
       </Box>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Xác nhận thêm?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc chắn muốn thêm nhân viên mới!!!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Hủy</Button>
+          <Button onClick={() => handleSave()} autoFocus>
+            Xác nhận thêm
+          </Button>
+        </DialogActions>
+      </Dialog>
       {alertContent && (
         <Snackbar
           open

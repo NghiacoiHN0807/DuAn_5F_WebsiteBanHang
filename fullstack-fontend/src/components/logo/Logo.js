@@ -20,7 +20,7 @@ const Logo = forwardRef(({ disabledLink = false, sx }) => {
 
   // OR using local (public folder)
   // -------------------------------------------------------
-  const logo = <Box component="img" src={logo5F} sx={{ width: 50, height: 50, cursor: 'pointer', ...sx }} />;
+  const logo = <Box component="img" src={logo5F} sx={{ width: 100, height: 100, cursor: 'pointer', ...sx }} />;
 
   // const logo = (
   //   <Box

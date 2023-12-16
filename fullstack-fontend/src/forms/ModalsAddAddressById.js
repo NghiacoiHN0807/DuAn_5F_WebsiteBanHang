@@ -205,8 +205,70 @@ const ModalAddAddressById = (props) => {
   };
 
   const [validationErrors, setValidationErrors] = useState('');
+  const validateFields = () => {
+    let isValid = true;
+    const newValidation = {};
+
+    // Validate 'ten' field
+    if (!tenNguoiNhan) {
+      newValidation.tenNguoiNhan = 'Tên không được để trống';
+      isValid = false;
+    }
+
+    if (!sdt) {
+      newValidation.sdt = 'Số điện thoại không được để trống';
+      isValid = false;
+    }
+    if (!diaChiCuThe) {
+      newValidation.diaChiCuThe = 'Địa chỉ cụ thể không được để trống';
+      isValid = false;
+    }
+    if (!selectedTinhThanh) {
+      newValidation.tinhThanh = 'Tỉnh thành Chưa được chọn';
+      isValid = false;
+    }
+
+    if (!selectedQuanHuyen) {
+      newValidation.quanHuyen = 'Quận huyện Chưa được chọn';
+      isValid = false;
+    }
+    if (!selectedPhuongXa) {
+      newValidation.phuongXa = 'Phường xã Chưa được chọn';
+      isValid = false;
+    }
+
+    // Validate other fields similarly
+
+    // Update the validation state
+    setValidationErrors(newValidation);
+
+    return isValid;
+  };
+
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, tenNguoiNhan: '' }));
+  }, [tenNguoiNhan]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, diaChiCuThe: '' }));
+  }, [diaChiCuThe]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, sdt: '' }));
+  }, [sdt]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, tinhThanh: '' }));
+  }, [selectedTinhThanh]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, quanHuyen: '' }));
+  }, [selectedQuanHuyen]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, phuongXa: '' }));
+  }, [selectedPhuongXa]);
 
   const handleSave = async () => {
+    if (!validateFields()) {
+      // Validation failed, do not proceed with the API call
+      return;
+    }
     try {
       const res = await postAddDiaChi(
         taiKhoan,

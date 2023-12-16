@@ -5,6 +5,11 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -40,13 +45,12 @@ const UpdateTkNV = (props) => {
   const [alertContent, setAlertContent] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState("");
-
   const getAllChucVu = async () => {
     const rs = await chucVu3(0);
     setMyChucVu(rs);
   };
 
-  
+
 
   useEffect(() => {
     getAllChucVu();
@@ -75,9 +79,79 @@ const UpdateTkNV = (props) => {
     getListData();
   }, [getListData]);
 
+
+  const cccdRegex = /^\d{9,12}$/;
+  const validateFields = () => {
+    let isValid = true;
+    const newValidation = {};
+
+    // Validate 'ho' field
+    if (!ho) {
+      newValidation.ho = 'Họ không được để trống';
+      isValid = false;
+    }
+
+    // Validate 'ten' field
+    if (!ten) {
+      newValidation.ten = 'Tên không được để trống';
+      isValid = false;
+    }
+
+    if (!sdt) {
+      newValidation.sdt = 'Số điện thoại không được để trống';
+      isValid = false;
+    }
+    if (!email) {
+      newValidation.email = 'Email không được để trống';
+      isValid = false;
+    }
+    if (!matKhau) {
+      newValidation.matKhau = 'Mật khẩu không được để trống';
+      isValid = false;
+    }
+
+    if (!soCanCuoc) {
+      newValidation.soCanCuoc = 'Không được để trống số căn cước';
+      isValid = false;
+    } else
+      if (!cccdRegex.test(soCanCuoc)) {
+        newValidation.soCanCuoc = 'Số Căn Cước phải có từ 9 đến 12 chữ số';
+        isValid = false;
+      }
+
+    // Validate other fields similarly
+
+    // Update the validation state
+    setValidationErrors(newValidation);
+
+    return isValid;
+  };
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, ho: '' }));
+  }, [ho]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, ten: '' }));
+  }, [ten]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, sdt: '' }));
+  }, [sdt]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, email: '' }));
+  }, [email]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, soCanCuoc: '' }));
+  }, [soCanCuoc]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, matKhau: '' }));
+  }, [matKhau]);
+
   const handleSave = async () => {
     let res;
     let tenCvObject;
+    if (!validateFields()) {
+      // Validation failed, do not proceed with the API call
+      return;
+    }
     try {
 
       tenCvObject = await detailTen(chucVu);
@@ -123,6 +197,14 @@ const UpdateTkNV = (props) => {
     }
   };
 
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const goback = () => {
     window.history.back();
   }
@@ -165,21 +247,19 @@ const UpdateTkNV = (props) => {
               onChange={(event) => setChucVu(event.target.value)}
             >
               {myChucVu
-                .filter((item) => item.idCv === 1 || item.idCv === 8) // Lọc theo idCv
+                .filter((item) => item.idCv === 1 || item.idCv === 8)
                 .map((item, index) => (
-                  <MenuItem
-                    key={index}
-                    value={item.tenCv}
-                  >
+                  <MenuItem key={index} value={item.tenCv}>
                     {item.tenCv}
                   </MenuItem>
                 ))}
             </Select>
           </FormControl>
 
+
           <TextField
-           error={!!validationErrors.ho}
-           helperText={validationErrors.ho}
+            error={!!validationErrors.ho}
+            helperText={validationErrors.ho}
             fullWidth
             label="Họ"
             id="ho"
@@ -187,8 +267,8 @@ const UpdateTkNV = (props) => {
             onChange={(event) => setHo(event.target.value)}
           />
           <TextField
-           error={!!validationErrors.ten}
-           helperText={validationErrors.ten}
+            error={!!validationErrors.ten}
+            helperText={validationErrors.ten}
             fullWidth
             label="Tên"
             id="ten"
@@ -196,8 +276,9 @@ const UpdateTkNV = (props) => {
             onChange={(event) => setTen(event.target.value)}
           />
           <TextField
-           error={!!validationErrors.email}
-           helperText={validationErrors.email}
+            disabled
+            error={!!validationErrors.email}
+            helperText={validationErrors.email}
             fullWidth
             label="Email"
             id="email"
@@ -205,17 +286,17 @@ const UpdateTkNV = (props) => {
             onChange={(event) => setEmail(event.target.value)}
           />
           <TextField
-           error={!!validationErrors.sdt}
-           helperText={validationErrors.sdt}
+            error={!!validationErrors.sdt}
+            helperText={validationErrors.sdt}
             fullWidth
             label="Số Điện Thoại"
             id="sdt"
             value={sdt}
             onChange={(event) => setSdt(event.target.value)}
           />
-          <TextField
-           error={!!validationErrors.matKhau}
-           helperText={validationErrors.matKhau}
+          {/* <TextField
+            error={!!validationErrors.matKhau}
+            helperText={validationErrors.matKhau}
             fullWidth
             type={showPassword ? "text" : "password"}
             id="matKhau"
@@ -234,10 +315,10 @@ const UpdateTkNV = (props) => {
                 </InputAdornment>
               ),
             }}
-          />
+          /> */}
           <TextField
-           error={!!validationErrors.soCanCuoc}
-           helperText={validationErrors.soCanCuoc}
+            error={!!validationErrors.soCanCuoc}
+            helperText={validationErrors.soCanCuoc}
             fullWidth
             id="soCanCuoc"
             label="Số Căn Cước"
@@ -273,12 +354,30 @@ const UpdateTkNV = (props) => {
           <Button
             variant="contained"
             color="success"
-            onClick={() => handleSave()}
+            onClick={() => handleClickOpen()}
           >
             Cập Nhập Tài Khoản Nhân Viên
           </Button>
         </div>
-
+        <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Xác nhận thêm?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc chắn muốn thêm nhân viên mới!!!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Hủy</Button>
+          <Button onClick={() => handleSave()} autoFocus>
+            Xác nhận thêm
+          </Button>
+        </DialogActions>
+      </Dialog>   
       </div>
 
     </>

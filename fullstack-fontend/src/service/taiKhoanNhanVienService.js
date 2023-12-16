@@ -10,7 +10,7 @@ const postAddTaiKhoan = (maTaiKhoan, idChucVu, ho, ten, sdt, email, soCanCuoc, m
 const postUpdateTaiKhoan = (id, maTaiKhoan, idChucVu, ho, ten, sdt, email, matKhau, soCanCuoc, trangThai) =>
   custom.put(`/tai-khoan/update/${id}`, { maTaiKhoan, idChucVu, ho, ten, sdt, email, matKhau, soCanCuoc, trangThai });
 
-const deleteTaiKhoan = (id) => custom.patch(`/tai-khoan/delete/${id}`);
+const deleteTaiKhoan = (id, trangThai) => custom.delete(`/tai-khoan/delete/${id}/${trangThai}`);
 
 const detailTaiKhoan = (id) => custom.get(`/tai-khoan/detail/${id}`);
 
