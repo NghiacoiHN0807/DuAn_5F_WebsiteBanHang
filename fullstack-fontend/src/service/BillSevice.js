@@ -14,6 +14,7 @@ const findByProductNameAndSize = (name, size, ms) =>
   custom.get(`/chi-tiet-san-pham/get-one-ctsp/${name}/${size}/${ms}`);
 const findById = (idSp) => custom.get(`/chi-tiet-san-pham/select-ctsp-byId/${idSp}`);
 const finByProductOnCart = (idHd) => custom.get(`/hoa-don-chi-tiet/view-all-prduct/${idHd}`);
+const finByProductOnCart2 = (idHd) => custom.get(`/hoa-don-chi-tiet/view-all-prduct2/${idHd}`);
 const getAllDataTaiKhoan = () => custom.get(`/tai-khoan-khach-hang/view-all`);
 const selectAllInvoiceWaiting = () => custom.get(`/hoa-don/view-all-invoice-waiting`);
 const paymentOnline = (amount, orderInfo) =>
@@ -41,6 +42,7 @@ export {
   selectAllInvoiceWaiting,
   paymentOnline,
   paymentOnlineSuccess,
+  finByProductOnCart2,
   // getHost,
   // getCallApiDistrict,
 };

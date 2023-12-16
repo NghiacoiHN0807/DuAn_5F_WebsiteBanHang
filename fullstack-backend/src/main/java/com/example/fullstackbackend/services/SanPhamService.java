@@ -50,4 +50,6 @@ public interface SanPhamService {
 
     List<SanPhamClientDTO> relatedProduct(Integer idLsp, Integer idSp);
 
+    void setSpIsOut();
+
 }

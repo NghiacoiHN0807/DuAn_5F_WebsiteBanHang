@@ -396,22 +396,30 @@ export default function UpdateSanPham() {
     }
   }, [selectedImages, uploadImage]);
 
-  const onDrop = useCallback((acceptedFiles, rejectedFiles) => {
-    if (acceptedFiles.length > 0 && rejectedFiles.length === 0) {
-      const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
-      setSelectedImages(imageFiles);
-      handleOpenBD();
-    }
-    if (acceptedFiles.length === 0 && rejectedFiles.length > 0) {
-      handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
-    }
-    if (acceptedFiles.length > 0 && rejectedFiles.length > 0) {
-      const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
-      setSelectedImages(imageFiles);
-      handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
-      handleOpenBD();
-    }
-  }, []);
+  const onDrop = useCallback(
+    (acceptedFiles, rejectedFiles) => {
+      if (acceptedFiles.length + listImg.length > 10) {
+        handleAlertClick(`Không được chọn quá ${10 - listImg.length} file ảnh.`, 'warning');
+        return;
+      }
+
+      if (acceptedFiles.length > 0 && rejectedFiles.length === 0) {
+        const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
+        setSelectedImages(imageFiles);
+        handleOpenBD();
+      }
+      if (acceptedFiles.length === 0 && rejectedFiles.length > 0) {
+        handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
+      }
+      if (acceptedFiles.length > 0 && rejectedFiles.length > 0) {
+        const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
+        setSelectedImages(imageFiles);
+        handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
+        handleOpenBD();
+      }
+    },
+    [listImg]
+  );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
