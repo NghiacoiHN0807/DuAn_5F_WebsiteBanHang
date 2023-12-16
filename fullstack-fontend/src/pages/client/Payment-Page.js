@@ -28,15 +28,15 @@ import { styled } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
-
+import ModalConfirmPayment from '../../forms/client/Modal-Confirm-Payment-Page';
 // Service
 import { detailBill, finByProductOnCart } from '../../service/BillSevice';
 import { updateTienShip } from '../../service/OrderManagementTimeLine';
 import {
   deleteOverTime,
-  paymentOnlineClient,
-  updateClientPayment,
-  updateClientPayment1,
+  // paymentOnlineClient,
+  // updateClientPayment,
+  // updateClientPayment1,
 } from '../../service/client/Payment';
 
 const ImageButton = styled(ButtonBase)(({ theme }) => ({
@@ -356,34 +356,38 @@ export default function PaymentPage() {
         message: 'Email Sai Định Dạng Hoặc Không Phải Email Cá Nhân!!!',
       });
     } else if (isDeliveryChecked === true) {
-      setAlertContent({
-        type: 'success',
-        message: 'Hãy Thanh Toán Cảm Ơn!!!',
-      });
-      await updateClientPayment1(
-        idHdParam,
-        selectedFirstName + selectedLastName,
-        selectedNumberPhone,
-        selectedEmail,
-        result
-      );
-      const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
-      console.log('Check paymentOn: ', paymentOn);
-      window.location.href = paymentOn;
-    } else {
-      setAlertContent({
-        type: 'success',
-        message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
-      });
-      await updateClientPayment(
-        idHdParam,
-        selectedFirstName + selectedLastName,
-        selectedNumberPhone,
-        selectedEmail,
-        result
-      );
+      setOpenConfirm(true);
 
-      navigate(`/`);
+      // setAlertContent({
+      //   type: 'success',
+      //   message: 'Hãy Thanh Toán Cảm Ơn!!!',
+      // });
+      // await updateClientPayment1(
+      //   idHdParam,
+      //   selectedFirstName + selectedLastName,
+      //   selectedNumberPhone,
+      //   selectedEmail,
+      //   result
+      // );
+      // const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
+      // console.log('Check paymentOn: ', paymentOn);
+      // window.location.href = paymentOn;
+    } else {
+      setOpenConfirm(true);
+
+      // setAlertContent({
+      //   type: 'success',
+      //   message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
+      // });
+      // await updateClientPayment(
+      //   idHdParam,
+      //   selectedFirstName + selectedLastName,
+      //   selectedNumberPhone,
+      //   selectedEmail,
+      //   result
+      // );
+
+      // navigate(`/`);
     }
   };
 
@@ -401,6 +405,12 @@ export default function PaymentPage() {
     }
     return () => {};
   }, [idHdParam, listHD.trangThai, navigate]);
+
+  const [openConfirm, setOpenConfirm] = useState(false);
+
+  const handleCloseConfirm = () => {
+    setOpenConfirm(false);
+  };
 
   return (
     <>
@@ -711,6 +721,16 @@ export default function PaymentPage() {
         )}
       </Container>
       {/* <ModalAddAddress open={showModalsAddress} handleClose={handleCloseAddress} /> */}
+      <ModalConfirmPayment
+        tenKH={selectedFirstName + selectedLastName}
+        sdtKH={selectedNumberPhone}
+        emailKH={selectedEmail}
+        open={openConfirm}
+        diaChi={result}
+        handleClose={handleCloseConfirm}
+        isDeliveryChecked={isDeliveryChecked}
+        thanhTien={listHD.thanhTien}
+      />
     </>
   );
 }
