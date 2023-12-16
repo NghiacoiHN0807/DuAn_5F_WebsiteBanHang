@@ -162,6 +162,7 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "            MIN(gia_thuc_te) as giam_gia,\n" +
             "            MAX(gia_thuc_te) as max_giam_gia\n" +
             "            FROM chi_tiet_san_pham\n" +
+            "            WHERE trang_thai = 0\n" +
             "            GROUP BY id_sp\n" +
             "            ) ctsp ON sp.id_sp = ctsp.id_sp\n" +
             " \n" +
