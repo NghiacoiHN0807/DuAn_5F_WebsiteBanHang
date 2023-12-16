@@ -26,19 +26,21 @@ import {
     Chip,
     TextField,
 } from '@mui/material';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import { Grid, makeStyles } from '@material-ui/core';
 import { CSVLink } from 'react-csv';
 // components
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
-import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
+import { UserListHead } from '../../sections/@dashboard/user';
 // mock
 // import USERLIST from '../_mock/user';
 // import { useEffect } from 'react';
 import { getAll } from '../../service/CouponsService';
 import ModalDeleteCoupon from './Modal-Delete-Coupon';
 import ModalResetCoupon from './Modal-Reset-Coupon';
+import UserListToolbarCoupons from './UserListToolbarCoupons';
 
 // ----------------------------------------------------------------------
 
@@ -162,8 +164,6 @@ export default function CouponsPage() {
     // Open and Close menu
     const [object, getObject] = useState([]);
     const handleOpenMenu = (event, row) => {
-        console.log('Check event: ', event);
-        console.log('Check row: ', row);
         getObject(row);
 
         setOpen(event.currentTarget);
@@ -181,18 +181,20 @@ export default function CouponsPage() {
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = listData.map((n) => n.idCoupon);
+            const newSelecteds = filteredUsers.map((n) => n.idCoupon);
             setSelected(newSelecteds);
             return;
         }
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
+    console.log(selected);
+
+    const handleClick = (event, idCoupon) => {
+        const selectedIndex = selected.indexOf(idCoupon);
         let newSelected = [];
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
+            newSelected = newSelected.concat(selected, idCoupon);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -345,7 +347,7 @@ export default function CouponsPage() {
                 array[1] = item.tenChuongTrinh;
                 array[2] = item.code;
                 array[3] = item.moTa;
-                array[4] = `${item.thoiGianTao} - ${item.thoiGianKetThuc}`;
+                array[4] = `${formatDate(item.thoiGianTao)} - ${formatDate(item.thoiGianKetThuc)}`;
                 array[5] = item.soLuongHienTai;
                 array[6] = `${item.phanTram} %`;
                 array[7] = formatCurrency(item.tienToiThieu);
@@ -376,7 +378,7 @@ export default function CouponsPage() {
                 </Stack>
 
                 <Card>
-                    <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+                    <UserListToolbarCoupons numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} information={selected} getListData={getListData} />
                     <Grid container className={classes.filterContainer}>
                         <TextField
                             label="Ngày Bắt Đầu"
@@ -418,10 +420,20 @@ export default function CouponsPage() {
                             value={maxAmountFilter}
                             onChange={(event) => setMaxAmountFilter(event.target.value)}
                         />
+                        <CSVLink data={selectedExports} filename={'DSSP.csv'} onClick={handleExportData}>
+                            <Button
+                                aria-label="download"
+                                Button
+                                variant="outlined"
+                                startIcon={<GetAppIcon />}
+                                size="large"
+                                color="success"
+                            >
+                                Xuất Excel
+                            </Button>
+                        </CSVLink>
                     </Grid>
-                    <CSVLink data={selectedExports} onClick={handleExportData}>
-                        Download me
-                    </CSVLink>
+
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
                             <Table>

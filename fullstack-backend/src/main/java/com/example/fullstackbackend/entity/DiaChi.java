@@ -33,6 +33,8 @@ public class DiaChi {
     @Column(name = "loai_dia_chi")
     private Integer loaiDiaChi;
 
+    @NotEmpty(message = "Chưa Chọn Phường Xã")
+    @NotNull(message = "Chưa Chọn Phường Xã")
     @Size(max = 255)
     @Column(name = "phuong_xa")
     private String phuongXa;

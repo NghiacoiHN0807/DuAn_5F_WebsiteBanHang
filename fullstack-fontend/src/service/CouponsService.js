@@ -12,4 +12,13 @@ const insertHd = (idHd, code) => custom.post(`/coupons/api/insert-hd?idHd=${idHd
 
 const detail = (id) => custom.get(`/coupons/api/detail/${id}`);
 
-export {getAll, add, update, del, detail, insertHd}
+const removeAll = (ids) => custom.delete('/coupons/api/remove-all', {
+    data: ids,
+    headers: {
+        'Content-Type': 'application/json', // Make sure to set the content type
+    },
+})
+
+const delCouponHd = (id) => custom.post(`/coupons/api/remove-coupon/${id}`);
+
+export { getAll, add, update, del, detail, insertHd, removeAll, delCouponHd }

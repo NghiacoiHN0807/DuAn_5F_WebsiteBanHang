@@ -27,17 +27,16 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHeadNoCheckBox, UserListToolbar } from '../sections/@dashboard/user';
 import { updateClientPayment2 } from '../service/client/Payment';
+import ModalAddAddressById from "./ModalsAddAddressById";
 // APIs
 
 const TABLE_HEAD = [
-  { id: 'loaiDiaChi', label: 'Loại Địa Chỉ', alignRight: false },
-  { id: 'diaChiCuThe', label: 'Địa Chỉ Cụ Thể', alignRight: false },
-  { id: 'phuongXa', label: 'Phường/Xã', alignRight: false },
-  { id: 'quanHuyen', label: 'Quận/Huyện', alignRight: false },
-  { id: 'tinhThanh', label: 'Tỉnh/Thành', alignRight: false },
-  { id: 'tenNguoiNhan', label: 'Tên Người Nhận', alignRight: false },
-  { id: 'sdt', label: 'Số Điện Thoại', alignRight: false },
-  { id: '' },
+  {id: 'loaiDiaChi', label: 'Loại Địa Chỉ', alignRight: false},
+  {id: 'diaChiCuThe', label: 'Địa Chỉ Cụ Thể', alignCenter: true},
+  {id: 'diaChi', label: 'Địa Chỉ', alignCenter: true},
+  {id: 'tenNguoiNhan', label: 'Tên Người Nhận', alignCenter: true},
+  {id: 'sdt', label: 'Số Điện Thoại', alignCenter: true},
+  {id: ''},
 ];
 
 // ----------------------------------------------------------------------
@@ -104,6 +103,7 @@ const ModalChangeAddress = (props) => {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const tong = listData.length;
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -173,7 +173,14 @@ const ModalChangeAddress = (props) => {
       console.error(error);
     }
   };
+  const [showModalsAddress, setShowModalKH] = useState(false);
+  const handleAddAddress = () => {
+    setShowModalKH(true);
+  };
+  const handleCloseAddress = () => {
+    setShowModalKH(false);
 
+  };
   return (
     <>
       <div>
@@ -181,6 +188,22 @@ const ModalChangeAddress = (props) => {
           <DialogTitle>DANH SÁCH ĐỊA CHỈ CỦA TÀI KHOẢN</DialogTitle>
           <DialogContent>
             <Card>
+              <Button
+                  onClick={() => handleAddAddress()}
+                  sx={{
+                    backgroundColor: "black",
+                    color: "white",
+                    float: "right",
+                    marginRight: "10px",
+                    "&:hover": {
+                      backgroundColor: "white",
+                      color: "black",
+                    },
+                  }}
+                  disabled={tong ===5}
+              >
+                {tong >=5 ? 'Khóa Thêm Địa Chỉ':'Thêm Địa Chỉ Mới' }
+              </Button>
               <UserListToolbar
                 numSelected={selected.length}
                 filterName={filterName}
@@ -205,26 +228,26 @@ const ModalChangeAddress = (props) => {
                         const selectedUser = selected.indexOf(loaiDiaChi) !== -1;
 
                         return (
-                          <TableRow hover key={index} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                            <TableCell component="th" scope="row" padding="none">
-                              <Stack direction="row" alignItems="center" spacing={2}>
-                                <Typography variant="subtitle2" noWrap>
-                                  {loaiDiaChi}
-                                </Typography>
-                              </Stack>
-                            </TableCell>
-                            <TableCell align="left">{diaChiCuThe}</TableCell>
-                            <TableCell align="left">{phuongXa}</TableCell>
-                            <TableCell align="left">{quanHuyen}</TableCell>
-                            <TableCell align="left">{tinhThanh}</TableCell>
-                            <TableCell align="left">{tenNguoiNhan}</TableCell>
-                            <TableCell align="left">{sdt}</TableCell>
-                            <TableCell align="right">
-                              <Button variant="outlined" size="small" onClick={() => handleChoose(row)}>
-                                Chọn
-                              </Button>
-                            </TableCell>
-                          </TableRow>
+                            <TableRow hover key={index} tabIndex={-1} role="checkbox"
+                                      selected={selectedUser}>
+                              <TableCell component="th" scope="row" align="center">
+                                <Stack direction="row" alignItems="center" spacing={2}>
+                                  <Typography variant="subtitle2" noWrap>
+                                    {loaiDiaChi === 1 ? 'Nhà Riêng' : 'Văn Phòng'}
+                                  </Typography>
+                                </Stack>
+                              </TableCell>
+                              <TableCell align="center">{diaChiCuThe}</TableCell>
+                              <TableCell align="center">{tinhThanh}, {phuongXa}, {quanHuyen}</TableCell>
+                              <TableCell align="center">{tenNguoiNhan}</TableCell>
+                              <TableCell align="center">{sdt}</TableCell>
+                              <TableCell align="center">
+                                <Button variant="outlined" size="small"
+                                        onClick={() => handleChoose(row)}>
+                                  Chọn
+                                </Button>
+                              </TableCell>
+                            </TableRow>
                         );
                       })}
                       {emptyRows > 0 && (
@@ -290,6 +313,11 @@ const ModalChangeAddress = (props) => {
           </Snackbar>
         )}
       </div>
+      <ModalAddAddressById
+          open={showModalsAddress}
+          handleClose={handleCloseAddress}
+          getAllData={getDetailHD}
+      />
     </>
   );
 };

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import {toast} from "react-toastify";
 import { Helmet } from "react-helmet-async";
-import { Box, Button, Container, InputAdornment, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Container, InputAdornment, Snackbar, Stack, TextField, Typography } from "@mui/material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { vi } from 'date-fns/locale'; // Import locale cho tiếng Việt
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -11,19 +11,52 @@ import dayjs from "dayjs";
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { add } from "../../service/CouponsService";
 import Iconify from "../../components/iconify";
-import { useAlert } from "../../layouts/dashboard/AlertContext";
 
 const AddCoupons = () => {
     const todayAtNoon = dayjs();
     const todayAt9AM = dayjs();
     const [ngayKetThuc, setNgayKetThuc] = useState(dayjs().set('hour', 12).startOf('hour'));
     const [ngayBatDau, setNgayBatDau] = useState(dayjs().set('hour', 12).startOf('hour'));
+    const [tenChuongTrinh, setTenChuongTrinh] = useState('');
+    const [tenChuongTrinhErr, setTenChuongTrinhErr] = useState('');
+    const [soLuong, setSoLuong] = useState('');
+    const [soLuongErr, setSoLuongErr] = useState('');
+    const [phanTram, setPhanTram] = useState('');
+    const [phanTramErr, setPhanTramErr] = useState('');
+    const [tienToiThieu, setTienToiThieu] = useState('');
+    const [tienToiThieuErr, setTienToiThieuErr] = useState('');
+    const [alertContent, setAlertContent] = useState(null);
+
+    const hanldeCheckGiaSL = (value, setFunc, errFunc, thongBao) => {
+        if (value.trim() === '') {
+            errFunc(`${thongBao} không được để trống.`);
+        }
+        // Kiểm tra nếu giá trị không phải là số hoặc là số âm
+        else if (!/^\d+$/.test(value) || parseInt(value, 10) <= 0) {
+            errFunc(`${thongBao} phải là số nguyên dương.`);
+        } else {
+            errFunc('');
+        }
+        setFunc(value);
+    };
+
+    const hanldeCheckTenChuongTrinh = (value, setFunc, errFunc) => {
+        if (value.trim() === '') {
+            errFunc('Tên chương trình không được để trống.');
+        } else if (/\d/.test(value)) {
+            errFunc('Tên chương trình không được chứa số.');
+        } else if (value.length < 3) {
+            errFunc('Tên chương trình phải có ít nhất 3 ký tự.');
+        } else {
+            errFunc('');
+        }
+        setFunc(value);
+    };
+
+
 
     // chuyen trang
     const navigate = useNavigate();
-
-    const [validationErrors, setValidationErrors] = useState("");
-    const { showAlert } = useAlert();
 
     const [coupon, setCoupon] = useState({
         tenChuongTrinh: '',
@@ -42,6 +75,14 @@ const AddCoupons = () => {
         setCoupon({ ...coupon, [e.target.name]: e.target.value });
     };
 
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setAlertContent(null);
+    };
+
+
     const handleSave = async () => {
 
         const selectedDatekt = dayjs(ngayKetThuc);
@@ -49,38 +90,42 @@ const AddCoupons = () => {
         const selectedDateBd = dayjs(ngayBatDau);
         const ngayBd = selectedDateBd.format('YYYY-MM-DDTHH:mm:ss', { locale: vi });
 
+        const { moTa } = coupon;
+
         const couponAdd = {
-            tenChuongTrinh: coupon.tenChuongTrinh,
+            tenChuongTrinh,
             code: coupon.code,
-            moTa: coupon.moTa,
+            moTa,
             thoiGianKetThuc: ngaykt,
             thoiGianTao: ngayBd,
-            soLuong: coupon.soLuong,
-            phanTram: coupon.phanTram,
-            tienToiThieu: coupon.tienToiThieu
+            soLuong,
+            phanTram,
+            tienToiThieu
         };
 
         console.log("couponAdd: ", couponAdd);
 
-        let res;
-        try {
-            res = await add(couponAdd);
-            console.log("Check res: ", res);
-        } catch (error) {
-            if (error.response && error.response.data) {
-                console.log("error.response.data", error.response.data);
-                setValidationErrors(error.response.data);
-            } else {
-                console.error("Error:", error);
-            }
-            return;
-        }
-
-        if (res && res.idCoupon) {
-            showAlert('success', 'Thêm Thành Công');
-            navigate("/dashboard/coupons");
+        if (!!tenChuongTrinhErr || !!soLuongErr || !!phanTramErr || !!tienToiThieuErr) {
+            setAlertContent({
+                type: 'warning',
+                message: 'Vui lòng nhập đúng và đủ thông tin!',
+            });
         } else {
-            showAlert('warning', 'Thêm Thất Bại');
+            const res = await add(couponAdd);
+            console.log("Check res: ", res);
+
+            if (res && res.idCoupon) {
+                setAlertContent({
+                    type: 'success',
+                    message: 'Thêm Thành Công!',
+                });
+                navigate("/dashboard/coupons");
+            } else {
+                setAlertContent({
+                    type: 'warning',
+                    message: 'Thêm Thất Bại!',
+                });
+            }
         }
 
     };
@@ -137,17 +182,15 @@ const AddCoupons = () => {
 
                 >
                     <TextField
-                        error={!!validationErrors.tenChuongTrinh}
-                        helperText={validationErrors.tenChuongTrinh}
                         fullWidth
                         margin={"dense"}
                         label="Tên Chương Trình"
                         name="tenChuongTrinh"
-                        onChange={(e) => onInputChange(e)}
+                        onChange={(event) => hanldeCheckTenChuongTrinh(event.target.value, setTenChuongTrinh, setTenChuongTrinhErr)}
+                        error={!!tenChuongTrinhErr}
+                        helperText={tenChuongTrinhErr}
                     />
                     <TextField
-                        error={!!validationErrors.code}
-                        helperText={validationErrors.code}
                         fullWidth
                         margin="dense"
                         label="Code"
@@ -167,13 +210,14 @@ const AddCoupons = () => {
                     />
 
                     <TextField
-                        error={!!validationErrors.soLuong}
-                        helperText={validationErrors.soLuong}
                         fullWidth
                         margin={"dense"}
                         label="Số Lượng"
                         name="soLuong"
-                        onChange={(e) => onInputChange(e)}
+                        type="number"
+                        onChange={(event) => hanldeCheckGiaSL(event.target.value, setSoLuong, setSoLuongErr, 'Số lượng')}
+                        error={!!soLuongErr}
+                        helperText={soLuongErr}
                     />
 
                     <div className="mb-3 text-center mt-3">
@@ -241,27 +285,27 @@ const AddCoupons = () => {
                     </div>
 
                     <TextField
-                        error={!!validationErrors.phanTram}
-                        helperText={validationErrors.phanTram}
                         fullWidth
                         margin={"dense"}
                         label="Phần Trăm Giảm"
                         name="phanTram"
-                        onChange={(e) => onInputChange(e)}
+                        type="number"
+                        onChange={(event) => hanldeCheckGiaSL(event.target.value, setPhanTram, setPhanTramErr, 'Phần trăm giảm')}
+                        error={!!phanTramErr}
+                        helperText={phanTramErr}
                     />
 
                     <TextField
-                        error={!!validationErrors.tienToiThieu}
-                        helperText={validationErrors.tienToiThieu}
                         fullWidth
                         margin={"dense"}
                         label="Số tiền tối thiểu"
                         name="tienToiThieu"
-                        onChange={(e) => onInputChange(e)}
+                        type="number"
+                        onChange={(event) => hanldeCheckGiaSL(event.target.value, setTienToiThieu, setTienToiThieuErr, 'Số tiền tối thiểu')}
+                        error={!!tienToiThieuErr}
+                        helperText={tienToiThieuErr}
                     />
                     <TextField
-                        error={!!validationErrors.moTa}
-                        helperText={validationErrors.moTa}
                         multiline
                         rows={4}
                         fullWidth
@@ -283,7 +327,18 @@ const AddCoupons = () => {
 
             </Container>
 
-
+            {alertContent && (
+                <Snackbar
+                    open
+                    autoHideDuration={3000}
+                    onClose={handleSnackbarClose}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                    <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+                        {alertContent.message}
+                    </Alert>
+                </Snackbar>
+            )}
 
         </>
     );

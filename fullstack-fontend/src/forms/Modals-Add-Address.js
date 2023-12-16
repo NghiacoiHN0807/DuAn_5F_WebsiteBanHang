@@ -22,16 +22,15 @@ import PropTypes from 'prop-types';
 import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHeadNoCheckBox, UserListToolbar } from '../sections/@dashboard/user';
+import ModalAddAddressById from './ModalsAddAddressById';
 // APIs
 
 const TABLE_HEAD = [
   { id: 'loaiDiaChi', label: 'Loại Địa Chỉ', alignRight: false },
-  { id: 'diaChiCuThe', label: 'Địa Chỉ Cụ Thể', alignRight: false },
-  { id: 'phuongXa', label: 'Phường/Xã', alignRight: false },
-  { id: 'quanHuyen', label: 'Quận/Huyện', alignRight: false },
-  { id: 'tinhThanh', label: 'Tỉnh/Thành', alignRight: false },
-  { id: 'tenNguoiNhan', label: 'Tên Người Nhận', alignRight: false },
-  { id: 'sdt', label: 'Số Điện Thoại', alignRight: false },
+  { id: 'diaChiCuThe', label: 'Địa Chỉ Cụ Thể', alignCenter: true },
+  { id: 'diaChi', label: 'Địa Chỉ', alignCenter: true },
+  { id: 'tenNguoiNhan', label: 'Tên Người Nhận', alignCenter: true },
+  { id: 'sdt', label: 'Số Điện Thoại', alignCenter: true },
   { id: '' },
 ];
 
@@ -63,6 +62,7 @@ function filterData(array, query) {
     })
   );
 }
+
 function applySortFilter(array, comparator, query) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -86,9 +86,22 @@ const ModalAddAddress = (props) => {
     setTenKH: PropTypes.func.isRequired,
     setSDTKH: PropTypes.func.isRequired,
     setDiaChi: PropTypes.func.isRequired,
+    setEmailKH: PropTypes.func.isRequired,
     setTienShip: PropTypes.func.isRequired,
+    getAllData: PropTypes.func.isRequired,
   };
-  const { open, handleClose, listData, setTenKH, setSDTKH, setDiaChi, setTienShip, getDetailHD } = props;
+  const {
+    open,
+    handleClose,
+    setEmailKH,
+    listData,
+    setTenKH,
+    setSDTKH,
+    setDiaChi,
+    setTienShip,
+    getDetailHD,
+    getAllData,
+  } = props;
 
   // Edit table
   const [page, setPage] = useState(0);
@@ -103,6 +116,7 @@ const ModalAddAddress = (props) => {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const tong = listData.length;
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -144,10 +158,18 @@ const ModalAddAddress = (props) => {
     console.log('item: ', item);
     setTenKH(item.tenNguoiNhan);
     setSDTKH(item.sdt);
+    setEmailKH(item.taiKhoan.email);
     setDiaChi(`${item.diaChiCuThe}, ${item.phuongXa}, ${item.quanHuyen}, ${item.tinhThanh}`);
     setTienShip(item.phiShip);
     handleClose();
     getDetailHD();
+  };
+  const [showModalsAddress, setShowModalKH] = useState(false);
+  const handleAddAddress = () => {
+    setShowModalKH(true);
+  };
+  const handleCloseAddress = () => {
+    setShowModalKH(false);
   };
 
   return (
@@ -157,6 +179,22 @@ const ModalAddAddress = (props) => {
           <DialogTitle>DANH SÁCH ĐỊA CHỈ CỦA TÀI KHOẢN</DialogTitle>
           <DialogContent>
             <Card>
+              <Button
+                onClick={() => handleAddAddress()}
+                sx={{
+                  backgroundColor: 'black',
+                  color: 'white',
+                  float: 'right',
+                  marginRight: '10px',
+                  '&:hover': {
+                    backgroundColor: 'white',
+                    color: 'black',
+                  },
+                }}
+                disabled={tong === 5}
+              >
+                {tong >= 5 ? 'Khóa Thêm Địa Chỉ' : 'Thêm Địa Chỉ Mới'}
+              </Button>
               <UserListToolbar
                 numSelected={selected.length}
                 filterName={filterName}
@@ -175,6 +213,7 @@ const ModalAddAddress = (props) => {
                       onRequestSort={handleRequestSort}
                       onSelectAllClick={handleSelectAllClick}
                     />
+
                     <TableBody>
                       {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
                         const { loaiDiaChi, diaChiCuThe, phuongXa, quanHuyen, tinhThanh, tenNguoiNhan, sdt } = row;
@@ -182,20 +221,20 @@ const ModalAddAddress = (props) => {
 
                         return (
                           <TableRow hover key={index} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                            <TableCell component="th" scope="row" padding="none">
+                            <TableCell component="th" scope="row" align="center">
                               <Stack direction="row" alignItems="center" spacing={2}>
                                 <Typography variant="subtitle2" noWrap>
-                                  {loaiDiaChi}
+                                  {loaiDiaChi === 1 ? 'Nhà Riêng' : 'Văn Phòng'}
                                 </Typography>
                               </Stack>
                             </TableCell>
-                            <TableCell align="left">{diaChiCuThe}</TableCell>
-                            <TableCell align="left">{phuongXa}</TableCell>
-                            <TableCell align="left">{quanHuyen}</TableCell>
-                            <TableCell align="left">{tinhThanh}</TableCell>
-                            <TableCell align="left">{tenNguoiNhan}</TableCell>
-                            <TableCell align="left">{sdt}</TableCell>
-                            <TableCell align="right">
+                            <TableCell align="center">{diaChiCuThe}</TableCell>
+                            <TableCell align="center">
+                              {tinhThanh}, {phuongXa}, {quanHuyen}
+                            </TableCell>
+                            <TableCell align="center">{tenNguoiNhan}</TableCell>
+                            <TableCell align="center">{sdt}</TableCell>
+                            <TableCell align="center">
                               <Button variant="outlined" size="small" onClick={() => handleChoose(row)}>
                                 Chọn
                               </Button>
@@ -254,6 +293,7 @@ const ModalAddAddress = (props) => {
           </DialogActions>
         </Dialog>
       </div>
+      <ModalAddAddressById open={showModalsAddress} handleClose={handleCloseAddress} getAllData={getAllData} />
     </>
   );
 };

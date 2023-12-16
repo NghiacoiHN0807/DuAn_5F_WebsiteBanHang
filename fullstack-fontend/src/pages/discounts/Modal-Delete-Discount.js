@@ -7,7 +7,6 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { useState, useEffect, forwardRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { remove } from '../../service/giamGiaService';
 
 const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);

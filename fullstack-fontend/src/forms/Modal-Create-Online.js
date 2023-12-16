@@ -5,7 +5,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
-import { format } from 'date-fns';
 import { forwardRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -20,17 +19,15 @@ export default function ModalCreateBillOnline(props) {
     handleClose: PropTypes.func.isRequired,
     tenKhShip: PropTypes.string.isRequired,
     sdtKHShip: PropTypes.string.isRequired,
+    emailKHShip: PropTypes.string.isRequired,
     result: PropTypes.string.isRequired,
     thanhTien: PropTypes.number.isRequired,
   };
-  const { open, handleClose, tenKhShip, sdtKHShip, result, thanhTien } = props;
+  const { open, handleClose, tenKhShip, emailKHShip, sdtKHShip, result, thanhTien } = props;
 
   const param = useParams();
   const idHdParam = param.id;
   const navigate = useNavigate();
-
-  const currentDate = new Date();
-  const formattedDate = format(currentDate, 'yyyy-MM-dd');
 
   // Alert
   const [alertContent, setAlertContent] = useState(null);
@@ -47,7 +44,7 @@ export default function ModalCreateBillOnline(props) {
       type: 'success',
       message: 'Đặt Hàng Online Thành Công!!!',
     });
-    await updatePaymentShip(idHdParam, tenKhShip, sdtKHShip, formattedDate, result, thanhTien, 2, 0);
+    await updatePaymentShip(idHdParam, tenKhShip, sdtKHShip, emailKHShip, result, thanhTien, 2, 0);
     navigate(`/dashboard/bills/time-line/${idHdParam}`);
   };
 
@@ -91,6 +88,20 @@ export default function ModalCreateBillOnline(props) {
               readOnly: true,
             }}
             // value={selectedCustomerEmail}
+            sx={{ marginTop: 2 }}
+            focused
+          />
+          <TextField
+            id="outlined-read-only-input"
+            label="Email"
+            maxRows={4}
+            variant="outlined"
+            size="small"
+            InputProps={{
+              readOnly: true,
+            }}
+            value={emailKHShip}
+            fullWidth
             sx={{ marginTop: 2 }}
             focused
           />

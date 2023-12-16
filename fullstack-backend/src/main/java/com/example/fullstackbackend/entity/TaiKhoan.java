@@ -63,7 +63,7 @@ public class TaiKhoan {
     private String matKhau;
 
     @Column(name = "so_can_cuoc")
-    @NotEmpty(message = "Không Được Để Trống Số Căn Cước")
+//    @NotEmpty(message = "Không Được Để Trống Số Căn Cước")
     private String soCanCuoc;
 
     @Column(name = "trang_thai")

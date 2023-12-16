@@ -40,4 +40,6 @@ public interface GiamGiaChiTietService {
 
     GiamGia updateDto(GiamGiaDTO giamGiaDTO, Integer id);
 
+    Boolean removeAll(List<Integer> ids);
+
 }
