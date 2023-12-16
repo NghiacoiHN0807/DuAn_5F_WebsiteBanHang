@@ -34,6 +34,8 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
             "or x.trangThai = 5 or x.trangThai = 9 or x.trangThai = 10 or x.trangThai = 0 ORDER BY x.maHd DESC")
     List<HoaDon> pageOnlineInvoice();
 
+
+//    @Query(value = "SELECT x FROM HoaDon x WHERE x.idKH =?1 AND x.trangThai = 0 AND x.trangThai = 1 AND x.trangThai = 2 AND x.trangThai =3AND x.trangThai =4 AND x.trangThai =5 AND x.trangThai =6 AND x.trangThai =8 AND x.trangThai =9 AND x.trangThai =10")
     List<HoaDon> findAllByIdKH_IdTaiKhoan(Integer idKh);
 
     @Modifying

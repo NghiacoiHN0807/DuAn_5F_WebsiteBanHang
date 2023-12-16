@@ -21,5 +21,8 @@ public interface TaiKhoanNhanVienRepository extends JpaRepository<TaiKhoan, Inte
             "WHERE id_chuc_vu IN (1, 8);", nativeQuery = true)
     List<TaiKhoan> chucVu();
 
+    @Query("select (count(t) > 0) from TaiKhoan t where upper(t.email) = upper(?1)")
+    boolean existsByEmailAllIgnoreCase(String email);
+
 
 }

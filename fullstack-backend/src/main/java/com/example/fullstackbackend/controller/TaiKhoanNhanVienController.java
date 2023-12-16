@@ -4,9 +4,20 @@ import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -46,7 +57,16 @@ public class TaiKhoanNhanVienController {
 
             return ResponseEntity.badRequest().body(errorMap);
         } else {
-            return ResponseEntity.ok(taiKhoanNhanVienService.add(taiKhoan));
+
+            String email = taiKhoan.getEmail();
+            if (taiKhoanNhanVienService.checkMailExists(email)) {
+                Map<String, String> errorMap = new HashMap<>();
+                errorMap.put("email", "Email đã tồn tại");
+                return ResponseEntity.badRequest().body(errorMap);
+            }
+
+            TaiKhoan addTK = taiKhoanNhanVienService.add(taiKhoan);
+            return ResponseEntity.ok(addTK);
         }
     }
 
@@ -56,10 +76,38 @@ public class TaiKhoanNhanVienController {
         return taiKhoanNhanVienService.detail(id);
     }
 
-    @PatchMapping("delete/{id}")
-    public TaiKhoan delete(@PathVariable("id") Integer id
-    ) {
-        return taiKhoanNhanVienService.delete(id);
+    @DeleteMapping("delete/{id}/{trangThai}")
+    ResponseEntity<?> delete(@PathVariable("id") Integer id,
+                             @PathVariable("trangThai") Integer trangThai) {
+        Boolean exists = taiKhoanNhanVienService.existsById(id);
+        if (!exists) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    "Không tìm thấy id"
+            );
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(
+                taiKhoanNhanVienService.delete(id, trangThai)
+        );
+    }
+
+    @DeleteMapping("delete-all")
+    ResponseEntity<?> deleteAll(@RequestBody List<Integer> id) {
+        if (id.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    "Không tìm thấy id"
+            );
+        } else {
+            Boolean deleteAll = taiKhoanNhanVienService.deleteAll(id);
+            if (deleteAll) {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        "Delete success"
+                );
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        "Delete false"
+                );
+            }
+        }
     }
 
 

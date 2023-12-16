@@ -36,12 +36,17 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
     @Value("${spring.mail.username}")
     private String formMail;
 
-    public void sendEmail(String mail, String content) {
+    public void sendEmail(String mail, String pass) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(formMail);
         message.setTo(mail);
         message.setSubject("Mật khẩu Mới");
-        message.setText("Mật Khẩu: "+content);
+        String content = "Đăng nhập 5F Store" ;
+        content += "\nTên đăng nhập : " + mail;
+        content += "\nMật khẩu hiện tại để đăng nhập : " + pass;
+        content += "\nTrân trọng.";
+        message.setText(content);
+
         mailSender.send(message);
     }
 

@@ -31,10 +31,6 @@ public class TaiKhoan {
     @Column(name = "id_tai_khoan")
     private Integer idTaiKhoan;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_chuc_vu", referencedColumnName = "id_cv")
-    private ChucVu idChucVu;
-
     @Column(name = "ma_tai_khoan")
     private String maTaiKhoan;
 
@@ -59,15 +55,19 @@ public class TaiKhoan {
     private String email;
 
     @Column(name = "mat_khau")
-    @NotEmpty(message = "Không Được Để Trống Mật Khẩu")
     private String matKhau;
 
     @Column(name = "so_can_cuoc")
 //    @NotEmpty(message = "Không Được Để Trống Số Căn Cước")
+//    @Pattern(regexp = "^[0-9]{9,12}$", message = "Số Căn Cước phải có từ 9 đến 12 chữ số")
     private String soCanCuoc;
+
 
     @Column(name = "trang_thai")
     private Integer trangThai = 0;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "id_chuc_vu", referencedColumnName = "id_cv")
+    private ChucVu idChucVu;
 
     public TaiKhoan(String username, String password, List<GrantedAuthority> authorities) {
     }
