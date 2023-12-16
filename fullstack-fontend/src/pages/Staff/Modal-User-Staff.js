@@ -40,7 +40,7 @@ import { CSVLink } from 'react-csv';
 import Iconify from '../../components/iconify';
 import Scrollbar from '../../components/scrollbar';
 // sections
-import { UserListHead, UserListToolbar } from '../../sections/@dashboard/user';
+import { UserListHead, UserListHeadNoCheckBox, UserListToolbar } from '../../sections/@dashboard/user';
 // mock
 import { taiKhoan } from '../../service/taiKhoanNhanVienService';
 import ModalDeleteDiscount from './Modal-Delete-Staff';
@@ -341,48 +341,51 @@ export default function UserStaff() {
           </Stack>
 
           <Card>
-            <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
-            <Grid container className={classes.filterContainer}>
-              <TextField
-                select
-                label="Trạng Thái"
-                value={statusFilter}
-                onChange={(event) => setStatusFilter(event.target.value)}
-              >
-                <MenuItem value="">Tất Cả</MenuItem>
-                <MenuItem value="0">Hoạt Động</MenuItem>
-                <MenuItem value="10">Dừng Hoạt Động</MenuItem>
-              </TextField>
-              <TextField
-                select
-                label="Chức Vụ"
-                value={positionFilter}
-                onChange={(event) => setPositionFilter(event.target.value)}
-              >
-                <MenuItem value="">Tất Cả</MenuItem>
-                <MenuItem value="1">Quản Lý</MenuItem>
-                <MenuItem value="8">Nhân Viên</MenuItem>
-              </TextField>
-              <CSVLink data={selectedExports} filename={'DSNV.csv'} onClick={handleExportData}>
-                  <Button
-                    aria-label="download"
-                    Button
-                    variant="outlined"
-                    startIcon={<GetAppIcon />}
-                    size="large"
-                    color="success"
+            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              <Grid item xs={4}>
+                <UserListToolbar numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} />
+              </Grid>
+              <Grid item xs={8} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Grid container justifyContent="right" alignItems="center" className={classes.filterContainer}>
+                  <TextField
+                    select
+                    label="Trạng Thái"
+                    value={statusFilter}
+                    onChange={(event) => setStatusFilter(event.target.value)}
                   >
-                    Xuất Excel
-                  </Button>
-                </CSVLink>
+                    <MenuItem value="">Tất Cả</MenuItem>
+                    <MenuItem value="0">Hoạt Động</MenuItem>
+                    <MenuItem value="10">Dừng Hoạt Động</MenuItem>
+                  </TextField>
+                  <TextField
+                    select
+                    label="Chức Vụ"
+                    value={positionFilter}
+                    onChange={(event) => setPositionFilter(event.target.value)}
+                  >
+                    <MenuItem value="">Tất Cả</MenuItem>
+                    <MenuItem value="1">Quản Lý</MenuItem>
+                    <MenuItem value="8">Nhân Viên</MenuItem>
+                  </TextField>
+                  <CSVLink data={selectedExports} filename={'DSNV.csv'} onClick={handleExportData}>
+                    <Button
+                      aria-label="download"
+                      Button
+                      variant="outlined"
+                      startIcon={<GetAppIcon />}
+                      size="large"
+                      color="success"
+                    >
+                      Xuất Excel
+                    </Button>
+                  </CSVLink>
+                </Grid>
+              </Grid>
             </Grid>
-
-
-
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800 }}>
                 <Table>
-                  <UserListHead
+                  <UserListHeadNoCheckBox
                     order={order}
                     orderBy={orderBy}
                     headLabel={TABLE_HEAD}
@@ -390,20 +393,10 @@ export default function UserStaff() {
                     numSelected={selected.length}
                     onRequestSort={handleRequestSort}
                     onSelectAllClick={handleSelectAllClick}
-
-                    onPositionFilterChange={(event) => setPositionFilter(event.target.value)}
-
                   />
                   <TableBody>
                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
                       <TableRow key={row.idTaiKhoan}>
-                        <TableCell padding="checkbox">
-                          <Checkbox
-                            checked={selected.indexOf(row.idTaiKhoan) !== -1}
-                            onChange={(event) => handleClick(event, row.idTaiKhoan)}
-                          />
-                        </TableCell>
-
                         <TableCell align="left">{row.maTaiKhoan}</TableCell>
                         <TableCell align="left">
                           {row.ho} {row.ten}

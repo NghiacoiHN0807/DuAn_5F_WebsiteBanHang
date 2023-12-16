@@ -46,7 +46,7 @@ const UpdateTkNV = (props) => {
     setMyChucVu(rs);
   };
 
-  
+
 
   useEffect(() => {
     getAllChucVu();
@@ -165,21 +165,19 @@ const UpdateTkNV = (props) => {
               onChange={(event) => setChucVu(event.target.value)}
             >
               {myChucVu
-                .filter((item) => item.idCv === 1 || item.idCv === 8) // Lọc theo idCv
+                .filter((item) => item.idCv === 1 || item.idCv === 8)
                 .map((item, index) => (
-                  <MenuItem
-                    key={index}
-                    value={item.tenCv}
-                  >
+                  <MenuItem key={index} value={item.tenCv}>
                     {item.tenCv}
                   </MenuItem>
                 ))}
             </Select>
           </FormControl>
 
+
           <TextField
-           error={!!validationErrors.ho}
-           helperText={validationErrors.ho}
+            error={!!validationErrors.ho}
+            helperText={validationErrors.ho}
             fullWidth
             label="Họ"
             id="ho"
@@ -187,8 +185,8 @@ const UpdateTkNV = (props) => {
             onChange={(event) => setHo(event.target.value)}
           />
           <TextField
-           error={!!validationErrors.ten}
-           helperText={validationErrors.ten}
+            error={!!validationErrors.ten}
+            helperText={validationErrors.ten}
             fullWidth
             label="Tên"
             id="ten"
@@ -196,8 +194,8 @@ const UpdateTkNV = (props) => {
             onChange={(event) => setTen(event.target.value)}
           />
           <TextField
-           error={!!validationErrors.email}
-           helperText={validationErrors.email}
+            error={!!validationErrors.email}
+            helperText={validationErrors.email}
             fullWidth
             label="Email"
             id="email"
@@ -205,8 +203,8 @@ const UpdateTkNV = (props) => {
             onChange={(event) => setEmail(event.target.value)}
           />
           <TextField
-           error={!!validationErrors.sdt}
-           helperText={validationErrors.sdt}
+            error={!!validationErrors.sdt}
+            helperText={validationErrors.sdt}
             fullWidth
             label="Số Điện Thoại"
             id="sdt"
@@ -214,8 +212,8 @@ const UpdateTkNV = (props) => {
             onChange={(event) => setSdt(event.target.value)}
           />
           <TextField
-           error={!!validationErrors.matKhau}
-           helperText={validationErrors.matKhau}
+            error={!!validationErrors.matKhau}
+            helperText={validationErrors.matKhau}
             fullWidth
             type={showPassword ? "text" : "password"}
             id="matKhau"
@@ -236,8 +234,8 @@ const UpdateTkNV = (props) => {
             }}
           />
           <TextField
-           error={!!validationErrors.soCanCuoc}
-           helperText={validationErrors.soCanCuoc}
+            error={!!validationErrors.soCanCuoc}
+            helperText={validationErrors.soCanCuoc}
             fullWidth
             id="soCanCuoc"
             label="Số Căn Cước"

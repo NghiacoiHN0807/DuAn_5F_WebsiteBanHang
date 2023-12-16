@@ -15,11 +15,13 @@ export default function ModalResetTK(props) {
   const { open, handleClose, information } = props;
   const [idTK, setIdTK] = useState('');
   const [alertContent, setAlertContent] = useState(null);
+  const [maTaiKhoan, setMaTaiKhoan] = useState('');
 
 
   useEffect(() => {
     if (information != null) {
       setIdTK(information.idTaiKhoan);
+      setMaTaiKhoan(information.maTaiKhoan);
     } else {
       setIdTK('');
     }
@@ -63,7 +65,7 @@ export default function ModalResetTK(props) {
       >
         <DialogTitle>{'Reset Coupon'}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-slide-description">Reset Coupon Có Mã Là: {idTK}</DialogContentText>
+          <DialogContentText id="alert-dialog-slide-description">Reset Nhân Viên Mã: {maTaiKhoan}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Hủy</Button>
