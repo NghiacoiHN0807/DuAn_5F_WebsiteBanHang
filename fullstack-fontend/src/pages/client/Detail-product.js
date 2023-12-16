@@ -75,6 +75,7 @@ const DetailProduct = () => {
     setUniqueSizes([...new Set(sizes)]);
   }, [detailProduct]);
 
+  console.log("detailProduct", detailProduct)
   // Set select one MS and Size
   const uniqueSizes = [...new Set(detailProduct.map((size) => size.idSize.tenSize))];
   const uniqueMS = [...new Set(detailProduct.map((ms) => ms.idMs.tenMs))];
@@ -294,7 +295,7 @@ const DetailProduct = () => {
             </Typography>
             <div className="price-product">
               <Typography variant="subtitle1">
-                <Typography
+                {selectSoLuongTon.length > 0 && selectSoLuongTon[0].idSp.trangThai === 1 && (<Typography
                   component="span"
                   variant="body1"
                   sx={{
@@ -305,7 +306,8 @@ const DetailProduct = () => {
                   }}
                 >
                   {detailProduct.length > 0 && detailProduct[0].giaBan && formatCurrency(detailProduct[0].giaBan)}
-                </Typography>
+                </Typography>)}
+
                 &nbsp;
                 {selectSoLuongTon.length > 0 ? formatCurrency(selectSoLuongTon[0].giaThucTe) : price}
               </Typography>

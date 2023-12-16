@@ -6,17 +6,17 @@ import { Alert, Box, Button, Container, InputAdornment, Snackbar, Stack, TextFie
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { vi } from 'date-fns/locale'; // Import locale cho tiếng Việt
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { add } from "../../service/CouponsService";
 import Iconify from "../../components/iconify";
 
 const AddCoupons = () => {
-    const todayAtNoon = dayjs();
-    const todayAt9AM = dayjs();
-    const [ngayKetThuc, setNgayKetThuc] = useState(dayjs().set('hour', 12).startOf('hour'));
+    const todayAtNoon = dayjs().set('hour', 12).startOf('hour');
+    const todayAt9AM = dayjs().set('hour', 9).startOf('hour');
     const [ngayBatDau, setNgayBatDau] = useState(dayjs().set('hour', 12).startOf('hour'));
+    const [ngayKetThuc, setNgayKetThuc] = useState(dayjs().set('hour', 12).startOf('hour'));
     const [alertContent, setAlertContent] = useState(null);
 
 
@@ -132,7 +132,7 @@ const AddCoupons = () => {
             });
             return;
         }
-        const checkDateValidity = () => ngaykt.isAfter(ngayBd);
+        const checkDateValidity = () => dayjs(ngayKetThuc).isAfter(dayjs(ngayBatDau));
 
         if (!checkDateValidity()) {
             setAlertContent({
@@ -203,6 +203,7 @@ const AddCoupons = () => {
     console.log("ngayKetThuc: ", ngayKetThuc);
 
     console.log("coupon: ", coupon);
+
 
     return (
         <>

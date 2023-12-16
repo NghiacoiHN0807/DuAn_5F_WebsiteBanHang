@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 // import {toast} from "react-toastify";
 import { Helmet } from "react-helmet-async";
-import { Box, Button, Container, InputAdornment, Stack, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Container, InputAdornment, Snackbar, Stack, TextField, Typography } from "@mui/material";
 import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { vi } from 'date-fns/locale'; // Import locale cho tiếng Việt
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -14,18 +14,14 @@ import Iconify from "../../components/iconify";
 import { useAlert } from "../../layouts/dashboard/AlertContext";
 
 const UpdateCoupons = () => {
-    const todayAtNoon = dayjs();
-    const todayAt9AM = dayjs();
-    const [ngayKetThuc, setNgayKetThuc] = useState(dayjs().set('hour', 12).startOf('hour'));
-    const [ngayBatDau, setNgayBatDau] = useState(dayjs().set('hour', 12).startOf('hour'));
+    const todayAtNoon = dayjs().set('hour', 12).startOf('hour');
+    const todayAt9AM = dayjs().set('hour', 9).startOf('hour');
     const [randomCode, setRandomCode] = useState("");
+    const [alertContent, setAlertContent] = useState(null);
     const { id } = useParams();
 
     // chuyen trang
     const navigate = useNavigate();
-
-    const [validationErrors, setValidationErrors] = useState("");
-    const { showAlert } = useAlert();
 
     const [coupon, setCoupon] = useState({
         tenChuongTrinh: '',
@@ -44,45 +40,156 @@ const UpdateCoupons = () => {
         setCoupon({ ...coupon, [e.target.name]: e.target.value });
     };
 
-    const handleSave = async () => {
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setAlertContent(null);
+    };
 
-        const selectedDatekt = dayjs(ngayKetThuc);
-        const ngaykt = selectedDatekt.format('YYYY-MM-DDTHH:mm:ss', { locale: vi });
-        const selectedDateBd = dayjs(ngayBatDau);
-        const ngayBd = selectedDateBd.format('YYYY-MM-DDTHH:mm:ss', { locale: vi });
+    const { tenChuongTrinh, code, soLuongHienTai, phanTram, tienToiThieu, thoiGianTao, thoiGianKetThuc } = coupon;
 
-        const couponAdd = {
-            tenChuongTrinh: coupon.tenChuongTrinh,
-            code: coupon.code,
-            moTa: coupon.moTa,
-            thoiGianKetThuc: ngaykt,
-            thoiGianTao: ngayBd,
-            soLuongHienTai: coupon.soLuongHienTai,
-            phanTram: coupon.phanTram,
-            tienToiThieu: coupon.tienToiThieu
-        };
+    const selectedDatekt = dayjs(thoiGianKetThuc);
+    const ngaykt = selectedDatekt.format('YYYY-MM-DDTHH:mm:ss', { locale: vi });
+    const selectedDateBd = dayjs(thoiGianTao);
+    const ngayBd = selectedDateBd.format('YYYY-MM-DDTHH:mm:ss', { locale: vi });
+    const onChangeNbd = (newDate) => {
+        // Lấy ngày giờ mới từ newDate
+        const newDatetime = newDate;
+        setCoupon({
+            ...coupon,
+            thoiGianTao: newDatetime
+        })
+    }
 
-        console.log("couponAdd: ", couponAdd);
+    const onChangeNkt = (newDate) => {
+        // Lấy ngày giờ mới từ newDate
+        const newDatetime = newDate;
+        setCoupon({
+            ...coupon,
+            thoiGianKetThuc: newDatetime
+        })
+    }
+    const handleSave = async (e) => {
+        e.preventDefault();
 
-        let res;
-        try {
-            res = await update(id, couponAdd);
-            console.log("Check res: ", res);
-        } catch (error) {
-            if (error.response && error.response.data) {
-                console.log(error.response.data);
-                setValidationErrors(error.response.data);
-            } else {
-                console.error("Error:", error);
-            }
+        if (!tenChuongTrinh.trim()) {
+            setAlertContent({
+                type: 'warning',
+                message: 'Vui lòng nhập tên chương trình!',
+            });
             return;
         }
 
-        if (res && res.idCoupon) {
-            showAlert('success', 'Thêm Thành Công');
-            navigate("/dashboard/coupons");
-        } else {
-            showAlert('warning', 'Thêm Thất Bại');
+        if (/\d/.test(tenChuongTrinh)) {
+            setAlertContent({
+                type: 'warning',
+                message: 'Tên chương trình không được chứa số!',
+            });
+            return;
+        }
+
+        if (!code.trim()) {
+            setAlertContent({
+                type: 'warning',
+                message: 'Vui lòng nhập code!',
+            });
+            return;
+        }
+
+        if (soLuongHienTai === '') {
+            setAlertContent({
+                type: 'warning',
+                message: 'Vui lòng nhập số lượng!',
+            });
+            return;
+        }
+
+        if (soLuongHienTai < 1) {
+            setAlertContent({
+                type: 'warning',
+                message: 'Số lượng phải là số nguyên lớn hơn 0!',
+            });
+            return;
+        }
+
+
+        if (phanTram === '') {
+            setAlertContent({
+                type: 'warning',
+                message: 'Vui lòng nhập phần trăm giảm giá!',
+            });
+            return;
+        }
+
+        if (phanTram < 1) {
+            setAlertContent({
+                type: 'warning',
+                message: 'Phần trăm giảm giá phải là số nguyên lớn hơn 0!',
+            });
+            return;
+        }
+
+        if (tienToiThieu === '') {
+            setAlertContent({
+                type: 'warning',
+                message: 'Vui lòng nhập số tiền tối thiểu!',
+            });
+            return;
+        }
+
+        if (tienToiThieu < 1) {
+            setAlertContent({
+                type: 'warning',
+                message: 'Số tiền tối thiểu phải là số nguyên lớn hơn 0!',
+            });
+            return;
+        }
+        const checkDateValidity = () => dayjs(thoiGianKetThuc).isAfter(dayjs(thoiGianTao));
+
+        if (!checkDateValidity()) {
+            setAlertContent({
+                type: 'warning',
+                message: 'Ngày kết thúc phải sau ngày bắt đầu!',
+            });
+            return;
+        }
+
+
+        let res;
+        try {
+            const couponAdd = {
+                tenChuongTrinh: coupon.tenChuongTrinh,
+                code: coupon.code,
+                moTa: coupon.moTa,
+                thoiGianKetThuc: ngaykt,
+                thoiGianTao: ngayBd,
+                soLuongHienTai: coupon.soLuongHienTai,
+                phanTram: coupon.phanTram,
+                tienToiThieu: coupon.tienToiThieu
+            };
+
+            console.log("couponAdd: ", couponAdd);
+            res = await update(id, couponAdd);
+            console.log("Check res: ", res);
+
+            if (res && res.idCoupon) {
+                setAlertContent({
+                    type: 'success',
+                    message: 'Thêm Thành Công!',
+                });
+                navigate("/dashboard/coupons");
+            } else {
+                setAlertContent({
+                    type: 'warning',
+                    message: 'Thêm Thất Bại!',
+                });
+            }
+        } catch (error) {
+            setAlertContent({
+                type: 'error',
+                message: 'Đã xảy ra lỗi khi thêm giảm giá!',
+            });
         }
 
     };
@@ -114,8 +221,6 @@ const UpdateCoupons = () => {
         setRandomCode(generateRandomCode());
     }
 
-    console.log("ngayKetThuc: ", ngayKetThuc);
-
     console.log("coupon: ", coupon);
 
     return (
@@ -144,8 +249,6 @@ const UpdateCoupons = () => {
 
                 >
                     <TextField
-                        error={!!validationErrors.tenChuongTrinh}
-                        helperText={validationErrors.tenChuongTrinh}
                         fullWidth
                         margin={"dense"}
                         label="Tên Chương Trình"
@@ -154,8 +257,6 @@ const UpdateCoupons = () => {
                         onChange={(e) => onInputChange(e)}
                     />
                     <TextField
-                        error={!!validationErrors.code}
-                        helperText={validationErrors.code}
                         fullWidth
                         margin="dense"
                         label="Code"
@@ -174,12 +275,11 @@ const UpdateCoupons = () => {
                         }}
                     />
                     <TextField
-                        error={!!validationErrors.soLuongHienTai}
-                        helperText={validationErrors.soLuongHienTai}
                         fullWidth
                         margin={"dense"}
                         label="Số Lượng"
                         name="soLuongHienTai"
+                        type="number"
                         value={coupon.soLuongHienTai}
                         onChange={(e) => onInputChange(e)}
                     />
@@ -190,11 +290,11 @@ const UpdateCoupons = () => {
                             <DemoContainer components={['DateTimePicker']}>
                                 <DemoItem>
                                     <DateTimePicker
-                                        defaultValue={todayAtNoon}
+                                        defaultValue={thoiGianTao}
                                         minDateTime={todayAt9AM}
                                         name='thoiGianTao'
-                                        value={dayjs(coupon.thoiGianTao)}
-                                        onChange={(newDate) => setNgayBatDau(newDate)}
+                                        value={dayjs(thoiGianTao)}
+                                        onChange={(e) => onChangeNbd(e)}
                                         renderInput={(props) => (
                                             <TextField
                                                 fullWidth
@@ -223,11 +323,11 @@ const UpdateCoupons = () => {
                             <DemoContainer components={['DateTimePicker']}>
                                 <DemoItem>
                                     <DateTimePicker
-                                        defaultValue={todayAtNoon}
+                                        defaultValue={thoiGianKetThuc}
                                         minDateTime={todayAt9AM}
                                         name='thoiGianKetThuc'
-                                        value={dayjs(coupon.thoiGianKetThuc)}
-                                        onChange={(newDate) => setNgayKetThuc(newDate)}
+                                        value={dayjs(thoiGianKetThuc)}
+                                        onChange={(e) => onChangeNkt(e)}
                                         renderInput={(props) => (
                                             <TextField
                                                 fullWidth
@@ -251,29 +351,25 @@ const UpdateCoupons = () => {
                     </div>
 
                     <TextField
-                        error={!!validationErrors.phanTram}
-                        helperText={validationErrors.phanTram}
                         fullWidth
                         margin={"dense"}
                         label="Phần Trăm Giảm"
                         name="phanTram"
+                        type="number"
                         value={coupon.phanTram}
                         onChange={(e) => onInputChange(e)}
                     />
 
                     <TextField
-                        error={!!validationErrors.tienToiThieu}
-                        helperText={validationErrors.tienToiThieu}
                         fullWidth
                         margin={"dense"}
                         label="Số tiền tối thiểu"
                         name="tienToiThieu"
+                        type="number"
                         value={coupon.tienToiThieu}
                         onChange={(e) => onInputChange(e)}
                     />
                     <TextField
-                        error={!!validationErrors.moTa}
-                        helperText={validationErrors.moTa}
                         multiline
                         rows={4}
                         fullWidth
@@ -287,7 +383,7 @@ const UpdateCoupons = () => {
                     <Button
                         size={"large"}
                         variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}
-                        onClick={() => handleSave()}
+                        onClick={(e) => handleSave(e)}
                         style={{ marginTop: "20px" }} // Make button wider
                     >
                         Update Coupon
@@ -296,7 +392,18 @@ const UpdateCoupons = () => {
 
             </Container>
 
-
+            {alertContent && (
+                <Snackbar
+                    open
+                    autoHideDuration={3000}
+                    onClose={handleSnackbarClose}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                >
+                    <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+                        {alertContent.message}
+                    </Alert>
+                </Snackbar>
+            )}
 
         </>
     );
