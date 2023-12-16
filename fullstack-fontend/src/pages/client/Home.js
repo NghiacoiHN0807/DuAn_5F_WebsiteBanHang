@@ -107,7 +107,6 @@ const Home = () => {
   const PRODUCTS = listSPBanChay.map((item, index) => {
     const setIndex = index + 1;
     // Select price
-    const priceRange = item.giaMin === item.giaThucTe ? null : item.giaMin;
 
     // const PRODUCT_COLOR = ['#00AB55', '#000000', '#FFFFFF', '#FFC0CB', '#FF4842', '#1890FF', '#94D82D', '#FFC107'];
     const PRODUCT_COLOR = ['#000000', '#FFC0CB', '#94D82D'];
@@ -117,7 +116,7 @@ const Home = () => {
       cover: item.url,
       name: item.tenSp,
       price: item.giaMin,
-      priceSale: priceRange,
+      priceSale: item.giaThucTe,
       colors:
         (setIndex === 1 && PRODUCT_COLOR.slice(0, 2)) ||
         (setIndex === 2 && PRODUCT_COLOR.slice(1, 3)) ||
@@ -140,6 +139,7 @@ const Home = () => {
     const end = (i + 1) * itemsPerSlide;
 
     const slideProducts = PRODUCTS.slice(start, end);
+    console.log("slideProducts: ", slideProducts)
     const slide = (
       <Carousel.Item key={i}>
         <Container>
@@ -178,18 +178,32 @@ const Home = () => {
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <ColorPreview colors={product.colors} />
                         <Typography variant="subtitle2">
-                          <Typography
-                            component="span"
-                            variant="subtitle2"
-                            sx={{
-                              color: 'text.disabled',
-                              textDecoration: 'line-through',
-                            }}
-                          >
-                            {formatCurrencyNull(product.priceSale) && formatCurrencyNull(product.priceSale)}
-                          </Typography>
-                          &nbsp;
-                          {formatCurrency(product.price)}
+
+                          {product.price === product.priceSale ? (
+                            formatCurrency(product.price)
+                          ) : (
+                            <>
+                              <Typography
+                                component="span"
+                                variant="subtitle2"
+                                sx={{
+                                  color: 'text.disabled',
+                                  textDecoration: 'line-through',
+                                }}
+                              >
+                                {formatCurrencyNull(product.price)}
+                                &nbsp;
+                              </Typography>
+                              &nbsp;
+                              <Typography
+                                component="span"
+                                variant="subtitle2"
+                                sx={{ color: 'error.main' }} // Đổi màu sắc tùy thuộc vào thiết kế của bạn
+                              >
+                                {formatCurrency(product.priceSale)}
+                              </Typography>
+                            </>
+                          )}
                         </Typography>
                       </Stack>
                     </Stack>

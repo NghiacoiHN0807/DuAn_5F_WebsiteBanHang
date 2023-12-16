@@ -44,16 +44,10 @@ public class CouponsController {
     }
 
     @PostMapping("/add")
-    ResponseEntity<?> add(@Valid @RequestBody Coupons coupons, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            Map<String, String> errorMap = new HashMap<>();
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-
-            for (FieldError fieldError : fieldErrors) {
-                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
-            }
-
-            return ResponseEntity.badRequest().body(errorMap);
+    ResponseEntity<?> add(@RequestBody Coupons coupons) {
+        Boolean exists = couponsService.existsById(coupons.getIdCoupon());
+        if(exists) {
+            return ResponseEntity.badRequest().body("error");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(
                     couponsService.add(coupons)

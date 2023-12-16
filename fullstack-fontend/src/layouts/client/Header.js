@@ -14,7 +14,7 @@ import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import MailIcon from '@mui/icons-material/Mail';
 import { Avatar, Box, Chip, ListItemIcon, Menu, MenuItem, Tooltip, AppBar } from '@mui/material';
-import {Logout, PersonAdd, Settings, ShareLocation} from '@mui/icons-material';
+import { Logout, PersonAdd, Settings, ShareLocation } from '@mui/icons-material';
 import logo5F from '../../assets/logo_5F.png';
 // utils
 import { bgBlur } from '../../utils/cssStyles';
@@ -61,6 +61,7 @@ const Header = () => {
       if (getLocalStore) {
         const authorities = JSON.parse(getLocalStore).taiKhoan;
         const getData = await listProductOnCart(authorities.idTaiKhoan);
+        localStorage.setItem("numberInCart", getData.length)
         setListData(getData || []);
       }
       // const getData = await listProductOnCart(authorities.idTaiKhoan);
@@ -73,6 +74,13 @@ const Header = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+
+  const [getNumberInCart, setNumberInCart] = useState(0);
+
+  useEffect(() => {
+    const getLocalStoreNumberInCart = localStorage.getItem("numberInCart");
+  }, [fetchData]);
 
   // Handle select menu
   const [anchorEl, setAnchorEl] = useState(null);
@@ -242,13 +250,8 @@ const Header = () => {
                       <FontAwesomeIcon icon={faMagnifyingGlass} size="xs" />
                     </Button>
                   </Form>
-                  <IconButton aria-label="cart">
-                    <StyledBadge badgeContent={4} color="secondary">
-                      <MailIcon />
-                    </StyledBadge>
-                  </IconButton>
                   <Link to={getLocalStore ? '/client/cart' : '/client/cart-noaccount'} className={'nav-link'}>
-                    <StyledBadge badgeContent={listData && listData.length} color="secondary">
+                    <StyledBadge color="secondary">
                       <ShoppingCartIcon />
                     </StyledBadge>
                   </Link>
