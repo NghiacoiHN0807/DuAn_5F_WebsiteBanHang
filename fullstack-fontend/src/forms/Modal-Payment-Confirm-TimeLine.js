@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import '../scss/Car-Bill-ADM.scss';
 import { Alert, Dialog, FormControlLabel, Snackbar, Switch, TextField } from '@mui/material';
 import { useState, forwardRef } from 'react';
@@ -35,7 +35,7 @@ const ModalPaymentComfirmTimeline = (props) => {
   const currentDate = new Date();
   const formattedDate = format(currentDate, 'yyyy-MM-dd');
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   //   Show  payment online
   const [isDeliveryChecked, setIsDeliveryChecked] = useState(false);
@@ -96,6 +96,7 @@ const ModalPaymentComfirmTimeline = (props) => {
             message: 'Thanh Toán Tại Quầy Thành Công!!!',
           });
           getListData();
+          handleClose();
         }
       }
     } catch (e) {
@@ -191,8 +192,8 @@ const ModalPaymentComfirmTimeline = (props) => {
                     id="standard-multiline-flexible"
                     label="Số Tiền Mặt Gửi"
                     type="number"
-                    multiline
-                    maxRows={4}
+                    // multiline
+                    // maxRows={4}
                     variant="outlined"
                     size="small"
                     fullWidth
@@ -216,8 +217,8 @@ const ModalPaymentComfirmTimeline = (props) => {
                     id="standard-multiline-flexible"
                     label="Số Tiền Khách Gửi"
                     type="number"
-                    multiline
-                    maxRows={4}
+                    // multiline
+                    // maxRows={4}
                     variant="outlined"
                     size="small"
                     fullWidth

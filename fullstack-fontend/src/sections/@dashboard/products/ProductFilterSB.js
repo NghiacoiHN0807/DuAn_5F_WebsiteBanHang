@@ -179,9 +179,11 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
       }
       const { min, max } = parsePriceRange(range);
       if (range.includes('+')) {
-        return product.giaThucTe >= min || product.giaMax >= min;
+        return product.giaThucTe >= min || product.maxThucTe >= min;
       }
-      return (product.giaThucTe >= min && product.giaThucTe <= max) || (product.giaMax >= min && product.giaMax <= max);
+      return (
+        (product.giaThucTe >= min && product.giaThucTe <= max) || (product.maxThucTe >= min && product.maxThucTe <= max)
+      );
     };
     return listSP.filter((product) => {
       const chatLieuMatched = listLocCL.length === 0 || listLocCL.some((check) => product.chatLieus.includes(check));

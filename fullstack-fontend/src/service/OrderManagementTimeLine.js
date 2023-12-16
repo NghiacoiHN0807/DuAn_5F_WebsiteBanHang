@@ -29,11 +29,11 @@ const updateTienShip = (idHd, tienShip) =>
     tienShip,
   });
 
-const updatePaymentShip = (idHd, tenKh, sdtKh, ngayThanhToan, diaChi, thanhTien, kieuHoaDon, trangThai) =>
+const updatePaymentShip = (idHd, tenKh, sdtKh, email, diaChi, thanhTien, kieuHoaDon, trangThai) =>
   custom.put(`/hoa-don/update-ship-online/${idHd}`, {
     tenKh,
     sdtKh,
-    ngayThanhToan,
+    email,
     diaChi,
     thanhTien,
     kieuHoaDon,

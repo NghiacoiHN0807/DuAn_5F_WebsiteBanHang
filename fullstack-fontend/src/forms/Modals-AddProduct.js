@@ -13,6 +13,7 @@ import {
   styled,
 } from '@mui/material';
 import PropTypes from 'prop-types';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
 
 // import ModalDetailProduct from './Modal-Detail-SanPham';
 import Iconify from '../components/iconify';
@@ -104,6 +105,13 @@ const ModalAddProduct = (props) => {
     setIsFiltered(isPressed);
   };
 
+  // show more
+  const [visibleItems, setVisibleItems] = useState(12); // Number of items to display initially
+  const itemsPerPage = 12;
+  const handleLoadMore = () => {
+    setVisibleItems((prevVisibleItems) => prevVisibleItems + itemsPerPage);
+  };
+
   useEffect(() => {
     if (isFiltered) {
       setDsList(listLoc);
@@ -135,7 +143,7 @@ const ModalAddProduct = (props) => {
                   onChange={handleSearchChange}
                 />
                 <Typography variant="caption" display="block" gutterBottom sx={{ margin: '10px' }}>
-                  {isFiltered ? 'Đang tìm theo lọc' : ''}
+                  {isFiltered ? 'Đang hiển thị kết quả theo lọc' : ''}
                 </Typography>
               </Grid>
               <Grid item xs={6} sx={{ textAlign: 'right' }}>
@@ -151,12 +159,33 @@ const ModalAddProduct = (props) => {
               </Grid>
             </Grid>
 
-            <ProductListADM
-              getDetailHD={getDetailHD}
-              products={filteredProducts}
-              selectDataCart={selectDataCart}
-              DataCart={DataCart}
-            />
+            {listData.length > 0 && (
+              <div>
+                {filteredProducts.length > 0 ? (
+                  <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                      <ProductListADM
+                        getDetailHD={getDetailHD}
+                        products={filteredProducts.slice(0, visibleItems)}
+                        selectDataCart={selectDataCart}
+                        DataCart={DataCart}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sx={{ textAlign: 'center', marginBottom: '50px' }}>
+                      {visibleItems < filteredProducts.length && (
+                        <Button color="secondary" onClick={handleLoadMore}>
+                          Tải thêm
+                        </Button>
+                      )}
+                    </Grid>
+                  </Grid>
+                ) : (
+                  <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', marginBottom: '50px' }}>
+                    <SearchOffIcon sx={{ fontSize: 80 }} /> Không tìm thấy sản phẩm phù hợp!
+                  </Typography>
+                )}
+              </div>
+            )}
           </DialogContent>
           <DialogActions>
             <Button onClick={() => hanldeSetCloser()}>Hủy</Button>

@@ -108,8 +108,11 @@ const CartBillADM = () => {
   const getDetailHD = useCallback(async () => {
     try {
       const getData = await detailBill(idHdParam);
-      console.log('getData: ', getData);
-      setlistHD(getData);
+      if (getData.trangThai === 8) {
+        setlistHD(getData);
+      }
+      // console.log('getData: ', getData);
+      // setlistHD(getData);
     } catch (error) {
       console.error('Error: ', error);
     }
@@ -286,6 +289,20 @@ const CartBillADM = () => {
     setIsDeliveryChecked(event.target.checked);
   };
 
+  const resetInformation = () => {
+    getTienShip(0);
+
+    setIsDeliveryChecked(false);
+    setSelectedProvince('');
+    setSelectedWard('');
+    setSelectedDistrict('');
+    setResult('');
+    setResult1('');
+    getTenKHShip('');
+    getEmailKHShip('');
+    getSdtKHShip('');
+  };
+
   // Fetch list of provinces on component mount
   const [diachiCuThe, setDiachiCuThe] = useState('');
   useEffect(() => {
@@ -415,14 +432,16 @@ const CartBillADM = () => {
 
   useEffect(() => {
     const calculateTotalPrice = async () => {
-      const updated = await updateTienShip(idHdParam, tienShip);
-      if (updated) {
-        getDetailHD();
+      if (listHD.trangThai === 8) {
+        const updated = await updateTienShip(idHdParam, tienShip);
+        if (updated) {
+          getDetailHD();
+        }
       }
     };
 
     calculateTotalPrice();
-  }, [getDetailHD, idHdParam, tienShip]);
+  }, [getDetailHD, idHdParam, listHD.trangThai, tienShip]);
 
   // Modal add KH
   const [showModalsKH, setShowModalKH] = useState(false);
@@ -457,14 +476,21 @@ const CartBillADM = () => {
     return emailPattern.test(email);
   };
   const handleClick = async () => {
-    if (
-      (isDeliveryChecked === true && !tenKhShip.trim()) ||
-      (isDeliveryChecked === true && containsNumber(tenKhShip)) ||
-      (isDeliveryChecked === false && containsNumber(tenKhTT))
-    ) {
+    console.log(emailKHShip);
+    if (isDeliveryChecked === false && containsNumber(tenKhTT) && tenKhTT.trim()) {
       setAlertContent({
         type: 'warning',
-        message: 'Tên Không Đúng!!!Vui Lòng Nhập Lại ',
+        message: 'Hãy Nhập Đúng Tên Khách Hàng Để Thanh Toán Tại Quầy ',
+      });
+    } else if (isDeliveryChecked === false && !isValidPhoneNumber(sdtKHTT) && sdtKHTT.trim()) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Nhập Đúng SDT Khách Hàng Để Thanh Toán Tại Quầy ',
+      });
+    } else if (isDeliveryChecked === true && !isValidEmail(emailKHShip)) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Nhập Đúng Email Để Đặt Hàng Online',
       });
     } else if ((isDeliveryChecked === true && !tenKhShip.trim()) || (isDeliveryChecked === true && !sdtKHShip.trim())) {
       setAlertContent({
@@ -472,13 +498,17 @@ const CartBillADM = () => {
         message: 'Hãy Nhập Thông Tin Người Nhận Hàng!!!',
       });
     } else if (
-      (isDeliveryChecked === true && !isValidPhoneNumber(sdtKHShip)) ||
-      (isDeliveryChecked === false && !sdtKHTT.trim()) ||
-      (isDeliveryChecked === false && !isValidPhoneNumber(sdtKHTT))
+      (isDeliveryChecked === true && !tenKhShip.trim()) ||
+      (isDeliveryChecked === true && containsNumber(tenKhShip))
     ) {
       setAlertContent({
         type: 'warning',
-        message: 'Hãy Nhập Đúng Định Dạng Số Của Việt Nam!!!',
+        message: 'Hãy Nhập Đúng Tên Khách Hàng Để Giao Hàng!!!',
+      });
+    } else if (isDeliveryChecked === true && !isValidPhoneNumber(sdtKHShip)) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hãy Nhập Đúng SDT Khách Hàng Để Giao Hàng!!!',
       });
     } else if (isDeliveryChecked === true && !result1.trim() && !result.trim()) {
       setAlertContent({
@@ -548,143 +578,153 @@ const CartBillADM = () => {
   return (
     <>
       <Box sx={{ width: '100%' }}>
-        <Box sx={{ bgcolor: '#fff' }}>
-          <Box sx={{ p: 3 }}>
-            <Button variant="contained" onClick={handleAddTab}>
-              Thêm Hóa Đơn Chờ
-            </Button>
-          </Box>
-          <AntTabs value={value} onChange={handleChange} aria-label="ant example">
-            {tabs.map((tabLabel, index) => (
-              <AntTab
-                key={index}
-                onClick={() => handleChange1(tabLabel)}
-                label={
-                  <span>
-                    {tabLabel.maHd}
-                    <CloseIcon
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCloseTab(tabLabel);
-                      }}
-                    />
-                  </span>
-                }
-              />
-            ))}
-          </AntTabs>
+        {listHD.trangThai === 8 ? (
+          <Box sx={{ bgcolor: '#fff' }}>
+            <Box sx={{ p: 3 }}>
+              <Button variant="contained" onClick={handleAddTab}>
+                Thêm Hóa Đơn Chờ
+              </Button>
+            </Box>
+            <AntTabs value={value} onChange={handleChange} aria-label="ant example">
+              {tabs.map((tabLabel, index) => (
+                <AntTab
+                  key={index}
+                  onClick={() => handleChange1(tabLabel)}
+                  label={
+                    <span>
+                      {tabLabel.maHd}
+                      <CloseIcon
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCloseTab(tabLabel);
+                        }}
+                      />
+                    </span>
+                  }
+                />
+              ))}
+            </AntTabs>
 
-          <Box sx={{ p: 3 }}>
-            {/* <p>Content: {tabContent[value]}</p> */}
-            <div>
-              <p>Bill Code: {listHD.maHd}</p>
-              <div className="class-add-product">
-                <Button onClick={() => handleAddProduct()} variant="outlined">
-                  <FontAwesomeIcon icon={faCartPlus} size="lg" />
-                  Thêm Sản Phẩm
-                </Button>{' '}
+            <Box sx={{ p: 3 }}>
+              {/* <p>Content: {tabContent[value]}</p> */}
+              <div>
+                <p>Bill Code: {listHD.maHd}</p>
+                <div className="class-add-product">
+                  <Button onClick={() => handleAddProduct()} variant="outlined">
+                    <FontAwesomeIcon icon={faCartPlus} size="lg" />
+                    Thêm Sản Phẩm
+                  </Button>{' '}
+                </div>
               </div>
-            </div>
 
-            <div className="row cart-information">
-              <div className="row">
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                  <Typography variant="h5" gutterBottom>
-                    Giỏ Hàng{' '}
-                  </Typography>
-                </Stack>
-              </div>
-              <TableContainer sx={{ marginTop: 2, marginBottom: 2 }} component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Ảnh</TableCell>
-                      <TableCell>Mã Sản Phẩm</TableCell>
-                      <TableCell align="right">Sản Phẩm</TableCell>
-                      <TableCell align="right">Thuộc tính</TableCell>
-                      <TableCell align="right">Giá</TableCell>
-                      <TableCell align="right">Số Lượng</TableCell>
-                      <TableCell align="right">Tổng</TableCell>
-                      <TableCell align="right">Thao Tác</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {DataCart && DataCart.length > 0 ? (
-                      DataCart.map((item, index) => {
-                        const imagesArray = item[2].split(','); // Tách chuỗi thành mảng
-                        const firstImage = imagesArray[0];
-                        return (
-                          <TableRow
-                            key={index}
-                            sx={{
-                              '&:last-child td, &:last-child th': { border: 0 },
-                            }}
-                          >
-                            <TableCell>
-                              <Image rounded style={{ width: '150px', height: 'auto' }} src={firstImage} />
-                            </TableCell>
-                            <TableCell>{item[4]}</TableCell>
-                            <TableCell align="right">{item[5]}</TableCell>
-                            <TableCell align="right">
-                              <Button onClick={() => handleUpdateClassify(item)} size="small" variant="outlined">
-                                Size: {item[6]}
-                                <br />
-                                Màu: {item[11]}
-                              </Button>
-                            </TableCell>
-                            <TableCell align="right">{formatCurrency(item[7])}</TableCell>
-                            <TableCell align="right">{item[8]}</TableCell>
-                            <TableCell align="right">{formatCurrency(item[9])}</TableCell>
-                            <TableCell align="right">
-                              <IconButton aria-label="delete" size="large" onClick={() => handleDelete(item)}>
-                                <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
-                              </IconButton>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })
-                    ) : (
+              <div className="row cart-information">
+                <div className="row">
+                  <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                    <Typography variant="h5" gutterBottom>
+                      Giỏ Hàng{' '}
+                    </Typography>
+                  </Stack>
+                </div>
+                <TableContainer sx={{ marginTop: 2, marginBottom: 2 }} component={Paper}>
+                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
                       <TableRow>
-                        <TableCell align="right" colSpan={8}>
-                          KHÔNG CÓ DỮ LIỆU
-                        </TableCell>
+                        <TableCell>Ảnh</TableCell>
+                        <TableCell>Mã Sản Phẩm</TableCell>
+                        <TableCell align="right">Sản Phẩm</TableCell>
+                        <TableCell align="right">Thuộc tính</TableCell>
+                        <TableCell align="right">Giá</TableCell>
+                        <TableCell align="right">Số Lượng</TableCell>
+                        <TableCell align="right">Tổng</TableCell>
+                        <TableCell align="right">Thao Tác</TableCell>
                       </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                      {DataCart && DataCart.length > 0 ? (
+                        DataCart.map((item, index) => {
+                          const imagesArray = item[2].split(','); // Tách chuỗi thành mảng
+                          const firstImage = imagesArray[0];
+                          return (
+                            <TableRow
+                              key={index}
+                              sx={{
+                                '&:last-child td, &:last-child th': { border: 0 },
+                              }}
+                            >
+                              <TableCell>
+                                <Image rounded style={{ width: '150px', height: 'auto' }} src={firstImage} />
+                              </TableCell>
+                              <TableCell>{item[4]}</TableCell>
+                              <TableCell align="right">{item[5]}</TableCell>
+                              <TableCell align="right">
+                                <Button onClick={() => handleUpdateClassify(item)} size="small" variant="outlined">
+                                  Size: {item[6]}
+                                  <br />
+                                  Màu: {item[11]}
+                                </Button>
+                              </TableCell>
+                              <TableCell align="right">{formatCurrency(item[7])}</TableCell>
+                              <TableCell align="right">{item[8]}</TableCell>
+                              <TableCell align="right">{formatCurrency(item[9])}</TableCell>
+                              <TableCell align="right">
+                                <IconButton aria-label="delete" size="large" onClick={() => handleDelete(item)}>
+                                  <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
+                                </IconButton>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
+                      ) : (
+                        <TableRow>
+                          <TableCell align="right" colSpan={8}>
+                            KHÔNG CÓ DỮ LIỆU
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
 
-              <div className="col-2">
-                <Button sx={{ marginBottom: 3 }} onClick={handDeleteAll} variant="outlined" startIcon={<DeleteIcon />}>
-                  Delete
-                </Button>
-              </div>
-            </div>
-            <div className="row customer-information">
-              <div className="row">
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                  <Typography variant="h5" gutterBottom>
-                    Thông Tin Khách Hàng{' '}
-                  </Typography>
-                  <Button onClick={() => handleAddKH()} variant="outlined" startIcon={<Iconify icon="eva:plus-fill" />}>
-                    Khách Hàng{' '}
+                <div className="col-2">
+                  <Button
+                    sx={{ marginBottom: 3 }}
+                    onClick={handDeleteAll}
+                    variant="outlined"
+                    startIcon={<DeleteIcon />}
+                  >
+                    Delete
                   </Button>
-                </Stack>
+                </div>
               </div>
+              <div className="row customer-information">
+                <div className="row">
+                  <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                    <Typography variant="h5" gutterBottom>
+                      Thông Tin Khách Hàng{' '}
+                    </Typography>
+                    <Button
+                      onClick={() => handleAddKH()}
+                      variant="outlined"
+                      startIcon={<Iconify icon="eva:plus-fill" />}
+                    >
+                      Khách Hàng{' '}
+                    </Button>
+                  </Stack>
+                </div>
 
-              <div className="text-information">
-                {listHD.idKH ? (
-                  <>
-                    <Typography variant="subtitle1" gutterBottom>
-                      Mã Tài Khoản: {listHD.idKH.maTaiKhoan}
-                    </Typography>
-                    <Typography variant="subtitle1" gutterBottom>
-                      Tên Khách Hàng: {`${listHD.idKH.ho} ${listHD.idKH.ten}`}
-                    </Typography>
-                    <Typography variant="subtitle1" gutterBottom>
-                      Số Điện Thoại: {listHD.idKH.sdt}
-                    </Typography>
-                    {/* <TextField
+                <div className="text-information">
+                  {listHD.idKH ? (
+                    <>
+                      <Typography variant="subtitle1" gutterBottom>
+                        Mã Tài Khoản: {listHD.idKH.maTaiKhoan}
+                      </Typography>
+                      <Typography variant="subtitle1" gutterBottom>
+                        Tên Khách Hàng: {`${listHD.idKH.ho} ${listHD.idKH.ten}`}
+                      </Typography>
+                      <Typography variant="subtitle1" gutterBottom>
+                        Số Điện Thoại: {listHD.idKH.sdt}
+                      </Typography>
+                      {/* <TextField
                       id="standard-multiline-flexible"
                       label="Mã Tài Khoản "
                       multiline
@@ -721,29 +761,29 @@ const CartBillADM = () => {
                       // value={selectedCustomerEmail}
                       sx={{ marginTop: 2 }}
                     /> */}
-                  </>
-                ) : (
-                  <Chip label="Khách Lẻ" color="primary" />
-                )}
-              </div>
-            </div>
-            <div className="row information-payment">
-              <div className="row header-information">
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                  <Typography variant="h5" gutterBottom>
-                    Thông Tin Thanh Toán{' '}
-                  </Typography>
-                  {listHD.idKH && isDeliveryChecked && (
-                    <Button
-                      onClick={() => handleAddAddress()}
-                      variant="outlined"
-                      startIcon={<Iconify icon="eva:plus-fill" />}
-                    >
-                      Địa Chỉ Khách hàng{' '}
-                    </Button>
+                    </>
+                  ) : (
+                    <Chip label="Khách Lẻ" color="primary" />
                   )}
-                </Stack>
-                {/* <div className="col-6">
+                </div>
+              </div>
+              <div className="row information-payment">
+                <div className="row header-information">
+                  <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                    <Typography variant="h5" gutterBottom>
+                      Thông Tin Thanh Toán{' '}
+                    </Typography>
+                    {listHD.idKH && isDeliveryChecked && (
+                      <Button
+                        onClick={() => handleAddAddress()}
+                        variant="outlined"
+                        startIcon={<Iconify icon="eva:plus-fill" />}
+                      >
+                        Địa Chỉ Khách hàng{' '}
+                      </Button>
+                    )}
+                  </Stack>
+                  {/* <div className="col-6">
 
                   <h6>Thông Tin Thanh Toán</h6>
                 </div>
@@ -752,320 +792,351 @@ const CartBillADM = () => {
                     Primary
                   </Button>
                 </div> */}
-              </div>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6} md={7}>
-                  {isDeliveryChecked && !result1 ? (
-                    <div className="text-information">
-                      <div>
-                        <h5>
-                          {' '}
-                          <AccountBoxIcon />
-                          Thông Tin Người Nhận
-                        </h5>
-                      </div>
-                      <TextField
-                        id="standard-multiline-flexible"
-                        label="Tên Người Nhận"
-                        multiline
-                        maxRows={4}
-                        variant="outlined"
-                        size="small"
-                        fullWidth
-                        onChange={(e) => getTenKHShip(e.target.value)}
-                        sx={{ marginTop: 2 }}
-                      />
-                      <TextField
-                        id="standard-multiline-flexible"
-                        label="Số Điện Thoại"
-                        multiline
-                        maxRows={4}
-                        variant="outlined"
-                        size="small"
-                        fullWidth
-                        sx={{ marginTop: 2 }}
-                        onChange={(e) => getSdtKHShip(e.target.value)}
-                      />
-                      <div className="address">
-                        <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}>
-                          <InputLabel id="province-label">Tỉnh/Thành Phố</InputLabel>
-                          <Select
-                            labelId="province-label"
-                            id="province-select"
-                            value={selectedProvince}
-                            onChange={(e) => {
-                              setSelectedProvince(e.target.value);
-                              setSelectedWard('');
-                              setSelectedDistrict('');
-                              setResult('');
-                            }}
-                            label="Tỉnh/Thành Phố"
-                          >
-                            <MenuItem value="">
-                              <em>Chọn Tỉnh/Thành Phố</em>
-                            </MenuItem>
-                            {provinces.map((province) => (
-                              <MenuItem key={province.ProvinceID} value={province.ProvinceID}>
-                                {province.ProvinceName}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                        <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}>
-                          <InputLabel id="district-label">Quận/Huyện</InputLabel>
-                          <Select
-                            labelId="district-label"
-                            id="district-select"
-                            value={selectedDistrict}
-                            onChange={(e) => {
-                              setSelectedDistrict(e.target.value);
-                              setSelectedWard('');
-                              setResult('');
-                            }}
-                            label="Quận/Huyện"
-                          >
-                            <MenuItem value="">
-                              <em>Chọn Quận/Huyện</em>
-                            </MenuItem>
-                            {districts.map((district) => (
-                              <MenuItem key={district.DistrictID} value={district.DistrictID}>
-                                {district.DistrictName}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                        <FormControl size="small" sx={{ m: 0, minWidth: 170, marginTop: 2 }}>
-                          <InputLabel id="ward-label">Phường/Xã</InputLabel>
-                          <Select
-                            labelId="ward-label"
-                            id="ward-select"
-                            value={selectedWard}
-                            onChange={(e) => {
-                              setSelectedWard(e.target.value);
-                              setResult('');
-                            }}
-                            label="Phường/Xã"
-                          >
-                            <MenuItem value="">
-                              <em>Chọn Phường/Xã</em>
-                            </MenuItem>
-                            {wards.map((ward) => (
-                              <MenuItem key={ward.WardCode} value={ward.WardCode}>
-                                {ward.WardName}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                        <div id="result">{result}</div>
-                      </div>
-                      <div>
+                </div>
+                <Grid container spacing={3}>
+                  <Grid item xs={12} sm={6} md={7}>
+                    {isDeliveryChecked && !result1 ? (
+                      <div className="text-information">
+                        <div>
+                          <h5>
+                            {' '}
+                            <AccountBoxIcon />
+                            Thông Tin Người Nhận
+                          </h5>
+                        </div>
                         <TextField
                           id="standard-multiline-flexible"
-                          label="Địa Chỉ Cụ Thể"
+                          label="Tên Người Nhận"
+                          multiline
+                          maxRows={4}
+                          variant="outlined"
+                          size="small"
+                          fullWidth
+                          onChange={(e) => getTenKHShip(e.target.value)}
+                          sx={{ marginTop: 2 }}
+                        />
+                        <TextField
+                          id="standard-multiline-flexible"
+                          label="Số Điện Thoại"
                           multiline
                           maxRows={4}
                           variant="outlined"
                           size="small"
                           fullWidth
                           sx={{ marginTop: 2 }}
-                          value={diachiCuThe}
-                          onChange={(e) => setDiachiCuThe(e.target.value)}
+                          onChange={(e) => getSdtKHShip(e.target.value)}
                         />
+                        <TextField
+                          id="standard-multiline-flexible"
+                          label="Email"
+                          multiline
+                          maxRows={4}
+                          variant="outlined"
+                          size="small"
+                          fullWidth
+                          sx={{ marginTop: 2 }}
+                          onChange={(e) => getEmailKHShip(e.target.value)}
+                        />
+                        <div className="address">
+                          <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}>
+                            <InputLabel id="province-label">Tỉnh/Thành Phố</InputLabel>
+                            <Select
+                              labelId="province-label"
+                              id="province-select"
+                              value={selectedProvince}
+                              onChange={(e) => {
+                                setSelectedProvince(e.target.value);
+                                setSelectedWard('');
+                                setSelectedDistrict('');
+                                setResult('');
+                              }}
+                              label="Tỉnh/Thành Phố"
+                            >
+                              <MenuItem value="">
+                                <em>Chọn Tỉnh/Thành Phố</em>
+                              </MenuItem>
+                              {provinces.map((province) => (
+                                <MenuItem key={province.ProvinceID} value={province.ProvinceID}>
+                                  {province.ProvinceName}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                          <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}>
+                            <InputLabel id="district-label">Quận/Huyện</InputLabel>
+                            <Select
+                              labelId="district-label"
+                              id="district-select"
+                              value={selectedDistrict}
+                              onChange={(e) => {
+                                setSelectedDistrict(e.target.value);
+                                setSelectedWard('');
+                                setResult('');
+                              }}
+                              label="Quận/Huyện"
+                            >
+                              <MenuItem value="">
+                                <em>Chọn Quận/Huyện</em>
+                              </MenuItem>
+                              {districts.map((district) => (
+                                <MenuItem key={district.DistrictID} value={district.DistrictID}>
+                                  {district.DistrictName}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                          <FormControl size="small" sx={{ m: 0, minWidth: 170, marginTop: 2 }}>
+                            <InputLabel id="ward-label">Phường/Xã</InputLabel>
+                            <Select
+                              labelId="ward-label"
+                              id="ward-select"
+                              value={selectedWard}
+                              onChange={(e) => {
+                                setSelectedWard(e.target.value);
+                                setResult('');
+                              }}
+                              label="Phường/Xã"
+                            >
+                              <MenuItem value="">
+                                <em>Chọn Phường/Xã</em>
+                              </MenuItem>
+                              {wards.map((ward) => (
+                                <MenuItem key={ward.WardCode} value={ward.WardCode}>
+                                  {ward.WardName}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                          <div id="result">{result}</div>
+                        </div>
+                        <div>
+                          <TextField
+                            id="standard-multiline-flexible"
+                            label="Địa Chỉ Cụ Thể"
+                            multiline
+                            maxRows={4}
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            sx={{ marginTop: 2 }}
+                            value={diachiCuThe}
+                            onChange={(e) => setDiachiCuThe(e.target.value)}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ) : result1 && isDeliveryChecked ? (
-                    <div>
-                      <h5>
-                        <AccountBoxIcon />
-                        Thông Tin Người Nhận
-                      </h5>{' '}
-                      <Typography variant="subtitle1" gutterBottom>
-                        Tên Người Nhận Hàng: {listHD.idKH && tenKhShip}
-                      </Typography>{' '}
-                      <Typography variant="subtitle1" gutterBottom>
-                        SĐT Người Nhận Hàng: {listHD.idKH && sdtKHShip}
-                      </Typography>{' '}
-                      <Typography variant="subtitle1" gutterBottom>
-                        Địa Chỉ Nhận Hàng: {result1 && result1}
-                      </Typography>
-                    </div>
-                  ) : (
-                    <div className="text-information">
+                    ) : result1 && isDeliveryChecked ? (
                       <div>
                         <h5>
                           <AccountBoxIcon />
-                          Thông Tin Khách Hàng
-                        </h5>
+                          Thông Tin Người Nhận
+                        </h5>{' '}
+                        <Typography variant="subtitle1" gutterBottom>
+                          Tên Người Nhận Hàng: {listHD.idKH && tenKhShip}
+                        </Typography>{' '}
+                        <Typography variant="subtitle1" gutterBottom>
+                          SĐT Người Nhận Hàng: {listHD.idKH && sdtKHShip}
+                        </Typography>{' '}
+                        <Typography variant="subtitle1" gutterBottom>
+                          Địa Chỉ Nhận Hàng: {result1 && result1}
+                        </Typography>
                       </div>
-                      <TextField
-                        id="standard-multiline-flexible"
-                        label="Người Thanh Toán"
-                        multiline
-                        maxRows={4}
-                        variant="outlined"
-                        size="small"
-                        fullWidth
-                        sx={{ marginTop: 2 }}
-                        onChange={(e) => getTenKHTT(e.target.value)}
-                      />
-                      <TextField
-                        id="standard-multiline-flexible"
-                        label="Số Điện Thoại"
-                        multiline
-                        maxRows={4}
-                        variant="outlined"
-                        size="small"
-                        fullWidth
-                        sx={{ marginTop: 2 }}
-                        onChange={(e) => getSdtKHTT(e.target.value)}
-                      />
+                    ) : (
+                      <div className="text-information">
+                        <div>
+                          <h5>
+                            <AccountBoxIcon />
+                            Thông Tin Khách Hàng
+                          </h5>
+                        </div>
+                        <TextField
+                          id="standard-multiline-flexible"
+                          label="Người Thanh Toán"
+                          multiline
+                          maxRows={4}
+                          variant="outlined"
+                          size="small"
+                          fullWidth
+                          sx={{ marginTop: 2 }}
+                          onChange={(e) => getTenKHTT(e.target.value)}
+                        />
+                        <TextField
+                          id="standard-multiline-flexible"
+                          label="Số Điện Thoại"
+                          multiline
+                          maxRows={4}
+                          variant="outlined"
+                          size="small"
+                          fullWidth
+                          sx={{ marginTop: 2 }}
+                          onChange={(e) => getSdtKHTT(e.target.value)}
+                        />
+                      </div>
+                    )}
+                  </Grid>
+                  <Grid item xs={12} md={6} lg={4}>
+                    <h5>
+                      <AccountBalanceWalletIcon />
+                      THÔNG TIN THANH TOÁN
+                    </h5>
+                    <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Giao Hàng" />
+                    <br />
+                    <div className="row">
+                      <Stack
+                        sx={{ marginTop: 5 }}
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        mb={3}
+                      >
+                        <Typography variant="h6" gutterBottom>
+                          Tiền Hàng{' '}
+                        </Typography>
+                        <Typography variant="h6" gutterBottom>
+                          {formatCurrency(listHD.tongTien)}{' '}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+                        <Typography variant="h6" gutterBottom>
+                          Tiền Ship{' '}
+                        </Typography>
+                        <Typography variant="h6" gutterBottom>
+                          {formatCurrency(listHD.tienShip)}{' '}
+                        </Typography>
+                      </Stack>
+                      <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+                        <Typography variant="h6" gutterBottom>
+                          Thành Tiền{' '}
+                        </Typography>
+                        <Typography variant="h6" gutterBottom>
+                          {formatCurrency(listHD.thanhTien)}{' '}
+                        </Typography>
+                      </Stack>
                     </div>
+                  </Grid>
+                </Grid>
+              </div>
+
+              <div className="class-checkout">
+                <LoadingButton
+                  size="small"
+                  color="secondary"
+                  onClick={handleClick}
+                  loading={loading}
+                  loadingPosition="start"
+                  startIcon={<SaveIcon />}
+                  variant="contained"
+                >
+                  <span>Save</span>
+                </LoadingButton>
+              </div>
+
+              {/* Add Modals */}
+              <ModalAddProduct
+                show={showModalsAdd}
+                selectDataCart={selectDataCart}
+                handleClose={handleClose}
+                DataCart={DataCart}
+                getDetailHD={getDetailHD}
+              />
+              {/* Modal Update Product */}
+              <ModalUpdateProductOnCart
+                show={showModalsUpdate}
+                handleClose={handleCloseUpdateClassify}
+                itemUpdateClassify={itemUpdateClassify}
+                selectDataCart={selectDataCart}
+                itemUpdate={itemUpdate}
+                getDetailHD={getDetailHD}
+              />
+
+              {/* Modal Delete Product  */}
+              <ModalDeleteAllProductOnCart
+                open={showModalsDeleteAll}
+                handleClose={handCloseDeleteAll}
+                selectDataCart={selectDataCart}
+                DataCart={DataCart}
+                getDetailHD={getDetailHD}
+              />
+              {/* Modal Add Customer */}
+              <ModalAddKhachHang
+                open={showModalsKH}
+                handleClose={handleCloseAddKH}
+                getDetailHD={getDetailHD}
+                resetInformation={resetInformation}
+                // setSelectedCustomerName={setSelectedCustomerName}
+                // setSelectedMaTk={setSelectedMaTk}
+                // setSelectedCustomerEmail={setSelectedCustomerEmail}
+              />
+              {/* ModalDeleteDirectSale */}
+              <ModalDeleteDirectSale open={open} handleClose={handleCloseDeleteInvoice} information={information} />
+              {DataCart.length > 0 && (
+                <>
+                  {/* Modal Delete Product  */}
+                  {itemDelete !== undefined && (
+                    <ModalDeleteProductOnCart
+                      open={showModalsDelete}
+                      handleClose={handleCloseModalDelelte}
+                      itemDelete={itemDelete}
+                      selectDataCart={selectDataCart}
+                      DataCart={DataCart}
+                      getDetailHD={getDetailHD}
+                    />
                   )}
-                </Grid>
-                <Grid item xs={12} md={6} lg={4}>
-                  <h5>
-                    <AccountBalanceWalletIcon />
-                    THÔNG TIN THANH TOÁN
-                  </h5>
-                  <FormControlLabel control={<Switch />} onChange={handleDeliveryChange} label="Giao Hàng" />
-                  <br />
-                  <div className="row">
-                    <Stack
-                      sx={{ marginTop: 5 }}
-                      direction="row"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      mb={3}
-                    >
-                      <Typography variant="h6" gutterBottom>
-                        Tiền Hàng{' '}
-                      </Typography>
-                      <Typography variant="h6" gutterBottom>
-                        {formatCurrency(listHD.tongTien)}{' '}
-                      </Typography>
-                    </Stack>
-                    <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
-                      <Typography variant="h6" gutterBottom>
-                        Tiền Ship{' '}
-                      </Typography>
-                      <Typography variant="h6" gutterBottom>
-                        {formatCurrency(listHD.tienShip)}{' '}
-                      </Typography>
-                    </Stack>
-                    <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
-                      <Typography variant="h6" gutterBottom>
-                        Thành Tiền{' '}
-                      </Typography>
-                      <Typography variant="h6" gutterBottom>
-                        {formatCurrency(listHD.thanhTien)}{' '}
-                      </Typography>
-                    </Stack>
-                  </div>
-                </Grid>
-              </Grid>
-            </div>
+                  <ModalPaymentComfirm
+                    show={openPayment}
+                    handleClose={handlePaymentClose}
+                    thanhTien={listHD.thanhTien}
+                    listHD={listHD}
+                    tenKhTT={tenKhTT}
+                    sdtKHTT={sdtKHTT}
+                  />
 
-            <div className="class-checkout">
-              <LoadingButton
-                size="small"
-                color="secondary"
-                onClick={handleClick}
-                loading={loading}
-                loadingPosition="start"
-                startIcon={<SaveIcon />}
-                variant="contained"
-              >
-                <span>Save</span>
-              </LoadingButton>
-            </div>
-
-            {/* Add Modals */}
-            <ModalAddProduct
-              show={showModalsAdd}
-              selectDataCart={selectDataCart}
-              handleClose={handleClose}
-              DataCart={DataCart}
-              getDetailHD={getDetailHD}
-            />
-            {/* Modal Update Product */}
-            <ModalUpdateProductOnCart
-              show={showModalsUpdate}
-              handleClose={handleCloseUpdateClassify}
-              itemUpdateClassify={itemUpdateClassify}
-              selectDataCart={selectDataCart}
-              itemUpdate={itemUpdate}
-              getDetailHD={getDetailHD}
-            />
-
-            {/* Modal Delete Product  */}
-            <ModalDeleteAllProductOnCart
-              open={showModalsDeleteAll}
-              handleClose={handCloseDeleteAll}
-              selectDataCart={selectDataCart}
-              DataCart={DataCart}
-              getDetailHD={getDetailHD}
-            />
-            {/* Modal Add Customer */}
-            <ModalAddKhachHang
-              open={showModalsKH}
-              handleClose={handleCloseAddKH}
-              getDetailHD={getDetailHD}
-              // setSelectedCustomerName={setSelectedCustomerName}
-              // setSelectedMaTk={setSelectedMaTk}
-              // setSelectedCustomerEmail={setSelectedCustomerEmail}
-            />
-            {/* ModalDeleteDirectSale */}
-            <ModalDeleteDirectSale open={open} handleClose={handleCloseDeleteInvoice} information={information} />
-            {DataCart.length > 0 && (
-              <>
-                {/* Modal Delete Product  */}
-                {itemDelete !== undefined && (
-                  <ModalDeleteProductOnCart
-                    open={showModalsDelete}
-                    handleClose={handleCloseModalDelelte}
-                    itemDelete={itemDelete}
-                    selectDataCart={selectDataCart}
-                    DataCart={DataCart}
+                  <ModalCreateBillOnline
+                    open={openCreateOnline}
+                    handleClose={handleCloseCreateOnline}
+                    thanhTien={listHD.thanhTien}
+                    listHD={listHD}
+                    tenKhShip={tenKhShip}
+                    sdtKHShip={sdtKHShip}
+                    emailKHShip={emailKHShip}
+                    result={result || result1}
+                  />
+                </>
+              )}
+              {listHD.idKH && (
+                <>
+                  <ModalAddAddress
+                    open={showModalsAddress}
+                    listData={listData}
+                    handleClose={handleCloseAddress}
+                    setTenKH={getTenKHShip}
+                    setSDTKH={getSdtKHShip}
+                    setEmailKH={getEmailKHShip}
+                    setDiaChi={setResult1}
+                    setTienShip={getTienShip}
                     getDetailHD={getDetailHD}
                   />
-                )}
-                <ModalPaymentComfirm
-                  show={openPayment}
-                  handleClose={handlePaymentClose}
-                  thanhTien={listHD.thanhTien}
-                  listHD={listHD}
-                  tenKhTT={tenKhTT}
-                  sdtKHTT={sdtKHTT}
-                />
-
-                <ModalCreateBillOnline
-                  open={openCreateOnline}
-                  handleClose={handleCloseCreateOnline}
-                  thanhTien={listHD.thanhTien}
-                  listHD={listHD}
-                  tenKhShip={tenKhShip}
-                  sdtKHShip={sdtKHShip}
-                  result={result || result1}
-                />
-              </>
-            )}
-            {listHD.idKH && (
-              <>
-                <ModalAddAddress
-                  open={showModalsAddress}
-                  listData={listData}
-                  handleClose={handleCloseAddress}
-                  setTenKH={getTenKHShip}
-                  setSDTKH={getSdtKHShip}
-                  setDiaChi={setResult1}
-                  setEmailKH={getEmailKHShip}
-                  setTienShip={getTienShip}
-                  getDetailHD={getDetailHD}
-                />
-              </>
-            )}
+                </>
+              )}
+            </Box>
           </Box>
-        </Box>
+        ) : (
+          <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 3, backgroundColor: 'white' }}>
+            <Paper
+              sx={{
+                textAlign: 'center',
+              }}
+            >
+              <Typography variant="h6" paragraph>
+                Dữ Liệu Trống
+              </Typography>
+
+              <Typography variant="body2">
+                Bạn Không Có Hóa Đơn Nào Ở Trạng Thái Này &nbsp;
+                <br /> Xin Vui Lòng Đặt Hàng.
+              </Typography>
+            </Paper>
+          </Grid>
+        )}
       </Box>
       {alertContent && (
         <Snackbar

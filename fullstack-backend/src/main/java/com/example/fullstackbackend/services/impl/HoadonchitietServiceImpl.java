@@ -58,7 +58,7 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     // Update product if it's exsit
-    public ResponseEntity<?> updateHoaDonChiTiet(List<HoaDonChiTiet> hoaDonChiTiets, HoaDonChiTiet add) {
+    public ResponseEntity<?> updateHoaDonChiTiet(HoaDonChiTiet add) {
         List<HoaDonChiTiet> hoaDonChiTiets1 = hoadonchitietRepository.findAllByIdCtspExsit(add.getIdHd().getIdHd(), add.getIdCtsp().getIdCtsp());
 
         if (hoaDonChiTiets1.isEmpty()) {
@@ -86,17 +86,23 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 
             return ResponseEntity.ok(hoadonRepo.save(hoaDon));
         } else {
+            // Update product on cart if it's exist
+            HoaDonChiTiet updateExist = hoadonchitietRepository.findByIdCtspExsit(add.getIdHd().getIdHd(), add.getIdCtsp().getIdCtsp()).orElseThrow();
+            //New Quantity
+            int newQuantity = updateExist.getSoLuong() + add.getSoLuong();
+            updateExist.setSoLuong(newQuantity);
+            // New Price
+//            ChiTietSanPham ctsp = chitietsanphamRepo.findById(add);
+            BigDecimal newPrice = updateExist.getIdCtsp().getGiaThucTe().multiply(new BigDecimal(newQuantity));
+            updateExist.setDonGia(newPrice);
+            hoadonchitietRepository.save(updateExist);
+
+            // Update price in hd
+            List<HoaDonChiTiet> hoaDonChiTiets2 = hoadonchitietRepository.findAllByIdHdANDTT(add.getIdHd().getIdHd(), 0);
+
             BigDecimal tongTien = BigDecimal.ZERO;
-            for (HoaDonChiTiet x : hoaDonChiTiets) {
-                ChiTietSanPham chiTietSanPham = chitietsanphamRepo.findById(x.getIdCtsp().getIdCtsp()).orElseThrow();
-                int newQuantity = x.getSoLuong() + add.getSoLuong();
-                x.setSoLuong(newQuantity);
-                BigDecimal newPrice = chiTietSanPham.getGiaThucTe().multiply(new BigDecimal(newQuantity));
-                System.out.println("newPrice: " + newPrice);
 
-                x.setDonGia(newPrice);
-
-                hoadonchitietRepository.save(x);
+            for (HoaDonChiTiet x : hoaDonChiTiets2) {
                 // UPdate price in hd
                 tongTien = tongTien.add(x.getDonGia());
                 System.out.println("tongTien: " + tongTien);
@@ -122,17 +128,14 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 
     @Override
     public ResponseEntity<?> add(HoaDonChiTiet add) {
-        List<HoaDonChiTiet> hoaDonChiTiets1 = hoadonchitietRepository.findAllByIdHdANDTT(add.getIdHd().getIdHd(), 0);
-        System.out.println("hoaDonChiTiets1: " + hoaDonChiTiets1.size());
-        System.out.println("add.getIdHd().getIdHd(): " + add.getIdHd().getIdHd());
 
         HoaDon hoaDon = hoadonRepo.findById(add.getIdHd().getIdHd()).orElseThrow();
         if (hoaDon.getTrangThai() < 8) {
             addLS(add, 1);
-            return updateHoaDonChiTiet(hoaDonChiTiets1, add);
+            return updateHoaDonChiTiet(add);
         } else {
 //            List<HoaDonChiTiet> hoaDonChiTiets1 =
-            return updateHoaDonChiTiet(hoaDonChiTiets1, add);
+            return updateHoaDonChiTiet(add);
         }
     }
 
@@ -142,10 +145,11 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     public void updatePriceAnDelete(HoaDonChiTiet detailHDCT) {
-        List<HoaDonChiTiet> hoaDonChiTiets2 = hoadonchitietRepository.findAllByIdHdANDTT(detailHDCT.getIdHd().getIdHd(), 0);
         HoaDon hoaDon = hoadonRepo.findById(detailHDCT.getIdHd().getIdHd()).orElseThrow();
 
         BigDecimal tongTien = BigDecimal.ZERO;
+        List<HoaDonChiTiet> hoaDonChiTiets2 = hoadonchitietRepository.findAllByIdHdANDTT(detailHDCT.getIdHd().getIdHd(), 0);
+
         for (HoaDonChiTiet x : hoaDonChiTiets2) {
             tongTien = tongTien.add(x.getDonGia());
         }
@@ -191,14 +195,11 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 
     public void updatePriceAndUpate(HoaDonChiTiet detailHDCT) {
         HoaDon hoaDon = hoadonRepo.findById(detailHDCT.getIdHd().getIdHd()).orElseThrow();
-        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdHdANDTT(hoaDon.getIdHd(), 0);
         BigDecimal tongTien = BigDecimal.ZERO;
         List<HoaDonChiTiet> hoaDonChiTiets1 = hoadonchitietRepository.findAllByIdCtspExsit(detailHDCT.getIdHd().getIdHd(), detailHDCT.getIdCtsp().getIdCtsp());
 
         if (hoaDonChiTiets1.isEmpty()) {
             hoadonchitietRepository.save(detailHDCT);
-//            HoaDon hoaDon = hoadonRepo.findById(detailHDCT.getIdHd().getIdHd()).orElseThrow();
-//            BigDecimal tongTien = BigDecimal.ZERO;
 
             List<HoaDonChiTiet> hoaDonChiTiets2 = hoadonchitietRepository.findAllByIdHdANDTT(detailHDCT.getIdHd().getIdHd(), 0);
 
@@ -221,8 +222,9 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
             hoadonRepo.save(hoaDon);
         } else {
             hoadonchitietRepository.save(detailHDCT);
+            List<HoaDonChiTiet> hoaDonChiTiets2 = hoadonchitietRepository.findAllByIdHdANDTT(detailHDCT.getIdHd().getIdHd(), 0);
 
-            for (HoaDonChiTiet x : hoaDonChiTiets) {
+            for (HoaDonChiTiet x : hoaDonChiTiets2) {
                 // UPdate price in hd
                 tongTien = tongTien.add(x.getDonGia());
                 System.out.println("tongTien: " + tongTien);

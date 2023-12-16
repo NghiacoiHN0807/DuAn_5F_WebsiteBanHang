@@ -155,7 +155,6 @@ const OrderManagementTimeline = ({ classes }) => {
 
   const handleCloseUpdate = () => {
     setShowModalUpdate(false);
-    getListData();
   };
   //
   const handlePayment = () => {
@@ -402,6 +401,7 @@ const OrderManagementTimeline = ({ classes }) => {
                     <h6>Tên Khách Hàng: {listData[0].idHd.tenKh}</h6>
                     <h6>Số Điện Thoại: {listData[0].idHd.sdtKh}</h6>
                     <h6>Địa Chỉ: {listData[0].idHd.diaChi}</h6>
+                    {listData[0].idHd.email && <h6>Email: {listData[0].idHd.email}</h6>}
                   </>
                 ) : (
                   <>

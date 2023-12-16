@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 import { useState, useEffect, useCallback } from 'react';
 // @mui
-import { Container, Grid, InputAdornment, OutlinedInput, Typography, alpha, styled } from '@mui/material';
+import { Button, Container, Grid, InputAdornment, OutlinedInput, Typography, alpha, styled } from '@mui/material';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import Iconify from '../../components/iconify';
 
@@ -82,6 +82,13 @@ export default function ProductsPage() {
     setIsFiltered(isPressed);
   };
 
+  // show more
+  const [visibleItems, setVisibleItems] = useState(12); // Number of items to display initially
+  const itemsPerPage = 12;
+  const handleLoadMore = () => {
+    setVisibleItems((prevVisibleItems) => prevVisibleItems + itemsPerPage);
+  };
+
   useEffect(() => {
     if (isFiltered) {
       setDsList(listLoc);
@@ -113,7 +120,7 @@ export default function ProductsPage() {
               onChange={handleSearchChange}
             />
             <Typography variant="caption" display="block" gutterBottom sx={{ margin: '10px' }}>
-              {isFiltered ? 'Đang tìm theo lọc' : ''}
+              {isFiltered ? 'Đang hiển thị kết quả theo lọc' : ''}
             </Typography>
           </Grid>
           <Grid item xs={6} sx={{ textAlign: 'right' }}>
@@ -131,7 +138,18 @@ export default function ProductsPage() {
         {listSP.length > 0 && (
           <div>
             {filteredProducts.length > 0 ? (
-              <ProductListAll products={filteredProducts} sx={{ marginBottom: '50px' }} />
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <ProductListAll products={filteredProducts.slice(0, visibleItems)} sx={{ marginBottom: '50px' }} />
+                </Grid>
+                <Grid item xs={12} sx={{ textAlign: 'center', marginBottom: '50px' }}>
+                  {visibleItems < filteredProducts.length && (
+                    <Button color="secondary" onClick={handleLoadMore}>
+                      Tải thêm
+                    </Button>
+                  )}
+                </Grid>
+              </Grid>
             ) : (
               <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', marginBottom: '50px' }}>
                 <SearchOffIcon sx={{ fontSize: 80 }} /> Không tìm thấy sản phẩm phù hợp!

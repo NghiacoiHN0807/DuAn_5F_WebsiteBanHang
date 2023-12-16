@@ -12,8 +12,7 @@ import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import PropTypes from 'prop-types';
-import { findByProductNameAndSize } from '../../service/BillSevice';
-import { postAddDirect } from '../../service/DirectSaleSevice';
+import { getDetailOne, postAddDirect } from '../../service/DirectSaleSevice';
 
 const ModalDetailProductClinet = (props) => {
   ModalDetailProductClinet.propTypes = {
@@ -97,23 +96,46 @@ const ModalDetailProductClinet = (props) => {
     console.log('Selected selectedSp:', selectedSp, selectedSize, selectedMauSac);
 
     try {
-      const getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize, selectedMauSac);
+      const getAllProduct = await getDetailOne(idHdParam);
+
+      const detailSPInCaert = getAllProduct.filter((p) => p.idCtsp.idCtsp === selectSoLuongTon[0].idCtsp);
 
       //   Insert to the cart
-      const donGia = getOneCTSP.giaThucTe * quantity;
+      if (selectedSize === null || selectedMauSac === null || selectSoLuongTon.length === 0) {
+        setAlertContent({
+          type: 'warning',
+          message: 'Hãy Chọn Thuộc Tính Của Sản Phẩm',
+        });
+      } else if (quantity < 1 || Number.isNaN(quantity) || quantity === '') {
+        setAlertContent({
+          type: 'warning',
+          message: 'Vui lòng chọn số lượng lớn hơn 0',
+        });
+      } else if (quantity > selectSoLuongTon[0].soLuongTon) {
+        setAlertContent({
+          type: 'warning',
+          message: 'Vượt Quá Số Lượng Tồn',
+        });
+      } else if (quantity + detailSPInCaert[0].soLuong > selectSoLuongTon[0].soLuongTon) {
+        setAlertContent({
+          type: 'warning',
+          message: ' Sản Phẩm Đã Có Trong Giỏ Hàng. Vượt Quá Số Lượng Tồn',
+        });
+      } else {
+        const donGia = selectSoLuongTon[0].giaThucTe * quantity;
 
-      await postAddDirect(getOneCTSP, quantity, donGia, idHdParam, 0);
-      //   Close the modal
-      setSelectedSize(null);
-      handleClose();
-      setQuantity(1);
-      //   Load new data on cart
-      selectDataCart();
-      setAlertContent({
-        type: 'success',
-        message: 'Thêm sản phẩm thành công',
-      });
-      // }
+        await postAddDirect(selectSoLuongTon[0], quantity, donGia, idHdParam, 0);
+        //   Close the modal
+        setSelectedSize(null);
+        handleClose();
+        setQuantity(1);
+        //   Load new data on cart
+        selectDataCart();
+        setAlertContent({
+          type: 'success',
+          message: 'Thêm sản phẩm thành công',
+        });
+      }
     } catch (error) {
       console.log('error: ', error);
     }

@@ -101,6 +101,11 @@ const ModalUpdateProductOnCartClient = (props) => {
   };
 
   const handleChoose = async () => {
+    // const productExistsInItemUpdate = selectSoLuongTon.find((product) => product.idCtsp === itemUpdate.idCtsp.idCtsp);
+
+    // const productExistsInItemUpdate = selectSoLuongTon.find((product) => product.idCtsp === itemUpdate.idCtsp.idCtsp);
+    // console.log('productExistsInItemUpdate:', productExistsInItemUpdate);
+
     const selectedSp = itemUpdateClassify[0].idSp.tenSp;
 
     if (selectedSize === null || selectedSp === '') {

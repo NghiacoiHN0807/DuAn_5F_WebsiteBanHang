@@ -1,7 +1,11 @@
 package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.entity.HoaDon;
+import com.example.fullstackbackend.entity.HoaDonChiTiet;
+import com.example.fullstackbackend.entity.LichSuHoaDon;
 import com.example.fullstackbackend.repository.HoadonRepository;
+import com.example.fullstackbackend.repository.HoadonchitietRepository;
+import com.example.fullstackbackend.repository.LichSuHoaDonRepository;
 import com.example.fullstackbackend.services.HoadonSevice;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,6 +23,12 @@ public class HoadonServiceImpl implements HoadonSevice {
 
     @Autowired
     private HoadonRepository hoadonRepository;
+
+    @Autowired
+    private HoadonchitietRepository hoadonchitietRepo;
+
+    @Autowired
+    private LichSuHoaDonRepository lichSuHoaDonRepo;
 
     // Get datetime now
     java.util.Date currentDate = new java.util.Date();
@@ -98,6 +107,31 @@ public class HoadonServiceImpl implements HoadonSevice {
     }
 
     @Override
+    public void deleteHDOver(Integer idHd) {
+        List<HoaDon> hoaDonList = hoadonRepository.findAllByIDAndTrangThai(idHd, 11);
+        for (HoaDon x :
+                hoaDonList) {
+            List<LichSuHoaDon> lichSuHoaDons = lichSuHoaDonRepo.findAllByIdHd_TrangThai(x.getIdHd(), 11);
+
+            for (LichSuHoaDon y :
+                    lichSuHoaDons) {
+                lichSuHoaDonRepo.deleteById(y.getIdLshd());
+
+            }
+            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepo.findAllByIdHd_TrangThai(x.getIdHd(), 11);
+
+            for (HoaDonChiTiet z :
+                    hoaDonChiTiets) {
+                hoadonchitietRepo.deleteById(z.getIdHdct());
+
+            }
+            hoadonRepository.deleteById(x.getIdHd());
+
+
+        }
+    }
+
+    @Override
     public Boolean checkExists(Integer id) {
         return hoadonRepository.existsById(id);
     }
@@ -138,7 +172,7 @@ public class HoadonServiceImpl implements HoadonSevice {
     @Override
     public Double calculateTotalTongTien() {
         Double total = hoadonRepository.calculateTotalTongTien();
-        if(total == null){
+        if (total == null) {
             return 0.0;
         }
         return total;
