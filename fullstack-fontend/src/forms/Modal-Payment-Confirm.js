@@ -6,7 +6,6 @@ import { format } from 'date-fns';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import SendIcon from '@mui/icons-material/Send';
@@ -54,9 +53,21 @@ const ModalPaymentComfirm = (props) => {
     setAlertContent(null);
   };
 
+  const containsNumber = (text) => /\d/.test(text);
+
   const handlePaymentOnCash = async () => {
     try {
-      if (isDeliveryChecked === true) {
+      if (cashGiven === 0 || cashGiven === null) {
+        setAlertContent({
+          type: 'warning',
+          message: 'Số Tiền Gửi Không Được Để Trống Và Phải Là Số Lớn Hơn Thành Tiền',
+        });
+      } else if (!containsNumber(cashGiven)) {
+        setAlertContent({
+          type: 'warning',
+          message: 'Số Tiền Gửi Không Được Để Là Chữ',
+        });
+      } else if (isDeliveryChecked === true) {
         const cashGivenValue = parseFloat(cashGiven);
         if (!Number.isNaN(cashGivenValue)) {
           const change = thanhTien - cashGivenValue;
@@ -90,12 +101,12 @@ const ModalPaymentComfirm = (props) => {
             message: 'Tiền Khách Đưa Chưa Đủ',
           });
         } else {
-          await updatePayment(idHdParam, tenKhTT, sdtKHTT, formattedDate, thanhTien, cashGiven, change, 1, 9);
+          await updatePayment(idHdParam, tenKhTT, sdtKHTT, formattedDate, thanhTien, cashGiven, change, 9);
           setAlertContent({
             type: 'success',
             message: 'Thanh Toán Tại Quầy Thành Công!!!',
           });
-          navigate(`/order-management-timeline/${idHdParam}`);
+          navigate(`/dashboard/bills/time-line/${idHdParam}`);
         }
       }
     } catch (e) {
@@ -103,7 +114,7 @@ const ModalPaymentComfirm = (props) => {
     }
   };
   //   Payment
-  const [cashGiven, setCashGiven] = useState('');
+  const [cashGiven, setCashGiven] = useState(0);
   const [changeAmount, setChangeAmount] = useState(0);
 
   const handleCalculateChange = () => {
@@ -118,8 +129,17 @@ const ModalPaymentComfirm = (props) => {
         change = cashGivenValue - thanhTien;
       }
     }
-
-    if (change < 0) {
+    if (cashGiven === 0 || cashGiven === null) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Số Tiền Gửi Không Được Để Trống Và Phải Là Số Lớn Hơn Thành Tiền',
+      });
+    } else if (!containsNumber(cashGiven)) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Số Tiền Gửi Không Được Để Là Chữ',
+      });
+    } else if (change < 0) {
       setAlertContent({
         type: 'warning',
         message: isDeliveryChecked ? 'Tiền Mặt Khách Đưa Đã Dư' : 'Tiền Khách Đưa Chưa Đủ',
@@ -191,8 +211,8 @@ const ModalPaymentComfirm = (props) => {
                     id="standard-multiline-flexible"
                     label="Số Tiền Mặt Gửi"
                     type="number"
-                    multiline
-                    maxRows={4}
+                    // multiline
+                    // maxRows={4}
                     variant="outlined"
                     size="small"
                     fullWidth
@@ -216,8 +236,8 @@ const ModalPaymentComfirm = (props) => {
                     id="standard-multiline-flexible"
                     label="Số Tiền Khách Gửi"
                     type="number"
-                    multiline
-                    maxRows={4}
+                    // multiline
+                    // maxRows={4}
                     variant="outlined"
                     size="small"
                     fullWidth

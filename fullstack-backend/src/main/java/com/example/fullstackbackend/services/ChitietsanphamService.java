@@ -1,5 +1,6 @@
 package com.example.fullstackbackend.services;
 
+import com.example.fullstackbackend.DTO.CTSPCustom;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import org.springframework.data.domain.Page;
 
@@ -30,10 +31,16 @@ public interface ChitietsanphamService {
 
     Optional<ChiTietSanPham> detail(Integer id);
 
+    List<ChiTietSanPham> finAllByIDCTSP(Integer idCtsp);
+
+    Optional<ChiTietSanPham> findByIdCTSP(Integer idCTSP);
+
     Boolean checkExists(Integer id);
 
     ChiTietSanPham addColorAndSize(Integer idSp, Integer idMs, Integer idSize);
 
     ChiTietSanPham updateNumber(Integer idCtsp, BigDecimal giaNhap, BigDecimal giaBan, Integer soLuongTon, Integer trangThai);
+
+    List<CTSPCustom> getCtspForAd(Integer idSp);
 
 }

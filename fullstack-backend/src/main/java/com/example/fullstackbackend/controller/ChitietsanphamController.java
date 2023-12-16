@@ -1,10 +1,12 @@
 package com.example.fullstackbackend.controller;
 
+import com.example.fullstackbackend.DTO.CTSPCustom;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.services.ChitietsanphamService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,8 +34,8 @@ public class ChitietsanphamController {
     public Page<ChiTietSanPham> viewAll(@RequestParam(defaultValue = "0") Integer page,
                                         @RequestParam(defaultValue = "5") Integer size,
                                         @RequestParam("p") Optional<Integer> p) {
-        Page<ChiTietSanPham> chiTietSP = chitietsanphamSevice.chiTietSP(p.orElse(page), size);
-        return chiTietSP;
+        return chitietsanphamSevice.chiTietSP(p.orElse(page), size);
+
     }
 
     @GetMapping("view-all-ctsp")
@@ -53,8 +55,7 @@ public class ChitietsanphamController {
 
     @GetMapping("select-Classify/{name}")
     public List<ChiTietSanPham> findByProductName(@PathVariable("name") String name) {
-        List<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductName(name);
-        return chiTietSanPham;
+        return chitietsanphamSevice.findByProductName(name);
     }
 
 
@@ -62,16 +63,16 @@ public class ChitietsanphamController {
     public Optional<ChiTietSanPham> findByProductNameAndSize(@PathVariable("name") String name,
                                                              @PathVariable("size") String size,
                                                              @PathVariable("ms") String ms) {
-        Optional<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductNameAndSize(name, size, ms);
-        return chiTietSanPham;
+        return chitietsanphamSevice.findByProductNameAndSize(name, size, ms);
+
     }
 
 
-    @GetMapping("select-ctsp-byid/{id}")
-    public List<ChiTietSanPham> findByProductId(@PathVariable("id") Integer id) {
-        List<ChiTietSanPham> chiTietSanPham = chitietsanphamSevice.findByProductId(id);
-        return chiTietSanPham;
-    }
+//    @GetMapping("select-ctsp-byid/{id}")
+//    public List<ChiTietSanPham> findByProductId(@PathVariable("id") Integer id) {
+//        return chitietsanphamSevice.findByProductId(id);
+//
+//    }
 
     @PostMapping("add/{soLuong}")
     public ChiTietSanPham add(@Valid @RequestBody ChiTietSanPham chiTietSanPham,
@@ -108,6 +109,12 @@ public class ChitietsanphamController {
                                        @PathVariable("soLuongTon") Integer soLuongTon,
                                        @PathVariable("trangThai") Integer trangThai) {
         return chitietsanphamSevice.updateNumber(idCtsp,giaNhap, giaBan, soLuongTon, trangThai);
+    }
+
+    @GetMapping("getCstpForAd/{idSp}")
+    public ResponseEntity<List<CTSPCustom>> getCtspForAd(@PathVariable("idSp") Integer idSp) {
+        List<CTSPCustom> pageSp = chitietsanphamSevice.getCtspForAd(idSp);
+        return ResponseEntity.ok(pageSp);
     }
 
 }

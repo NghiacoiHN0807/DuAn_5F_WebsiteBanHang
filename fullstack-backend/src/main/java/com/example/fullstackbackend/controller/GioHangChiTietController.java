@@ -3,9 +3,9 @@ package com.example.fullstackbackend.controller;
 import com.example.fullstackbackend.entity.GioHangChiTiet;
 import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
+import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.repository.HoadonRepository;
 import com.example.fullstackbackend.services.GioHangChiTietSevice;
-import com.example.fullstackbackend.services.HoadonSevice;
 import com.example.fullstackbackend.services.HoadonchitietSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/gio-hang-chi-tiet/")
@@ -62,6 +62,20 @@ public class GioHangChiTietController {
         }
     }
 
+    @PutMapping("update-product/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable("id") Integer id, @Valid @RequestBody GioHangChiTiet updateGHCT, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.ok("Không Được Để Trống");
+        } else {
+            return ResponseEntity.ok(gioHangChiTietSevice.detail(id).map(
+                    gioHangChiTiet -> {
+                        gioHangChiTiet.setIdCtsp(updateGHCT.getIdCtsp());
+                        gioHangChiTiet.setSoLuong(updateGHCT.getSoLuong());
+                        return gioHangChiTietSevice.update(gioHangChiTiet);
+                    }).orElseThrow(() -> new xuatXuNotFoundException(id)));
+        }
+    }
+
     @DeleteMapping("delete/{id}")
     public ResponseEntity<?> deleteGHCT(@PathVariable("id") Integer id) {
         if (id == null) {
@@ -74,12 +88,12 @@ public class GioHangChiTietController {
 
     @PostMapping("add-to-hdct/{id}")
     public ResponseEntity<?> addToHDCT(@PathVariable("id") Integer idHD,
-                                       @RequestBody GioHangChiTiet newHDCT){
+                                       @RequestBody GioHangChiTiet newHDCT) {
+
         // Detail HoaDon
         HoaDon hoaDon = hoadonSevice.findById(idHD).orElseThrow();
-        // Set HDCT
-        System.out.println("newHDCT: "+ newHDCT.getIdCtsp());
 
+        // Set HDCT
         HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
         hoaDonChiTiet.setIdHd(hoaDon);
         hoaDonChiTiet.setIdCtsp(newHDCT.getIdCtsp());
@@ -88,8 +102,23 @@ public class GioHangChiTietController {
         hoaDonChiTiet.setTrangThai(0);
         hoadonchitietSevice.add1(hoaDonChiTiet);
         // Delete product on cart
-        gioHangChiTietSevice.deleteGHCT(newHDCT.getIdGhct());
+//        gioHangChiTietSevice.deleteGHCT(newHDCT.getIdGhct());
         return ResponseEntity.ok("Tạo Hóa Đơn Thành Công!!!");
+    }
+
+    @DeleteMapping("delete-product/{id}")
+    public ResponseEntity<?> deteleproductOnCart(@PathVariable("id") Integer idHD) {
+
+        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSevice.findAllByIDHD(idHD);
+
+        for (HoaDonChiTiet x :
+                hoaDonChiTiets) {
+            GioHangChiTiet gioHangChiTiet = gioHangChiTietSevice.finByIDCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
+            gioHangChiTietSevice.deleteGHCT(gioHangChiTiet.getIdGhct());
+        }
+        // Delete product on cart
+
+        return ResponseEntity.ok("Đã Xóa Sản Phẩm Rea Khỏi Giỏ Hàng!!!");
     }
 
 }

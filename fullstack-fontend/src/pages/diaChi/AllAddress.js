@@ -1,31 +1,21 @@
 import {Helmet} from "react-helmet-async";
 import React, {useEffect, useRef, useState} from "react";
 import Badge from "react-bootstrap/Badge";
-import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import {useNavigate} from "react-router-dom";
-import {
-    DataGrid,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarDensitySelector,
-    GridToolbarExport,
-    GridToolbarFilterButton
-} from "@mui/x-data-grid";
+import {DataGrid, GridToolbarContainer, GridToolbarExport} from "@mui/x-data-grid";
 import {
     Card,
     Container,
     FormControl,
     IconButton,
-    InputBase,
     InputLabel,
     MenuItem,
-    Paper,
-    Select, TextField,
+    Select,
+    TextField,
     Typography
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import {getPhuongXa, getQuanHuyen, getTinhThanhPho} from "../../service/apiDiaChi";
 import {fetchAllDiaChi} from "../../service/diaChiSevice";
 import AlertSnackbar from "../../layouts/dashboard/AlertSnackbar";
 
@@ -39,9 +29,6 @@ const AllAddress = () => {
     const [originalListData, setOriginalListData] = useState([]);
     const navigate = useNavigate();
     const isMounted = useRef(true);
-    const [listTP, setListTP] = useState([]);
-    const [listQH, setListQH] = useState([]);
-    const [listPX, setListPX] = useState([]);
 
     const getListData = async (page, query) => {
         try {
@@ -59,57 +46,12 @@ const AllAddress = () => {
     useEffect(() => {
         isMounted.current = true;
         getListData(0);
-        getListTP();
+        // getListTP();
         return () => {
             isMounted.current = false;
         };
     }, []);
 
-    useEffect(() => {
-        if (listData.length > 0) {
-            listData.forEach((item) => {
-                fetchQuanHuyenAndPhuongXa(item.tinhThanh, item.quanHuyen);
-            });
-        }
-        // eslint-disable-next-line
-    }, [listData]);
-    const getListTP = async () => {
-        const resTP = await getTinhThanhPho();
-
-        setListTP(resTP?.data.results);
-
-    };
-
-    const getNameByIdTP = (id) => {
-        const province = listTP.find((item) => item.province_id === id);
-        return province ? province.province_name : null;
-    };
-    const getNameByIdQH = (id) => {
-        const province = listQH.find((item) => item.district_id === id);
-        return province ? province.district_name : null;
-    };
-    const getNameByIdPX = (id) => {
-        const province = listPX.find((item) => item.ward_id === id);
-        return province ? province.ward_name : null;
-    };
-
-    const fetchQuanHuyenAndPhuongXa = async (tinhThanhID, quanHuyenID) => {
-        const existingQH = listQH.find(item => item.district_id === quanHuyenID);
-        const existingPX = listPX.find(item => item.ward_id === quanHuyenID);
-
-        if (existingQH && existingPX) {
-            // Data already exists, no need to fetch again
-            return;
-        }
-
-        const quanHuyenData = await getQuanHuyen(tinhThanhID);
-        const phuongXaData = await getPhuongXa(quanHuyenID);
-
-        if (quanHuyenData.status === 200 && phuongXaData.status === 200) {
-            setListQH(prevListQH => [...prevListQH, ...quanHuyenData.data.results]);
-            setListPX(prevListPX => [...prevListPX, ...phuongXaData.data.results]);
-        }
-    };
 
 
     const columns = [
@@ -154,13 +96,9 @@ const AllAddress = () => {
                 let badgeVariant
                 let statusText;
                 switch (trangThai) {
-                    case 1:
+                    case 0:
                         badgeVariant = "primary";
-                        statusText = "Đã Xác Nhận";
-                        break;
-                    case 4:
-                        badgeVariant = "info";
-                        statusText = "Đã Ngưng hoạt động";
+                        statusText = "Đang Hoạt Động";
                         break;
                     case 10:
                         badgeVariant = "danger";
@@ -168,7 +106,7 @@ const AllAddress = () => {
                         break;
                     default:
                         badgeVariant = "light";
-                        statusText = "Chưa Xác Nhận";
+                        statusText = "Đang Bị Null";
                         break;
                 }
 
@@ -196,7 +134,7 @@ const AllAddress = () => {
             maTaiKhoan: item.taiKhoan.maTaiKhoan,
             tenNguoiNhan: item.tenNguoiNhan,
             sdtKh: item.sdt,
-            diaChi: `${getNameByIdTP(item.tinhThanh)}, ${getNameByIdQH(item.quanHuyen)}, ${getNameByIdPX(item.phuongXa)}`,
+            diaChi: `${item.tinhThanh}, ${item.quanHuyen}, ${item.phuongXa}`,
             diaChiCuThe: item.diaChiCuThe,
             loaiDiaChi: item.loaiDiaChi,
             trangThai: item.trangThai,
@@ -240,15 +178,6 @@ const AllAddress = () => {
     function CustomToolbar() {
         return (
             <GridToolbarContainer>
-                <GridToolbarFilterButton/>
-                <GridToolbarColumnsButton/>
-                <GridToolbarDensitySelector/>
-                <GridToolbarExport
-                    csvOptions={{
-                        fileName: 'address',
-                        utf8WithBom: true,
-                    }}
-                />
 
                 <FormControl variant="standard" sx={{m: 1, minWidth: 120}}>
                     <InputLabel id="status-select">Trạng Thái:</InputLabel>
@@ -260,9 +189,7 @@ const AllAddress = () => {
                         onChange={(e) => setSelectedStatus(e.target.value)}
                     >
                         <MenuItem value={"Tất cả"}>Tất Cả</MenuItem>
-                        <MenuItem value={0}>Chưa Kích Hoạt</MenuItem>
-                        <MenuItem value={1}>Đã Kích Hoạt</MenuItem>
-                        <MenuItem value={4}>Ngưng Hoạt Động</MenuItem>
+                        <MenuItem value={0}>Đang Hoạt Động</MenuItem>
                         <MenuItem value={10}>Đã Bị Xóa</MenuItem>
                     </Select>
                 </FormControl>
@@ -280,6 +207,13 @@ const AllAddress = () => {
                         <MenuItem value={1}>Nơi Làm Việc</MenuItem>
                     </Select>
                 </FormControl>
+                <GridToolbarExport
+                    csvOptions={{
+                        fileName: 'address',
+                        utf8WithBom: true,
+                    }}
+                />
+
             </GridToolbarContainer>
         );
     }
@@ -295,8 +229,10 @@ const AllAddress = () => {
                         Thông Tin Tất Cả Địa Chỉ
                     </Typography>
                 </Stack>
+                <Card>
                 <TextField
                     variant="outlined"
+                    margin="dense"
                     sx={{ml: 1, flex: 1}}
                     placeholder="Tìm Kiếm"
                     InputProps={{
@@ -309,6 +245,9 @@ const AllAddress = () => {
                     onChange={(e) => setSearchKeyword(e.target.value)}
                 />
                 <DataGrid
+                    sx={{
+                        border: 'none'
+                    }}
                     rows={rows}
                     columns={columns}
                     initialState={{
@@ -320,6 +259,7 @@ const AllAddress = () => {
                     pageSizeOptions={[5, 10, 15]}
                     onRowClick={(params) => handlClickRow(params.row)}
                 />
+                </Card>
             </Container>
             <AlertSnackbar />
         </>

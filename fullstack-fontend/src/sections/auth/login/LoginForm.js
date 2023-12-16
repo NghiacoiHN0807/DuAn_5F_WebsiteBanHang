@@ -11,13 +11,14 @@ import { LoadingButton } from '@mui/lab';
 
 import {GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
 import Iconify from '../../../components/iconify';
+import {useAlert} from "../../../layouts/dashboard/AlertContext";
 
 
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
-
+  const {showAlert} = useAlert();
   const [showPassword, setShowPassword] = useState(false);
 
   const [params, setParams] = useState({
@@ -48,13 +49,13 @@ export default function LoginForm() {
 
       if (response.status === 200) {
         localStorage.setItem('userFormToken', JSON.stringify(response.data));
-        console.log('response:', response.data);
-        console.log('response: ', response);
+        // console.log('response:', response.data);
+        // console.log('response: ', response);
         const authorities = response.data.authorities[0].authority;
         navigate(authorities === 'ROLE_ADMIN' || authorities === 'ROLE_STAFF' ? '/dashboard/app' : '/client/home');
         window.location.reload();
-
       } else {
+        showAlert('error', 'Đăng Nhập Thất Bại');
         throw Error(response.status);
       }
     } catch (error) {
@@ -79,28 +80,22 @@ export default function LoginForm() {
       body: raw,
       redirect: 'follow',
     };
-    console.log("requestOptions:",requestOptions);
+    // console.log("requestOptions:",requestOptions);
     try {
       const response = await fetch('http://localhost:8080/api/login', requestOptions);
 
       if (response.ok) {
-        setAlertContent({
-          type: 'success',
-          message: 'Login Success',
-        });
+        showAlert('success', 'Đăng Nhập Thành Công');
         const result = await response.json();
-        console.log('result: ', result);
+        // console.log('result: ', result);
         localStorage.setItem('accessToken', result.accessToken);
         await fetchUserData();
       } else {
         throw new Error(response.status);
       }
     } catch (error) {
-      console.log('error', error);
-      setAlertContent({
-        type: 'error',
-        message: 'Login Failed',
-      });
+      // console.log('error', error);
+      showAlert('error', 'Đăng Nhập Thất Bại');
     }
   };
   const responseGoogle = async (credentialResponse ) => {
@@ -108,11 +103,8 @@ export default function LoginForm() {
     try {
       const res = await axios.post('http://localhost:8080/google-login', credentialResponse.credential );
 
-      if (res) {
-        setAlertContent({
-          type: 'success',
-          message: 'Login Success',
-        });
+      if (res.status === 200) {
+        showAlert('success', 'Đăng Nhập Thành Công');
         localStorage.setItem('accessToken', res.data);
         await fetchUserData();
 
@@ -120,11 +112,7 @@ export default function LoginForm() {
         throw new Error(res);
       }
     } catch (error) {
-      console.log('error', error);
-      setAlertContent({
-        type: 'error',
-        message: 'Login Failed',
-      });
+      showAlert('error', 'Đăng Nhập Thất Bại');
     }
   }
 
@@ -141,18 +129,18 @@ export default function LoginForm() {
         </GoogleOAuthProvider>
         
 
-        <TextField name="email" label="Email address" value={params.email} onChange={(e) => getParam(e)} />
+        <TextField name="email" label="Email" value={params.email} onChange={(e) => getParam(e)} />
 
         <TextField
           name="password"
-          label="Password"
+          label="Mật Khẩu"
           onChange={(e) => getParam(e)}
           value={params.password}
           type={showPassword ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                <IconButton aria-label="toggle password visibility" onClick={() => setShowPassword(!showPassword)} edge="end">
                   <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
                 </IconButton>
               </InputAdornment>
@@ -162,14 +150,13 @@ export default function LoginForm() {
       </Stack>
 
       <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-        <Checkbox name="remember" label="Remember me" />
-        <Link variant="subtitle2" underline="hover">
-          Forgot password?
+        <Link variant="subtitle2" href="/forgetPassword" >
+          Quên Mật Khẩu
         </Link>
       </Stack>
 
       <LoadingButton fullWidth size="large" type="submit" variant="contained" onClick={handleClick}>
-        Login
+        Đăng Nhập
       </LoadingButton>
       {alertContent && (
         <Snackbar

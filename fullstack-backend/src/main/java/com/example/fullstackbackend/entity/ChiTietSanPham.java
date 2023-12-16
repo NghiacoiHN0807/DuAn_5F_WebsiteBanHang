@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -53,6 +54,7 @@ public class ChiTietSanPham {
     @Column(name = "so_luong_ton")
     private Integer soLuongTon;
 
+    @NotNull(message = "Trạng thái không được để trống")
     @Column(name = "trang_thai")
     private Integer trangThai;
 

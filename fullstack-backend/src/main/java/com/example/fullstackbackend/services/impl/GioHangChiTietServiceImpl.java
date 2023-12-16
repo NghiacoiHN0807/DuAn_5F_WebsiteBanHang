@@ -6,8 +6,6 @@ import com.example.fullstackbackend.entity.GioHangChiTiet;
 import com.example.fullstackbackend.repository.ChitietsanphamRepository;
 import com.example.fullstackbackend.repository.GioHangChiTietReponsitory;
 import com.example.fullstackbackend.repository.GioHangReponsitory;
-import com.example.fullstackbackend.repository.HoadonRepository;
-import com.example.fullstackbackend.repository.HoadonchitietRepository;
 import com.example.fullstackbackend.services.GioHangChiTietSevice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,13 +24,45 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietSevice {
 
     private final GioHangReponsitory gioHangReponsitory;
 
-    private final HoadonchitietRepository hoadonchitietRepository;
-
-    private final HoadonRepository hoadonRepository;
+//    private final HoadonchitietRepository hoadonchitietRepository;
+//
+//    private final HoadonRepository hoadonRepository;
 
     @Override
     public List<GioHangChiTiet> getAll(Integer idKh) {
         return gioHangChiTietReponsitory.findByIdGh_IdKh_IdTaiKhoan(idKh);
+    }
+
+    @Override
+    public Optional<GioHangChiTiet> detail(Integer id) {
+        return gioHangChiTietReponsitory.findById(id);
+    }
+
+    @Override
+    public GioHangChiTiet update(GioHangChiTiet update) {
+//        GioHangChiTiet detailGH = gioHangChiTietReponsitory.findById(update.getIdGhct()).orElseThrow();
+//        if (detailGH != null) {
+        Optional<GioHangChiTiet> gioHangChiTietOptional = gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(update.getIdCtsp().getIdCtsp());
+        if (gioHangChiTietOptional.isPresent()) {
+            ChiTietSanPham getCTSP = chitietsanphamRepository.findById(gioHangChiTietOptional.get().getIdCtsp().getIdCtsp()).orElseThrow();
+
+//            int newQuatity = gioHangChiTietOptional.get().getSoLuong()+ update.getSoLuong();
+//            BigDecimal newPrice = getCTSP.getGiaThucTe().multiply(new BigDecimal(newQuatity));
+            BigDecimal newPrice = getCTSP.getGiaThucTe().multiply(new BigDecimal(update.getSoLuong()));
+
+            gioHangChiTietOptional.get().setSoLuong(update.getSoLuong());
+            gioHangChiTietOptional.get().setDonGia(newPrice);
+            gioHangChiTietOptional.get().setDonGiaSauGiam(newPrice);
+            return gioHangChiTietReponsitory.save(gioHangChiTietOptional.get());
+        } else {
+            ChiTietSanPham getCTSP = chitietsanphamRepository.findById(update.getIdCtsp().getIdCtsp()).orElseThrow();
+            BigDecimal newPrice = getCTSP.getGiaThucTe().multiply(new BigDecimal(update.getSoLuong()));
+            update.setSoLuong(update.getSoLuong());
+            update.setDonGia(newPrice);
+            update.setDonGiaSauGiam(newPrice);
+            return gioHangChiTietReponsitory.save(update);
+
+        }
     }
 
     @Override
@@ -92,6 +122,11 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietSevice {
     @Override
     public void deleteGHCT(Integer idGHCT) {
         gioHangChiTietReponsitory.deleteById(idGHCT);
+    }
+
+    @Override
+    public Optional<GioHangChiTiet> finByIDCTSP(Integer idCtsp) {
+        return gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(idCtsp);
     }
 
     @Override

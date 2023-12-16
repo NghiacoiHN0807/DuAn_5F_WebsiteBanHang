@@ -5,8 +5,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { pink } from '@mui/material/colors';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import EditIcon from '@mui/icons-material/Edit';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import CircularProgress from '@mui/material/CircularProgress';
 import { CardGroup } from 'react-bootstrap';
 import { useDropzone } from 'react-dropzone';
@@ -38,7 +36,6 @@ import {
   TableRow,
   TableCell,
   Paper,
-  TableHead,
   CardActionArea,
   CardMedia,
   Box,
@@ -46,21 +43,26 @@ import {
   FormLabel,
   Backdrop,
   Chip,
+  TablePagination,
 } from '@mui/material';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import Scrollbar from '../../components/scrollbar';
+import { UserListHeadNoCheckBox, UserListToolbar } from '../../sections/@dashboard/user';
 import Iconify from '../../components/iconify';
 import { putUpdateSanPham, detailSP } from '../../service/SanPhamService';
-import { findCtspById, addColorAndSize, updateNumber, detailCTSP } from '../../service/ChiTietSPService';
+import { fetchListAtt, addColorAndSize, updateNumber, detailCTSP } from '../../service/ChiTietSPService';
 import { deleteAnh, fetchAnh } from '../../service/AnhService';
 import { postAddCloud, deleteCloud } from '../../service/CloudinaryService';
 
-import { fetchXX, detailXX } from '../../service/XuatXuService';
-import { fetchCL, detailCL } from '../../service/ChatLieuService';
-import { fetchCoAo, detailCoAo } from '../../service/LoaiCoAoService';
-import { fetchLSP, detailLSP } from '../../service/LoaiSPService';
-import { fetchTayAo, detailTayAo } from '../../service/OngTayAoService';
-import { fetchMS } from '../../service/MauSacService';
-import { fetchSize } from '../../service/SizeService';
+import { fetchXX, detailXX, postAddXuatXu, putUpdateXuatXu } from '../../service/XuatXuService';
+import { fetchCL, detailCL, postAddChatLieu, putUpdateChatLieu } from '../../service/ChatLieuService';
+import { fetchCoAo, detailCoAo, postAddLoaiCoAo, putUpdateLoaiCoAo } from '../../service/LoaiCoAoService';
+import { fetchLSP, detailLSP, postAddLoaiSP, putUpdateLoaiSP } from '../../service/LoaiSPService';
+import { fetchTayAo, detailTayAo, postAddOngTayAo, putUpdateOngTayAo } from '../../service/OngTayAoService';
+import { fetchMS, detailMS, postAddMauSac, putUpdateMauSac } from '../../service/MauSacService';
+import { fetchSize, detailSize, postAddSize, putUpdateSize } from '../../service/SizeService';
 import '../../scss/UpdateSp.scss';
+import ModalQuickAtt from './ModalQuickAtt';
 
 function renderTrangThai(trangThai) {
   let badgeVariant;
@@ -71,7 +73,7 @@ function renderTrangThai(trangThai) {
       badgeVariant = 'success';
       statusText = 'Còn bán';
       break;
-    case 1:
+    case 9:
       badgeVariant = 'warning';
       statusText = 'Đang cập nhật';
       break;
@@ -98,6 +100,50 @@ function formatCurrency(price) {
   });
 
   return formatter.format(price);
+}
+
+const TABLE_HEAD = [
+  { id: 'stt', label: 'STT', alignRight: false },
+  { id: 'tenMs', label: 'Màu sắc', alignRight: false },
+  { id: 'tenSize', label: 'Size', alignRight: false },
+  { id: 'giaNhap', label: 'Giá nhập', alignRight: false },
+  { id: 'giaBan', label: 'Giá bán', alignRight: false },
+  { id: 'soLuongTon', label: 'Số Lượng tồn', alignRight: false },
+  { id: 'trangThai', label: 'Trạng thái', alignRight: false },
+  { id: '' },
+];
+
+// ----------------------------------------------------------------------
+
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+
+function getComparator(order, orderBy) {
+  return order === 'desc'
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+
+function filterData(array, query) {
+  return array.filter((_user) =>
+    ['tenMs', 'tenSize', 'giaNhap', 'giaBan', 'soLuongTon'].some((field) => {
+      const fieldValue = _user[field];
+      if (typeof fieldValue === 'string') {
+        return fieldValue.toLowerCase().includes(query.toLowerCase());
+      }
+      if (typeof fieldValue === 'number') {
+        return fieldValue.toString().toLowerCase().includes(query.toLowerCase());
+      }
+      return false;
+    })
+  );
 }
 
 export default function UpdateSanPham() {
@@ -175,7 +221,7 @@ export default function UpdateSanPham() {
       setTayAo(res.idTayAo.idTayAo);
       setCoAo(res.idCoAo.idCoAo);
 
-      const resCTSP = await findCtspById(idSpHttp);
+      const resCTSP = await fetchListAtt(idSpHttp);
       setListCTSP(resCTSP);
     } catch (error) {
       console.log('error: ', error);
@@ -285,6 +331,7 @@ export default function UpdateSanPham() {
     ) {
       handleAlertClick('Cập nhật thất bại!', 'danger');
     } else {
+      const trangThaiValue = listImg.length === 0 || listCTSP.length === 0 ? 9 : trangThai;
       const res = await putUpdateSanPham(
         idSpHttp,
         maSp,
@@ -295,7 +342,7 @@ export default function UpdateSanPham() {
         getObjCoAo,
         getObjTayAo,
         moTa,
-        trangThai
+        trangThaiValue
       );
 
       console.log('Check res: ', res);
@@ -349,16 +396,36 @@ export default function UpdateSanPham() {
     }
   }, [selectedImages, uploadImage]);
 
-  const onDrop = useCallback((acceptedFiles) => {
-    const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
-    setSelectedImages(imageFiles);
-    handleOpenBD();
-  }, []);
+  const onDrop = useCallback(
+    (acceptedFiles, rejectedFiles) => {
+      if (acceptedFiles.length + listImg.length > 10) {
+        handleAlertClick(`Không được chọn quá ${10 - listImg.length} file ảnh.`, 'warning');
+        return;
+      }
+
+      if (acceptedFiles.length > 0 && rejectedFiles.length === 0) {
+        const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
+        setSelectedImages(imageFiles);
+        handleOpenBD();
+      }
+      if (acceptedFiles.length === 0 && rejectedFiles.length > 0) {
+        handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
+      }
+      if (acceptedFiles.length > 0 && rejectedFiles.length > 0) {
+        const imageFiles = acceptedFiles.filter((file) => file.type.startsWith('image/'));
+        setSelectedImages(imageFiles);
+        handleAlertClick(`Có ${rejectedFiles.length} file vượt quá dung lượng tối đa (1 MB).`, 'warning');
+        handleOpenBD();
+      }
+    },
+    [listImg]
+  );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: 'image/*',
     multiple: true,
+    maxSize: 1024 * 1024,
   });
 
   const handlDeleteImg = async (idImg, url) => {
@@ -372,34 +439,46 @@ export default function UpdateSanPham() {
 
   // add color and size
   const hanldeAddColorAndSize = async () => {
-    const res = await addColorAndSize(idSpHttp, mauSac, size);
-    console.log('Check res: ', res);
-    if (res && res.idCtsp) {
-      if (res.trangThai === 1) {
-        handleAlertClick('Thêm thành công!', 'success');
-        handleClickEditAtt(res.idCtsp);
-        handleCloseColorAndSize();
-      } else {
-        handleOpenDulicateUpdate();
-        setIdCtsp(res.idCtsp);
-      }
+    if (mauSac === '' || size === '') {
+      checkEmptyCBB();
+      handleAlertClick('Hãy chọn màu sắc và size', 'warning');
     } else {
-      handleAlertClick('Cập nhật thất bại!', 'danger');
-      handleCloseColorAndSize();
+      const res = await addColorAndSize(idSpHttp, mauSac, size);
+      console.log('Check res: ', res);
+      if (res && res.idCtsp) {
+        if (res.trangThai === 1) {
+          handleAlertClick('Thêm thành công!', 'success');
+          handleClickEditAtt(res.idCtsp);
+          handleCloseColorAndSize();
+        } else {
+          handleOpenDulicateUpdate();
+          setIdCtsp(res.idCtsp);
+        }
+      } else {
+        handleAlertClick('Thêm thất bại!', 'danger');
+        handleCloseColorAndSize();
+      }
     }
   };
 
   // update number
 
   const handlUpdateNumber = async () => {
-    const res = await updateNumber(idCtsp, giaNhap, giaBan, soLuongTon, statusAtt);
-    console.log('Check res: ', res);
-    if (res && res.idCtsp) {
-      handleAlertClick('Cập nhật thành công!', 'success');
-      handleClostEditAtt();
+    hanldeCheckGiaSL(giaBan, setGiaBanErr, 'Giá bán');
+    hanldeCheckGiaSL(giaNhap, setGiaNhapErr, 'Giá nhập');
+    hanldeCheckGiaSL(soLuongTon, setSoLuongErr, 'Số lượng tồn');
+    if (!!giaBanErr || !!giaNhapErr || !!soLuongErr || giaBan === '' || giaNhap === '' || soLuongTon === '') {
+      handleAlertClick('Hãy nhập đúng và đủ thông tin!', 'warning');
     } else {
-      handleAlertClick('Cập nhật thất bại!', 'danger');
-      handleClostEditAtt();
+      const res = await updateNumber(idCtsp, giaNhap, giaBan, soLuongTon, statusAtt);
+      console.log('Check res: ', res);
+      if (res && res.idCtsp) {
+        handleAlertClick('Cập nhật thành công!', 'success');
+        handleClostEditAtt();
+      } else {
+        handleAlertClick('Cập nhật thất bại!', 'danger');
+        handleClostEditAtt();
+      }
     }
   };
 
@@ -440,6 +519,219 @@ export default function UpdateSanPham() {
     }
   };
 
+  // open quick att
+  const [openQuickAtt, setOpenQuickAtt] = useState(false);
+  const [phanTu, setPhanTu] = useState({
+    att: null,
+    id: null,
+    ma: null,
+    ten: null,
+  });
+  const [listAtt, setListAtt] = useState([]);
+  const emptyFunc = () => {};
+
+  const getAddFunc = (att) => {
+    switch (att) {
+      case 'Chất liệu':
+        return postAddChatLieu;
+      case 'Xuất xứ':
+        return postAddXuatXu;
+      case 'Loại sản phẩm':
+        return postAddLoaiSP;
+      case 'Loại cổ áo':
+        return postAddLoaiCoAo;
+      case 'Ống tay áo':
+        return postAddOngTayAo;
+      case 'Màu sắc':
+        return postAddMauSac;
+      case 'Size':
+        return postAddSize;
+      default:
+        return emptyFunc;
+    }
+  };
+
+  const getUpdateFunc = (att) => {
+    switch (att) {
+      case 'Chất liệu':
+        return putUpdateChatLieu;
+      case 'Xuất xứ':
+        return putUpdateXuatXu;
+      case 'Loại sản phẩm':
+        return putUpdateLoaiSP;
+      case 'Loại cổ áo':
+        return putUpdateLoaiCoAo;
+      case 'Ống tay áo':
+        return putUpdateOngTayAo;
+      case 'Màu sắc':
+        return putUpdateMauSac;
+      case 'Size':
+        return putUpdateSize;
+      default:
+        return emptyFunc;
+    }
+  };
+
+  const getDetailFunc = (att) => {
+    switch (att) {
+      case 'Chất liệu':
+        return detailCL;
+      case 'Xuất xứ':
+        return detailXX;
+      case 'Loại sản phẩm':
+        return detailLSP;
+      case 'Loại cổ áo':
+        return detailCoAo;
+      case 'Ống tay áo':
+        return detailTayAo;
+      case 'Màu sắc':
+        return detailMS;
+      case 'Size':
+        return detailSize;
+      default:
+        return emptyFunc;
+    }
+  };
+
+  const handleOpenQuickAtt = (att, id, ma, ten) => {
+    setOpenQuickAtt(true);
+    setPhanTu({ att, id, ma, ten });
+  };
+
+  const handleCloseQuickAtt = () => {
+    setOpenQuickAtt(false);
+  };
+
+  useEffect(() => {
+    if (phanTu.att === 'Chất liệu') {
+      setListAtt(listCL);
+    }
+    if (phanTu.att === 'Loại sản phẩm') {
+      setListAtt(listLSP);
+    }
+    if (phanTu.att === 'Xuất xứ') {
+      setListAtt(listXX);
+    }
+    if (phanTu.att === 'Loại cổ áo') {
+      setListAtt(listCoAo);
+    }
+    if (phanTu.att === 'Ống tay áo') {
+      setListAtt(listTayAo);
+    }
+    if (phanTu.att === 'Màu sắc') {
+      setListAtt(listMS);
+    }
+    if (phanTu.att === 'Size') {
+      setListAtt(listSize);
+    }
+  }, [listCL, listLSP, listXX, listTayAo, listCoAo, listMS, listSize, phanTu]);
+
+  // for sort table
+
+  const [page, setPage] = useState(0);
+
+  const [order, setOrder] = useState('asc');
+
+  const [orderBy, setOrderBy] = useState('maHd');
+
+  const [filterName, setFilterName] = useState('');
+
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  // Next Page
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setPage(0);
+    setRowsPerPage(parseInt(event.target.value, 10));
+  };
+
+  const handleFilterByName = (event) => {
+    setPage(0);
+    setFilterName(event.target.value);
+  };
+
+  function applySortFilter(array, comparator, query) {
+    if (query) {
+      return filterData(array, query);
+    }
+
+    const stabilizedThis = array.map((el, index) => [el, index]);
+    stabilizedThis.sort((a, b) => {
+      const order = comparator(a[0], b[0]);
+      if (order !== 0) return order;
+      return a[1] - b[1];
+    });
+
+    return stabilizedThis.map((el) => el[0]);
+  }
+
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listCTSP.length) : 0;
+
+  const filteredUsers =
+    listCTSP && listCTSP ? applySortFilter(listCTSP, getComparator(order, orderBy), filterName) : [];
+  const isNotFound = !filteredUsers.length && !!filterName;
+
+  // validate
+  const [emptyTen, setEmptyTen] = useState(false);
+
+  const handleTenChange = (event) => {
+    const { value } = event.target;
+    setTenSp(value);
+    setEmptyTen(value.trim() === '');
+  };
+
+  const [emptyMS, setEmptyMS] = useState(false);
+  const handleAttChange = (value, setFunc, setEmpty) => {
+    setFunc(value);
+    setEmpty(false);
+  };
+
+  const checkEmptyCBB = () => {
+    if (mauSac === '') {
+      setEmptyMS(true);
+    }
+  };
+
+  const [giaNhapErr, setGiaNhapErr] = useState('');
+  const [giaBanErr, setGiaBanErr] = useState('');
+  const [soLuongErr, setSoLuongErr] = useState('');
+  const hanldeSaveGiaSL = (value, setFunc, errFunc, thongBao) => {
+    if (value.trim() === '') {
+      errFunc(`${thongBao} không được để trống.`);
+    }
+    // Kiểm tra nếu giá trị không phải là số hoặc là số âm
+    else if (!/^\d+$/.test(value.trim()) || parseInt(value, 10) <= 0) {
+      errFunc(`${thongBao} phải là số nguyên dương.`);
+    } else {
+      errFunc('');
+    }
+    setFunc(value);
+  };
+
+  const hanldeCheckGiaSL = (value, errFunc, thongBao) => {
+    if (typeof value !== 'string' && typeof value !== 'number') {
+      errFunc(`${thongBao} phải là một chuỗi hoặc số.`);
+    } else {
+      const stringValue = String(value).trim(); // Chuyển đổi thành chuỗi và loại bỏ khoảng trắng
+      if (stringValue === '') {
+        errFunc(`${thongBao} không được để trống.`);
+      } else if (!/^\d+$/.test(stringValue) || parseInt(stringValue, 10) <= 0) {
+        errFunc(`${thongBao} phải là số nguyên dương.`);
+      } else {
+        errFunc('');
+      }
+    }
+  };
+
   return (
     <>
       <Helmet>
@@ -464,11 +756,13 @@ export default function UpdateSanPham() {
                 id="fullWidth"
                 label="Tên sản phẩm"
                 fullWidth
-                onChange={(event) => setTenSp(event.target.value)}
+                onChange={handleTenChange}
+                error={emptyTen}
+                helperText={emptyTen ? 'Tên không được để trống' : ''}
                 value={tenSp}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               {listCL.length > 0 && (
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Chất liệu</InputLabel>
@@ -479,17 +773,28 @@ export default function UpdateSanPham() {
                     value={chatLieu}
                     onChange={(event) => setChatLieu(event.target.value)}
                   >
-                    {listCL.map((item, index) => (
-                      <MenuItem value={item.idCl} key={index}>
-                        {item.tenCl}
-                      </MenuItem>
-                    ))}
+                    {listCL
+                      .filter((item) => item.trangThai === 0)
+                      .map((item, index) => (
+                        <MenuItem value={item.idCl} key={index}>
+                          {item.tenCl}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               )}
             </Grid>
+            <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={() => handleOpenQuickAtt('Chất liệu', 'idCl', 'maCl', 'tenCl')}
+              >
+                <MoreHorizIcon />
+              </Button>
+            </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={5}>
               {listLSP.length > 0 && (
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Loại sản phẩm</InputLabel>
@@ -500,16 +805,28 @@ export default function UpdateSanPham() {
                     value={loaiSP}
                     onChange={(event) => setLoaiSP(event.target.value)}
                   >
-                    {listLSP.map((option, index) => (
-                      <MenuItem key={index} value={option.idLoaisp}>
-                        {option.tenLsp}
-                      </MenuItem>
-                    ))}
+                    {listLSP
+                      .filter((item) => item.trangThai === 0)
+                      .map((item, index) => (
+                        <MenuItem key={index} value={item.idLoaisp}>
+                          {item.tenLsp}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               )}
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={() => handleOpenQuickAtt('Loại sản phẩm', 'idLoaisp', 'maLsp', 'tenLsp')}
+              >
+                <MoreHorizIcon />
+              </Button>
+            </Grid>
+
+            <Grid item xs={5}>
               {listXX.length > 0 && (
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Xuất xứ</InputLabel>
@@ -520,16 +837,28 @@ export default function UpdateSanPham() {
                     value={xuatXu}
                     onChange={(event) => setXuatXu(event.target.value)}
                   >
-                    {listXX.map((item, index) => (
-                      <MenuItem value={item.idXx} key={index}>
-                        {item.tenNuoc}
-                      </MenuItem>
-                    ))}
+                    {listXX
+                      .filter((item) => item.trangThai === 0)
+                      .map((item, index) => (
+                        <MenuItem value={item.idXx} key={index}>
+                          {item.tenNuoc}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               )}
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={() => handleOpenQuickAtt('Xuất xứ', 'idXx', 'maXx', 'tenNuoc')}
+              >
+                <MoreHorizIcon />
+              </Button>
+            </Grid>
+
+            <Grid item xs={5}>
               {listCoAo.length > 0 && (
                 <FormControl fullWidth>
                   <InputLabel id="demo-simple-select-label">Loại cổ áo</InputLabel>
@@ -540,57 +869,90 @@ export default function UpdateSanPham() {
                     value={coAo}
                     onChange={(event) => setCoAo(event.target.value)}
                   >
-                    {listCoAo.map((item, index) => (
-                      <MenuItem value={item.idCoAo} key={index}>
-                        {item.loaiCoAo}
-                      </MenuItem>
-                    ))}
+                    {listCoAo
+                      .filter((item) => item.trangThai === 0)
+                      .map((item, index) => (
+                        <MenuItem value={item.idCoAo} key={index}>
+                          {item.loaiCoAo}
+                        </MenuItem>
+                      ))}
                   </Select>
                 </FormControl>
               )}
             </Grid>
+            <Grid item xs={1} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={() => handleOpenQuickAtt('Loại cổ áo', 'idCoAo', 'maCoAo', 'loaiCoAo')}
+              >
+                <MoreHorizIcon />
+              </Button>
+            </Grid>
             <Grid item xs={6}>
-              {listTayAo.length > 0 && (
-                <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Ống tay áo</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-label"
-                    id="demo-simple-select"
-                    label="Ống tay áo"
-                    value={tayAo}
-                    onChange={(event) => setTayAo(event.target.value)}
+              <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+                <Grid item xs={10}>
+                  {listTayAo.length > 0 && (
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">Ống tay áo</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Ống tay áo"
+                        value={tayAo}
+                        onChange={(event) => setTayAo(event.target.value)}
+                      >
+                        {listTayAo
+                          .filter((item) => item.trangThai === 0)
+                          .map((option, index) => (
+                            <MenuItem key={index} value={option.idTayAo}>
+                              {option.loaiTayAo}
+                            </MenuItem>
+                          ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                </Grid>
+                <Grid item xs={2} sx={{ display: 'flex', marginTop: '4px' }}>
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    onClick={() => handleOpenQuickAtt('Ống tay áo', 'idTayAo', 'maTayAo', 'loaiTayAo')}
                   >
-                    {listTayAo.map((option, index) => (
-                      <MenuItem key={index} value={option.idTayAo}>
-                        {option.loaiTayAo}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-              <div>
-                <RadioGroup
-                  row
-                  aria-labelledby="demo-row-radio-buttons-group-label"
-                  name="row-radio-buttons-group"
-                  sx={{ marginTop: '15px' }}
-                >
-                  <FormControlLabel
-                    value="0"
-                    control={<Radio />}
-                    label="Còn bán"
-                    checked={Number(trangThai) === 0}
-                    onChange={(event) => setTrangThai(event.target.value)}
-                  />
-                  <FormControlLabel
-                    value="10"
-                    control={<Radio />}
-                    label="Ngừng kinh doanh"
-                    checked={Number(trangThai) === 10}
-                    onChange={(event) => setTrangThai(event.target.value)}
-                  />
-                </RadioGroup>
-              </div>
+                    <MoreHorizIcon />
+                  </Button>
+                </Grid>
+                <Grid item xs={12}>
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    sx={{ marginTop: '15px' }}
+                  >
+                    <FormControlLabel
+                      value="0"
+                      control={<Radio />}
+                      label="Còn bán"
+                      checked={Number(trangThai) === 0}
+                      onChange={(event) => setTrangThai(event.target.value)}
+                    />
+                    <FormControlLabel
+                      value="10"
+                      control={<Radio />}
+                      label="Ngừng kinh doanh"
+                      checked={Number(trangThai) === 10}
+                      onChange={(event) => setTrangThai(event.target.value)}
+                    />
+                    <FormControlLabel
+                      value="9"
+                      control={<Radio />}
+                      label="Đang cập nhật"
+                      checked={Number(trangThai) === 9}
+                      onChange={(event) => setTrangThai(event.target.value)}
+                    />
+                  </RadioGroup>
+                </Grid>
+              </Grid>
             </Grid>
 
             <Grid item xs={6}>
@@ -618,12 +980,15 @@ export default function UpdateSanPham() {
           </div>
         </Card>
 
-        <Card sx={{ padding: '25px', marginTop: '15px' }}>
+        <Card sx={{ marginTop: '15px', padding: '25px' }}>
           <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Typography variant="h6" gutterBottom>
                 Cập nhật thuộc tính
               </Typography>
+            </Grid>
+            <Grid item xs={6} sx={{ margin: '-24px' }}>
+              <UserListToolbar filterName={filterName} onFilterName={handleFilterByName} sx={{ width: '500px' }} />
             </Grid>
             <Grid item xs={6} style={{ textAlign: 'right' }}>
               <Button
@@ -634,41 +999,82 @@ export default function UpdateSanPham() {
                 Thêm thuộc tính
               </Button>
             </Grid>
-            <Grid item xs={12}>
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Màu sắc</TableCell>
-                      <TableCell>Size</TableCell>
-                      <TableCell>Giá nhập</TableCell>
-                      <TableCell>Giá bán</TableCell>
-                      <TableCell>Số lượng tồn</TableCell>
-                      <TableCell>Trạng thái</TableCell>
-                      <TableCell> </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {listCTSP.map((row) => (
-                      <TableRow key={row.idCtsp} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                        <TableCell component="th" scope="row">
-                          {row.idMs.tenMs}
-                        </TableCell>
-                        <TableCell>{row.idSize.tenSize}</TableCell>
-                        <TableCell>{formatCurrency(row.giaNhap)}</TableCell>
-                        <TableCell>{formatCurrency(row.giaBan)}</TableCell>
-                        <TableCell>{row.soLuongTon}</TableCell>
-                        <TableCell>{renderTrangThai(row.trangThai)}</TableCell>
-                        <TableCell>
-                          <IconButton aria-label="add an alarm" onClick={() => handleClickEditAtt(row.idCtsp)}>
-                            <EditIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+            <Grid item xs={12} sx={{ paddingBottom: '15px' }}>
+              <Scrollbar>
+                <TableContainer sx={{ minWidth: 800 }}>
+                  <Table>
+                    <UserListHeadNoCheckBox
+                      order={order}
+                      orderBy={orderBy}
+                      headLabel={TABLE_HEAD}
+                      rowCount={listCTSP.length}
+                      onRequestSort={handleRequestSort}
+                    />
+                    <TableBody>
+                      {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
+                        const { tenMs, tenSize, giaNhap, giaBan, soLuongTon, trangThai } = row;
+                        return (
+                          <TableRow hover key={index} tabIndex={-1}>
+                            <TableCell component="th" scope="row">
+                              {index + 1}
+                            </TableCell>
+                            <TableCell>{tenMs}</TableCell>
+                            <TableCell>{tenSize}</TableCell>
+                            <TableCell>{formatCurrency(giaNhap)}</TableCell>
+                            <TableCell>{formatCurrency(giaBan)}</TableCell>
+                            <TableCell>{soLuongTon === null ? 0 : soLuongTon}</TableCell>
+                            <TableCell>{renderTrangThai(trangThai)}</TableCell>
+                            <TableCell>
+                              <IconButton aria-label="add an alarm" onClick={() => handleClickEditAtt(row.idCtsp)}>
+                                <EditIcon />
+                              </IconButton>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                      {emptyRows > 0 && (
+                        <TableRow style={{ height: 53 * emptyRows }}>
+                          <TableCell colSpan={3} />
+                        </TableRow>
+                      )}
+                    </TableBody>
+
+                    {isNotFound && (
+                      <TableBody>
+                        <TableRow>
+                          <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                            <Paper
+                              sx={{
+                                textAlign: 'center',
+                              }}
+                            >
+                              <Typography variant="h6" paragraph>
+                                Not found
+                              </Typography>
+
+                              <Typography variant="body2">
+                                No results found for &nbsp;
+                                <strong>&quot;{filterName}&quot;</strong>.
+                                <br /> Try checking for typos or using complete words.
+                              </Typography>
+                            </Paper>
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    )}
+                  </Table>
+                </TableContainer>
+              </Scrollbar>
+
+              <TablePagination
+                rowsPerPageOptions={[5, 10, 25]}
+                component="div"
+                count={listCTSP && listCTSP.length ? listCTSP.length : 0}
+                rowsPerPage={rowsPerPage}
+                page={page}
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+              />
             </Grid>
           </Grid>
         </Card>
@@ -688,16 +1094,16 @@ export default function UpdateSanPham() {
                         <CardActionArea>
                           <Box position="relative">
                             <CardMedia component="img" height="200" image={item.url} alt="green iguana" />
-                            <IconButton
-                              sx={{ position: 'absolute', top: 0, right: 0 }}
-                              size="small"
-                              color="primary"
-                              onClick={() => handlDeleteImg(item.idImage, item.url)}
-                            >
-                              <DeleteIcon sx={{ color: pink[500], fontSize: 40 }} />
-                            </IconButton>
                           </Box>
                         </CardActionArea>
+                        <IconButton
+                          sx={{ position: 'absolute', top: 0, right: 0 }}
+                          size="small"
+                          color="primary"
+                          onClick={() => handlDeleteImg(item.idImage, item.url)}
+                        >
+                          <DeleteIcon sx={{ color: pink[500], fontSize: 40 }} />
+                        </IconButton>
                       </Card>
                     </Grid>
                   ))}
@@ -708,8 +1114,8 @@ export default function UpdateSanPham() {
                       <div {...getRootProps()} className="dropzone">
                         <input {...getInputProps()} />
                         <p>
-                          <AddPhotoAlternateIcon sx={{ fontSize: 40 }} /> Kéo hoặc thả ảnh vô đây, hoặc click để chọn
-                          ảnh
+                          <AddPhotoAlternateIcon sx={{ fontSize: 40 }} />
+                          {'Kéo hoặc thả ảnh vô đây, hoặc click để chọn ảnh! (Lưu ý dung lượng ảnh phải <= 1 MB)'}
                         </p>
                       </div>
                     </Card>
@@ -749,45 +1155,77 @@ export default function UpdateSanPham() {
         <DialogTitle id="alert-dialog-title">{'Thêm thuộc tính'}</DialogTitle>
         <DialogContent>
           <div className="listMauSac">
-            {listMS.length > 0 && (
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Màu sắc</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  label="Màu sắc"
-                  value={mauSac}
-                  onChange={(event) => setMauSac(event.target.value)}
+            <Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+              <Grid item xs={10}>
+                {listMS.length > 0 && (
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Màu sắc</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Màu sắc"
+                      value={mauSac}
+                      onChange={(event) => handleAttChange(event.target.value, setMauSac, setEmptyMS)}
+                      error={emptyMS}
+                    >
+                      {listMS
+                        .filter((item) => item.trangThai === 0)
+                        .map((item, index) => (
+                          <MenuItem value={item.idMs} key={index}>
+                            {item.tenMs}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
+                )}
+              </Grid>
+
+              <Grid item xs={1} sx={{ display: 'flex', marginTop: '4px' }}>
+                <Button
+                  variant="outlined"
+                  size="large"
+                  onClick={() => handleOpenQuickAtt('Màu sắc', 'idMs', 'maMs', 'tenMs')}
                 >
-                  {listMS.map((item, index) => (
-                    <MenuItem value={item.idMs} key={index}>
-                      {item.tenMs}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
+                  <MoreHorizIcon />
+                </Button>
+              </Grid>
+            </Grid>
           </div>
           <div className="listSize">
-            <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
-              <div>
-                Size:{' '}
-                {listSize.map((item, itemIndex) => (
+            <Box sx={{ display: 'flex', alignItems: 'center', pb: 1, marginTop: '50px' }}>
+              {listLSP.length > 0 && (
+                <div>
+                  Size:{' '}
+                  {listSize
+                    .filter((item) => item.trangThai === 0)
+                    .map((item, itemIndex) => (
+                      <Button
+                        style={{
+                          marginRight: '4px',
+                          marginBottom: '4px',
+                        }}
+                        key={`size-button-${itemIndex}`}
+                        onClick={() => handleShowSize(item.idSize)}
+                        variant={size === item.idSize ? 'contained' : 'outlined'}
+                        value={size}
+                        size="small"
+                      >
+                        {item.tenSize}
+                      </Button>
+                    ))}
                   <Button
                     style={{
                       marginRight: '4px',
                       marginBottom: '4px',
                     }}
-                    key={`size-button-${itemIndex}`}
-                    onClick={() => handleShowSize(item.idSize)}
-                    variant={size === item.idSize ? 'contained' : 'outlined'}
-                    value={size}
                     size="small"
+                    variant="outlined"
+                    onClick={() => handleOpenQuickAtt('Size', 'idSize', 'maSize', 'tenSize')}
                   >
-                    {item.tenSize}
+                    +
                   </Button>
-                ))}
-              </div>
+                </div>
+              )}
             </Box>
           </div>
         </DialogContent>
@@ -817,7 +1255,9 @@ export default function UpdateSanPham() {
               }}
               fullWidth
               value={giaNhap}
-              onChange={(event) => setGiaNhap(event.target.value)}
+              onChange={(event) => hanldeSaveGiaSL(event.target.value, setGiaNhap, setGiaNhapErr, 'Giá nhập')}
+              error={!!giaNhapErr}
+              helperText={giaNhapErr}
             />
           </div>
           <div className="editAtt">
@@ -830,7 +1270,9 @@ export default function UpdateSanPham() {
               }}
               fullWidth
               value={giaBan}
-              onChange={(event) => setGiaBan(event.target.value)}
+              onChange={(event) => hanldeSaveGiaSL(event.target.value, setGiaBan, setGiaBanErr, 'Giá bán')}
+              error={!!giaBanErr}
+              helperText={giaBanErr}
             />
           </div>
           <div className="editAtt">
@@ -843,7 +1285,9 @@ export default function UpdateSanPham() {
               }}
               fullWidth
               value={soLuongTon}
-              onChange={(event) => setSoLuongTon(event.target.value)}
+              onChange={(event) => hanldeSaveGiaSL(event.target.value, setSoLuongTon, setSoLuongErr, 'Số lượng tồn')}
+              error={!!soLuongErr}
+              helperText={soLuongErr}
             />
           </div>
           <div className="editAtt">
@@ -858,6 +1302,7 @@ export default function UpdateSanPham() {
               >
                 <FormControlLabel value="0" control={<Radio />} label="Còn bán" />
                 <FormControlLabel value="10" control={<Radio />} label="Ngừng kinh doanh" />
+                <FormControlLabel value="9" control={<Radio />} label="Đang cập nhật" />
               </RadioGroup>
             </FormControl>
           </div>
@@ -903,13 +1348,20 @@ export default function UpdateSanPham() {
         </Snackbar>
       </Stack>
 
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={openBD}
-        onClick={() => handleCloseBD()}
-      >
+      <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={openBD}>
         <CircularProgress color="inherit" />
       </Backdrop>
+
+      <ModalQuickAtt
+        openQuickAtt={openQuickAtt}
+        handleCloseQuickAtt={handleCloseQuickAtt}
+        listAtt={listAtt}
+        phanTu={phanTu}
+        addFunc={getAddFunc(phanTu.att)}
+        updateFunc={getUpdateFunc(phanTu.att)}
+        detailFunc={getDetailFunc(phanTu.att)}
+        getAllList={getAllList}
+      />
     </>
   );
 }

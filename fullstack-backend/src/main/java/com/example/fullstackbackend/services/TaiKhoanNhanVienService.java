@@ -9,21 +9,25 @@ import java.util.Optional;
 public interface TaiKhoanNhanVienService {
     List<TaiKhoan> getAll();
 
-//    Page<TaiKhoan> phanTrang(Integer pageNo, Integer size);
-
-    List<TaiKhoan> phanTrang();
+    List<TaiKhoan> chucVu();
 
     TaiKhoan add(TaiKhoan taiKhoan);
 
     Optional<TaiKhoan> getOne(Integer id);
 
-    TaiKhoan delete(Integer id);
+    Boolean delete(Integer id, Integer trangThai);
+
+    Boolean deleteAll(List<Integer> id);
+
+    Boolean checkMailExists(String email);
 
     TaiKhoan update(TaiKhoan taiKhoan, Integer id);
 
     Boolean existsById(Integer id);
 
+    Boolean changePass(TaiKhoan tk,String pass,String passChange);
+
     Optional<TaiKhoan> detail(Integer id);
 
-    List<TaiKhoan> chucVu();
+
 }

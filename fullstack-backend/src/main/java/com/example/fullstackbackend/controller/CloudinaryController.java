@@ -40,7 +40,7 @@ public class CloudinaryController {
                                     @RequestParam("idSp")Integer idSp){
         Map<String, Object> response = new HashMap<>();
         for(MultipartFile image : images){
-            if (!image.isEmpty() && anhService.checkSL()) {
+            if (!image.isEmpty()) {
                 try {
                     String url = cloudinaryService.upload(image);
                     Anh anh = new Anh();
@@ -48,6 +48,7 @@ public class CloudinaryController {
                     anh.setIdSp(sanPhamService.detail(idSp).orElse(null));
                     anh.setTrangThai(0);
                     anhService.add(anh);
+
                 } catch (IOException e) {
                     e.printStackTrace();
                     response.put("error", e.getMessage());

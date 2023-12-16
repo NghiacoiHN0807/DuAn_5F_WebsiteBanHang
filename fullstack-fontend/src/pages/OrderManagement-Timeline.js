@@ -11,16 +11,17 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import {
-  FaBackward,
-  FaCogs,
-  FaPaperPlane,
-  FaRegCalendarCheck,
-  FaRegCheckCircle,
-  FaRegFileAlt,
-  FaMoneyBillWave,
-  FaBug,
-  FaQuestionCircle,
-} from 'react-icons/fa';
+  FcAssistant,
+  FcShipped,
+  FcSurvey,
+  FcHome,
+  FcProcess,
+  FcPrint,
+  FcTodoList,
+  FcSalesPerformance,
+  FcDeleteDatabase,
+  FcCancel,
+} from 'react-icons/fc';
 import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
@@ -28,15 +29,18 @@ import { pink } from '@mui/material/colors';
 import Timeline from '../MappingTimeLine/Timeline';
 import TimelineEvent from '../MappingTimeLine/TimelineEvent';
 import { viewAllHTTT } from '../service/OrderManagementTimeLine';
-import { finByProductOnCart, findById } from '../service/BillSevice';
+import { finByProductOnCart2, findById } from '../service/BillSevice';
 import ModalUpdateStatus from '../forms/Modal-Update-Status';
-import ModalPaymentComfirm from '../forms/Modal-Payment-Confirm';
+import ModalPaymentComfirmTimeline from '../forms/Modal-Payment-Confirm-TimeLine';
 import { getDetailOneHD } from '../service/OderManagementSevice';
 import SelectHistoryBill from '../forms/Modals-SelectHistoryBill';
 import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 import ModalAddProduct from '../forms/Modals-AddProduct';
 import ModalDeleteProductOnCart from '../forms/Modal-Delete-Product';
 import ModalUpdateProductOnCart from '../forms/Modals-Update-Product-Cart';
+import ModalChangeAddress from '../forms/Modals-Change-Address';
+import { selectDiaChiByTK } from '../service/client/Payment';
+import ModalChangeAddressNoAcc from '../forms/Modals-Change-AddressNoAcc';
 
 const styles = {
   container: {
@@ -73,20 +77,16 @@ const OrderManagementTimeline = ({ classes }) => {
 
   const [DataCart, setDataCart] = useState([]);
 
-  const selectDataCart = useCallback(
-    async (page) => {
-      try {
-        const res = await finByProductOnCart(page, idHdParam);
-        if (res) {
-          console.log('Check DataCart: ', res);
-          setDataCart(res);
-        }
-      } catch (error) {
-        console.error(error);
+  const selectDataCart = useCallback(async () => {
+    try {
+      const res = await finByProductOnCart2(idHdParam);
+      if (res) {
+        setDataCart(res);
       }
-    },
-    [idHdParam]
-  );
+    } catch (error) {
+      console.error(error);
+    }
+  }, [idHdParam]);
   useEffect(() => {
     selectDataCart();
   }, [selectDataCart]);
@@ -106,7 +106,7 @@ const OrderManagementTimeline = ({ classes }) => {
   function getColorForTrangThai(trangThai) {
     if (trangThai === 10) return '#ff0000';
     if (trangThai === 6) return '#ffff00';
-    if (trangThai === 7) return '#ffA500';
+    if (trangThai === 7 || trangThai === 12) return '#ffA500';
     if (trangThai >= 0) return '#64a338';
     return '#E3E3E3';
   }
@@ -114,7 +114,7 @@ const OrderManagementTimeline = ({ classes }) => {
   function getTextForTrangThai(trangThai) {
     if (trangThai === 0) return 'Tạo Đơn Hàng Ship';
     if (trangThai === 8) return 'Đã Xác Nhận Đơn Tại Quầy';
-    if (trangThai === 1) return 'Đã Xác Nhận Đơn ';
+    if (trangThai === 1) return 'Đã Xác Nhận Đơn';
     if (trangThai === 2) return 'Đã Xác Nhận Người Mua';
     if (trangThai === 3) return 'Đã Chuyển Cho Đơn Vị';
     if (trangThai === 4 || trangThai === 9) return 'Đã Xác Nhận Thanh Toán';
@@ -122,20 +122,22 @@ const OrderManagementTimeline = ({ classes }) => {
     if (trangThai === 6) return 'Đổi/Trả Hàng';
     if (trangThai === 7) return 'Chỉnh Sửa Đơn Hàng';
     if (trangThai === 10) return 'Đơn Hàng Đã Bị Hủy';
+    if (trangThai === 11) return 'Tạo Hóa Đơn Treo Thành Công';
+    if (trangThai === 12) return 'Chỉnh Sửa Địa Chỉ';
     return 'Trạng Thái Trống';
   }
 
   function getIconForTrangThai(trangThai) {
-    if (trangThai === 0 || trangThai === 8) return FaRegFileAlt;
-    if (trangThai === 1) return FaRegFileAlt;
-    if (trangThai === 2) return FaRegCalendarCheck;
-    if (trangThai === 3) return FaPaperPlane;
-    if (trangThai === 4 || trangThai === 9) return FaMoneyBillWave;
-    if (trangThai === 5) return FaRegCheckCircle;
-    if (trangThai === 6) return FaBackward;
-    if (trangThai === 7) return FaCogs;
-    if (trangThai === 10) return FaBug;
-    return FaQuestionCircle;
+    if (trangThai === 0 || trangThai === 8) return FcPrint;
+    if (trangThai === 1) return FcSurvey;
+    if (trangThai === 2) return FcAssistant;
+    if (trangThai === 3) return FcShipped;
+    if (trangThai === 4 || trangThai === 9) return FcSalesPerformance;
+    if (trangThai === 5) return FcHome;
+    if (trangThai === 6) return FcProcess;
+    if (trangThai === 7 || trangThai === 12) return FcTodoList;
+    if (trangThai === 10) return FcDeleteDatabase;
+    return FcCancel;
   }
 
   //   Handle click Confirm
@@ -153,7 +155,6 @@ const OrderManagementTimeline = ({ classes }) => {
 
   const handleCloseUpdate = () => {
     setShowModalUpdate(false);
-    getListData();
   };
   //
   const handlePayment = () => {
@@ -194,17 +195,21 @@ const OrderManagementTimeline = ({ classes }) => {
         break;
       case 1:
         badgeVariant = 'primary';
-        statusText = 'Đang Chờ Xác Nhận Thông Tin';
+        statusText = 'Đã Xác Nhận Đơn';
         break;
       case 2:
         badgeVariant = 'secondary';
-        statusText = 'Đã Chuyển Cho Đơn Vị';
+        statusText = 'Đã Xác Nhận Người Mua';
         break;
       case 3:
         badgeVariant = 'warning';
-        statusText = 'Xác Nhận Thanh Toán';
+        statusText = 'Đã Chuyển Cho Đơn Vị';
         break;
       case 4:
+        badgeVariant = 'success';
+        statusText = 'Đã Xác Nhận Thanh Toán';
+        break;
+      case 5:
         badgeVariant = 'success';
         statusText = 'Đã Giao Thành Công';
         break;
@@ -284,7 +289,6 @@ const OrderManagementTimeline = ({ classes }) => {
   const [showModalsDelete, setShowModalDelete] = useState(false);
   const [itemDelete, setIntemDelete] = useState();
   const handleDelete = (item) => {
-    console.log('Check item', item);
     setShowModalDelete(true);
     setIntemDelete(item);
   };
@@ -292,6 +296,32 @@ const OrderManagementTimeline = ({ classes }) => {
     setShowModalDelete(false);
     getListData();
   };
+  // Handle Change Address
+  const [showModalsAddress, setShowModalAddress] = useState(false);
+  const [listAddess, setListAddress] = useState([]);
+  const [showModalsAddress1, setShowModalAddress1] = useState(false);
+
+  const handleChangeAddress = async () => {
+    if (listData[0].idHd.idKH) {
+      const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
+      console.log(getData);
+      setListAddress(getData);
+      setShowModalAddress(true);
+    } else {
+      setShowModalAddress1(true);
+      console.log('Sửa Địa Chỉ Mà Không Có Tài Khoản');
+    }
+  };
+
+  const handleCloseAddress = () => {
+    // getDetailHD();
+    setShowModalAddress(false);
+  };
+  const handleCloseAddress1 = () => {
+    setShowModalAddress1(false);
+  };
+  // Format thanhTien
+  const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
   return (
     <>
       <div className="row-order-management-timeline">
@@ -316,7 +346,7 @@ const OrderManagementTimeline = ({ classes }) => {
             variant="contained"
             color="success"
             onClick={() => handleConfirm()}
-            disabled={activeIndex === 10 || activeIndex === 3 || activeIndex >= 5}
+            disabled={activeIndex === 10 || (activeIndex === 3 && listHTTT.length <= 0) || activeIndex >= 5}
           >
             {activeIndex === 0
               ? 'Xác Nhận Hóa Đơn'
@@ -324,8 +354,10 @@ const OrderManagementTimeline = ({ classes }) => {
               ? 'Xác Nhận Thông Tin'
               : activeIndex === 2
               ? 'Chuyển Cho Đơn Vị'
-              : activeIndex === 3
+              : activeIndex === 3 && listHTTT.length <= 0
               ? 'Xác Nhận Thanh Toán'
+              : activeIndex === 3 && listHTTT.length >= 0
+              ? 'Giao Thành Công'
               : activeIndex === 4
               ? 'Giao Thành Công'
               : activeIndex === 5
@@ -334,7 +366,7 @@ const OrderManagementTimeline = ({ classes }) => {
               ? 'Đơn Đã Hoàn Thành'
               : activeIndex === 10
               ? 'Đơn Hàng Đã Bị Hủy'
-              : 'Đơn Đã Hoàn Thành'}
+              : 'Đơn Đã Hoàn Thành1'}
           </Button>{' '}
           <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 1}>
             Hủy Đơn Hàng
@@ -350,8 +382,8 @@ const OrderManagementTimeline = ({ classes }) => {
             <Typography variant="h6" gutterBottom>
               Thông Tin Khách Hàng{' '}
             </Typography>
-            <Button size="small" variant="outlined">
-              Chỉnh sửa thông tin
+            <Button onClick={() => handleChangeAddress()} disabled={activeIndex >= 1} size="small" variant="outlined">
+              Chỉnh Sửa Thông Tin
             </Button>
           </Stack>
         </div>
@@ -369,6 +401,7 @@ const OrderManagementTimeline = ({ classes }) => {
                     <h6>Tên Khách Hàng: {listData[0].idHd.tenKh}</h6>
                     <h6>Số Điện Thoại: {listData[0].idHd.sdtKh}</h6>
                     <h6>Địa Chỉ: {listData[0].idHd.diaChi}</h6>
+                    {listData[0].idHd.email && <h6>Email: {listData[0].idHd.email}</h6>}
                   </>
                 ) : (
                   <>
@@ -392,7 +425,7 @@ const OrderManagementTimeline = ({ classes }) => {
               onClick={() => handlePayment()}
               size="small"
               variant="outlined"
-              disabled={activeIndex < 3 || activeIndex > 3}
+              disabled={activeIndex < 3 || activeIndex > 3 || listHTTT.length > 0}
             >
               Xác nhận thanh toán
             </Button>
@@ -419,8 +452,8 @@ const OrderManagementTimeline = ({ classes }) => {
                       <TableCell component="th" scope="row">
                         {item.hinhThuc}
                       </TableCell>
-                      <TableCell align="right">{item.soTien}</TableCell>
-                      <TableCell align="right">{item.idHd.ngayThanhToan}</TableCell>
+                      <TableCell align="right">{formatCurrency(item.soTien)}</TableCell>
+                      <TableCell align="right">{formatDateTime(item.idHd.ngayThanhToan)}</TableCell>
                     </TableRow>
                   ))
                 ) : (
@@ -479,17 +512,27 @@ const OrderManagementTimeline = ({ classes }) => {
                         <TableCell>{item[4]}</TableCell>
                         <TableCell align="right">{item[5]}</TableCell>
                         <TableCell align="right">
-                          <Button onClick={() => handleUpdateClassify(item)} size="small" variant="outlined">
+                          <Button
+                            onClick={() => handleUpdateClassify(item)}
+                            disabled={activeIndex >= 1}
+                            size="small"
+                            variant="outlined"
+                          >
                             Size: {item[6]}
                             <br />
                             Màu: {item[11]}
                           </Button>
                         </TableCell>
-                        <TableCell align="right">{item[7]}</TableCell>
+                        <TableCell align="right">{formatCurrency(item[7])}</TableCell>
                         <TableCell align="right">{item[8]}</TableCell>
-                        <TableCell align="right">{item[9]}</TableCell>
+                        <TableCell align="right">{formatCurrency(item[9])}</TableCell>
                         <TableCell align="right">
-                          <IconButton aria-label="delete" size="large" onClick={() => handleDelete(item)}>
+                          <IconButton
+                            aria-label="delete"
+                            size="large"
+                            disabled={activeIndex >= 1}
+                            onClick={() => handleDelete(item)}
+                          >
                             <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
                           </IconButton>
                         </TableCell>
@@ -509,15 +552,23 @@ const OrderManagementTimeline = ({ classes }) => {
               </TableBody>
             </Table>{' '}
             {listData.length > 0 && (
-              <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
-                Thành Tiền: {listData[0].idHd.thanhTien}
-              </Typography>
+              <>
+                {listData[0].idHd.tienShip && (
+                  <Typography sx={{ textAlign: 'right' }} variant="subtitle2" gutterBottom>
+                    Tiền Ship: {formatCurrency(listData[0].idHd.tienShip)}
+                  </Typography>
+                )}
+
+                <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
+                  Thành Tiền: {formatCurrency(listData[0].idHd.thanhTien)}
+                </Typography>
+              </>
             )}
           </TableContainer>
           {/* Modal Payment */}
           {listData.length > 0 && (
             <>
-              <ModalPaymentComfirm
+              <ModalPaymentComfirmTimeline
                 show={showModalsAdd}
                 showModalsAdd={showModalsAdd}
                 handleClose={handleClose}
@@ -526,19 +577,25 @@ const OrderManagementTimeline = ({ classes }) => {
                 listHD={listData[0].idHd}
                 tenKhTT={listData[0].idHd.tenKh}
                 sdtKHTT={listData[0].idHd.sdtKh}
+                getListData={getListData}
               />
-              <ModalDeleteProductOnCart
-                open={showModalsDelete}
-                handleClose={handleCloseModalDelelte}
-                itemDelete={itemDelete}
-                selectDataCart={selectDataCart}
-              />
+              {itemDelete !== undefined && (
+                <ModalDeleteProductOnCart
+                  open={showModalsDelete}
+                  handleClose={handleCloseModalDelelte}
+                  itemDelete={itemDelete}
+                  selectDataCart={selectDataCart}
+                  DataCart={DataCart}
+                  getDetailHD={getListData}
+                />
+              )}
               <ModalUpdateProductOnCart
                 show={showModalsUpdate}
                 handleClose={handleCloseUpdateClassify}
                 itemUpdateClassify={itemUpdateClassify}
                 selectDataCart={selectDataCart}
                 itemUpdate={itemUpdate}
+                getDetailHD={getListData}
               />
             </>
           )}
@@ -548,6 +605,7 @@ const OrderManagementTimeline = ({ classes }) => {
             selectDataCart={selectDataCart}
             handleClose={handleClose2}
             DataCart={DataCart}
+            getDetailHD={getListData}
           />
           {/* Modal update status */}
           <ModalUpdateStatus
@@ -555,12 +613,33 @@ const OrderManagementTimeline = ({ classes }) => {
             handleClose={handleCloseUpdate}
             activeIndex={activeIndex}
             getListData={getListData}
+            listHTTT={listHTTT}
           />
           {/* Dialog xác nhận xóa */}
           <ModalDeleteDirectSale open={openDelete} handleClose={handleClose1} information={information} />
         </div>
       </div>
       <SelectHistoryBill open={showModalsDT} handleClose={handleCloseAddDT} listData={listData} />
+      {listAddess && (
+        <>
+          <ModalChangeAddress
+            open={showModalsAddress}
+            listData={listAddess}
+            handleClose={handleCloseAddress}
+            getDetailHD={getListData}
+          />
+        </>
+      )}
+      <ModalChangeAddressNoAcc
+        open={showModalsAddress1}
+        handleClose={handleCloseAddress1}
+        // setTenKH={getTenKHShip}
+        // setSDTKH={getSdtKHShip}
+        // setDiaChi={setResult1}
+        // setEmailKH={getEmailKHShip}
+        // setTienShip={getTienShip}
+        getDetailHD={getListData}
+      />
     </>
   );
 };

@@ -10,6 +10,12 @@ public interface DiaChiSevice {
 
     List<DiaChi> getAllByTK(String maTaiKhoan);
 
+    Boolean Check5DiaChi(String maTaiKhoan);
+
+    Long CheckDiaChi(String maTaiKhoan);
+
+    List<DiaChi> getAllTK(String maTaiKhoan);
+
     List<DiaChi> getAll();
 
 

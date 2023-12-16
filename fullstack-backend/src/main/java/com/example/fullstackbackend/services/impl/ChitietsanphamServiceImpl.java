@@ -1,5 +1,7 @@
 package com.example.fullstackbackend.services.impl;
 
+import com.example.fullstackbackend.DTO.CTSPCustom;
+import com.example.fullstackbackend.DTO.SanPhamCustom;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.repository.ChitietsanphamRepository;
 import com.example.fullstackbackend.repository.MausacRepository;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,6 +103,16 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
     }
 
     @Override
+    public List<ChiTietSanPham> finAllByIDCTSP(Integer idCtsp) {
+        return chitietsanphamRepository.findAllByIdCtsp(idCtsp);
+    }
+
+    @Override
+    public Optional<ChiTietSanPham> findByIdCTSP(Integer idCTSP) {
+        return chitietsanphamRepository.findById(idCTSP);
+    }
+
+    @Override
     public Boolean checkExists(Integer id) {
         return chitietsanphamRepository.existsById(id);
     }
@@ -113,7 +126,7 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
             ctsp.setIdSp(spRepo.findById(idSp).orElse(null));
             ctsp.setIdMs(msRepo.findById(idMs).orElse(null));
             ctsp.setIdSize(sizeRepo.findById(idSize).orElse(null));
-            ctsp.setTrangThai(1);
+            ctsp.setTrangThai(9);
             return chitietsanphamRepository.save(ctsp);
         }
     }
@@ -129,6 +142,24 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
         ctsp.setSoLuongTon(soLuongTon);
         ctsp.setTrangThai(trangThai);
         return chitietsanphamRepository.save(ctsp);
+    }
+
+    @Override
+    public List<CTSPCustom> getCtspForAd(Integer idSp) {
+        List<CTSPCustom> dtos = new ArrayList<>();
+        for (Object[] row : chitietsanphamRepository.ctspForAd(idSp)) {
+            CTSPCustom spCustom = new CTSPCustom();
+            spCustom.setIdCtsp((Integer) row[0]);
+            spCustom.setTenMs((String) row[1]);
+            spCustom.setTenSize((String) row[2]);
+            spCustom.setGiaNhap((BigDecimal) row[3]);
+            spCustom.setGiaBan((BigDecimal) row[4]);
+            spCustom.setSoLuongTon((Integer) row[5]);
+            spCustom.setTrangThai((Integer) row[6]);
+            dtos.add(spCustom);
+        }
+
+        return dtos;
     }
 
 

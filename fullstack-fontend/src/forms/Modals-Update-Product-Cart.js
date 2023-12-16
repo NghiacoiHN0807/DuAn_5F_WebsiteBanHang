@@ -18,11 +18,13 @@ const ModalUpdateProductOnCart = (props) => {
   ModalUpdateProductOnCart.propTypes = {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
-    itemUpdateClassify: PropTypes.array.isRequired,
+    itemUpdateClassify: PropTypes.object.isRequired,
+    getDetailHD: PropTypes.func.isRequired,
+
     selectDataCart: PropTypes.func.isRequired,
-    itemUpdate: PropTypes.array.isRequired,
+    itemUpdate: PropTypes.object.isRequired,
   };
-  const { show, handleClose, itemUpdateClassify, selectDataCart, itemUpdate } = props;
+  const { show, handleClose, itemUpdateClassify, getDetailHD, selectDataCart, itemUpdate } = props;
 
   //   Insert product
   //   Get Name Of Size And Number
@@ -55,25 +57,32 @@ const ModalUpdateProductOnCart = (props) => {
   };
 
   const handleShowMS = (mauSac) => {
-    const checkSoLuong = Array.isArray(itemUpdateClassify)
-      ? [
-          ...new Set(
-            itemUpdateClassify.filter(
-              (item) => item.idMs.tenMs === mauSac.idMs.tenMs && item.idSize.tenSize === selectedSize
-            )
-          ),
-        ]
-      : [];
-    console.log('checkSoLuong:', checkSoLuong);
-
-    if (isMSSelected && selectedMauSac === mauSac.idMs.tenMs) {
-      setSelectedMauSac(null);
-      setIsMSSelected(false);
-      setSelectSoLuongTon([]);
+    if (!mauSac || !mauSac.idMs) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Vui Lòng Chọn Size',
+      });
     } else {
-      setSelectSoLuongTon(checkSoLuong);
-      setSelectedMauSac(mauSac.idMs.tenMs);
-      setIsMSSelected(true);
+      const checkSoLuong = Array.isArray(itemUpdateClassify)
+        ? [
+            ...new Set(
+              itemUpdateClassify.filter(
+                (item) => item.idMs.tenMs === mauSac.idMs.tenMs && item.idSize.tenSize === selectedSize
+              )
+            ),
+          ]
+        : [];
+      console.log('checkSoLuong:', checkSoLuong);
+
+      if (isMSSelected && selectedMauSac === mauSac.idMs.tenMs) {
+        setSelectedMauSac(null);
+        setIsMSSelected(false);
+        setSelectSoLuongTon([]);
+      } else {
+        setSelectSoLuongTon(checkSoLuong);
+        setSelectedMauSac(mauSac.idMs.tenMs);
+        setIsMSSelected(true);
+      }
     }
   };
   const [quantity, setQuantity] = useState(1); // Initialize with a default quantity
@@ -104,22 +113,25 @@ const ModalUpdateProductOnCart = (props) => {
         type: 'warning',
         message: 'Vui lòng chọn số lượng lớn hơn 0',
       });
+    } else if (quantity > selectSoLuongTon[0].soLuongTon) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Sản Phẩm Vượt Quá Số Lượng Tồn',
+      });
     } else {
       const getIdHdCt = itemUpdate[1];
 
       const getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize, selectedMauSac);
-      console.log('getOneCTSP: ', getOneCTSP);
 
       const donGia = getOneCTSP.giaThucTe * quantity;
-      console.log('donGia: ', donGia);
 
       //   Insert to the cart
 
       await updateCart(getIdHdCt, getOneCTSP, quantity, donGia);
       //   Close the modal
-      setSelectedSize(null);
-      handleClose();
-      setQuantity(1);
+      // setSelectedSize(null);
+      handleCloseDetai();
+      // setQuantity(1);
       //   Load new data on cart
       selectDataCart();
       setAlertContent({
@@ -157,10 +169,33 @@ const ModalUpdateProductOnCart = (props) => {
     }
     return null;
   };
+  function formatCurrency(price) {
+    if (!price) return '0';
+
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
+  const handleCloseDetai = () => {
+    handleClose();
+    getDetailHD();
+    setSelectSoLuongTon([]);
+    setAvailableColors([]);
+    setIsMSSelected(false);
+    setIsSizeSelected(false);
+    setSelectedMauSac(null);
+    setSelectedSize(null);
+    setQuantity(1);
+    // Call the original handleClose function
+  };
   return (
     <>
       <div>
-        <Dialog open={show} onClose={handleClose} maxWidth="xl">
+        <Dialog open={show} onClose={handleCloseDetai} maxWidth="xl">
           <DialogTitle>CẬP NHẬP SẢN PHẨM</DialogTitle>
           {itemUpdateClassify.length > 0 && (
             <DialogContent>
@@ -188,7 +223,9 @@ const ModalUpdateProductOnCart = (props) => {
                     <Typography variant="subtitle1" color="text.secondary" component="div">
                       <p>Xuất Xứ: {itemUpdateClassify[0].idSp.idXx.tenNuoc}</p>
                       <p>Chất Liệu: {itemUpdateClassify[0].idSp.idCl.tenCl}</p>
-                      <p>Giá: {selectSoLuongTon.length > 0 ? selectSoLuongTon[0].giaThucTe : priceRange}</p>
+                      <p>
+                        Giá: {selectSoLuongTon.length > 0 ? formatCurrency(selectSoLuongTon[0].giaThucTe) : priceRange}
+                      </p>
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', pb: 1 }}>
                       <div>
@@ -279,7 +316,7 @@ const ModalUpdateProductOnCart = (props) => {
             </DialogContent>
           )}
           <DialogActions>
-            <Button onClick={handleClose}>Hủy</Button>
+            <Button onClick={handleCloseDetai}>Hủy</Button>
             <Button onClick={handleChoose}>Hoàn Tất</Button>
           </DialogActions>
         </Dialog>

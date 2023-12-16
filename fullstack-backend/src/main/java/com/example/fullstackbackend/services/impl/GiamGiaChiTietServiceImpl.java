@@ -1,28 +1,20 @@
 package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.DTO.GiamGiaDTO;
-import com.example.fullstackbackend.DTO.MucGiamDTO;
-import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.GiamGia;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
 import com.example.fullstackbackend.entity.SanPham;
 import com.example.fullstackbackend.repository.GiamGiaChiTietRepository;
 import com.example.fullstackbackend.repository.SanphamRepository;
-import com.example.fullstackbackend.services.ChitietsanphamService;
 import com.example.fullstackbackend.services.GiamGiaChiTietService;
 import com.example.fullstackbackend.services.GiamGiaService;
 import com.example.fullstackbackend.services.SanPhamService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,17 +72,30 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     @Override
     @Transactional
     public void remove(Integer id) {
+        boolean tatCaLaTrangThai0 = true;
         GiamGiaChiTiet giamGiaChiTiet = getOne(id).orElseThrow();
         GiamGia giamGia = giamGiaService.getOne(giamGiaChiTiet.getIdGiamGia().getIdGiamGia()).orElseThrow();
-        giamGia.setTrangThai(10);
         giamGiaChiTiet.setTrangThai(10);
         Integer idSp = giamGiaChiTiet.getIdSp().getIdSp();
         SanPham sanPham = sanPhamService.detail(idSp).orElseThrow();
         sanPham.setTrangThai(0);
         sanPhamService.add(sanPham);
-        giamGiaService.add(giamGia);
         giamGiaChiTietRepository.updateCtsp("amount", BigDecimal.valueOf(0.0), idSp);
         giamGiaChiTietRepository.save(giamGiaChiTiet);
+        List<GiamGiaChiTiet> giamGiaChiTiets = giamGiaChiTietRepository.findAllByIdGiamGia_IdGiamGia(giamGia.getIdGiamGia());
+        for (GiamGiaChiTiet x : giamGiaChiTiets) {
+            if (x.getTrangThai() != 10) {
+                tatCaLaTrangThai0 = false;
+                break; // Có ít nhất một phần tử không có trạng thái 10, dừng kiểm tra
+            }
+        }
+        // Kiểm tra nếu tất cả đều có trạng thái 10
+        if (tatCaLaTrangThai0) {
+            giamGia.setTrangThai(10);
+            giamGiaService.add(giamGia);
+            // Thực hiện câu lệnh khi tất cả đều có trạng thái 10
+            // Ví dụ: System.out.println("Tất cả có trạng thái 10");
+        }
     }
 
     @Override
@@ -145,13 +150,13 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
 
         GiamGia giamGia1 = (GiamGia) giamGiaService.add(giamGiaDTO.getGiamGia());
         List<Integer> idSp = giamGiaDTO.getIdSp();
-        for (Integer i: idSp) {
+        for (Integer i : idSp) {
             Boolean exists = sanphamRepository.existsById(i);
-            if(exists) {
+            if (exists) {
                 giamGiaChiTietRepository.deleteGgctByidSp(Integer.valueOf(i));
                 GiamGiaChiTiet giamGiaChiTiet = new GiamGiaChiTiet();
                 SanPham sanPham = sanPhamService.detail(i).orElseThrow();
-                sanPham.setTrangThai(2);
+                sanPham.setTrangThai(1);
                 giamGiaChiTiet.setIdGiamGia(giamGia1);
                 giamGiaChiTiet.setIdSp(sanPham);
                 sanPhamService.add(sanPham);
@@ -176,14 +181,14 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
         giamGiaDTO.getGiamGia().setIdGiamGia(giamGiaChiTiet.getIdGiamGia().getIdGiamGia());
         GiamGia giamGia1 = (GiamGia) giamGiaService.add(giamGiaDTO.getGiamGia());
         List<Integer> idSp = giamGiaDTO.getIdSp();
-        for (Integer i: idSp) {
+        for (Integer i : idSp) {
             Integer exists = giamGiaChiTietRepository.existsByIdSp_IdSp(i);
-            System.out.println("exists: "+ exists);
-            if(exists >= 1) {
+            System.out.println("exists: " + exists);
+            if (exists >= 1) {
                 GiamGiaChiTiet giamGiaChiTiet1 = new GiamGiaChiTiet();
                 giamGiaChiTiet1.setIdGgct(id);
                 SanPham sanPham = sanPhamService.detail(i).orElseThrow();
-                sanPham.setTrangThai(2);
+                sanPham.setTrangThai(1);
                 giamGiaChiTiet1.setIdGiamGia(giamGia1);
                 giamGiaChiTiet1.setIdSp(sanPham);
                 sanPhamService.add(sanPham);
@@ -200,4 +205,46 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
         }
         return giamGia1;
     }
+
+    @Transactional
+    @Override
+    public Boolean removeAll(List<Integer> ids) {
+        try {
+            for (Integer id : ids) {
+                GiamGiaChiTiet giamGiaChiTiet = getOne(id).orElseThrow();
+                giamGiaChiTiet.setTrangThai(10);
+
+                Integer idGiamGia = giamGiaChiTiet.getIdGiamGia().getIdGiamGia();
+                List<GiamGiaChiTiet> giamGiaChiTiets = giamGiaChiTietRepository.findAllByIdGiamGia_IdGiamGia(idGiamGia);
+                boolean tatCaLaTrangThai10 = giamGiaChiTiets.stream().allMatch(x -> x.getTrangThai() == 10);
+
+                if (tatCaLaTrangThai10) {
+                    GiamGia giamGia = giamGiaService.getOne(idGiamGia).orElseThrow();
+                    giamGia.setTrangThai(10);
+                    giamGiaService.add(giamGia);
+                    // Thực hiện câu lệnh khi tất cả đều có trạng thái 10
+                    // Ví dụ: System.out.println("Tất cả có trạng thái 10");
+                }
+
+                // Update sản phẩm và chi tiết giảm giá trong một giao dịch
+                updateSanPhamAndGiamGiaChiTiet(giamGiaChiTiet);
+            }
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private void updateSanPhamAndGiamGiaChiTiet(GiamGiaChiTiet giamGiaChiTiets) {
+            Integer idSp = giamGiaChiTiets.getIdSp().getIdSp();
+            SanPham sanPham = sanPhamService.detail(idSp).orElseThrow();
+            sanPham.setTrangThai(0);
+            sanPhamService.add(sanPham);
+
+            giamGiaChiTietRepository.updateCtsp("amount", BigDecimal.valueOf(0.0), idSp);
+            giamGiaChiTietRepository.save(giamGiaChiTiets);
+    }
+
 }

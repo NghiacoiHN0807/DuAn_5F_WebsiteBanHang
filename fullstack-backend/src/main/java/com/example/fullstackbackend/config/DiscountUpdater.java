@@ -1,11 +1,12 @@
 package com.example.fullstackbackend.config;
 
+import com.example.fullstackbackend.entity.Coupons;
 import com.example.fullstackbackend.entity.GiamGia;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
 import com.example.fullstackbackend.entity.SanPham;
+import com.example.fullstackbackend.repository.CouponsRepository;
 import com.example.fullstackbackend.repository.GiamGiaChiTietRepository;
 import com.example.fullstackbackend.repository.GiamGiaRepository;
-import com.example.fullstackbackend.services.GiamGiaChiTietService;
 import com.example.fullstackbackend.services.SanPhamService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class DiscountUpdater {
 
     private final GiamGiaChiTietRepository giamGiaChiTietRepository;
 
-    private final GiamGiaChiTietService giamGiaChiTietService;
+    private final CouponsRepository couponsRepository;
 
     private final SanPhamService sanPhamService;
 
@@ -34,8 +35,13 @@ public class DiscountUpdater {
     public void updateDiscount() {
         List<GiamGia> giamGias = giamGiaRepository.findAll();
 
+        List<Coupons> coupons = couponsRepository.findAll();
+
         Date now = new Date();
+
         Date currentTimestamp = new Date(now.getTime());
+
+        boolean tatCaLaTrangThai0 = true;
 
         for (GiamGia giamGia : giamGias) {
             Date ngayKetThuc = giamGia.getNgayKetThuc();
@@ -51,8 +57,31 @@ public class DiscountUpdater {
                     giamGiaChiTietRepository.updateTrangThaiGiamGia(10, giamGia.getIdGiamGia());
                     giamGiaChiTietRepository.updateTrangThaiGiamGiaChiTiet(10, giamGia.getIdGiamGia());
                 }
+
+                for (GiamGiaChiTiet x : giamGiaChiTietList) {
+                    if (x.getTrangThai() != 10) {
+                        tatCaLaTrangThai0 = false;
+                        break; // Có ít nhất một phần tử không có trạng thái 10, dừng kiểm tra
+                    }
+                }
+                // Kiểm tra nếu tất cả đều có trạng thái 10
+                if (tatCaLaTrangThai0) {
+                    giamGia.setTrangThai(10);
+                    giamGiaRepository.save(giamGia);
+                    // Thực hiện câu lệnh khi tất cả đều có trạng thái 10
+                    // Ví dụ: System.out.println("Tất cả có trạng thái 10");
+                }
             }
         }
+
+        for (Coupons coupon: coupons) {
+            Date ngayKetThuc = coupon.getThoiGianKetThuc();
+            if (ngayKetThuc != null && currentTimestamp.after(ngayKetThuc)) {
+                coupon.setTrangThai(10);
+                couponsRepository.save(coupon);
+            }
+        }
+
     }
 
 

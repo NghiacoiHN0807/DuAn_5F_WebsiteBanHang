@@ -4,27 +4,31 @@ import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.services.TaiKhoanNhanVienService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/tai-khoan/")
 @CrossOrigin("http://localhost:3000/")
-@Secured("ADMIN")
+
 public class TaiKhoanNhanVienController {
     @Autowired
     private TaiKhoanNhanVienService taiKhoanNhanVienService;
@@ -41,12 +45,28 @@ public class TaiKhoanNhanVienController {
     }
 
     @PostMapping("add")
-    public TaiKhoan add(@Valid @RequestBody TaiKhoan taiKhoan,
-                        BindingResult bindingResult) {
+    public ResponseEntity<?> add(@Valid @RequestBody TaiKhoan taiKhoan,
+                                 BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return null;
+            Map<String, String> errorMap = new HashMap<>();
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+
+            for (FieldError fieldError : fieldErrors) {
+                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+
+            return ResponseEntity.badRequest().body(errorMap);
         } else {
-            return taiKhoanNhanVienService.add(taiKhoan);
+
+            String email = taiKhoan.getEmail();
+            if (taiKhoanNhanVienService.checkMailExists(email)) {
+                Map<String, String> errorMap = new HashMap<>();
+                errorMap.put("email", "Email đã tồn tại");
+                return ResponseEntity.badRequest().body(errorMap);
+            }
+
+            TaiKhoan addTK = taiKhoanNhanVienService.add(taiKhoan);
+            return ResponseEntity.ok(addTK);
         }
     }
 
@@ -56,21 +76,73 @@ public class TaiKhoanNhanVienController {
         return taiKhoanNhanVienService.detail(id);
     }
 
-    @PatchMapping("delete/{id}")
-    public TaiKhoan delete(@PathVariable("id") Integer id
-    ) {
-        return taiKhoanNhanVienService.delete(id);
+    @DeleteMapping("delete/{id}/{trangThai}")
+    ResponseEntity<?> delete(@PathVariable("id") Integer id,
+                             @PathVariable("trangThai") Integer trangThai) {
+        Boolean exists = taiKhoanNhanVienService.existsById(id);
+        if (!exists) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    "Không tìm thấy id"
+            );
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(
+                taiKhoanNhanVienService.delete(id, trangThai)
+        );
+    }
+
+    @DeleteMapping("delete-all")
+    ResponseEntity<?> deleteAll(@RequestBody List<Integer> id) {
+        if (id.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    "Không tìm thấy id"
+            );
+        } else {
+            Boolean deleteAll = taiKhoanNhanVienService.deleteAll(id);
+            if (deleteAll) {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        "Delete success"
+                );
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                        "Delete false"
+                );
+            }
+        }
     }
 
 
     @PutMapping("update/{id}")
-    public TaiKhoan update(@PathVariable("id") Integer id, @RequestBody TaiKhoan taiKhoan, BindingResult bindingResult) {
+    public ResponseEntity<?> update(@PathVariable("id") Integer id,
+                                    @Valid
+                                    @RequestBody TaiKhoan taiKhoan,
+                                    BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            return null;
+            Map<String, String> errorMap = new HashMap<>();
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            for (FieldError fieldError : fieldErrors) {
+                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+            return ResponseEntity.badRequest().body(errorMap);
         } else {
-            return taiKhoanNhanVienService.update(taiKhoan, id);
+            return ResponseEntity.ok(taiKhoanNhanVienService.update(taiKhoan, id));
         }
     }
 
+    @PostMapping("changePass")
+    public ResponseEntity<?> changePass(@Valid @RequestBody TaiKhoan taiKhoankh, @RequestParam("pass") String pass,
+                                        @RequestParam("newPass") String newPass
+    ) {
+        Map<String, String> textTo = new HashMap<>();
+        Boolean check = taiKhoanNhanVienService.changePass(taiKhoankh, pass, newPass);
+
+        if (check) {
+            textTo.put("Check", "Mật Khẩu Đã Được Đổi");
+            return ResponseEntity.ok(textTo);
+        }
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("matKhau", "Mật khẩu không đúng");
+        return ResponseEntity.badRequest().body(errorMap);
+
+    }
 
 }

@@ -3,16 +3,9 @@ import {useNavigate, useParams} from "react-router-dom";
 import {Helmet} from "react-helmet-async";
 import Badge from "react-bootstrap/Badge";
 import Stack from "@mui/material/Stack";
+import {DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarExport,} from "@mui/x-data-grid";
 import {
-    DataGrid,
-    GridActionsCellItem,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarDensitySelector,
-    GridToolbarExport,
-    GridToolbarFilterButton,
-} from "@mui/x-data-grid";
-import {
+    Box,
     Button,
     Container,
     Dialog,
@@ -31,9 +24,8 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
-// import {toast, ToastContainer} from "react-toastify";
-import {deleteDiaChi, fetchDiaChiByTK} from "../../service/diaChiSevice";
-import {getPhuongXa, getQuanHuyen, getTinhThanhPho} from "../../service/apiDiaChi";
+import Card from "@mui/material/Card";
+import {deleteDiaChi, fetchCountDiaChi, fetchDiaChiByTkAll} from "../../service/diaChiSevice";
 import Iconify from "../../components/iconify";
 import {useAlert} from "../../layouts/dashboard/AlertContext";
 
@@ -47,16 +39,15 @@ const AddressByClient = () => {
     const [selectedLoaiDiaChi, setSelectedLoaiDiaChi] = useState("Tất cả");
     const [originalListData, setOriginalListData] = useState([]);
     const navigate = useNavigate();
-
-    const [listTP, setListTP] = useState([]);
-    const [listQH, setListQH] = useState([]);
-    const [listPX, setListPX] = useState([]);
+    const [tong,setTong]=useState([]);
 
     const {showAlert} = useAlert();
 
-    const getListData = async (idTK, page) => {
+    const getListData = async (idTK) => {
         try {
-            const res = await fetchDiaChiByTK(idTK, page);
+            const res = await fetchDiaChiByTkAll(idTK);
+            const count = await fetchCountDiaChi(idTK);
+            setTong(count);
             setListData(res);
             setOriginalListData(res);
         } catch (error) {
@@ -66,15 +57,7 @@ const AddressByClient = () => {
 
     useEffect(() => {
         getListData(idTK, 0);
-        getListTP();
     }, [idTK]);
-
-    useEffect(() => {
-        listData.forEach((item) => {
-            fetchQuanHuyenAndPhuongXa(item.tinhThanh, item.quanHuyen);
-        });
-        // eslint-disable-next-line
-    }, [listData]);
 
     const fetchUpdatedData = (page) => {
         getListData(idTK, page);
@@ -114,17 +97,17 @@ const AddressByClient = () => {
                 let badgeVariant;
                 let statusText;
                 switch (trangThai) {
-                    case 1:
+                    case 0:
                         badgeVariant = "primary";
-                        statusText = "Đã Xác Nhận";
+                        statusText = "Đang Hoạt Động";
                         break;
-                    case 4:
+                    case 10:
                         badgeVariant = "info";
-                        statusText = "Đã Ngưng hoạt động";
+                        statusText = "Đã Bị Xóa";
                         break;
                     default:
                         badgeVariant = "light";
-                        statusText = "Chưa Xác Nhận";
+                        statusText = "Đang Bị Null";
                         break;
                 }
 
@@ -150,41 +133,6 @@ const AddressByClient = () => {
                 ];
             },
         },];
-    const getListTP = async () => {
-        const resTP = await getTinhThanhPho();
-        setListTP(resTP?.data.results);
-    };
-
-    const getNameByIdTP = (id) => {
-        const province = listTP.find((item) => item.province_id === id);
-        return province ? province.province_name : null;
-    };
-    const getNameByIdQH = (id) => {
-        const province = listQH.find((item) => item.district_id === id);
-        return province ? province.district_name : null;
-    };
-    const getNameByIdPX = (id) => {
-        const province = listPX.find((item) => item.ward_id === id);
-        return province ? province.ward_name : null;
-    };
-
-    const fetchQuanHuyenAndPhuongXa = async (tinhThanhID, quanHuyenID) => {
-        const existingQH = listQH.find(item => item.district_id === quanHuyenID);
-        const existingPX = listPX.find(item => item.ward_id === quanHuyenID);
-
-        if (existingQH && existingPX) {
-            // Data already exists, no need to fetch again
-            return;
-        }
-
-        const quanHuyenData = await getQuanHuyen(tinhThanhID);
-        const phuongXaData = await getPhuongXa(quanHuyenID);
-
-        if (quanHuyenData.status === 200 && phuongXaData.status === 200) {
-            setListQH(prevListQH => [...prevListQH, ...quanHuyenData.data.results]);
-            setListPX(prevListPX => [...prevListPX, ...phuongXaData.data.results]);
-        }
-    };
 
 
     // Xử lý dữ liệu của bảng vào mảng rows
@@ -202,16 +150,13 @@ const AddressByClient = () => {
             maTaiKhoan: item.taiKhoan.maTaiKhoan,
             tenNguoiNhan: item.tenNguoiNhan,
             sdtKh: item.sdt,
-            diaChi: `${getNameByIdTP(item.tinhThanh)}, ${getNameByIdQH(item.quanHuyen)}, ${getNameByIdPX(item.phuongXa)}`,
+            diaChi: `${item.tinhThanh}, ${item.quanHuyen}, ${item.phuongXa}`,
             diaChiCuThe: item.diaChiCuThe,
             loaiDiaChi: item.loaiDiaChi,
             trangThai: item.trangThai,
         }));
 
 
-    const handlePageClick = (page) => {
-        getListData(page + 1);
-    };
 
     useEffect(() => {
         const filteredData = selectedStatus === "Tất cả" ? originalListData // Sử dụng danh sách dữ liệu gốc khi chọn "All"
@@ -261,16 +206,6 @@ const AddressByClient = () => {
     function CustomToolbar() {
         return (
             <GridToolbarContainer>
-                <GridToolbarFilterButton/>
-                <GridToolbarColumnsButton/>
-                <GridToolbarDensitySelector/>
-                <GridToolbarExport
-                    csvOptions={{
-                        fileName: 'address',
-                        utf8WithBom: true,
-                    }}
-                />
-
                 <FormControl variant="standard" sx={{m: 1, minWidth: 120}}>
                     <InputLabel id="status-select">Trạng Thái:</InputLabel>
                     <Select
@@ -281,9 +216,7 @@ const AddressByClient = () => {
                         onChange={(e) => setSelectedStatus(e.target.value)}
                     >
                         <MenuItem value={"Tất cả"}>Tất Cả</MenuItem>
-                        <MenuItem value={0}>Chưa Kích Hoạt</MenuItem>
-                        <MenuItem value={1}>Đã Kích Hoạt</MenuItem>
-                        <MenuItem value={4}>Ngưng Hoạt Động</MenuItem>
+                        <MenuItem value={0}>Đang Hoạt Động</MenuItem>
                         <MenuItem value={10}>Đã Bị Xóa</MenuItem>
                     </Select>
                 </FormControl>
@@ -301,6 +234,13 @@ const AddressByClient = () => {
                         <MenuItem value={1}>Nơi Làm Việc</MenuItem>
                     </Select>
                 </FormControl>
+                <GridToolbarExport
+                    csvOptions={{
+                        fileName: 'address',
+                        utf8WithBom: true,
+                    }}
+                />
+
             </GridToolbarContainer>
         );
     }
@@ -316,30 +256,45 @@ const AddressByClient = () => {
                 <Typography variant="h4" gutterBottom>
                     Thông Tin Địa Chỉ Của Tài Khoản: {idTK}
                 </Typography>
-                <Button variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => handAdd()}>
-                    Tạo Địa Chỉ Mới
-                </Button>
+                <Typography variant="h4" gutterBottom>
+                    Số địa chỉ đang hoạt động: {tong}/5
+                </Typography>
             </Stack>
-            <TextField
-                variant="outlined"
-                sx={{ml: 1, flex: 1}}
-                placeholder="Tìm Kiếm"
-                InputProps={{
-                    startAdornment: (
-                        <IconButton type="button" sx={{p: '10px'}} aria-label="search">
-                            <SearchIcon/>
-                        </IconButton>
-                    ),
-                }}
-                onChange={(e) => setSearchKeyword(e.target.value)}
-            />
+            <Card>
+
+            <Box sx={{ display: 'flex' }}>
+                <Box sx={{ flexGrow: 1 }}>
+                    <TextField
+                        margin="dense"
+                        variant="outlined"
+                        sx={{ml: 1, flex: 1}}
+                        placeholder="Tìm Kiếm"
+                        InputProps={{
+                            startAdornment: (
+                                <IconButton type="button" sx={{p: '10px'}} aria-label="search">
+                                    <SearchIcon/>
+                                </IconButton>
+                            ),
+                        }}
+                        onChange={(e) => setSearchKeyword(e.target.value)}
+                    />
+                </Box>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                    <Button disabled={tong >= 5} variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => handAdd()}>
+                        Tạo Địa Chỉ Mới
+                    </Button>
+                </Box>
+            </Box>
 
             <DataGrid
+                sx={{
+                    border: 'none'
+                }}
                 rows={rows}
                 columns={columns}
                 initialState={{
                     pagination: {
-                        paginationModel: {page: 0, pageSize: 5},
+                        paginationModel: {page: 0, pageSize: 10},
                     },
                 }}
                 slots={{toolbar: CustomToolbar}}
@@ -350,7 +305,7 @@ const AddressByClient = () => {
                 pageSizeOptions={[5, 10, 15]}
             />
 
-
+            </Card>
         </Container>
         <Dialog
             open={open}

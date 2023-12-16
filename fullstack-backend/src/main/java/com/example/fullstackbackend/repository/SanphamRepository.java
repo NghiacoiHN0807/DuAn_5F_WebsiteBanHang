@@ -34,6 +34,23 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "    sp.id_sp, sp.ten_sp;", nativeQuery = true)
     List<Object[]> getSanPhamWithMinImageUrl();
 
+    @Query(value = "SELECT  \n" +
+            "                sp.*,  \n" +
+            "                MIN(img.images), \n" +
+            "                MIN(ctsp.gia_ban) AS gia_ban_nho_nhat, \n" +
+            "                MAX(ctsp.gia_ban) AS gia_ban_lon_nhat \n" +
+            "            FROM  \n" +
+            "                san_pham sp \n" +
+            "            LEFT JOIN  \n" +
+            "                Images img ON sp.id_sp = img.id_sp \n" +
+            "            LEFT JOIN  \n" +
+            "                chi_tiet_san_pham ctsp ON sp.id_sp = ctsp.id_sp \n" +
+            "            WHERE  \n" +
+            "                sp.id_sp =:idSp\n" +
+            "            GROUP BY  \n" +
+            "                sp.id_sp, sp.ten_sp", nativeQuery = true)
+    List<Object[]> getSanPhamWithMinImageUrlByIdSp(@Param("idSp") Integer idSp);
+
     @Query(value =
             "SELECT \n" +
                     "    san_pham.id_sp,\n" +
@@ -91,18 +108,140 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "    sp.id_sp,\n" +
             "    sp.ma_sp,\n" +
             "    sp.ten_sp,\n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_cl) as id_cl,\n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_loaisp) as id_loaisp,\n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_xx) as id_xx,\n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_tay_ao) as id_tay_ao,\n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_co_ao) as id_co_ao,\n" +
+            "    GROUP_CONCAT(DISTINCT ct.id_size) as id_size,\n" +
+            "    GROUP_CONCAT(DISTINCT ct.id_ms) as id_ms,\n" +
+            "    \n" +
             "    sp.mo_ta,\n" +
             "    sp.trang_thai,\n" +
             "    (SELECT img.images FROM images img WHERE img.id_sp = sp.id_sp ORDER BY img.id_images LIMIT 1) AS first_image,\n" +
             "    ctsp.min_gia_ban,\n" +
-            "    ctsp.max_gia_ban\n" +
+            "    ctsp.max_gia_ban,\n" +
+            "    ctsp.giam_gia\n" +
             "FROM san_pham sp\n" +
+            "LEFT JOIN chi_tiet_san_pham ct ON sp.id_sp = ct.id_sp\n" +
             "LEFT JOIN (\n" +
-            "    SELECT id_sp, MIN(gia_ban) as min_gia_ban, max(gia_ban) as max_gia_ban\n" +
+            "    SELECT id_sp,\n" +
+            "        MIN(gia_ban) as min_gia_ban,\n" +
+            "        MAX(gia_ban) as max_gia_ban,\n" +
+            "        MIN(gia_thuc_te) as giam_gia\n" +
             "    FROM chi_tiet_san_pham\n" +
             "    GROUP BY id_sp\n" +
-            ") ctsp ON sp.id_sp = ctsp.id_sp;\n", nativeQuery = true)
-    List<Object[]> getSpWithImg();
+            ") ctsp ON sp.id_sp = ctsp.id_sp\n" +
+            "GROUP BY sp.id_sp, ctsp.min_gia_ban, ctsp.max_gia_ban, ctsp.giam_gia;\n", nativeQuery = true)
+    List<Object[]> getSpForAdmin();
+
+    @Query(value = "SELECT\n" +
+            "            sp.id_sp,\n" +
+            "            GROUP_CONCAT(DISTINCT sp.id_cl) as id_cl,\n" +
+            "            GROUP_CONCAT(DISTINCT sp.id_loaisp) as id_loaisp,\n" +
+            "            GROUP_CONCAT(DISTINCT sp.id_xx) as id_xx,\n" +
+            "            GROUP_CONCAT(DISTINCT sp.id_tay_ao) as id_tay_ao,\n" +
+            "            GROUP_CONCAT(DISTINCT sp.id_co_ao) as id_co_ao,\n" +
+            "            GROUP_CONCAT(DISTINCT ct.id_size) as id_size,\n" +
+            "            GROUP_CONCAT(DISTINCT ct.id_ms) as id_ms,\n" +
+            "\n" +
+            "            sp.ten_sp,\n" +
+            "            sp.trang_thai,\n" +
+            "            (SELECT img.images FROM images img WHERE img.id_sp = sp.id_sp ORDER BY img.id_images LIMIT 1) AS first_image,\n" +
+            "            ctsp.min_gia_ban,\n" +
+            "            ctsp.max_gia_ban,\n" +
+            "            ctsp.giam_gia,\n" +
+            "            MAX(gia_thuc_te) as max_giam_gia\n" +
+            "            \n" +
+            "            FROM san_pham sp\n" +
+            "            JOIN chi_tiet_san_pham ct ON sp.id_sp = ct.id_sp\n" +
+            "            LEFT JOIN (\n" +
+            "\t\t\tSELECT id_sp,\n" +
+            "            MIN(gia_ban) as min_gia_ban,\n" +
+            "            MAX(gia_ban) as max_gia_ban,\n" +
+            "            MIN(gia_thuc_te) as giam_gia,\n" +
+            "            MAX(gia_thuc_te) as max_giam_gia\n" +
+            "            FROM chi_tiet_san_pham\n" +
+            "            WHERE trang_thai = 0\n" +
+            "            GROUP BY id_sp\n" +
+            "            ) ctsp ON sp.id_sp = ctsp.id_sp\n" +
+            " \n" +
+            "            GROUP BY sp.id_sp, ctsp.min_gia_ban, ctsp.max_gia_ban, ctsp.giam_gia\n" +
+            "            HAVING sp.trang_thai = 0 OR sp.trang_thai = 1;", nativeQuery = true)
+    List<Object[]> getSpForClient();
+
+
+    @Query(value = "SELECT sp.id_sp, sp.ten_sp, SUM(hdct.so_luong) AS so_luong_ban\n" +
+            "FROM san_pham sp\n" +
+            "JOIN chi_tiet_san_pham ctsp ON sp.id_sp = ctsp.id_sp\n" +
+            "JOIN hoa_don_chi_tiet hdct ON ctsp.id_ctsp = hdct.id_ctsp\n" +
+            "GROUP BY sp.id_sp, sp.ten_sp\n" +
+            "ORDER BY so_luong_ban DESC\n" +
+            "LIMIT 4;", nativeQuery = true)
+    List<Object[]> topSptrending();
+
+    @Query(value = "SELECT \n" +
+            "                sp.id_sp,\n" +
+            "                GROUP_CONCAT(DISTINCT sp.id_cl) as id_cl, \n" +
+            "                GROUP_CONCAT(DISTINCT sp.id_loaisp) as id_loaisp,\n" +
+            "                GROUP_CONCAT(DISTINCT sp.id_xx) as id_xx, \n" +
+            "                GROUP_CONCAT(DISTINCT sp.id_tay_ao) as id_tay_ao,\n" +
+            "                GROUP_CONCAT(DISTINCT sp.id_co_ao) as id_co_ao, \n" +
+            "                GROUP_CONCAT(DISTINCT ct.id_size) as id_size,\n" +
+            "                GROUP_CONCAT(DISTINCT ct.id_ms) as id_ms,\n" +
+            "                sp.ten_sp,\n" +
+            "                sp.trang_thai,\n" +
+            "                (SELECT img.images FROM images img WHERE img.id_sp = sp.id_sp ORDER BY img.id_images LIMIT 1) AS first_image,\n" +
+            "                ctsp.min_gia_ban,\n" +
+            "                ctsp.max_gia_ban, \n" +
+            "                ctsp.giam_gia\n" +
+            "            FROM san_pham sp\n" +
+            "            JOIN chi_tiet_san_pham ct ON sp.id_sp = ct.id_sp\n" +
+            "            LEFT JOIN (\n" +
+            "              SELECT id_sp, \n" +
+            "                     MIN(gia_ban) as min_gia_ban, \n" +
+            "                     MAX(gia_ban) as max_gia_ban,\n" +
+            "                     MIN(gia_thuc_te) as giam_gia\n" +
+            "              FROM chi_tiet_san_pham\n" +
+            "              GROUP BY id_sp\n" +
+            "            ) ctsp ON sp.id_sp = ctsp.id_sp\n" +
+            "            GROUP BY sp.id_sp, ctsp.min_gia_ban, ctsp.max_gia_ban, ctsp.giam_gia\n" +
+            "            HAVING (sp.trang_thai = 0 OR sp.trang_thai = 1) AND min_gia_ban > giam_gia", nativeQuery = true)
+    List<Object[]> getSpGiamGiaForClient();
+
+    @Query(value = "SELECT \n" +
+            "    sp.id_sp,\n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_cl) AS id_cl, \n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_loaisp) AS id_loaisp,\n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_xx) AS id_xx, \n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_tay_ao) AS id_tay_ao,\n" +
+            "    GROUP_CONCAT(DISTINCT sp.id_co_ao) AS id_co_ao, \n" +
+            "    GROUP_CONCAT(DISTINCT ct.id_size) AS id_size,\n" +
+            "    GROUP_CONCAT(DISTINCT ct.id_ms) AS id_ms,\n" +
+            "    sp.ten_sp,\n" +
+            "    sp.trang_thai,\n" +
+            "    (SELECT img.images FROM images img WHERE img.id_sp = sp.id_sp ORDER BY img.id_images LIMIT 1) AS first_image,\n" +
+            "    ctsp.min_gia_ban,\n" +
+            "    ctsp.max_gia_ban, \n" +
+            "    ctsp.giam_gia,\n" +
+            "    SUM(hdct.so_luong) AS so_luong_ban\n" +
+            "FROM san_pham sp\n" +
+            "JOIN chi_tiet_san_pham ct ON sp.id_sp = ct.id_sp\n" +
+            "LEFT JOIN (\n" +
+            "    SELECT id_sp, \n" +
+            "           MIN(gia_ban) AS min_gia_ban, \n" +
+            "           MAX(gia_ban) AS max_gia_ban,\n" +
+            "           MIN(gia_thuc_te) AS giam_gia\n" +
+            "    FROM chi_tiet_san_pham\n" +
+            "    GROUP BY id_sp\n" +
+            ") ctsp ON sp.id_sp = ctsp.id_sp\n" +
+            "LEFT JOIN hoa_don_chi_tiet hdct ON ct.id_ctsp = hdct.id_ctsp\n" +
+            "LEFT JOIN hoa_don hd ON hdct.id_hd = hd.id_hd\n" +
+            "WHERE (sp.trang_thai = 0 OR sp.trang_thai = 1) AND (hd.trang_thai = 5 OR hd.trang_thai = 9) AND (hdct.trang_thai = 0)\n" +
+            "GROUP BY sp.id_sp, sp.ten_sp, sp.trang_thai, first_image, ctsp.min_gia_ban, ctsp.max_gia_ban, ctsp.giam_gia\n" +
+            "ORDER BY so_luong_ban DESC\n" +
+            "LIMIT 20;", nativeQuery = true)
+    List<Object[]> getTopSpBanChayForClient();
 
     @Query(value = "SELECT \n" +
             "    sp.id_sp,\n" +
@@ -132,14 +271,19 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "  GROUP BY id_sp\n" +
             ") ctsp ON sp.id_sp = ctsp.id_sp\n" +
             "\n" +
+            "WHERE (sp.trang_thai = 0 OR sp.trang_thai = 1) AND sp.id_loaisp =:idLsp AND sp.id_sp <>:idSp\n" +
+            "\n" +
             "GROUP BY sp.id_sp, ctsp.min_gia_ban, ctsp.max_gia_ban, ctsp.giam_gia\n" +
-            "HAVING sp.trang_thai = 0 OR sp.trang_thai = 1;", nativeQuery = true)
-    List<Object[]> getSpForClient();
+            "LIMIT 8;\n", nativeQuery = true)
+    List<Object[]> getRelatedProduct(@Param("idLsp") Integer idLsp, @Param("idSp") Integer idSp);
 
-    @Query(value = "select distinct so_luong,  ten_sp from duan_5f.san_pham sp , duan_5f.chi_tiet_san_pham  ctsp , duan_5f.hoa_don_chi_tiet hdct\n" +
-            "where sp.id_sp = ctsp.id_sp\n" +
-            "and ctsp.id_ctsp = hdct.id_ctsp\n" +
-            "order by so_luong desc\n" +
-            "limit 4;", nativeQuery = true)
-    List<Object[]> topSptrending();
+    @Query(value = "SELECT \n" +
+            "    CASE\n" +
+            "        WHEN COUNT(*) = SUM(CASE WHEN trang_thai = 10 THEN 1 ELSE 0 END) THEN true\n" +
+            "        ELSE false\n" +
+            "    END AS result\n" +
+            "FROM chi_tiet_san_pham\n" +
+            "WHERE id_sp =:idSp", nativeQuery = true)
+
+    Integer setSpIsOut(@Param("idSp") Integer idSp);
 }

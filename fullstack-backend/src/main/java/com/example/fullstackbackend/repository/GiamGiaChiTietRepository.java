@@ -80,4 +80,5 @@ public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, 
     @Query(value = "select * from giam_gia_chi_tiet where id_giam_gia = :idGiamGia", nativeQuery = true)
     List<GiamGiaChiTiet> findByIdGiamGia(@Param("idGiamGia") Integer idGiamGia);
 
+    List<GiamGiaChiTiet> findAllByIdGiamGia_IdGiamGia(Integer idGgct);
 }

@@ -1,10 +1,14 @@
 package com.example.fullstackbackend.controller;
 
+import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
+import com.example.fullstackbackend.services.ChitietsanphamService;
 import com.example.fullstackbackend.services.HoadonchitietSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,9 +18,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/hoa-don-chi-tiet/")
@@ -25,14 +32,24 @@ public class HoaDonChiTietController {
     @Autowired
     private HoadonchitietSevice hoadonchitietSevice;
 
+    @Autowired
+    private ChitietsanphamService chitietsanphamSer;
+
     @GetMapping("view-all")
     public List<HoaDonChiTiet> viewAll() {
         return hoadonchitietSevice.chatlieuPage();
     }
 
+    @GetMapping("view-allProduct/{idKH}")
+    public Page<HoaDonChiTiet> getListProductByIDKH(@RequestParam(defaultValue = "0") Integer page,
+                                                    @RequestParam(defaultValue = "5") Integer size,
+                                                    @RequestParam("p") Optional<Integer> p, @PathVariable("idKH") Integer idKH) {
+        return hoadonchitietSevice.getListProductByIDKH(idKH, p.orElse(page), size);
+    }
+
     @PostMapping("add")
-    public HoaDonChiTiet add(@Valid @RequestBody HoaDonChiTiet newHD,
-                             BindingResult bindingResult) {
+    public ResponseEntity<?> add(@Valid @RequestBody HoaDonChiTiet newHD,
+                                 BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
@@ -44,6 +61,10 @@ public class HoaDonChiTietController {
     public List<Object[]> getSanPhamsWithSizes(@PathVariable("idHd") Integer idHd) {
         return hoadonchitietSevice.getListProductOncart(idHd);
     }
+    @GetMapping("view-all-prduct2/{idHd}")
+    public List<Object[]> getSanPhamsWithSizes2(@PathVariable("idHd") Integer idHd) {
+        return hoadonchitietSevice.getListProductOncart2(idHd);
+    }
 
     @GetMapping("detail-get-one/{id}")
     public List<HoaDonChiTiet> detailCTSP(@PathVariable("id") Integer id) {
@@ -52,8 +73,8 @@ public class HoaDonChiTietController {
     }
 
     @PutMapping("update-hdct/{id}")
-    public HoaDonChiTiet updateHDCT(@Valid @RequestBody HoaDonChiTiet updateHD, @PathVariable("id") Integer id,
-                                    BindingResult bindingResult) {
+    public ResponseEntity<?> updateHDCT(@Valid @RequestBody HoaDonChiTiet updateHD, @PathVariable("id") Integer id,
+                                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
@@ -61,17 +82,30 @@ public class HoaDonChiTietController {
         }
     }
 
+    @PutMapping("return-item")
+    public HoaDonChiTiet returnItem(@Valid @RequestBody HoaDonChiTiet updateHD,
+                                    BindingResult bindingResult) {
+        System.out.println("updateHD: " + updateHD.getIdHdct());
+        if (bindingResult.hasErrors()) {
+            return null;
+        } else {
+            return hoadonchitietSevice.returnItem(updateHD);
+        }
+    }
+
     @PutMapping("update/{id}")
-    public HoaDonChiTiet update(@RequestBody HoaDonChiTiet newHDCT,
-                                @PathVariable("id") Integer id) {
-        HoaDonChiTiet newHD = hoadonchitietSevice.detail(id).map(
+    public ResponseEntity<?> update(@RequestBody HoaDonChiTiet newHDCT,
+                                    @PathVariable("id") Integer id) {
+        return hoadonchitietSevice.detail(id).map(
                 hoaDonChiTiet -> {
+                    ChiTietSanPham ctsp = chitietsanphamSer.findByIdCTSP(newHDCT.getIdCtsp().getIdCtsp()).orElseThrow();
+                    BigDecimal newDonGia = ctsp.getGiaThucTe().multiply(new BigDecimal(newHDCT.getSoLuong()));
                     hoaDonChiTiet.setIdCtsp(newHDCT.getIdCtsp());
                     hoaDonChiTiet.setSoLuong(newHDCT.getSoLuong());
-                    hoaDonChiTiet.setDonGia(newHDCT.getDonGia());
+                    hoaDonChiTiet.setDonGia(newDonGia);
                     return hoadonchitietSevice.update(hoaDonChiTiet);
                 }).orElseThrow(() -> new xuatXuNotFoundException(id));
-        return newHD;
+
     }
 
     @PutMapping("update-cart/{id}")

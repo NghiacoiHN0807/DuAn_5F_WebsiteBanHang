@@ -5,9 +5,10 @@ import { Box, Card, CardActionArea, Link, Stack, Typography } from '@mui/materia
 import { Container } from '@mui/system';
 import { Carousel, Col, Row } from 'react-bootstrap';
 import { styled } from '@mui/material/styles';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
 // utils
 import { useNavigate } from 'react-router-dom';
-import { fCurrency } from '../../utils/formatNumber';
+// import { fCurrency } from '../../utils/formatNumber';
 // import
 import anh1 from '../../assets/slider_2.jpg';
 import anh2 from '../../assets/banner-thoi-trang-nam.jpg';
@@ -18,6 +19,8 @@ import { fetchAllCTSPBySize } from '../../service/BillSevice';
 // @mui
 import Label from '../../components/label';
 import { ColorPreview } from '../../components/color-utils';
+import { getSpGiamGiaForClient, getTopSpBanChayForClient } from '../../service/SanPhamService';
+import { ProductListAll } from '../../sections/@dashboard/products';
 
 const StyledProductImg = styled('img')({
   top: 0,
@@ -28,7 +31,29 @@ const StyledProductImg = styled('img')({
 });
 
 const Home = () => {
+  const [listSPBanChay, setListSPBanChay] = useState([]);
+  const [listSpGiamGia, setListSpGiamGia] = useState([]);
   const [listData, setListData] = useState([]);
+
+  const getListSPBanChay = async () => {
+    try {
+      const res = await getTopSpBanChayForClient();
+      console.log('getListSPBanChay ', res);
+      setListSPBanChay(res);
+    } catch (error) {
+      console.error('Error in list bill: ', error);
+    }
+  };
+
+  const getListSpGiamGia = async () => {
+    try {
+      const res = await getSpGiamGiaForClient();
+      console.log('Check res: ', res);
+      setListSpGiamGia(res);
+    } catch (error) {
+      console.error('Error in list bill: ', error);
+    }
+  };
 
   const getAllData = useCallback(async () => {
     try {
@@ -43,36 +68,55 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
+    getListSPBanChay();
     getAllData();
+    getListSpGiamGia();
   }, [getAllData]);
 
   const navigate = useNavigate();
+  // Format thanhTien
+  function formatCurrency(price) {
+    if (!price) return "0";
+
+    const formatter = new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
+
+  function formatCurrencyNull(price) {
+    if (!price) return "";
+
+    const formatter = new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      minimumFractionDigits: 0,
+    });
+
+    return formatter.format(price);
+  }
 
   const handleChoose = async (id, cover) => {
     console.log('HIHIHI', cover, id);
     navigate(`/client/detail/${id}`);
   };
 
-  const PRODUCTS = listData.map((item, index) => {
+  const PRODUCTS = listSPBanChay.map((item, index) => {
     const setIndex = index + 1;
-    const imagesArray = item[0].split(',');
-    const firstImage = imagesArray[0];
-    const arrayPrice = item[4].split(',');
-    const price = arrayPrice.map((price) => parseFloat(price));
-    // find max and min of price
-    const minPrice = Math.min(...price);
-    const maxPrice = Math.max(...price);
     // Select price
-    const priceRange = minPrice === maxPrice ? minPrice : `${minPrice} ${maxPrice}`;
 
-    const PRODUCT_COLOR = ['#00AB55', '#000000', '#FFFFFF', '#FFC0CB', '#FF4842', '#1890FF', '#94D82D', '#FFC107'];
+    // const PRODUCT_COLOR = ['#00AB55', '#000000', '#FFFFFF', '#FFC0CB', '#FF4842', '#1890FF', '#94D82D', '#FFC107'];
+    const PRODUCT_COLOR = ['#000000', '#FFC0CB', '#94D82D'];
 
     return {
-      id: item[1],
-      cover: firstImage,
-      name: item[3],
-      price: priceRange,
-      priceSale: item[2],
+      id: item.idSp,
+      cover: item.url,
+      name: item.tenSp,
+      price: item.giaMin,
+      priceSale: item.giaThucTe,
       colors:
         (setIndex === 1 && PRODUCT_COLOR.slice(0, 2)) ||
         (setIndex === 2 && PRODUCT_COLOR.slice(1, 3)) ||
@@ -81,7 +125,7 @@ const Home = () => {
         (setIndex === 23 && PRODUCT_COLOR.slice(4, 6)) ||
         (setIndex === 24 && PRODUCT_COLOR.slice(5, 6)) ||
         PRODUCT_COLOR,
-      status: sample(['sale', 'new', 'hot', '']),
+      status: sample(['hot']),
     };
   });
 
@@ -91,24 +135,18 @@ const Home = () => {
 
   const slides = [];
   for (let i = 0; i < numSlides; i += 1) {
+    const start = i * itemsPerSlide;
+    const end = (i + 1) * itemsPerSlide;
+
+    const slideProducts = PRODUCTS.slice(start, end);
+    console.log("slideProducts: ", slideProducts)
     const slide = (
       <Carousel.Item key={i}>
         <Container>
           <Row>
-            {/* {PRODUCTS.map((product, index) => (
-              <Col key={index}>
-                <Card sx={{ maxWidth: 345 }}>
-                  <CardActionArea>
-                    <DialogContent>
-                      <ProductListClient products={[product]} />
-                    </DialogContent>
-                  </CardActionArea>
-                </Card>
-              </Col>
-            ))} */}
-            {PRODUCTS.map((product, index) => (
-              <Col key={index}>
-                <Card sx={{ height: 350, width: '70%' }}>
+            {slideProducts.map((product, index) => (
+              <Col key={index} sm={6} md={4} lg={3} className="product-col">
+                <Card sx={{ height: 350, width: 250 }}>
                   <CardActionArea onClick={() => handleChoose(product.id, product.cover)}>
                     {/* <DialogContent> */}
                     <Box sx={{ pt: '100%', position: 'relative' }}>
@@ -132,26 +170,40 @@ const Home = () => {
 
                     <Stack spacing={2} sx={{ p: 3 }}>
                       <Link color="inherit" underline="hover">
-                        <Typography variant="subtitle2" noWrap>
+                        <Typography variant="subtitle1" noWrap>
                           {product.name}
                         </Typography>
                       </Link>
 
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <ColorPreview colors={product.colors} />
-                        <Typography variant="subtitle1">
-                          <Typography
-                            component="span"
-                            variant="body1"
-                            sx={{
-                              color: 'text.disabled',
-                              textDecoration: 'line-through',
-                            }}
-                          >
-                            {product.priceSale && fCurrency(product.priceSale)}
-                          </Typography>
-                          &nbsp;
-                          {fCurrency(product.price)}
+                        <Typography variant="subtitle2">
+
+                          {product.price === product.priceSale ? (
+                            formatCurrency(product.price)
+                          ) : (
+                            <>
+                              <Typography
+                                component="span"
+                                variant="subtitle2"
+                                sx={{
+                                  color: 'text.disabled',
+                                  textDecoration: 'line-through',
+                                }}
+                              >
+                                {formatCurrencyNull(product.price)}
+                                &nbsp;
+                              </Typography>
+                              &nbsp;
+                              <Typography
+                                component="span"
+                                variant="subtitle2"
+                                sx={{ color: 'error.main' }} // Đổi màu sắc tùy thuộc vào thiết kế của bạn
+                              >
+                                {formatCurrency(product.priceSale)}
+                              </Typography>
+                            </>
+                          )}
                         </Typography>
                       </Stack>
                     </Stack>
@@ -159,21 +211,6 @@ const Home = () => {
                   </CardActionArea>
                 </Card>
               </Col>
-              // <Col key={index}>
-              //   <Card sx={{ maxWidth: 345 }}>
-              //     <CardActionArea>
-              //       <CardMedia component="img" height="140" image={product.cover} alt={product.cover} />
-              //       <CardContent>
-              //         <Typography gutterBottom variant="h5" component="div">
-              //           {product.name}
-              //         </Typography>
-              //         <Typography variant="body2" color="text.secondary">
-              //           {product.price}
-              //         </Typography>
-              //       </CardContent>
-              //     </CardActionArea>
-              //   </Card>
-              // </Col>
             ))}
           </Row>
         </Container>
@@ -189,6 +226,7 @@ const Home = () => {
           <h6 className="hello">XIN CHÀO CÁC BẠN</h6>
           <p>Chào Mừng Đến Với Cửa Hàng 5F Store</p>
         </div>
+
         <div>
           <Carousel>
             <Carousel.Item style={{ height: '400px' }}>
@@ -231,9 +269,17 @@ const Home = () => {
         </div>
         <div className="text">
           <p>Có Lẽ Bạn Đang Mong Chờ</p>
-          <h5>MỘT SỐ CHƯƠNG TRÌNH GIẢM GIÁ</h5>
+          <h5>MỘT SỐ SẢN PHẨM GIẢM GIÁ</h5>
         </div>
-        <div className="">HAHA</div>
+        <div className="container">
+          {listSpGiamGia.length > 0 ? (
+            <ProductListAll products={listSpGiamGia} sx={{ marginBottom: '50px' }} />
+          ) : (
+            <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', marginBottom: '50px' }}>
+              <SearchOffIcon sx={{ fontSize: 80 }} /> Không tìm thấy sản phẩm phù hợp!
+            </Typography>
+          )}
+        </div>
       </section>
     </>
   );

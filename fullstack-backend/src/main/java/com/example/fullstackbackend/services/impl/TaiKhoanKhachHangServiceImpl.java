@@ -2,7 +2,9 @@ package com.example.fullstackbackend.services.impl;
 
 
 import com.example.fullstackbackend.entity.ChucVu;
+import com.example.fullstackbackend.entity.GioHang;
 import com.example.fullstackbackend.entity.TaiKhoan;
+import com.example.fullstackbackend.repository.GioHangReponsitory;
 import com.example.fullstackbackend.repository.TaiKhoanKhachHangRepository;
 import com.example.fullstackbackend.services.TaiKhoanKhachHangSevice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +28,24 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
     private TaiKhoanKhachHangRepository TaiKhoanKhachHangRepository;
 
     @Autowired
+    private GioHangReponsitory gioHangReponsitory;
+
+    @Autowired
     private JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
     private String formMail;
 
-    public void sendEmail(String mail, String content) {
+    public void sendEmail(String mail, String pass) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(formMail);
         message.setTo(mail);
         message.setSubject("Mật khẩu Mới");
-        message.setText("Mật Khẩu: "+content);
+        String content = "Đăng nhập 5F Store" ;
+        content += "\nTên đăng nhập : " + mail;
+        content += "\nMật khẩu hiện tại để đăng nhập : " + pass;
+        content += "\nTrân trọng.";
+        message.setText(content);
 
         mailSender.send(message);
     }
@@ -66,6 +75,7 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
         String PassEncode = encoder.encode(pass);
         sendEmail(add.getEmail(), pass);
         add.setMatKhau(PassEncode);
+
         return TaiKhoanKhachHangRepository.save(add);
     }
 
@@ -86,7 +96,7 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
 
     @Override
     public TaiKhoan update(TaiKhoan update) {
-        ChucVu vc = new ChucVu(9,"CV03","Khách Hàng", Date.valueOf("2023-07-23"),0);
+        ChucVu vc = new ChucVu(9, "CV03", "Khách Hàng", Date.valueOf("2023-07-23"), 0);
         update.setIdChucVu(vc);
         if (!update.getMatKhau().startsWith("$2a$10$")){
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -96,6 +106,24 @@ public class TaiKhoanKhachHangServiceImpl implements TaiKhoanKhachHangSevice {
         }
 
         return TaiKhoanKhachHangRepository.save(update);
+    }
+
+    @Override
+    public Boolean changePass(TaiKhoan tk,String pass,String passChange) {
+        ChucVu vc = new ChucVu(9, "CV03", "Khách Hàng", Date.valueOf("2023-07-23"), 0);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String matKhauMaHoa = tk.getMatKhau();
+        String matKhauBanDau = encoder.matches(pass, matKhauMaHoa) ? pass : null;
+        if (matKhauBanDau == null){
+            return false;
+        }else {
+            String PassEncode = encoder.encode(passChange);
+            tk.setIdChucVu(vc);
+            tk.setMatKhau(PassEncode);
+            TaiKhoanKhachHangRepository.save(tk);
+            return true;
+        }
+
     }
 
     @Override

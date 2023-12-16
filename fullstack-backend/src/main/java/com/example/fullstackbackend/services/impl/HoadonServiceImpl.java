@@ -1,7 +1,11 @@
 package com.example.fullstackbackend.services.impl;
 
 import com.example.fullstackbackend.entity.HoaDon;
+import com.example.fullstackbackend.entity.HoaDonChiTiet;
+import com.example.fullstackbackend.entity.LichSuHoaDon;
 import com.example.fullstackbackend.repository.HoadonRepository;
+import com.example.fullstackbackend.repository.HoadonchitietRepository;
+import com.example.fullstackbackend.repository.LichSuHoaDonRepository;
 import com.example.fullstackbackend.services.HoadonSevice;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +23,16 @@ public class HoadonServiceImpl implements HoadonSevice {
 
     @Autowired
     private HoadonRepository hoadonRepository;
+
+    @Autowired
+    private HoadonchitietRepository hoadonchitietRepo;
+
+    @Autowired
+    private LichSuHoaDonRepository lichSuHoaDonRepo;
+
+    // Get datetime now
+    java.util.Date currentDate = new java.util.Date();
+    Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
 
 
     @Override
@@ -48,9 +62,14 @@ public class HoadonServiceImpl implements HoadonSevice {
     }
 
     @Override
+    public List<HoaDon> findAllByIDKH(Integer idKH) {
+        return hoadonRepository.findAllByIdKH_IdTaiKhoan(idKH);
+    }
+
+    @Override
     public HoaDon add(HoaDon add) {
-        List<HoaDon> allHoaDon = getAll();// Get datetime now
-        LocalDate currentDate = LocalDate.now();
+        List<HoaDon> allHoaDon = getAll();
+
         if (!allHoaDon.isEmpty()) {
 
             String maxMaHd = getAll().stream()
@@ -73,11 +92,11 @@ public class HoadonServiceImpl implements HoadonSevice {
             System.out.println("newNumber: " + newNumber);
 
             add.setMaHd(newNumber);
-            add.setNgayTao(currentDate);
+            add.setNgayTao(currentTimestamp);
             return hoadonRepository.save(add);
         } else {
             add.setMaHd("HD000001");
-            add.setNgayTao(currentDate);
+            add.setNgayTao(currentTimestamp);
             return hoadonRepository.save(add);
         }
     }
@@ -85,6 +104,31 @@ public class HoadonServiceImpl implements HoadonSevice {
     @Override
     public void delete(Integer id) {
         hoadonRepository.delete(id);
+    }
+
+    @Override
+    public void deleteHDOver(Integer idHd) {
+        List<HoaDon> hoaDonList = hoadonRepository.findAllByIDAndTrangThai(idHd, 11);
+        for (HoaDon x :
+                hoaDonList) {
+            List<LichSuHoaDon> lichSuHoaDons = lichSuHoaDonRepo.findAllByIdHd_TrangThai(x.getIdHd(), 11);
+
+            for (LichSuHoaDon y :
+                    lichSuHoaDons) {
+                lichSuHoaDonRepo.deleteById(y.getIdLshd());
+
+            }
+            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepo.findAllByIdHd_TrangThai(x.getIdHd(), 11);
+
+            for (HoaDonChiTiet z :
+                    hoaDonChiTiets) {
+                hoadonchitietRepo.deleteById(z.getIdHdct());
+
+            }
+            hoadonRepository.deleteById(x.getIdHd());
+
+
+        }
     }
 
     @Override
@@ -97,16 +141,21 @@ public class HoadonServiceImpl implements HoadonSevice {
         return hoadonRepository.save(update);
     }
 
+//    @Override
+//    public HoaDon updatePaymentClient(Integer idHd, HoaDon update) {
+//        return hoadonRepository.save(update);
+//    }
+
     @Override
     public Optional<HoaDon> detail(Integer id) {
-        Optional<HoaDon> HoaDon = hoadonRepository.findById(id);
-        return HoaDon;
+        return hoadonRepository.findById(id);
+
     }
 
     @Override
     public HoaDon finByMaHD(Integer maHD) {
-        HoaDon find = hoadonRepository.findByMaHd(maHD);
-        return find;
+        return hoadonRepository.findByMaHd(maHD);
+
     }
 
     @Override
@@ -123,7 +172,7 @@ public class HoadonServiceImpl implements HoadonSevice {
     @Override
     public Double calculateTotalTongTien() {
         Double total = hoadonRepository.calculateTotalTongTien();
-        if(total == null){
+        if (total == null) {
             return 0.0;
         }
         return total;
@@ -131,8 +180,7 @@ public class HoadonServiceImpl implements HoadonSevice {
 
     @Override
     public Long totalInvoice() {
-        long totalInvoices = hoadonRepository.totalInvoice();
-        return totalInvoices;
+        return hoadonRepository.totalInvoice();
     }
 
     public List<Object[]> getTotalRevenueByDay() {

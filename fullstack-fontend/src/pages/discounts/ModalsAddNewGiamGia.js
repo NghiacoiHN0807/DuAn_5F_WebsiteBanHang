@@ -1,17 +1,32 @@
 import * as React from 'react';
-import { useState } from "react";
+import { useState } from 'react';
 import { vi } from 'date-fns/locale'; // Import locale cho tiếng Việt
-import Modal from "react-bootstrap/Modal";
-import { useNavigate } from "react-router-dom";
-import { Alert, Button, Checkbox, Chip, Grid, Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
+import Modal from 'react-bootstrap/Modal';
+import { useNavigate } from 'react-router-dom';
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Chip,
+  Grid,
+  Paper,
+  Snackbar,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TextField,
+} from '@mui/material';
 import { Col, Image, Table } from 'react-bootstrap';
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { add, getAllSanPham } from "../../service/giamGiaService";
-import "../../scss/GiamGiaClient.scss";
-import "../../scss/GiamGiaAdd.scss";
+import { add, getAllSanPham } from '../../service/giamGiaService';
+import '../../scss/GiamGiaClient.scss';
+import '../../scss/GiamGiaAdd.scss';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -26,7 +41,6 @@ function union(a, b) {
 }
 
 const ModelAddNewGiamGia = () => {
-
   // const { show, handleClose, isDataGiamGia, getGiamGia } = props;
   // console.log(dataSanPham)
   const navigate = useNavigate();
@@ -44,19 +58,18 @@ const ModelAddNewGiamGia = () => {
   const getAllSp = async () => {
     try {
       const res = await getAllSanPham();
-      console.log("data: ", res);
+      console.log('data: ', res);
       setLeft(res);
     } catch (error) {
       console.error('Error loading images:', error);
     }
-  }
+  };
 
-
-  console.log("Img: ", image)
+  console.log('Img: ', image);
 
   React.useEffect(() => {
     getAllSp();
-  }, [])
+  }, []);
 
   const leftChecked = intersection(checked, left);
 
@@ -85,10 +98,6 @@ const ModelAddNewGiamGia = () => {
     }
   };
 
-
-
-
-
   const numberOfChecked = (items) => intersection(checked, items).length;
 
   const handleToggleAll = (items) => () => {
@@ -110,9 +119,8 @@ const ModelAddNewGiamGia = () => {
     setChecked(not(checked, leftChecked));
 
     setchiTietList([...chiTietList, ...leftChecked]);
-    console.log([...chiTietList, ...leftChecked])
+    console.log([...chiTietList, ...leftChecked]);
   };
-
 
   const handleCheckedLeft = () => {
     const newLeft = left.concat(chiTietList); // Sửa từ rightChecked sang chiTietList
@@ -133,9 +141,6 @@ const ModelAddNewGiamGia = () => {
     }
     setAlertContent(null);
   };
-
-
-
 
   const handleLeftPageChange = (event, newPage) => {
     setLeftPage(newPage);
@@ -158,11 +163,11 @@ const ModelAddNewGiamGia = () => {
   const isMoveLeftDisabled = chiTietList.length === 0;
 
   function formatCurrency(price) {
-    if (!price) return "0";
+    if (!price) return '0';
 
-    const formatter = new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
       minimumFractionDigits: 0,
     });
 
@@ -179,7 +184,7 @@ const ModelAddNewGiamGia = () => {
     trangThai: 0,
   });
 
-  console.log(chiTietList)
+  console.log(chiTietList);
 
   const { maGiamGia, tenChuongTrinh, mucGiamPhanTram, mucGiamTienMat } = giamGia;
 
@@ -189,12 +194,10 @@ const ModelAddNewGiamGia = () => {
 
   console.log(giamGia);
 
-  const [selected, setSelected] = useState("");
-  const changeHandler = e => {
+  const [selected, setSelected] = useState('');
+  const changeHandler = (e) => {
     setSelected(e.target.value);
   };
-
-
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -214,7 +217,10 @@ const ModelAddNewGiamGia = () => {
       return;
     }
 
-    if (selected === 'phanTram' && (!mucGiamPhanTram || Number.isNaN(mucGiamPhanTram) || mucGiamPhanTram < 1 || mucGiamPhanTram > 50)) {
+    if (
+      selected === 'phanTram' &&
+      (!mucGiamPhanTram || Number.isNaN(mucGiamPhanTram) || mucGiamPhanTram < 1 || mucGiamPhanTram > 50)
+    ) {
       setAlertContent({
         type: 'warning',
         message: 'Vui lòng nhập mức giảm phần trăm hợp lệ (1-50)!',
@@ -238,9 +244,7 @@ const ModelAddNewGiamGia = () => {
       return;
     }
 
-    const checkDateValidity = () => {
-      return ngayKetThuc.isAfter(ngayBatDau);
-    };
+    const checkDateValidity = () => ngayKetThuc.isAfter(ngayBatDau);
 
     if (!checkDateValidity()) {
       setAlertContent({
@@ -251,8 +255,7 @@ const ModelAddNewGiamGia = () => {
     }
 
     try {
-
-// Định dạng ngày và giờ theo múi giờ Việt Nam
+      // Định dạng ngày và giờ theo múi giờ Việt Nam
 
       const selectedDate = dayjs(ngayBatDau);
       const ngay = selectedDate.format('YYYY-MM-DDTHH:mm:ss', { locale: vi });
@@ -262,7 +265,7 @@ const ModelAddNewGiamGia = () => {
       // const formattedDateFirst = format(ngay, 'dd/MM/yyyy HH:mm:ss', { locale: vi });
       // const formattedDateLast = format(ngaykt, 'dd/MM/yyyy HH:mm:ss', { locale: vi });
 
-      console.log("ngay", ngay)
+      console.log('ngay', ngay);
 
       const giaGiaAa = {
         maGiamGia: giamGia.maGiamGia,
@@ -272,20 +275,19 @@ const ModelAddNewGiamGia = () => {
         mucGiamPhanTram: giamGia.mucGiamPhanTram,
         mucGiamTienMat: giamGia.mucGiamTienMat,
         trangThai: 0,
-      }
+      };
 
-      console.log("giaGiaAa", giaGiaAa)
-
+      console.log('giaGiaAa', giaGiaAa);
 
       // Trích xuất danh sách idSp từ chiTietList
-      const idSpList = chiTietList.map(item => item.sanPham.idSp);
+      const idSpList = chiTietList.map((item) => item.sanPham.idSp);
 
       // Cập nhật state listIdSp
       const giamGiaChiTietOk = {
         giamGia: giaGiaAa,
-        idSp: idSpList
-      }
-      console.log("giamGiaChiTietOk", giamGiaChiTietOk);
+        idSp: idSpList,
+      };
+      console.log('giamGiaChiTietOk', giamGiaChiTietOk);
 
       const response = await add(giamGiaChiTietOk);
 
@@ -307,7 +309,6 @@ const ModelAddNewGiamGia = () => {
         message: 'Đã xảy ra lỗi khi thêm giảm giá!',
       });
     }
-
   };
   // if (!giamGiaData) {
   //   return <div>Loading...</div>;
@@ -319,11 +320,11 @@ const ModelAddNewGiamGia = () => {
   return (
     <>
       <Modal.Header>
-        <Modal.Title className='text-center m-25 w-100 text-uppercase'>Tạo chương trình giảm giá</Modal.Title>
+        <Modal.Title className="text-center m-25 w-100 text-uppercase">Tạo chương trình giảm giá</Modal.Title>
       </Modal.Header>
       <div className="d-flex justify-content-around">
         <div className="content-left">
-          <p className='text-center info-discount'>Thông tin giảm giá</p>
+          <p className="text-center info-discount">Thông tin giảm giá</p>
           <Modal.Body>
             <div className="body-add-new">
               <form>
@@ -335,7 +336,7 @@ const ModelAddNewGiamGia = () => {
                     size="small"
                     fullWidth
                     sx={{ marginTop: 2 }}
-                    name='maGiamGia'
+                    name="maGiamGia"
                     label="Mã chương trình"
                     value={maGiamGia}
                     onChange={(e) => onInputChange(e)}
@@ -351,7 +352,7 @@ const ModelAddNewGiamGia = () => {
                     fullWidth
                     sx={{ marginTop: 2 }}
                     label="Tên chương trình"
-                    name='tenChuongTrinh'
+                    name="tenChuongTrinh"
                     value={tenChuongTrinh}
                     onChange={(e) => onInputChange(e)}
                   />
@@ -361,21 +362,33 @@ const ModelAddNewGiamGia = () => {
                   <p className="form-label">Mức Giảm</p>
                   <div>
                     <div className="form-check">
-                      <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="form-check-label" value={"mucGiam"} checked={selected === "mucGiam"} />
-                      <p className="form-check-label">
-                      Tiền Mặt
-                      </p>
+                      <input
+                        className="form-check-input"
+                        onChange={(e) => changeHandler(e)}
+                        type="radio"
+                        name="flexRadioDefault"
+                        id="form-check-label"
+                        value={'mucGiam'}
+                        checked={selected === 'mucGiam'}
+                      />
+                      <p className="form-check-label">Tiền Mặt</p>
                     </div>
                     <div className="form-check">
-                      <input className="form-check-input" onChange={(e) => changeHandler(e)} type="radio" name="flexRadioDefault" id="form-check-label1" value={"phanTram"} checked={selected === "phanTram"} />
-                      <p className="form-check-label1">
-                      Phần Trăm
-                      </p>
+                      <input
+                        className="form-check-input"
+                        onChange={(e) => changeHandler(e)}
+                        type="radio"
+                        name="flexRadioDefault"
+                        id="form-check-label1"
+                        value={'phanTram'}
+                        checked={selected === 'phanTram'}
+                      />
+                      <p className="form-check-label1">Phần Trăm</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="mb-3" aria-hidden={selected !== "phanTram"}>
+                <div className="mb-3" aria-hidden={selected !== 'phanTram'}>
                   <TextField
                     multiline
                     maxRows={4}
@@ -384,13 +397,13 @@ const ModelAddNewGiamGia = () => {
                     fullWidth
                     sx={{ marginTop: 2 }}
                     label="Mức giảm %"
-                    name='mucGiamPhanTram'
+                    name="mucGiamPhanTram"
                     value={mucGiamPhanTram}
                     onChange={(e) => onInputChange(e)}
                   />
                 </div>
 
-                <div className="mb-3" aria-hidden={selected !== "mucGiam"}>
+                <div className="mb-3" aria-hidden={selected !== 'mucGiam'}>
                   <TextField
                     multiline
                     maxRows={4}
@@ -399,7 +412,7 @@ const ModelAddNewGiamGia = () => {
                     fullWidth
                     sx={{ marginTop: 2 }}
                     label="Mức giảm tiền mặt"
-                    name='mucGiamTienMat'
+                    name="mucGiamTienMat"
                     value={mucGiamTienMat}
                     onChange={(e) => onInputChange(e)}
                   />
@@ -413,7 +426,7 @@ const ModelAddNewGiamGia = () => {
                         <DateTimePicker
                           defaultValue={todayAtNoon}
                           minDateTime={todayAt9AM}
-                          name='ngayBatDau'
+                          name="ngayBatDau"
                           value={ngayBatDau}
                           onChange={(newDate) => setNgayBatDau(newDate)}
                         />
@@ -430,7 +443,7 @@ const ModelAddNewGiamGia = () => {
                         <DateTimePicker
                           defaultValue={todayAtNoon}
                           minDateTime={todayAt9AM}
-                          name='ngayKetThuc'
+                          name="ngayKetThuc"
                           value={ngayKetThuc}
                           onChange={(newDate) => setNgayKetThuc(newDate)}
                         />
@@ -451,14 +464,16 @@ const ModelAddNewGiamGia = () => {
                   </LocalizationProvider>
                 </div> */}
 
-                <button onClick={(e) => handleSave(e)} className="btn bg-primary text-light d-flex align-items-end">Thêm</button>
+                <Button onClick={(e) => handleSave(e)} className="btn bg-primary text-light d-flex align-items-end">
+                  Thêm
+                </Button>
               </form>
             </div>
           </Modal.Body>
         </div>
 
         <div className="content-right">
-          <p className='text-center info-discount'>Chọn sản phẩm cần giảm giá</p>
+          <p className="text-center info-discount">Chọn sản phẩm cần giảm giá</p>
           <div>
             <Grid container spacing={2} justifyContent="center" alignItems="center">
               <Grid item>
@@ -484,22 +499,26 @@ const ModelAddNewGiamGia = () => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {left.slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage).map((value, index) =>
-                      (
-                        <TableRow key={`left_${value.sanPham.idSp}`} onClick={handleToggle(value, true)}>
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              value={value.sanPham.idSp}
-                              checked={checked.indexOf(value) !== -1}
-
-                            />
-                          </TableCell>
-                          <TableCell>{index + 1}</TableCell>
-                          <TableCell>{value.sanPham.maSp}</TableCell>
-                          <TableCell>{value.sanPham.tenSp}</TableCell>
-                          <TableCell>{value.sanPham.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
-                        </TableRow>
-                      ))}
+                      {left
+                        .filter((value) => value.sanPham.trangThai === 0)
+                        .slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage)
+                        .map((value, index) => (
+                          <TableRow key={`left_${value.sanPham.idSp}`} onClick={handleToggle(value, true)}>
+                            <TableCell padding="checkbox">
+                              <Checkbox value={value.sanPham.idSp} checked={checked.indexOf(value) !== -1} />
+                            </TableCell>
+                            <TableCell>{index + 1}</TableCell>
+                            <TableCell>{value.sanPham.maSp}</TableCell>
+                            <TableCell>{value.sanPham.tenSp}</TableCell>
+                            <TableCell>
+                              {value.sanPham.trangThai === 0 ? (
+                                <Chip label="Hoạt động" className="bg-success text-light" />
+                              ) : (
+                                <Chip label="Ngưng hoạt động" className="bg-danger text-light" />
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
                     </TableBody>
                   </Table>
                 </TableContainer>
@@ -552,33 +571,45 @@ const ModelAddNewGiamGia = () => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {right.slice(rightPage * rightRowsPerPage, rightPage * rightRowsPerPage + rightRowsPerPage).map((value, index) => (
-                        <TableRow key={`right_${value.sanPham.idSp}`}>
-                          <TableCell padding="checkbox">
-                            <Checkbox
-                              value={value.sanPham.idSp}
-                              checked={chiTietList.indexOf(value) !== -1} // Sử dụng chiTietList thay vì checked
-                              onClick={handleToggle(value, false)} // Đặt isLeft là false để xác định là bảng phải
-                            // onChange={handleChange}
-                            />
-                          </TableCell>
-                          <TableCell>{index + 1}</TableCell>
-                          <TableCell>
-                            <Col xs={6} md={4}>
-                              <Image
-                                rounded
-                                style={{ width: "150px", height: "auto" }}
-                                src={value.url_image}
-                                alt={`Ảnh sản phẩm ${value.maSp}`}
+                      {right
+                        .slice(rightPage * rightRowsPerPage, rightPage * rightRowsPerPage + rightRowsPerPage)
+                        .map((value, index) => (
+                          <TableRow key={`right_${value.sanPham.idSp}`}>
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                value={value.sanPham.idSp}
+                                checked={chiTietList.indexOf(value) !== -1} // Sử dụng chiTietList thay vì checked
+                                onClick={handleToggle(value, false)} // Đặt isLeft là false để xác định là bảng phải
+                              // onChange={handleChange}
                               />
-                            </Col>
-                          </TableCell>
-                          <TableCell>{value.sanPham.maSp}</TableCell>
-                          <TableCell>{value.sanPham.tenSp}</TableCell>
-                          <TableCell>{value.sanPham.giaSmall === value.sanPham.giaBig ? formatCurrency(value.sanPham.giaSmall) : `${formatCurrency(value.sanPham.giaSmall)} - ${formatCurrency(value.sanPham.giaBig)}`}</TableCell>
-                          <TableCell>{value.sanPham.trangThai === 0 ? <Chip label="Hoạt động" className="bg-success text-light" /> : <Chip label="Ngưng hoạt động" className="bg-danger text-light" />}</TableCell>
-                        </TableRow>
-                      ))}
+                            </TableCell>
+                            <TableCell>{index + 1}</TableCell>
+                            <TableCell>
+                              <Col xs={6} md={4}>
+                                <Image
+                                  rounded
+                                  style={{ width: '150px', height: 'auto' }}
+                                  src={value.url_image}
+                                  alt={`Ảnh sản phẩm ${value.maSp}`}
+                                />
+                              </Col>
+                            </TableCell>
+                            <TableCell>{value.sanPham.maSp}</TableCell>
+                            <TableCell>{value.sanPham.tenSp}</TableCell>
+                            <TableCell>
+                              {value.sanPham.giaSmall === value.sanPham.giaBig
+                                ? formatCurrency(value.sanPham.giaSmall)
+                                : `${formatCurrency(value.sanPham.giaSmall)} - ${formatCurrency(value.sanPham.giaBig)}`}
+                            </TableCell>
+                            <TableCell>
+                              {value.sanPham.trangThai === 0 ? (
+                                <Chip label="Hoạt động" className="bg-success text-light" />
+                              ) : (
+                                <Chip label="Ngưng hoạt động" className="bg-danger text-light" />
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
                     </TableBody>
                   </Table>
                 </TableContainer>

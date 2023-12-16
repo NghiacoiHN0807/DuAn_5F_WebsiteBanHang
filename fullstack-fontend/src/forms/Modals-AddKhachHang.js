@@ -14,23 +14,22 @@ import {
   TableCell,
   Typography,
   TableContainer,
-  Popover,
-  MenuItem,
   Card,
   TablePagination,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 
 // components
-import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHeadNoCheckBox, UserListToolbar } from '../sections/@dashboard/user';
 // APIs
 import { getAllDataTaiKhoan } from '../service/BillSevice';
-import { updateKH } from '../service/OrderManagementTimeLine';
+import { updateKH, updateKH1 } from '../service/OrderManagementTimeLine';
 
 const TABLE_HEAD = [
   { id: 'maTaiKhoan', label: 'Mã Khách Hàng', alignRight: false },
@@ -86,17 +85,18 @@ const ModalAddKhachHang = (props) => {
   ModalAddKhachHang.propTypes = {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
-    // setSelectedCustomerName: PropTypes.func.isRequired,
+    getDetailHD: PropTypes.func.isRequired,
+    resetInformation: PropTypes.func.isRequired,
     // setSelectedCustomerEmail: PropTypes.func.isRequired,
     // setSelectedMaTk: PropTypes.func.isRequired,
   };
-  const { open, handleClose } = props;
+  const { open, handleClose, resetInformation, getDetailHD } = props;
   //   open Data on Table
   const [listData, setListData] = useState([]);
 
-  const getAllData = useCallback(async (page) => {
+  const getAllData = useCallback(async () => {
     try {
-      const getData = await getAllDataTaiKhoan(page);
+      const getData = await getAllDataTaiKhoan();
       console.log('getData: ', getData);
       if (getData) {
         setListData(getData);
@@ -113,7 +113,6 @@ const ModalAddKhachHang = (props) => {
   }, [getAllData]);
 
   // Edit table
-  const [open1, setOpen1] = useState(null);
 
   const [page, setPage] = useState(0);
 
@@ -137,10 +136,6 @@ const ModalAddKhachHang = (props) => {
 
   //   setOpen1(event.currentTarget);
   // };
-
-  const handleCloseMenu = () => {
-    setOpen1(null);
-  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -178,17 +173,47 @@ const ModalAddKhachHang = (props) => {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
+  const [alertContent, setAlertContent] = useState(null);
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setAlertContent(null);
+  };
+
   const param = useParams();
   const idHdParam = param.id;
+
+  const handleDeleteKH = async () => {
+    try {
+      setAlertContent({
+        type: 'success',
+        message: 'Đã Chuyển Về Khách Lẻ!!!',
+      });
+      await updateKH1(idHdParam);
+      resetInformation();
+      getDetailHD();
+      handleClose();
+    } catch (error) {
+      console.error(error);
+    }
+  };
   // Get number
   const handleChoose = async (item) => {
-    // setSelectedMaTk(`${item.maTaiKhoan}`);
-    // setSelectedCustomerName(`${item.ho} ${item.ten}`);
-    // setSelectedCustomerEmail(`${item.email}`);
-    console.log(idHdParam, item.idTaiKhoan);
-    await updateKH(idHdParam, item.idTaiKhoan);
+    try {
+      setAlertContent({
+        type: 'success',
+        message: 'Thêm Khách Hàng Thành Công!!!',
+      });
+      await updateKH(idHdParam, item.idTaiKhoan);
+    } catch (error) {
+      console.error(error);
+    }
+    getDetailHD();
     handleClose();
   };
+
   return (
     <>
       <div>
@@ -287,41 +312,25 @@ const ModalAddKhachHang = (props) => {
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </Card>
-            <Popover
-              open={Boolean(open1)}
-              anchorEl={open1}
-              onClose={handleCloseMenu}
-              anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-              PaperProps={{
-                sx: {
-                  p: 1,
-                  width: 140,
-                  '& .MuiMenuItem-root': {
-                    px: 1,
-                    typography: 'body2',
-                    borderRadius: 0.75,
-                  },
-                },
-              }}
-            >
-              <MenuItem>
-                <Iconify icon={'eva:edit-fill'} sx={{ mr: 2 }} />
-                Edit
-              </MenuItem>
-
-              <MenuItem sx={{ color: 'error.main' }}>
-                <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
-                Delete
-              </MenuItem>
-            </Popover>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Hủy</Button>
-            <Button onClick={handleClose}>Hoàn Tất</Button>
+            <Button onClick={handleDeleteKH}>Xóa Khách Hàng</Button>
           </DialogActions>
         </Dialog>
       </div>
+      {alertContent && (
+        <Snackbar
+          open
+          autoHideDuration={3000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+            {alertContent.message}
+          </Alert>
+        </Snackbar>
+      )}
     </>
   );
 };

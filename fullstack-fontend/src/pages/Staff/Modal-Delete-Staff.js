@@ -30,12 +30,10 @@ export default function ModalDeleteDiscount(props) {
   const handleDelete = async () => {
     // Kiểm tra trạng thái trước khi xóa
     if (information.trangThai === 0) {
-      // Thay đổi trạng thái thành 10
-      information.trangThai = 10;
-
       // Gửi yêu cầu xóa
-      await deleteTaiKhoan(information.idTaiKhoan);
-
+      const del= await deleteTaiKhoan(information.idTaiKhoan, 10);
+      console.log("delete Tt" , del);
+      
       // Cập nhật giao diện ngay lập tức
       setAlertContent({
         type: 'success',
@@ -45,11 +43,6 @@ export default function ModalDeleteDiscount(props) {
       setAlertContent({
         type: 'warning',
         message: 'Không thể xóa!!!',
-      });
-    } else {
-      setAlertContent({
-        type: 'error',
-        message: 'Lỗi của chúng tôi!',
       });
     }
     handleClose();

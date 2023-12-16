@@ -4,6 +4,8 @@ import SvgColor from '../../../components/svg-color';
 // ----------------------------------------------------------------------
 
 const icon = (name) => <SvgColor src={`/assets/icons/navbar/${name}.svg`} sx={{ width: 1, height: 1 }} />;
+const getLocalStore = localStorage.getItem('userFormToken');
+const authorities = getLocalStore && JSON.parse(getLocalStore).authorities[0].authority;
 
 const navConfig = [
   {
@@ -14,12 +16,12 @@ const navConfig = [
   {
     title: 'Hóa Đơn',
     path: '/dashboard/bills',
-    icon: icon('ic_analytics'),
+    icon: icon('ic_hoaDon'),
   },
   {
     title: 'Bán Hàng',
     path: '/dashboard/sales',
-    icon: icon('ic_analytics'),
+    icon: icon('ic_banHang'),
   },
   {
     title: 'Quản Lý Sản Phẩm',
@@ -32,6 +34,11 @@ const navConfig = [
     icon: icon('ic_blog'),
   },
   {
+    title: 'Coupons',
+    path: '/dashboard/coupons',
+    icon: icon('ic_blog2'),
+  },
+  {
     title: 'Khách Hàng',
     path: '/dashboard/clients',
     icon: icon('ic_user'),
@@ -39,18 +46,22 @@ const navConfig = [
   {
     title: 'Địa Chỉ',
     path: '/dashboard/address',
-    icon: icon('ic_user'),
+    icon: icon('ic_user2'),
   },
   {
     title: 'Nhân Viên',
     path: '/dashboard/staff',
-    icon: icon('ic_lock'),
+    icon: icon('ic_user3'),
   },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic_disabled'),
-  },
-];
+].filter((item) => {
+  if (authorities === 'ROLE_ADMIN') {
+    return true; // Hiển thị tất cả cho ROLE_ADMIN
+  }
+  if (authorities === 'ROLE_STAFF') {
+    // Ẩn phần tử 'Nhân Viên' cho ROLE_STAFF
+    return item.title !== 'Nhân Viên';
+  }
+  return false; // Trường hợp còn lại không trả về gì cả
+});
 
 export default navConfig;

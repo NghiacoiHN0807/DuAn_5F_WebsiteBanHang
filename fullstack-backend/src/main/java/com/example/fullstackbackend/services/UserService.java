@@ -41,20 +41,35 @@ public class UserService implements UserDetailsService {
         return new CustomUserDetails(taiKhoan);
     }
 
-
-
     @Value("${spring.mail.username}")
     private String formMail;
 
-    private void sendEmail(String mail, String content) {
+    public void sendEmail(String mail, String pass) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(formMail);
         message.setTo(mail);
         message.setSubject("Mật khẩu Mới");
-        message.setText("Mật Khẩu Để Đăng Nhập Tài Khoản Của 5F Store: "+content);
+        String content = "Đăng nhập 5F Store" ;
+        content += "\nTên đăng nhập : " + mail;
+        content += "\nMật khẩu hiện tại để đăng nhập : " + pass;
+        content += "\nTrân trọng.";
+        message.setText(content);
+
         mailSender.send(message);
     }
 
+
+    public TaiKhoanUser forgetPassword(String mail){
+
+            Optional<TaiKhoanUser> tk = findByEmail(mail);
+            String pass = TaiKhoan.generateRandomPassword();
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            String PassEncode = encoder.encode(pass);
+            sendEmail(mail, pass);
+            tk.get().setMatKhau(PassEncode);
+            return userRepository.save(tk.get());
+
+    }
 
     public TaiKhoanUser add(TaiKhoanUser add) {
         ChucVu vc = new ChucVu(9,"CV03","Khách Hàng", Date.valueOf("2023-07-23"),0);
@@ -74,6 +89,9 @@ public class UserService implements UserDetailsService {
 
     public Boolean checkMailExists(String email) {
         return userRepository.existsByEmailAllIgnoreCase(email);
+    }
+    public Boolean checkBan(String email) {
+        return userRepository.checkBan(email);
     }
 
 }

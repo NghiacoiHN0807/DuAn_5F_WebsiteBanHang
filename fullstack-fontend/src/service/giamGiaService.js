@@ -19,6 +19,8 @@ const filerDate = (pageNo, size, first, last) =>
 
 const getAllSanPham = () => custom.get(`/san-pham/minimage`);
 
+const getDetailSanPhamById = (idSp) => custom.get(`/san-pham/minimage/${idSp}`);
+
 const getSanPhamDetails = () => custom.get(`/san-pham/dto`);
 
 const detail = (id) => custom.get(`/giam-gia-chi-tiet/api/detail/${id}`);
@@ -39,6 +41,13 @@ const getImgByIdSp = (idSp) => custom.get(`/images/select-byidSP?id=${idSp}`);
 
 const getIdGiamGia = (id) => custom.get(`/giam-gia-chi-tiet/api/getidGiamGiaByIdggct/${id}`);
 
+const removeAll = (ids) => custom.delete('/giam-gia-chi-tiet/api/remove-all', {
+  data: ids,
+  headers: {
+    'Content-Type': 'application/json', // Make sure to set the content type
+  },
+});
+
 export {
   getSanPhamDetails,
   getIdGiamGia,
@@ -58,4 +67,6 @@ export {
   detailGiamGia,
   detailChiTietSanPham,
   getCtspByIdSp,
+  getDetailSanPhamById,
+  removeAll
 };

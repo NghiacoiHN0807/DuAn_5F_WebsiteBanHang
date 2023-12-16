@@ -17,17 +17,23 @@ const updatePayment = (idHd, tenKh, sdtKh, ngayThanhToan, thanhTien, tienDua, ti
     trangThai,
   });
 
-const updateTongTien = (idHd, tongTien, tienShip) =>
+const updateTongTien = (idHd, tongTien, tienShip, thanhTien) =>
   custom.put(`/hoa-don/update-tong-tien/${idHd}`, {
     tongTien,
     tienShip,
+    thanhTien,
   });
 
-const updatePaymentShip = (idHd, tenKh, sdtKh, ngayThanhToan, diaChi, thanhTien, kieuHoaDon, trangThai) =>
+const updateTienShip = (idHd, tienShip) =>
+  custom.put(`/hoa-don/update-tien-ship/${idHd}`, {
+    tienShip,
+  });
+
+const updatePaymentShip = (idHd, tenKh, sdtKh, email, diaChi, thanhTien, kieuHoaDon, trangThai) =>
   custom.put(`/hoa-don/update-ship-online/${idHd}`, {
     tenKh,
     sdtKh,
-    ngayThanhToan,
+    email,
     diaChi,
     thanhTien,
     kieuHoaDon,
@@ -38,6 +44,7 @@ const updateKH = (idHd, idTaiKhoan) =>
   custom.put(`/hoa-don/update-khach-hang/${idHd}`, {
     idTaiKhoan,
   });
+const updateKH1 = (idHd) => custom.put(`/hoa-don/update-khach-hang1/${idHd}`);
 const getDetailHDCT = (idHd) => custom.get(`/hoa-don-chi-tiet/detail-get-one/${idHd}`);
 
 const viewAllHTTT = (idHd) => custom.get(`/hinh-thuc-thanh-toan/view-all-list/${idHd}`);
@@ -54,6 +61,7 @@ const listHTTTByID = (idHd) => custom.get(`/hoa-don-chi-tiet/detail-get-one/${id
 
 export {
   updateTongTien,
+  updateKH1,
   listHTTTByID,
   updateStatusBill,
   getDetailHDCT,
@@ -62,4 +70,5 @@ export {
   updatePaymentShip,
   viewAllHTTT,
   updateKH,
+  updateTienShip,
 };

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -73,6 +76,11 @@ public class SanPhamController {
         return ResponseEntity.ok(dtoList);
     }
 
+    @GetMapping("/minimage/{idSp}")
+    public SanPhamWithMinImageDTO getSanPhamWithMinImageUrlByIdSp(@PathVariable Integer idSp) {
+        return sanPhamService.getSanPhamWithMinImageUrlByIdSp(idSp);
+    }
+
     @GetMapping("dto")
     public ResponseEntity<List<SanPhamDTO>> getSanPhamDetails() {
         List<SanPhamDTO> page = sanPhamService.getSanPhamDetails();
@@ -80,12 +88,20 @@ public class SanPhamController {
     }
 
     @PostMapping("add")
-    public SanPham add(@Valid @RequestBody SanPham sanPham,
-                       BindingResult bindingResult) {
+    public ResponseEntity<?> add(@Valid @RequestBody SanPham sanPham,
+                                 BindingResult bindingResult) {
+
         if (bindingResult.hasErrors()) {
-            return null;
+            Map<String, String> errorMap = new HashMap<>();
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+
+            for (FieldError fieldError : fieldErrors) {
+                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+
+            return ResponseEntity.badRequest().body(errorMap);
         } else {
-            return sanPhamService.add(sanPham);
+            return ResponseEntity.ok(sanPhamService.add(sanPham));
         }
     }
 
@@ -100,12 +116,25 @@ public class SanPhamController {
     }
 
     @PutMapping("update")
-    public SanPham update(@RequestBody SanPham sanPham) {
-        return sanPhamService.update(sanPham);
+    public ResponseEntity<?> update(@Valid @RequestBody SanPham sanPham,
+                                    BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+
+            for (FieldError fieldError : fieldErrors) {
+                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+            }
+
+            return ResponseEntity.badRequest().body(errorMap);
+        } else {
+            return ResponseEntity.ok(sanPhamService.update(sanPham));
+        }
     }
 
-    @GetMapping("getSpWithImg")
-    public ResponseEntity<List<SanPhamCustom>> getSanPhamDetail()  {
+    @GetMapping("getSpForAdmin")
+    public ResponseEntity<List<SanPhamCustom>> getSanPhamDetail() {
         List<SanPhamCustom> pageSp = sanPhamService.sanPhamCustom();
         return ResponseEntity.ok(pageSp);
     }
@@ -116,9 +145,28 @@ public class SanPhamController {
         return ResponseEntity.ok(pageSp);
     }
 
+    @GetMapping("getSpGiamGiaForClient")
+    public ResponseEntity<List<SanPhamClientDTO>> getSpGiamGiaForClient() {
+        List<SanPhamClientDTO> pageSp = sanPhamService.getSpGiamGiaForClient();
+        return ResponseEntity.ok(pageSp);
+    }
+
+    @GetMapping("getTopSpBanChayForClient")
+    public ResponseEntity<List<SanPhamClientDTO>> getTopSpBanChayForClient() {
+        List<SanPhamClientDTO> pageSp = sanPhamService.getTopSpBanChayForClient();
+        return ResponseEntity.ok(pageSp);
+    }
+
     @GetMapping("/top-sp-trend")
     public List<Object[]> getTopSpTrend() {
         return sanPhamService.topSptrend();
+    }
+
+    @GetMapping("sp-lien-quan/{idLsp}/{idSp}")
+    public ResponseEntity<List<SanPhamClientDTO>> relatedProduct(@PathVariable("idLsp") Integer idLsp,
+                                                                 @PathVariable("idSp") Integer idSp) {
+        List<SanPhamClientDTO> pageSp = sanPhamService.relatedProduct(idLsp, idSp);
+        return ResponseEntity.ok(pageSp);
     }
 
 }
