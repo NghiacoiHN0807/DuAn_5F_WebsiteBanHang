@@ -340,7 +340,7 @@ export default function PaymentPage() {
         type: 'warning',
         message: 'Hãy Nhập Đúng Định Dạng Số Của Việt Nam!!!',
       });
-    } else if (selectedFirstName === '' || selectedLastName === '') {
+    } else if (selectedFirstName.trim() === '' || selectedLastName.trim() === '') {
       setAlertContent({
         type: 'warning',
         message: 'Không Được Để Trống Họ Và Tên!!!',
@@ -386,14 +386,7 @@ export default function PaymentPage() {
       navigate(`/`);
     }
   };
-  // handle payment online
-  // const handlePaymentOnline = async () => {
-  //   const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
-  //   console.log('Check paymentOn: ', paymentOn);
-  //   window.location.href = paymentOn;
 
-  //   console.log('Đi tới thanh toán');
-  // };
   useEffect(() => {
     if (listHD.trangThai === 11) {
       const timeoutId = setTimeout(async () => {
