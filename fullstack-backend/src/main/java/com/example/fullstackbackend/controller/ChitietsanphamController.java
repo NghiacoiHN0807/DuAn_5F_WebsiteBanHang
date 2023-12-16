@@ -68,11 +68,11 @@ public class ChitietsanphamController {
     }
 
 
-    @GetMapping("select-ctsp-byid/{id}")
-    public List<ChiTietSanPham> findByProductId(@PathVariable("id") Integer id) {
-        return chitietsanphamSevice.findByProductId(id);
-
-    }
+//    @GetMapping("select-ctsp-byid/{id}")
+//    public List<ChiTietSanPham> findByProductId(@PathVariable("id") Integer id) {
+//        return chitietsanphamSevice.findByProductId(id);
+//
+//    }
 
     @PostMapping("add/{soLuong}")
     public ChiTietSanPham add(@Valid @RequestBody ChiTietSanPham chiTietSanPham,

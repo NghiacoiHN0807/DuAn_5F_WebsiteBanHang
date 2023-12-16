@@ -73,7 +73,7 @@ function renderTrangThai(trangThai) {
       badgeVariant = 'success';
       statusText = 'Còn bán';
       break;
-    case 1:
+    case 9:
       badgeVariant = 'warning';
       statusText = 'Đang cập nhật';
       break;
@@ -431,27 +431,35 @@ export default function UpdateSanPham() {
 
   // add color and size
   const hanldeAddColorAndSize = async () => {
-    const res = await addColorAndSize(idSpHttp, mauSac, size);
-    console.log('Check res: ', res);
-    if (res && res.idCtsp) {
-      if (res.trangThai === 1) {
-        handleAlertClick('Thêm thành công!', 'success');
-        handleClickEditAtt(res.idCtsp);
-        handleCloseColorAndSize();
-      } else {
-        handleOpenDulicateUpdate();
-        setIdCtsp(res.idCtsp);
-      }
+    if (mauSac === '' || size === '') {
+      checkEmptyCBB();
+      handleAlertClick('Hãy chọn màu sắc và size', 'warning');
     } else {
-      handleAlertClick('Thêm thất bại!', 'danger');
-      handleCloseColorAndSize();
+      const res = await addColorAndSize(idSpHttp, mauSac, size);
+      console.log('Check res: ', res);
+      if (res && res.idCtsp) {
+        if (res.trangThai === 1) {
+          handleAlertClick('Thêm thành công!', 'success');
+          handleClickEditAtt(res.idCtsp);
+          handleCloseColorAndSize();
+        } else {
+          handleOpenDulicateUpdate();
+          setIdCtsp(res.idCtsp);
+        }
+      } else {
+        handleAlertClick('Thêm thất bại!', 'danger');
+        handleCloseColorAndSize();
+      }
     }
   };
 
   // update number
 
   const handlUpdateNumber = async () => {
-    if (!!giaBanErr || !!giaNhapErr || !!soLuongErr) {
+    hanldeCheckGiaSL(giaBan, setGiaBanErr, 'Giá bán');
+    hanldeCheckGiaSL(giaNhap, setGiaNhapErr, 'Giá nhập');
+    hanldeCheckGiaSL(soLuongTon, setSoLuongErr, 'Số lượng tồn');
+    if (!!giaBanErr || !!giaNhapErr || !!soLuongErr || giaBan === '' || giaNhap === '' || soLuongTon === '') {
       handleAlertClick('Hãy nhập đúng và đủ thông tin!', 'warning');
     } else {
       const res = await updateNumber(idCtsp, giaNhap, giaBan, soLuongTon, statusAtt);
@@ -673,20 +681,44 @@ export default function UpdateSanPham() {
     setEmptyTen(value.trim() === '');
   };
 
+  const [emptyMS, setEmptyMS] = useState(false);
+  const handleAttChange = (value, setFunc, setEmpty) => {
+    setFunc(value);
+    setEmpty(false);
+  };
+
+  const checkEmptyCBB = () => {
+    if (mauSac === '') {
+      setEmptyMS(true);
+    }
+  };
+
   const [giaNhapErr, setGiaNhapErr] = useState('');
   const [giaBanErr, setGiaBanErr] = useState('');
   const [soLuongErr, setSoLuongErr] = useState('');
-  const hanldeCheckGiaSL = (value, setFunc, errFunc, thongBao) => {
+  const hanldeSaveGiaSL = (value, setFunc, errFunc, thongBao) => {
     if (value.trim() === '') {
       errFunc(`${thongBao} không được để trống.`);
     }
     // Kiểm tra nếu giá trị không phải là số hoặc là số âm
-    else if (!/^\d+$/.test(value) || parseInt(value, 10) <= 0) {
+    else if (!/^\d+$/.test(value.trim()) || parseInt(value, 10) <= 0) {
       errFunc(`${thongBao} phải là số nguyên dương.`);
     } else {
       errFunc('');
     }
     setFunc(value);
+  };
+
+  const hanldeCheckGiaSL = (value, errFunc, thongBao) => {
+    if (value.trim() === '') {
+      errFunc(`${thongBao} không được để trống.`);
+    }
+    // Kiểm tra nếu giá trị không phải là số hoặc là số âm
+    else if (!/^\d+$/.test(value.trim()) || parseInt(value, 10) <= 0) {
+      errFunc(`${thongBao} phải là số nguyên dương.`);
+    } else {
+      errFunc('');
+    }
   };
 
   return (
@@ -979,7 +1011,7 @@ export default function UpdateSanPham() {
                             <TableCell>{tenSize}</TableCell>
                             <TableCell>{formatCurrency(giaNhap)}</TableCell>
                             <TableCell>{formatCurrency(giaBan)}</TableCell>
-                            <TableCell>{soLuongTon}</TableCell>
+                            <TableCell>{soLuongTon === null ? 0 : soLuongTon}</TableCell>
                             <TableCell>{renderTrangThai(trangThai)}</TableCell>
                             <TableCell>
                               <IconButton aria-label="add an alarm" onClick={() => handleClickEditAtt(row.idCtsp)}>
@@ -1122,13 +1154,16 @@ export default function UpdateSanPham() {
                       id="demo-simple-select"
                       label="Màu sắc"
                       value={mauSac}
-                      onChange={(event) => setMauSac(event.target.value)}
+                      onChange={(event) => handleAttChange(event.target.value, setMauSac, setEmptyMS)}
+                      error={emptyMS}
                     >
-                      {listMS.map((item, index) => (
-                        <MenuItem value={item.idMs} key={index}>
-                          {item.tenMs}
-                        </MenuItem>
-                      ))}
+                      {listMS
+                        .filter((item) => item.trangThai === 0)
+                        .map((item, index) => (
+                          <MenuItem value={item.idMs} key={index}>
+                            {item.tenMs}
+                          </MenuItem>
+                        ))}
                     </Select>
                   </FormControl>
                 )}
@@ -1150,21 +1185,23 @@ export default function UpdateSanPham() {
               {listLSP.length > 0 && (
                 <div>
                   Size:{' '}
-                  {listSize.map((item, itemIndex) => (
-                    <Button
-                      style={{
-                        marginRight: '4px',
-                        marginBottom: '4px',
-                      }}
-                      key={`size-button-${itemIndex}`}
-                      onClick={() => handleShowSize(item.idSize)}
-                      variant={size === item.idSize ? 'contained' : 'outlined'}
-                      value={size}
-                      size="small"
-                    >
-                      {item.tenSize}
-                    </Button>
-                  ))}
+                  {listSize
+                    .filter((item) => item.trangThai === 0)
+                    .map((item, itemIndex) => (
+                      <Button
+                        style={{
+                          marginRight: '4px',
+                          marginBottom: '4px',
+                        }}
+                        key={`size-button-${itemIndex}`}
+                        onClick={() => handleShowSize(item.idSize)}
+                        variant={size === item.idSize ? 'contained' : 'outlined'}
+                        value={size}
+                        size="small"
+                      >
+                        {item.tenSize}
+                      </Button>
+                    ))}
                   <Button
                     style={{
                       marginRight: '4px',
@@ -1207,7 +1244,7 @@ export default function UpdateSanPham() {
               }}
               fullWidth
               value={giaNhap}
-              onChange={(event) => hanldeCheckGiaSL(event.target.value, setGiaNhap, setGiaNhapErr, 'Giá nhập')}
+              onChange={(event) => hanldeSaveGiaSL(event.target.value, setGiaNhap, setGiaNhapErr, 'Giá nhập')}
               error={!!giaNhapErr}
               helperText={giaNhapErr}
             />
@@ -1222,7 +1259,7 @@ export default function UpdateSanPham() {
               }}
               fullWidth
               value={giaBan}
-              onChange={(event) => hanldeCheckGiaSL(event.target.value, setGiaBan, setGiaBanErr, 'Giá bán')}
+              onChange={(event) => hanldeSaveGiaSL(event.target.value, setGiaBan, setGiaBanErr, 'Giá bán')}
               error={!!giaBanErr}
               helperText={giaBanErr}
             />
@@ -1237,7 +1274,7 @@ export default function UpdateSanPham() {
               }}
               fullWidth
               value={soLuongTon}
-              onChange={(event) => hanldeCheckGiaSL(event.target.value, setSoLuongTon, setSoLuongErr, 'Số lượng tồn')}
+              onChange={(event) => hanldeSaveGiaSL(event.target.value, setSoLuongTon, setSoLuongErr, 'Số lượng tồn')}
               error={!!soLuongErr}
               helperText={soLuongErr}
             />
@@ -1254,7 +1291,7 @@ export default function UpdateSanPham() {
               >
                 <FormControlLabel value="0" control={<Radio />} label="Còn bán" />
                 <FormControlLabel value="10" control={<Radio />} label="Ngừng kinh doanh" />
-                <FormControlLabel value="1" control={<Radio />} label="Đang cập nhật" />
+                <FormControlLabel value="9" control={<Radio />} label="Đang cập nhật" />
               </RadioGroup>
             </FormControl>
           </div>
