@@ -9,12 +9,12 @@ import { useNavigate } from 'react-router-dom';
 import { listImg } from '../../service/client/Detail-Product';
 import {
   listProductOnCart,
-  postAddBillAddBill,
+  // postAddBillAddBill,
   postAddBillNoAccount,
   postAddDirectClient,
 } from '../../service/client/Detail-Cart';
 import ModalUpdateProductOnCartClientNoAccount from '../../forms/client/Modals-Update-Product-Cart-Client-NoAccount';
-import { findById, postAddBill } from '../../service/BillSevice';
+import { findById } from '../../service/BillSevice';
 
 const StyledProductImg = styled('img')({
   top: 0,

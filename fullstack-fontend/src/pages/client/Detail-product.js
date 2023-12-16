@@ -139,12 +139,12 @@ const DetailProduct = () => {
     const selectedMauSacIsNull = selectedMauSac === null || selectedSize === null;
 
     let existsProduct = [];
-    if (selectSoLuongTon.length > 0) {
+    if (getLocalStore && selectSoLuongTon.length > 0) {
       const getProduct = await listProductOnCart(authorities.idTaiKhoan);
 
       existsProduct = getProduct.filter((product) => product.idCtsp.idCtsp === selectSoLuongTon[0].idCtsp);
     }
-    if (!getLocalStore || selectedMauSacIsNull || selectSoLuongTon.length === 0) {
+    if (selectedMauSacIsNull || selectSoLuongTon.length === 0) {
       setAlertContent({
         type: 'warning',
         message: 'Thuộc Tính Sản Phẩm Trống',
@@ -170,40 +170,41 @@ const DetailProduct = () => {
         message: 'Giá Tiền Đã Vượt Quá 10TR. Hãy Liên Hệ Với Nhân Viên Để Đặt Thêm Hàng!!!',
       });
     } else {
-      const authorities = JSON.parse(getLocalStore).taiKhoan;
+      // const authorities = JSON.parse(getLocalStore).taiKhoan;
+      // console.log(authorities);
       const productId = selectSoLuongTon[0].idCtsp;
-
-      try {
-        if (!selectedMauSacIsNull) {
-          await addProductOnCart(authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
-          setAlertContent({
-            type: 'success',
-            message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
-          });
+      if (getLocalStore) {
+        try {
+          if (!selectedMauSacIsNull) {
+            await addProductOnCart(authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
+            setAlertContent({
+              type: 'success',
+              message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
+            });
+          }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
-      }
-
-      const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {};
-      const selectedItem = currentCart[productId];
-
-      if (selectedItem) {
-        selectedItem.soLuong += quantity;
-        selectedItem.donGia = selectSoLuongTon[0].giaThucTe * selectedItem.soLuong;
       } else {
-        currentCart[productId] = {
-          idCtsp: selectSoLuongTon[0],
-          soLuong: quantity,
-          donGia: selectSoLuongTon[0].giaThucTe * quantity,
-        };
-      }
+        const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {};
+        const selectedItem = currentCart[productId];
 
-      localStorage.setItem('cartProduct', JSON.stringify(currentCart));
-      setAlertContent({
-        type: 'success',
-        message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
-      });
+        if (selectedItem) {
+          selectedItem.soLuong += quantity;
+          selectedItem.donGia = selectSoLuongTon[0].giaThucTe * selectedItem.soLuong;
+        } else {
+          currentCart[productId] = {
+            idCtsp: selectSoLuongTon[0],
+            soLuong: quantity,
+            donGia: selectSoLuongTon[0].giaThucTe * quantity,
+          };
+        }
+        localStorage.setItem('cartProduct', JSON.stringify(currentCart));
+        setAlertContent({
+          type: 'success',
+          message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
+        });
+      }
     }
   };
 
