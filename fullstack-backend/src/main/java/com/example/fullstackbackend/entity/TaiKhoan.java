@@ -55,7 +55,6 @@ public class TaiKhoan {
     private String email;
 
     @Column(name = "mat_khau")
-    @NotEmpty(message = "Không Được Để Trống Mật Khẩu")
     private String matKhau;
 
     @Column(name = "so_can_cuoc")
@@ -66,7 +65,6 @@ public class TaiKhoan {
 
     @Column(name = "trang_thai")
     private Integer trangThai = 0;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_chuc_vu", referencedColumnName = "id_cv")
     private ChucVu idChucVu;

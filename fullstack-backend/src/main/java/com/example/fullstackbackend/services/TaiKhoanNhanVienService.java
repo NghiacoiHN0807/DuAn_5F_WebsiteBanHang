@@ -19,6 +19,8 @@ public interface TaiKhoanNhanVienService {
 
     Boolean deleteAll(List<Integer> id);
 
+    Boolean checkMailExists(String email);
+
     TaiKhoan update(TaiKhoan taiKhoan, Integer id);
 
     Boolean existsById(Integer id);

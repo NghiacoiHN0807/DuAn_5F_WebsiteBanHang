@@ -48,6 +48,10 @@ export default function AccountPopover() {
     navigate('/dashboard/profile');
     handleClose();
   };
+  const handlePass = () => {
+    navigate('/dashboard/changePass');
+    handleClose();
+  };
 
   return (
     <>
@@ -103,8 +107,11 @@ export default function AccountPopover() {
         <MenuItem onClick={handleProfile} sx={{ m: 1 }}>
           Thông Tin Người Dùng
         </MenuItem>
+        <MenuItem onClick={handlePass} sx={{ m: 1 }}>
+          Đổi Mật Khẩu
+        </MenuItem>
         <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
-         Đăng Xuất
+          Đăng Xuất
         </MenuItem>
       </Popover>
     </>

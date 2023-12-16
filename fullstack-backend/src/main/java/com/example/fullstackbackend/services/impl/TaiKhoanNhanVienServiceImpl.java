@@ -26,12 +26,16 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
     @Value("${spring.mail.username}")
     private String formMail;
 
-    public void sendEmail(String mail, String content) {
+    public void sendEmail(String mail, String pass) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(formMail);
         message.setTo(mail);
         message.setSubject("Mật khẩu Mới");
-        message.setText("Mật Khẩu: "+content);
+        String content = "Đăng nhập 5F Store" ;
+        content += "\nTên đăng nhập : " + mail;
+        content += "\nMật khẩu hiện tại để đăng nhập : " + pass;
+        content += "\nTrân trọng.";
+        message.setText(content);
 
         mailSender.send(message);
     }
@@ -53,10 +57,13 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
 
     @Override
     public TaiKhoan add(TaiKhoan taiKhoan) {
-        taiKhoan.setMatKhau(hashPassword(taiKhoan.getMatKhau()));
-        TaiKhoan savedTaiKhoan = taiKhoanRepository.save(taiKhoan);
+        String pass = TaiKhoan.generateRandomPassword();
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String PassEncode = encoder.encode(pass);
+        sendEmail(taiKhoan.getEmail(), pass);
+        taiKhoan.setMatKhau(PassEncode);
 
-        return savedTaiKhoan;
+        return taiKhoanRepository.save(taiKhoan);
     }
 
 
@@ -93,6 +100,11 @@ class TaiKhoanNhanVienServiceImpl implements TaiKhoanNhanVienService {
            e.printStackTrace();
            return  false;
        }
+    }
+
+    @Override
+    public Boolean checkMailExists(String email) {
+        return taiKhoanRepository.existsByEmailAllIgnoreCase(email);
     }
 
     @Transactional

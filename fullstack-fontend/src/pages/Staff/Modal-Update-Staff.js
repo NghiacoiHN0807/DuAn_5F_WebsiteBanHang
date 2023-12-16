@@ -5,6 +5,11 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -40,7 +45,6 @@ const UpdateTkNV = (props) => {
   const [alertContent, setAlertContent] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState("");
-  const [helperTextSCC, setHelperTextSCC] = useState('');
   const getAllChucVu = async () => {
     const rs = await chucVu3(0);
     setMyChucVu(rs);
@@ -75,18 +79,18 @@ const UpdateTkNV = (props) => {
     getListData();
   }, [getListData]);
 
- 
+
   const cccdRegex = /^\d{9,12}$/;
   const validateFields = () => {
     let isValid = true;
     const newValidation = {};
-  
+
     // Validate 'ho' field
     if (!ho) {
       newValidation.ho = 'Họ không được để trống';
       isValid = false;
     }
-  
+
     // Validate 'ten' field
     if (!ten) {
       newValidation.ten = 'Tên không được để trống';
@@ -107,21 +111,39 @@ const UpdateTkNV = (props) => {
     }
 
     if (!soCanCuoc) {
-      newValidation.soCanCuoc ='Không được để trống số căn cước';
+      newValidation.soCanCuoc = 'Không được để trống số căn cước';
       isValid = false;
-    }else 
-    if (!cccdRegex.test(soCanCuoc)) {
-      newValidation.soCanCuoc ='Số Căn Cước phải có từ 9 đến 12 chữ số';
-      isValid = false;
-    }
-  
+    } else
+      if (!cccdRegex.test(soCanCuoc)) {
+        newValidation.soCanCuoc = 'Số Căn Cước phải có từ 9 đến 12 chữ số';
+        isValid = false;
+      }
+
     // Validate other fields similarly
-  
+
     // Update the validation state
     setValidationErrors(newValidation);
-  
+
     return isValid;
   };
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, ho: '' }));
+  }, [ho]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, ten: '' }));
+  }, [ten]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, sdt: '' }));
+  }, [sdt]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, email: '' }));
+  }, [email]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, soCanCuoc: '' }));
+  }, [soCanCuoc]);
+  useEffect(() => {
+    setValidationErrors((prevErrors) => ({ ...prevErrors, matKhau: '' }));
+  }, [matKhau]);
 
   const handleSave = async () => {
     let res;
@@ -173,6 +195,14 @@ const UpdateTkNV = (props) => {
       });
 
     }
+  };
+
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
   };
 
   const goback = () => {
@@ -246,6 +276,7 @@ const UpdateTkNV = (props) => {
             onChange={(event) => setTen(event.target.value)}
           />
           <TextField
+            disabled
             error={!!validationErrors.email}
             helperText={validationErrors.email}
             fullWidth
@@ -263,7 +294,7 @@ const UpdateTkNV = (props) => {
             value={sdt}
             onChange={(event) => setSdt(event.target.value)}
           />
-          <TextField
+          {/* <TextField
             error={!!validationErrors.matKhau}
             helperText={validationErrors.matKhau}
             fullWidth
@@ -284,9 +315,9 @@ const UpdateTkNV = (props) => {
                 </InputAdornment>
               ),
             }}
-          />
+          /> */}
           <TextField
-            error={ !!validationErrors.soCanCuoc}
+            error={!!validationErrors.soCanCuoc}
             helperText={validationErrors.soCanCuoc}
             fullWidth
             id="soCanCuoc"
@@ -323,12 +354,30 @@ const UpdateTkNV = (props) => {
           <Button
             variant="contained"
             color="success"
-            onClick={() => handleSave()}
+            onClick={() => handleClickOpen()}
           >
             Cập Nhập Tài Khoản Nhân Viên
           </Button>
         </div>
-
+        <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Xác nhận thêm?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Bạn có chắc chắn muốn thêm nhân viên mới!!!
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Hủy</Button>
+          <Button onClick={() => handleSave()} autoFocus>
+            Xác nhận thêm
+          </Button>
+        </DialogActions>
+      </Dialog>   
       </div>
 
     </>

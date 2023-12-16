@@ -57,7 +57,16 @@ public class TaiKhoanNhanVienController {
 
             return ResponseEntity.badRequest().body(errorMap);
         } else {
-            return ResponseEntity.ok(taiKhoanNhanVienService.add(taiKhoan));
+
+            String email = taiKhoan.getEmail();
+            if (taiKhoanNhanVienService.checkMailExists(email)) {
+                Map<String, String> errorMap = new HashMap<>();
+                errorMap.put("email", "Email đã tồn tại");
+                return ResponseEntity.badRequest().body(errorMap);
+            }
+
+            TaiKhoan addTK = taiKhoanNhanVienService.add(taiKhoan);
+            return ResponseEntity.ok(addTK);
         }
     }
 

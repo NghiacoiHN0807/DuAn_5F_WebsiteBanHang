@@ -1,5 +1,4 @@
 import { Helmet } from 'react-helmet-async';
-import { faker } from '@faker-js/faker';
 // @mui
 import { useTheme } from '@mui/material/styles';
 import { Grid, Container, Typography } from '@mui/material';
@@ -11,7 +10,6 @@ import { faSackDollar } from '@fortawesome/free-solid-svg-icons';
 
 
 // components
-import Iconify from '../components/iconify';
 import { totalRevenue, totalInvoieces, totalTheoNgay, tyLeTraHang, tongSpDaBan } from '../service/bill-service'
 import { topSpTrending } from '../service/san-pham-service'
 
@@ -59,12 +57,14 @@ export default function DashboardAppPage() {
       setheoNgay(response);
       setAllSp(Number(allSpres));
       setheoNgay(response);
-      setSpTrending(trendingResponse);  // Set trending data
+      setSpTrending(trendingResponse);
+      
+      // Set trending data
     };
 
     fetchData();
   }, []);
-
+console.log('test:' , hdNgay);
   const currentVisitsData = spTrending.map((item) => ({
     label: item[1], // Tên quốc gia, ví dụ "Ao Kakame"
     value: item[0], // Số lượng lượt truy cập, ví dụ 5z`
@@ -83,11 +83,11 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={['fas', 'sack-dollar']}  />
+            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={ 'mdi:dollar'}  />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng Đơn Hàng" total={invoieces} color="info" icon={'ant-design:apple-filled'} />
+            <AppWidgetSummary title="Tổng Đơn Hàng" total={invoieces} color="info" icon={'solar:cart-2-bold'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
@@ -95,12 +95,12 @@ export default function DashboardAppPage() {
               title="Tổng sản phẩm đã bán"
               total={allSp}
               color="warning"
-              icon={'ant-design:windows-filled'}
+              icon={'ion:shirt'}
             />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tỷ Lệ Trả Hàng (%)" total={rate} color="error" icon={'ant-design:bug-filled'} />
+            <AppWidgetSummary title="Tỷ Lệ Trả Hàng (%)" total={rate} color="error" icon={'tabler:truck-return'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
@@ -132,7 +132,7 @@ export default function DashboardAppPage() {
             />
           </Grid>
 
-          <Grid item xs={12} md={6} lg={8}>
+          {/* <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates
               title="Conversion Rates"
               subheader="(+43%) than last year"
@@ -234,7 +234,7 @@ export default function DashboardAppPage() {
                 { id: '5', label: 'Sprint Showcase' },
               ]}
             />
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
     </>

@@ -1,14 +1,14 @@
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 
-
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import {TextField} from "@mui/material";
+import {Dialog, DialogContent, TextField} from "@mui/material";
 import Link from "@mui/material/Link";
 import {postForgetPassword} from "../../../service/taiKhoanKhachHangSevice";
 import {useAlert} from "../../../layouts/dashboard/AlertContext";
@@ -43,14 +43,22 @@ export default function ForgetPasswordForm() {
             return;
         }
 
-        if (res.ok) {
-            showAlert('success', 'Mật khẩu mới đã được gửi');
-        } else {
-            showAlert('error', 'Sửa mật khẩu Thất Bại');
-        }
+        if (res.email) {
+           handlOpenAdd();
+            
+        } 
 
     };
+    const [openAdd, setOpenAdd] = useState(false);
 
+    const handlOpenAdd = () => {
+        setOpenAdd(true);
+    };
+
+    const handlCloseAdd = () => {
+        setOpenAdd(false);
+        navigate('/login');
+    };
 
     return (
 
@@ -106,6 +114,20 @@ export default function ForgetPasswordForm() {
                     </Grid>
                 </Box>
             </Box>
+            <Dialog
+                open={openAdd}
+                onClose={handlCloseAdd}
+                maxWidth="sm"
+                fullWidth
+            >
+                <DialogContent>
+                    <div style={{textAlign: 'center', padding: '16px'}}>
+                        <CheckCircleIcon style={{fontSize: '48px', marginBottom: '16px'}}/>
+                        <Typography variant="h6">Đổi mật khẩu thành công</Typography>
+                    </div>
+                </DialogContent>
+
+            </Dialog>
         </Container>
 
     );

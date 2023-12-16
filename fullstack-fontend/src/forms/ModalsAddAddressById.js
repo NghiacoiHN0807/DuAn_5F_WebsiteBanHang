@@ -19,11 +19,11 @@ import {
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
-import {useCallback, useEffect, useState} from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import {useAlert} from "../layouts/dashboard/AlertContext";
-import {getDetailOneTK} from "../service/taiKhoanKhachHangSevice";
-import {postAddDiaChi} from "../service/diaChiSevice";
+import { useAlert } from "../layouts/dashboard/AlertContext";
+import { getDetailOneTK } from "../service/taiKhoanKhachHangSevice";
+import { postAddDiaChi } from "../service/diaChiSevice";
 // components
 // sections
 // APIs
@@ -33,7 +33,7 @@ const ModalAddAddressById = (props) => {
         handleClose: PropTypes.func.isRequired,
         getAllData: PropTypes.func.isRequired,
     };
-    const {open, handleClose,getAllData } = props;
+    const { open, handleClose, getAllData } = props;
 
     const [idTK, setIdtk] = useState('');
 
@@ -91,7 +91,7 @@ const ModalAddAddressById = (props) => {
     const callApiDistrict = useCallback(async () => {
         try {
             const response = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district`, {
-                params: {province_id: selectedTinhThanh},
+                params: { province_id: selectedTinhThanh },
                 headers: {
                     token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
                 },
@@ -113,7 +113,7 @@ const ModalAddAddressById = (props) => {
     const callApiWard = useCallback(async () => {
         try {
             const response = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/ward`, {
-                params: {district_id: selectedQuanHuyen},
+                params: { district_id: selectedQuanHuyen },
                 headers: {
                     token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
                 },
@@ -177,7 +177,7 @@ const ModalAddAddressById = (props) => {
     // chuyen trang
     // const navigate = useNavigate();
 
-    const {showAlert} = useAlert();
+    const { showAlert } = useAlert();
 
     useEffect(() => {
         // Call getTaiKhoan when open becomes true
@@ -186,16 +186,80 @@ const ModalAddAddressById = (props) => {
         }
     }, [open, idTK]);
     const getTaiKhoan = async (idTK) => {
-            const resTK = await getDetailOneTK(idTK);
-            console.log(resTK);
-            setTaiKhoan(resTK);
+        const resTK = await getDetailOneTK(idTK);
+        console.log(resTK);
+        setTaiKhoan(resTK);
     };
 
 
 
     const [validationErrors, setValidationErrors] = useState("");
+    const validateFields = () => {
+        let isValid = true;
+        const newValidation = {};
+
+
+        // Validate 'ten' field
+        if (!tenNguoiNhan) {
+            newValidation.tenNguoiNhan = 'Tên không được để trống';
+            isValid = false;
+        }
+
+        if (!sdt) {
+            newValidation.sdt = 'Số điện thoại không được để trống';
+            isValid = false;
+        }
+        if (!diaChiCuThe) {
+            newValidation.diaChiCuThe = 'Địa chỉ cụ thể không được để trống';
+            isValid = false;
+        }
+        if (!selectedTinhThanh) {
+            newValidation.tinhThanh = 'Tỉnh thành Chưa được chọn';
+            isValid = false;
+        }
+
+        if (!selectedQuanHuyen) {
+            newValidation.quanHuyen = 'Quận huyện Chưa được chọn';
+            isValid = false;
+        }
+        if (!selectedPhuongXa) {
+            newValidation.phuongXa = 'Phường xã Chưa được chọn';
+            isValid = false;
+        }
+
+        // Validate other fields similarly
+
+        // Update the validation state
+        setValidationErrors(newValidation);
+
+        return isValid;
+    };
+
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, tenNguoiNhan: '' }));
+    }, [tenNguoiNhan]);
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, diaChiCuThe: '' }));
+    }, [diaChiCuThe]);
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, sdt: '' }));
+    }, [sdt]);
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, tinhThanh: '' }));
+    }, [selectedTinhThanh]);
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, quanHuyen: '' }));
+    }, [selectedQuanHuyen]);
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, phuongXa: '' }));
+    }, [selectedPhuongXa]);
+
 
     const handleSave = async () => {
+        if (!validateFields()) {
+            // Validation failed, do not proceed with the API call
+            return;
+        }
         try {
             const res = await postAddDiaChi(
                 taiKhoan,
@@ -237,7 +301,7 @@ const ModalAddAddressById = (props) => {
             }
         }
     };
-    const clearText = ()=>{
+    const clearText = () => {
         setTenNguoiNhan("");
         setDiaChiCuThe("");
         setSdt("");
@@ -299,12 +363,12 @@ const ModalAddAddressById = (props) => {
                                     label="Số Điện Thoại"
                                     id="fullWidth"
                                     type="number"
-                                    inputProps={{maxLength: 10}}
+                                    inputProps={{ maxLength: 10 }}
                                     onChange={(event) => setSdt(event.target.value)}
                                 />
-                                <FormControl style={{marginLeft: "10px"}}
-                                             error={!!validationErrors.loaiDiaChi}
-                                             helperText={validationErrors.loaiDiaChi} >
+                                <FormControl style={{ marginLeft: "10px" }}
+                                    error={!!validationErrors.loaiDiaChi}
+                                    helperText={validationErrors.loaiDiaChi} >
                                     <FormLabel id="demo-radio-buttons-group-label">
                                         Loại Địa Chỉ
                                     </FormLabel>
@@ -317,12 +381,12 @@ const ModalAddAddressById = (props) => {
                                     >
                                         <FormControlLabel
                                             value="0"
-                                            control={<Radio/>}
+                                            control={<Radio />}
                                             label="Nhà Riêng"
                                         />
                                         <FormControlLabel
                                             value="1"
-                                            control={<Radio/>}
+                                            control={<Radio />}
                                             label="Nơi Làm Việc"
                                         />
                                     </RadioGroup>
@@ -337,9 +401,9 @@ const ModalAddAddressById = (props) => {
                                         flexWrap: "wrap"
                                     }}
                                 >
-                                    <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}
-                                                 error={!!validationErrors.tinhThanh}
-                                                 helperText={validationErrors.tinhThanh}>
+                                    <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}
+                                        error={!!validationErrors.tinhThanh}
+                                        helperText={validationErrors.tinhThanh}>
                                         <InputLabel id="province-label">Tỉnh/Thành Phố</InputLabel>
                                         <Select
                                             labelId="province-label"
@@ -357,11 +421,11 @@ const ModalAddAddressById = (props) => {
                                                 </MenuItem>
                                             ))}
                                         </Select>
-                                        <FormHelperText    error={!!validationErrors.tinhThanh}>{validationErrors.tinhThanh}</FormHelperText>
+                                        <FormHelperText error={!!validationErrors.tinhThanh}>{validationErrors.tinhThanh}</FormHelperText>
 
                                     </FormControl>
-                                    <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}
-                                                 error={!!validationErrors.quanHuyen}
+                                    <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}
+                                        error={!!validationErrors.quanHuyen}
                                     >
                                         <InputLabel id="district-label">Quận/Huyện</InputLabel>
                                         <Select
@@ -381,12 +445,12 @@ const ModalAddAddressById = (props) => {
                                                 </MenuItem>
                                             ))}
                                         </Select>
-                                        <FormHelperText   error={!!validationErrors.quanHuyen}>{validationErrors.quanHuyen}</FormHelperText>
+                                        <FormHelperText error={!!validationErrors.quanHuyen}>{validationErrors.quanHuyen}</FormHelperText>
 
                                     </FormControl>
-                                    <FormControl size="small" sx={{m: 0, minWidth: 170, marginTop: 2}}
-                                                 error={!!validationErrors.phuongXa}
-                                                 helperText={validationErrors.phuongXa}
+                                    <FormControl size="small" sx={{ m: 0, minWidth: 170, marginTop: 2 }}
+                                        error={!!validationErrors.phuongXa}
+                                        helperText={validationErrors.phuongXa}
                                     >
                                         <InputLabel id="ward-label" >Phường/Xã</InputLabel>
                                         <Select
@@ -405,7 +469,7 @@ const ModalAddAddressById = (props) => {
                                                 </MenuItem>
                                             ))}
                                         </Select>
-                                        <FormHelperText  error={!!validationErrors.phuongXa}>{validationErrors.phuongXa}</FormHelperText>
+                                        <FormHelperText error={!!validationErrors.phuongXa}>{validationErrors.phuongXa}</FormHelperText>
 
                                     </FormControl>
                                 </Box>
@@ -414,8 +478,8 @@ const ModalAddAddressById = (props) => {
                                     size={"large"}
                                     variant="contained"
                                     onClick={() => handleSave()}
-                                    style={{marginTop: "20px"}} // Make button wider
-                                    startIcon={<AddLocationAltIcon/>}
+                                    style={{ marginTop: "20px" }} // Make button wider
+                                    startIcon={<AddLocationAltIcon />}
                                 >
                                     Thêm Địa Chỉ Mới
                                 </Button>
