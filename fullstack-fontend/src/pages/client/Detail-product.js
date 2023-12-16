@@ -159,6 +159,11 @@ const DetailProduct = () => {
         type: 'warning',
         message: 'Số Lượng Tồn Không Đủ!!!',
       });
+    } else if (existsProduct.length > 0 && quantity + existsProduct[0].soLuong > selectSoLuongTon[0].soLuongTon) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Sản Phẩm Đã Có Trong Giỏ Hàng. Số Lượng Tồn Không Đủ!!!',
+      });
     } else if (quantity * selectSoLuongTon[0].giaThucTe > 10000000) {
       setAlertContent({
         type: 'warning',
