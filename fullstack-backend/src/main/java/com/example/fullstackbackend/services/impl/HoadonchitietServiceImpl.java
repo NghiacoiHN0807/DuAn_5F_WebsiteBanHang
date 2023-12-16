@@ -52,6 +52,11 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     @Override
+    public List<Object[]> getListProductOncart2(Integer idHd) {
+        return hoadonchitietRepository.getListProductOncart2(idHd);
+    }
+
+    @Override
     public Page<HoaDonChiTiet> getListProductByIDKH(Integer idKH, Integer pageNo, Integer size) {
         Pageable pageable = PageRequest.of(pageNo, size);
         return hoadonchitietRepository.findByIdHd_IdKH_IdTaiKhoan(idKH, pageable);

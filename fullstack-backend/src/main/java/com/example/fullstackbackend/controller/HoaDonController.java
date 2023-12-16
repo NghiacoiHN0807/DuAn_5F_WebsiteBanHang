@@ -243,6 +243,9 @@ public class HoaDonController {
 
                     System.out.println("Số Lượng Còn Lại:" + y.getSoLuongTon());
                     y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                    if(y.getSoLuongTon() <= 0){
+                        y.setTrangThai(10);
+                    }
                     chitietsanphamSer.update(y);
                 }
             }
@@ -254,6 +257,9 @@ public class HoaDonController {
                         chiTietSanPhams) {
                     System.out.println("Số Lượng Còn Lại:" + y.getSoLuongTon());
                     y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
+                    if(y.getSoLuongTon() <= 0){
+                        y.setTrangThai(10);
+                    }
                     chitietsanphamSer.update(y);
                 }
             }
@@ -297,6 +303,9 @@ public class HoaDonController {
                 for (ChiTietSanPham y :
                         chiTietSanPhams) {
                     y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                    if(y.getSoLuongTon() <= 0){
+                        y.setTrangThai(10);
+                    }
                     chitietsanphamSer.update(y);
                 }
             }
@@ -369,7 +378,7 @@ public class HoaDonController {
 
         return newHD1;
     }
-
+    
 
     @PutMapping("update-ship-online/{id}")
     public HoaDon updateShipOnline(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {

@@ -79,18 +79,8 @@ public class LoginController {
         }
     }
     @PostMapping("/forgetPassword")
-    public ResponseEntity<?> forgetPassword(@Valid @RequestBody Map<String, String> request,
-                                 BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            Map<String, String> errorMap = new HashMap<>();
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-
-            for (FieldError fieldError : fieldErrors) {
-                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
-            }
-
-            return ResponseEntity.badRequest().body(errorMap);
-        } else {
+    public ResponseEntity<?> forgetPassword(@Valid @RequestBody Map<String, String> request
+                                ) {
             String email = request.get("email");
             String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
             Pattern pattern = Pattern.compile(emailRegex);
@@ -120,7 +110,7 @@ public class LoginController {
             text.put("email","Mật khẩu mới Đã được gửi");
             return ResponseEntity.ok(text);
         }
-    }
+
 
     @Autowired
     private JwtTokenProvider tokenProvider;

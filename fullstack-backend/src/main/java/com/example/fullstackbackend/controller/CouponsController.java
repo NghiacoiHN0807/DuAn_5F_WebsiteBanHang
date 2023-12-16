@@ -44,16 +44,10 @@ public class CouponsController {
     }
 
     @PostMapping("/add")
-    ResponseEntity<?> add(@Valid @RequestBody Coupons coupons, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            Map<String, String> errorMap = new HashMap<>();
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-
-            for (FieldError fieldError : fieldErrors) {
-                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
-            }
-
-            return ResponseEntity.badRequest().body(errorMap);
+    ResponseEntity<?> add(@RequestBody Coupons coupons) {
+        Optional<Coupons> coupons1 = couponsService.detailByCode(coupons.getCode());
+        if(coupons1.isPresent()) {
+            return ResponseEntity.badRequest().body("error");
         } else {
             return ResponseEntity.status(HttpStatus.OK).body(
                     couponsService.add(coupons)
@@ -62,17 +56,7 @@ public class CouponsController {
     }
 
     @PutMapping("/update/{id}")
-    ResponseEntity<?> update(@PathVariable("id") Integer id, @Valid @RequestBody Coupons coupons, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            Map<String, String> errorMap = new HashMap<>();
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-
-            for (FieldError fieldError : fieldErrors) {
-                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
-            }
-
-            return ResponseEntity.badRequest().body(errorMap);
-        } else {
+    ResponseEntity<?> update(@PathVariable("id") Integer id, @RequestBody Coupons coupons) {
             Boolean exists = couponsService.existsById(id);
             if (!exists) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
@@ -82,7 +66,6 @@ public class CouponsController {
             return ResponseEntity.status(HttpStatus.OK).body(
                     couponsService.update(coupons, id)
             );
-        }
     }
 
     @DeleteMapping("/delete/{id}/{trangThai}")

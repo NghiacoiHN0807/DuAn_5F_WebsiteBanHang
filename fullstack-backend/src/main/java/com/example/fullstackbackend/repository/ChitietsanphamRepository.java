@@ -1,8 +1,6 @@
 package com.example.fullstackbackend.repository;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,11 +27,11 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
             "  so_luong_ton,\n" +
             "  trang_thai\n" +
             "FROM chi_tiet_san_pham\n" +
-            "WHERE id_sp = ?1 \n" +
+            "WHERE id_sp = ?1 AND trang_thai=0 \n" +
             "ORDER BY id_ms, id_ctsp\n", nativeQuery = true)
     List<ChiTietSanPham> findByIdSp(@Param("idSp") Integer idSp);
 
-    @Query("SELECT c FROM ChiTietSanPham c WHERE c.idSp.idSp = :idSp")
+    @Query("SELECT c FROM ChiTietSanPham c WHERE c.idSp.idSp = :idSp AND c.trangThai = 0")
     List<ChiTietSanPham> findByProductId(@Param("idSp") Integer idSp);
 
     List<ChiTietSanPham> findAllByIdCtsp(Integer idCtsp);
@@ -59,8 +57,8 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
             "FROM chi_tiet_san_pham c \n" +
             "WHERE c.id_sp = :idSp AND c.id_ms = :idMs AND c.id_size = :idSize", nativeQuery = true)
     List<ChiTietSanPham> existsBySpAndMsAndSize(@Param("idSp") Integer idSp,
-                                   @Param("idMs") Integer idMs,
-                                   @Param("idSize") Integer idSize);
+                                                @Param("idMs") Integer idMs,
+                                                @Param("idSize") Integer idSize);
 
     @Query(value = "SELECT ctsp.id_ctsp, ms.ten_ms,\n" +
             "sz.ten_size,\n" +
@@ -74,7 +72,6 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
             "  mau_sac ms ON ctsp.id_ms = ms.id_ms\n" +
             "JOIN \n" +
             "  size sz ON ctsp.id_size = sz.id_size\n" +
-            "WHERE id_sp = :idSp",nativeQuery = true)
+            "WHERE id_sp = :idSp", nativeQuery = true)
     List<Object[]> ctspForAd(@Param("idSp") Integer idSp);
-
 }

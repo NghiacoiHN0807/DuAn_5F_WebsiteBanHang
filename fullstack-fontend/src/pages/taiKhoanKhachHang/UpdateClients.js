@@ -1,24 +1,26 @@
-import {useCallback, useEffect, useState} from "react";
-import {Helmet} from "react-helmet-async";
-import {Visibility, VisibilityOff} from "@mui/icons-material";
-// import {toast} from "react-toastify";
+import { useCallback, useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import {
     Box,
     Button,
     Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     FormControl,
     FormControlLabel,
     FormLabel,
-    InputAdornment,
     Radio,
     RadioGroup,
     Stack,
     TextField,
     Typography
 } from "@mui/material";
-import {useNavigate, useParams} from "react-router-dom";
-import IconButton from "@mui/material/IconButton";
-import {getDetailOneTK, postUpdateTaiKhoanKhachHang} from "../../service/taiKhoanKhachHangSevice";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAlert } from "../../layouts/dashboard/AlertContext";
+import { getDetailOneTK, postUpdateTaiKhoanKhachHang } from "../../service/taiKhoanKhachHangSevice";
 import Iconify from "../../components/iconify";
 
 
@@ -32,7 +34,6 @@ const UpdateClients = () => {
     const [email, setEmail] = useState("");
     const [matKhau, setMatKhau] = useState("");
     const [trangThai, setTrangThai] = useState("0");
-    const [showPassword, setShowPassword] = useState(false);
 
     // chuyen trang
     const navigate = useNavigate();
@@ -54,10 +55,53 @@ const UpdateClients = () => {
     useEffect(() => {
         getListData();
     }, [getListData]);
-
+    const { showAlert } = useAlert();
     const [validationErrors, setValidationErrors] = useState("");
+    const validateFields = () => {
+        let isValid = true;
+        const newValidation = {};
 
+        if (!ho) {
+            newValidation.ho = 'Họ không được để trống';
+            isValid = false;
+        }
+
+        if (!ten) {
+            newValidation.ten = 'Tên không được để trống';
+            isValid = false;
+        }
+
+        if (!sdt) {
+            newValidation.sdt = 'Số điện thoại không được để trống';
+            isValid = false;
+        }
+        if (!email) {
+            newValidation.email = 'Email không được để trống';
+            isValid = false;
+        }
+
+        setValidationErrors(newValidation);
+
+        return isValid;
+    };
+
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, ho: '' }));
+    }, [ho]);
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, ten: '' }));
+    }, [ten]);
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, sdt: '' }));
+    }, [sdt]);
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, email: '' }));
+    }, [email]);
     const handleSave = async () => {
+        handleClose();
+        if (!validateFields()) {
+            return;
+        }
         let res;
         try {
             res = await postUpdateTaiKhoanKhachHang(
@@ -81,12 +125,20 @@ const UpdateClients = () => {
             return;
         }
         if (res && res.idTaiKhoan) {
-            // toast.success("Cập Nhập Tài Khoản Thành Công!");
+            showAlert('success', 'Cập nhật Tài Khoản Khách Hàng Thành Công');
             navigate("/dashboard/clients");
         } else {
-            // toast.error("Cập Nhập Tài Khoản Thất Bại");
+            showAlert('warning', 'Cập nhật Thất Bại');
         }
 
+    };
+
+    const [open, setOpen] = useState(false);
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+    const handleClose = () => {
+        setOpen(false);
     };
     return (
         <>
@@ -155,8 +207,8 @@ const UpdateClients = () => {
                     />
 
 
-                    <FormControl style={{marginLeft: "10px"}}
-                                 margin={"dense"}>
+                    <FormControl style={{ marginLeft: "10px" }}
+                        margin={"dense"}>
                         <FormLabel id="demo-radio-buttons-group-label">
                             Trạng thái
                         </FormLabel>
@@ -169,27 +221,46 @@ const UpdateClients = () => {
                         >
                             <FormControlLabel
                                 value="0"
-                                control={<Radio/>}
+                                control={<Radio />}
                                 label="Hoạt Động"
                             />
                             <FormControlLabel
                                 value="10"
-                                control={<Radio/>}
+                                control={<Radio />}
                                 label="Ngưng Hoạt Động"
                             />
                         </RadioGroup>
                     </FormControl>
                     <Button
                         size={"large"}
-                        variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>}
-                        onClick={() => handleSave()}
-                        style={{marginTop: "20px"}} // Make button wider
+                        variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}
+                        onClick={() => handleClickOpen()}
+                        style={{ marginTop: "20px" }} // Make button wider
                     >
                         Cập Nhập Tài Khoản
                     </Button>
                 </Box>
 
             </Container>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Xác nhận cập nhật?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Bạn Có chắc chắn cập nhật tài khoản
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose}>Hủy</Button>
+                    <Button onClick={() => handleSave()}>
+                        Xác nhận cập nhật
+                    </Button>
+                </DialogActions>
+            </Dialog>
 
 
         </>

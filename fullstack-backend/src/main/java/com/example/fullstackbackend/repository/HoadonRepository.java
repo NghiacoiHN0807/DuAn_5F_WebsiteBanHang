@@ -34,6 +34,8 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
             "or x.trangThai = 5 or x.trangThai = 9 or x.trangThai = 10 or x.trangThai = 0 ORDER BY x.maHd DESC")
     List<HoaDon> pageOnlineInvoice();
 
+
+//    @Query(value = "SELECT x FROM HoaDon x WHERE x.idKH =?1 AND x.trangThai = 0 AND x.trangThai = 1 AND x.trangThai = 2 AND x.trangThai =3AND x.trangThai =4 AND x.trangThai =5 AND x.trangThai =6 AND x.trangThai =8 AND x.trangThai =9 AND x.trangThai =10")
     List<HoaDon> findAllByIdKH_IdTaiKhoan(Integer idKh);
 
     @Modifying
@@ -58,9 +60,9 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
     List<Object[]> getTotalRevenueByDay();
 
     @Query(value = "SELECT\n" +
-            "    IFNULL(((COUNT(CASE WHEN trang_thai = 6 THEN 1 END) / COUNT(CASE WHEN trang_thai IN (5, 6) THEN 1 END)) * 100), 0) AS ty_le_tra_hang\n" +
-            "FROM duan_5f.hoa_don\n" +
-            "WHERE trang_thai IN (5, 6);", nativeQuery = true)
+            "                IFNULL(((COUNT(CASE WHEN trang_thai = 6 THEN 1 END) / COUNT(CASE WHEN trang_thai IN (5, 9) THEN 1 END)) * 100), 0) AS ty_le_tra_hang\n" +
+            "            FROM duan_5f.hoa_don\n" +
+            "            WHERE trang_thai IN (5, 6, 9);", nativeQuery = true)
     Double getTyLeTraHang();
 
 

@@ -75,6 +75,7 @@ const DetailProduct = () => {
     setUniqueSizes([...new Set(sizes)]);
   }, [detailProduct]);
 
+  console.log("detailProduct", detailProduct)
   // Set select one MS and Size
   const uniqueSizes = [...new Set(detailProduct.map((size) => size.idSize.tenSize))];
   const uniqueMS = [...new Set(detailProduct.map((ms) => ms.idMs.tenMs))];
@@ -139,12 +140,12 @@ const DetailProduct = () => {
     const selectedMauSacIsNull = selectedMauSac === null || selectedSize === null;
 
     let existsProduct = [];
-    if (selectSoLuongTon.length > 0) {
+    if (getLocalStore && selectSoLuongTon.length > 0) {
       const getProduct = await listProductOnCart(authorities.idTaiKhoan);
 
       existsProduct = getProduct.filter((product) => product.idCtsp.idCtsp === selectSoLuongTon[0].idCtsp);
     }
-    if (!getLocalStore || selectedMauSacIsNull || selectSoLuongTon.length === 0) {
+    if (selectedMauSacIsNull || selectSoLuongTon.length === 0) {
       setAlertContent({
         type: 'warning',
         message: 'Thuộc Tính Sản Phẩm Trống',
@@ -159,46 +160,52 @@ const DetailProduct = () => {
         type: 'warning',
         message: 'Số Lượng Tồn Không Đủ!!!',
       });
+    } else if (existsProduct.length > 0 && quantity + existsProduct[0].soLuong > selectSoLuongTon[0].soLuongTon) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Sản Phẩm Đã Có Trong Giỏ Hàng. Số Lượng Tồn Không Đủ!!!',
+      });
     } else if (quantity * selectSoLuongTon[0].giaThucTe > 10000000) {
       setAlertContent({
         type: 'warning',
         message: 'Giá Tiền Đã Vượt Quá 10TR. Hãy Liên Hệ Với Nhân Viên Để Đặt Thêm Hàng!!!',
       });
     } else {
-      const authorities = JSON.parse(getLocalStore).taiKhoan;
+      // const authorities = JSON.parse(getLocalStore).taiKhoan;
+      // console.log(authorities);
       const productId = selectSoLuongTon[0].idCtsp;
-
-      try {
-        if (!selectedMauSacIsNull) {
-          await addProductOnCart(authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
-          setAlertContent({
-            type: 'success',
-            message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
-          });
+      if (getLocalStore) {
+        try {
+          if (!selectedMauSacIsNull) {
+            await addProductOnCart(authorities.idTaiKhoan, selectSoLuongTon[0], quantity);
+            setAlertContent({
+              type: 'success',
+              message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
+            });
+          }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
-      }
-
-      const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {};
-      const selectedItem = currentCart[productId];
-
-      if (selectedItem) {
-        selectedItem.soLuong += quantity;
-        selectedItem.donGia = selectSoLuongTon[0].giaThucTe * selectedItem.soLuong;
       } else {
-        currentCart[productId] = {
-          idCtsp: selectSoLuongTon[0],
-          soLuong: quantity,
-          donGia: selectSoLuongTon[0].giaThucTe * quantity,
-        };
-      }
+        const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {};
+        const selectedItem = currentCart[productId];
 
-      localStorage.setItem('cartProduct', JSON.stringify(currentCart));
-      setAlertContent({
-        type: 'success',
-        message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
-      });
+        if (selectedItem) {
+          selectedItem.soLuong += quantity;
+          selectedItem.donGia = selectSoLuongTon[0].giaThucTe * selectedItem.soLuong;
+        } else {
+          currentCart[productId] = {
+            idCtsp: selectSoLuongTon[0],
+            soLuong: quantity,
+            donGia: selectSoLuongTon[0].giaThucTe * quantity,
+          };
+        }
+        localStorage.setItem('cartProduct', JSON.stringify(currentCart));
+        setAlertContent({
+          type: 'success',
+          message: 'Đã Thêm Sản Phẩm Vào Giỏ Hàng',
+        });
+      }
     }
   };
 
@@ -289,7 +296,7 @@ const DetailProduct = () => {
             </Typography>
             <div className="price-product">
               <Typography variant="subtitle1">
-                <Typography
+                {selectSoLuongTon.length > 0 && selectSoLuongTon[0].idSp.trangThai === 1 && (<Typography
                   component="span"
                   variant="body1"
                   sx={{
@@ -300,7 +307,8 @@ const DetailProduct = () => {
                   }}
                 >
                   {detailProduct.length > 0 && detailProduct[0].giaBan && formatCurrency(detailProduct[0].giaBan)}
-                </Typography>
+                </Typography>)}
+
                 &nbsp;
                 {selectSoLuongTon.length > 0 ? formatCurrency(selectSoLuongTon[0].giaThucTe) : price}
               </Typography>
@@ -332,40 +340,40 @@ const DetailProduct = () => {
                 <div>
                   {availableColors.length > 0
                     ? // Hiển thị danh sách màu sắc từ availableColors
-                      availableColors.map((mauSac, msIndex) => (
-                        <Button
-                          style={{
-                            marginRight: '4px',
-                            marginBottom: '4px',
-                            marginLeft: '10px',
-                            height: '25px',
-                          }}
-                          key={`size-button-${msIndex}`}
-                          onClick={() => handleShowMS(mauSac)}
-                          variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
-                          size="small"
-                          className=""
-                        >
-                          {mauSac}
-                        </Button>
-                      ))
+                    availableColors.map((mauSac, msIndex) => (
+                      <Button
+                        style={{
+                          marginRight: '4px',
+                          marginBottom: '4px',
+                          marginLeft: '10px',
+                          height: '25px',
+                        }}
+                        key={`size-button-${msIndex}`}
+                        onClick={() => handleShowMS(mauSac)}
+                        variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
+                        size="small"
+                        className=""
+                      >
+                        {mauSac}
+                      </Button>
+                    ))
                     : // Hiển thị dữ liệu từ dataDetail
-                      uniqueMS.map((item, index) => (
-                        <Button
-                          style={{
-                            marginLeft: '10px',
-                            height: '25px',
-                            marginRight: '4px',
-                            marginBottom: '4px',
-                          }}
-                          key={`size-button-${index}`}
-                          onClick={() => handleShowMS(item)}
-                          variant={selectedMauSac === item ? 'contained' : 'outlined'}
-                          size="small"
-                        >
-                          {item}
-                        </Button>
-                      ))}
+                    uniqueMS.map((item, index) => (
+                      <Button
+                        style={{
+                          marginLeft: '10px',
+                          height: '25px',
+                          marginRight: '4px',
+                          marginBottom: '4px',
+                        }}
+                        key={`size-button-${index}`}
+                        onClick={() => handleShowMS(item)}
+                        variant={selectedMauSac === item ? 'contained' : 'outlined'}
+                        size="small"
+                      >
+                        {item}
+                      </Button>
+                    ))}
                 </div>
               </Box>
             </div>

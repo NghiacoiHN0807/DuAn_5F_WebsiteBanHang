@@ -61,6 +61,10 @@ public class HoaDonChiTietController {
     public List<Object[]> getSanPhamsWithSizes(@PathVariable("idHd") Integer idHd) {
         return hoadonchitietSevice.getListProductOncart(idHd);
     }
+    @GetMapping("view-all-prduct2/{idHd}")
+    public List<Object[]> getSanPhamsWithSizes2(@PathVariable("idHd") Integer idHd) {
+        return hoadonchitietSevice.getListProductOncart2(idHd);
+    }
 
     @GetMapping("detail-get-one/{id}")
     public List<HoaDonChiTiet> detailCTSP(@PathVariable("id") Integer id) {
