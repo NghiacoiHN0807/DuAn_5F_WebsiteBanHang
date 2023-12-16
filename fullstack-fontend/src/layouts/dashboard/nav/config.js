@@ -16,12 +16,12 @@ const navConfig = [
   {
     title: 'Hóa Đơn',
     path: '/dashboard/bills',
-    icon: icon('ic_analytics'),
+    icon: icon('ic_hoaDon'),
   },
   {
     title: 'Bán Hàng',
     path: '/dashboard/sales',
-    icon: icon('ic_analytics'),
+    icon: icon('ic_banHang'),
   },
   {
     title: 'Quản Lý Sản Phẩm',
@@ -36,7 +36,7 @@ const navConfig = [
   {
     title: 'Coupons',
     path: '/dashboard/coupons',
-    icon: icon('ic_blog'),
+    icon: icon('ic_blog2'),
   },
   {
     title: 'Khách Hàng',
@@ -46,12 +46,12 @@ const navConfig = [
   {
     title: 'Địa Chỉ',
     path: '/dashboard/address',
-    icon: icon('ic_user'),
+    icon: icon('ic_user2'),
   },
   {
     title: 'Nhân Viên',
     path: '/dashboard/staff',
-    icon: icon('ic_lock'),
+    icon: icon('ic_user3'),
   },
 ].filter((item) => {
   if (authorities === 'ROLE_ADMIN') {

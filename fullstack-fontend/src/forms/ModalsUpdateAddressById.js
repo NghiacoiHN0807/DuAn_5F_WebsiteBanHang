@@ -19,10 +19,10 @@ import {
 } from '@mui/material';
 import PropTypes from 'prop-types';
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
-import {useCallback, useEffect, useState} from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
-import {useAlert} from "../layouts/dashboard/AlertContext";
-import {getDiaChiById, postUpdateDiaChi} from "../service/diaChiSevice";
+import { useAlert } from "../layouts/dashboard/AlertContext";
+import { getDiaChiById, postUpdateDiaChi } from "../service/diaChiSevice";
 // components
 // sections
 // APIs
@@ -33,7 +33,7 @@ const ModalAddAddressById = (props) => {
         getAllData: PropTypes.func.isRequired,
         idDC: PropTypes.func.isRequired,
     };
-    const {open, handleClose, getAllData, idDC} = props;
+    const { open, handleClose, getAllData, idDC } = props;
     const idDc = idDC.id;
     const [diaChi, setDiaChi] = useState([]);
     const [taiKhoan, setTaiKhoan] = useState("");
@@ -70,7 +70,7 @@ const ModalAddAddressById = (props) => {
         }
     });
     useEffect(() => {
-        if(open) {
+        if (open) {
             fetchtinhThanh();
         }
     }, [open]);
@@ -105,7 +105,7 @@ const ModalAddAddressById = (props) => {
     const callApiDistrict = useCallback(async () => {
         try {
             const response = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/district`, {
-                params: {province_id: selectedTinhThanh},
+                params: { province_id: selectedTinhThanh },
                 headers: {
                     token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
                 },
@@ -150,7 +150,7 @@ const ModalAddAddressById = (props) => {
     const callApiWard = useCallback(async () => {
         try {
             const response = await axios.get(`https://online-gateway.ghn.vn/shiip/public-api/master-data/ward`, {
-                params: {district_id: selectedQuanHuyen},
+                params: { district_id: selectedQuanHuyen },
                 headers: {
                     token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
                 },
@@ -240,30 +240,30 @@ const ModalAddAddressById = (props) => {
 
     // chuyen trang
 
-    const {showAlert} = useAlert();
+    const { showAlert } = useAlert();
     useEffect(() => {
-        if(open) {
+        if (open) {
             getDiaChi(idDc);
         }
-    }, [idDc,open]);
+    }, [idDc, open]);
 
     useEffect(() => {
-        if(open) {
+        if (open) {
             getDiaChiTinhThanh(idDc);
         }
-    }, [idDc, tinhThanh,open]);
+    }, [idDc, tinhThanh, open]);
 
     useEffect(() => {
-        if(open) {
+        if (open) {
             getDiaChiQuanHuyen(idDc);
         }
-    }, [idDc, quanHuyen,open]);
+    }, [idDc, quanHuyen, open]);
 
     useEffect(() => {
-        if(open) {
+        if (open) {
             getDiaChiPhuongXa(idDc);
         }
-    }, [idDc, phuongXa,open]);
+    }, [idDc, phuongXa, open]);
 
     const getDiaChi = async (idDc) => {
         const resDc = await getDiaChiById(idDc);
@@ -294,8 +294,65 @@ const ModalAddAddressById = (props) => {
 
 
     const [validationErrors, setValidationErrors] = useState("");
-    const handleSave = async () => {
 
+    const validateFields = () => {
+        let isValid = true;
+        const newValidation = {};
+        if (!tenNguoiNhan) {
+            newValidation.tenNguoiNhan = 'Tên không được để trống';
+            isValid = false;
+        }
+
+        if (!sdt) {
+            newValidation.sdt = 'Số điện thoại không được để trống';
+            isValid = false;
+        }
+        if (!diaChiCuThe) {
+            newValidation.diaChiCuThe = 'Địa chỉ cụ thể không được để trống';
+            isValid = false;
+        }
+        if (!selectedTinhThanh) {
+            newValidation.tinhThanh = 'Tỉnh thành Chưa được chọn';
+            isValid = false;
+        }
+
+        if (!selectedQuanHuyen) {
+            newValidation.quanHuyen = 'Quận huyện Chưa được chọn';
+            isValid = false;
+        }
+        if (!selectedPhuongXa) {
+            newValidation.phuongXa = 'Phường xã Chưa được chọn';
+            isValid = false;
+        }
+        setValidationErrors(newValidation);
+
+        return isValid;
+    };
+
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, tenNguoiNhan: '' }));
+    }, [tenNguoiNhan]);
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, diaChiCuThe: '' }));
+    }, [diaChiCuThe]);
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, sdt: '' }));
+    }, [sdt]);
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, tinhThanh: '' }));
+    }, [selectedTinhThanh]);
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, quanHuyen: '' }));
+    }, [selectedQuanHuyen]);
+    useEffect(() => {
+        setValidationErrors((prevErrors) => ({ ...prevErrors, phuongXa: '' }));
+    }, [selectedPhuongXa]);
+
+
+    const handleSave = async () => {
+        if (!validateFields()) {
+            return;
+        }
         let res;
         try {
             res = await postUpdateDiaChi(
@@ -331,7 +388,7 @@ const ModalAddAddressById = (props) => {
         }
 
     };
-    const clearText = ()=>{
+    const clearText = () => {
         setTenNguoiNhan("");
         setDiaChiCuThe("");
         setSdt("");
@@ -393,14 +450,14 @@ const ModalAddAddressById = (props) => {
                                     fullWidth
                                     label="Số Điện Thoại"
                                     id="fullWidth"
-                                    inputProps={{maxLength: 10}}
+                                    inputProps={{ maxLength: 10 }}
                                     value={sdt}
                                     type="number"
                                     onChange={(event) => setSdt(event.target.value)}
                                 />
-                                <FormControl style={{marginLeft: "10px"}}
-                                             error={!!validationErrors.loaiDiaChi}
-                                             helperText={validationErrors.loaiDiaChi}>
+                                <FormControl style={{ marginLeft: "10px" }}
+                                    error={!!validationErrors.loaiDiaChi}
+                                    helperText={validationErrors.loaiDiaChi}>
                                     <FormLabel id="demo-radio-buttons-group-label">
                                         Loại Địa Chỉ
                                     </FormLabel>
@@ -413,12 +470,12 @@ const ModalAddAddressById = (props) => {
                                     >
                                         <FormControlLabel
                                             value="0"
-                                            control={<Radio/>}
+                                            control={<Radio />}
                                             label="Nhà Riêng"
                                         />
                                         <FormControlLabel
                                             value="1"
-                                            control={<Radio/>}
+                                            control={<Radio />}
                                             label="Nơi Làm Việc"
                                         />
                                     </RadioGroup>
@@ -433,9 +490,9 @@ const ModalAddAddressById = (props) => {
                                         flexWrap: "wrap"
                                     }}
                                 >
-                                    <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}
-                                                 error={!!validationErrors.tinhThanh}
-                                                 helperText={validationErrors.tinhThanh}>
+                                    <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}
+                                        error={!!validationErrors.tinhThanh}
+                                        helperText={validationErrors.tinhThanh}>
                                         <InputLabel id="province-label">Tỉnh/Thành Phố</InputLabel>
                                         <Select
                                             labelId="province-label"
@@ -455,8 +512,8 @@ const ModalAddAddressById = (props) => {
                                         </Select>
                                         <FormHelperText error>{validationErrors.tinhThanh}</FormHelperText>
                                     </FormControl>
-                                    <FormControl size="small" sx={{m: 0, minWidth: 165, marginRight: 3, marginTop: 2}}
-                                                 error={!!validationErrors.quanHuyen}
+                                    <FormControl size="small" sx={{ m: 0, minWidth: 165, marginRight: 3, marginTop: 2 }}
+                                        error={!!validationErrors.quanHuyen}
                                     >
                                         <InputLabel id="district-label">Quận/Huyện</InputLabel>
                                         <Select
@@ -478,9 +535,9 @@ const ModalAddAddressById = (props) => {
                                         </Select>
                                         <FormHelperText error>{validationErrors.quanHuyen}</FormHelperText>
                                     </FormControl>
-                                    <FormControl size="small" sx={{m: 0, minWidth: 170, marginTop: 2}}
-                                                 error={!!validationErrors.phuongXa}
-                                                 helperText={validationErrors.phuongXa}
+                                    <FormControl size="small" sx={{ m: 0, minWidth: 170, marginTop: 2 }}
+                                        error={!!validationErrors.phuongXa}
+                                        helperText={validationErrors.phuongXa}
                                     >
                                         <InputLabel id="ward-label">Phường/Xã</InputLabel>
                                         <Select
@@ -507,8 +564,8 @@ const ModalAddAddressById = (props) => {
                                     size={"large"}
                                     variant="contained"
                                     onClick={() => handleSave()}
-                                    style={{marginTop: "20px"}} // Make button wider
-                                    startIcon={<AddLocationAltIcon/>}
+                                    style={{ marginTop: "20px" }} // Make button wider
+                                    startIcon={<AddLocationAltIcon />}
                                 >
                                     Cập Nhật Địa Chỉ
                                 </Button>
