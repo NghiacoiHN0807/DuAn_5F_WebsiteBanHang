@@ -155,7 +155,6 @@ const OrderManagementTimeline = ({ classes }) => {
 
   const handleCloseUpdate = () => {
     setShowModalUpdate(false);
-    getListData();
   };
   //
   const handlePayment = () => {

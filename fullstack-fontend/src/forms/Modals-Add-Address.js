@@ -22,7 +22,7 @@ import PropTypes from 'prop-types';
 import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHeadNoCheckBox, UserListToolbar } from '../sections/@dashboard/user';
-import ModalAddAddressById from './ModalsAddAddressById';
+// import ModalAddAddressById from './ModalsAddAddressById';
 // APIs
 
 const TABLE_HEAD = [
@@ -88,7 +88,7 @@ const ModalAddAddress = (props) => {
     setDiaChi: PropTypes.func.isRequired,
     setEmailKH: PropTypes.func.isRequired,
     setTienShip: PropTypes.func.isRequired,
-    getAllData: PropTypes.func.isRequired,
+    // getAllData: PropTypes.func.isRequired,
   };
   const {
     open,
@@ -100,7 +100,7 @@ const ModalAddAddress = (props) => {
     setDiaChi,
     setTienShip,
     getDetailHD,
-    getAllData,
+    // getAllData,
   } = props;
 
   // Edit table
@@ -116,7 +116,7 @@ const ModalAddAddress = (props) => {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const tong = listData.length;
+  // const tong = listData.length;
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -164,13 +164,13 @@ const ModalAddAddress = (props) => {
     handleClose();
     getDetailHD();
   };
-  const [showModalsAddress, setShowModalKH] = useState(false);
-  const handleAddAddress = () => {
-    setShowModalKH(true);
-  };
-  const handleCloseAddress = () => {
-    setShowModalKH(false);
-  };
+  // const [showModalsAddress, setShowModalKH] = useState(false);
+  // const handleAddAddress = () => {
+  //   setShowModalKH(true);
+  // };
+  // const handleCloseAddress = () => {
+  //   setShowModalKH(false);
+  // };
 
   return (
     <>
@@ -179,7 +179,7 @@ const ModalAddAddress = (props) => {
           <DialogTitle>DANH SÁCH ĐỊA CHỈ CỦA TÀI KHOẢN</DialogTitle>
           <DialogContent>
             <Card>
-              <Button
+              {/* <Button
                 onClick={() => handleAddAddress()}
                 sx={{
                   backgroundColor: 'black',
@@ -194,7 +194,7 @@ const ModalAddAddress = (props) => {
                 disabled={tong === 5}
               >
                 {tong >= 5 ? 'Khóa Thêm Địa Chỉ' : 'Thêm Địa Chỉ Mới'}
-              </Button>
+              </Button> */}
               <UserListToolbar
                 numSelected={selected.length}
                 filterName={filterName}
@@ -293,7 +293,7 @@ const ModalAddAddress = (props) => {
           </DialogActions>
         </Dialog>
       </div>
-      <ModalAddAddressById open={showModalsAddress} handleClose={handleCloseAddress} getAllData={getAllData} />
+      {/* <ModalAddAddressById open={showModalsAddress} handleClose={handleCloseAddress} getAllData={getAllData} /> */}
     </>
   );
 };
