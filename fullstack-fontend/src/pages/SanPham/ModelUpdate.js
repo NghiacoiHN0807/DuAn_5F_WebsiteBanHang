@@ -710,14 +710,17 @@ export default function UpdateSanPham() {
   };
 
   const hanldeCheckGiaSL = (value, errFunc, thongBao) => {
-    if (value.trim() === '') {
-      errFunc(`${thongBao} không được để trống.`);
-    }
-    // Kiểm tra nếu giá trị không phải là số hoặc là số âm
-    else if (!/^\d+$/.test(value.trim()) || parseInt(value, 10) <= 0) {
-      errFunc(`${thongBao} phải là số nguyên dương.`);
+    if (typeof value !== 'string' && typeof value !== 'number') {
+      errFunc(`${thongBao} phải là một chuỗi hoặc số.`);
     } else {
-      errFunc('');
+      const stringValue = String(value).trim(); // Chuyển đổi thành chuỗi và loại bỏ khoảng trắng
+      if (stringValue === '') {
+        errFunc(`${thongBao} không được để trống.`);
+      } else if (!/^\d+$/.test(stringValue) || parseInt(stringValue, 10) <= 0) {
+        errFunc(`${thongBao} phải là số nguyên dương.`);
+      } else {
+        errFunc('');
+      }
     }
   };
 
