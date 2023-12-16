@@ -116,7 +116,7 @@ const ModalDetailProductClinet = (props) => {
           type: 'warning',
           message: 'Vượt Quá Số Lượng Tồn',
         });
-      } else if (quantity + detailSPInCaert[0].soLuong > selectSoLuongTon[0].soLuongTon) {
+      } else if (detailSPInCaert.length > 0 && quantity + detailSPInCaert[0].soLuong > selectSoLuongTon[0].soLuongTon) {
         setAlertContent({
           type: 'warning',
           message: ' Sản Phẩm Đã Có Trong Giỏ Hàng. Vượt Quá Số Lượng Tồn',
@@ -302,24 +302,24 @@ const ModalDetailProductClinet = (props) => {
               </Card>
             </DialogContent>
           )}
+          {alertContent && (
+            <Snackbar
+              open
+              autoHideDuration={3000}
+              onClose={handleSnackbarClose}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            >
+              <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+                {alertContent.message}
+              </Alert>
+            </Snackbar>
+          )}
           <DialogActions>
             <Button onClick={handleClose}>Hủy</Button>
             <Button onClick={handleChoose}>Hoàn Tất</Button>
           </DialogActions>
         </Dialog>
       </div>
-      {alertContent && (
-        <Snackbar
-          open
-          autoHideDuration={3000}
-          onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
-            {alertContent.message}
-          </Alert>
-        </Snackbar>
-      )}
     </>
   );
 };

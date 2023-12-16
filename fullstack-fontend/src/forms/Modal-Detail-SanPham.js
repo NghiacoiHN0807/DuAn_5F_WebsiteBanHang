@@ -118,7 +118,7 @@ const ModalDetailProduct = (props) => {
           type: 'warning',
           message: 'Vượt Quá Số Lượng Tồn',
         });
-      } else if (quantity + detailSPInCaert[0].soLuong > selectSoLuongTon[0].soLuongTon) {
+      } else if (detailSPInCaert.length > 0 && quantity + detailSPInCaert[0].soLuong > selectSoLuongTon[0].soLuongTon) {
         setAlertContent({
           type: 'warning',
           message: ' Sản Phẩm Đã Có Trong Giỏ Hàng. Vượt Quá Số Lượng Tồn',
