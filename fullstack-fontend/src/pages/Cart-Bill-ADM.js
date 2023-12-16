@@ -476,6 +476,7 @@ const CartBillADM = () => {
     return emailPattern.test(email);
   };
   const handleClick = async () => {
+    console.log(emailKHShip);
     if (isDeliveryChecked === false && containsNumber(tenKhTT) && tenKhTT.trim()) {
       setAlertContent({
         type: 'warning',
@@ -1109,8 +1110,8 @@ const CartBillADM = () => {
                     handleClose={handleCloseAddress}
                     setTenKH={getTenKHShip}
                     setSDTKH={getSdtKHShip}
-                    setDiaChi={setResult1}
                     setEmailKH={getEmailKHShip}
+                    setDiaChi={setResult1}
                     setTienShip={getTienShip}
                     getDetailHD={getDetailHD}
                   />

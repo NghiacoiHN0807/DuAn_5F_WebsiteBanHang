@@ -25,7 +25,6 @@ import { Image } from 'react-bootstrap';
 // Service
 import { detailBill, finByProductOnCart } from '../../service/BillSevice';
 import { updateTienShip } from '../../service/OrderManagementTimeLine';
-import ModalAddAddress from '../../forms/Modals-Add-Address';
 import {
   deleteOverTime,
   deleteProductOnCartPayment,
@@ -35,6 +34,7 @@ import {
   updateClientPayment1,
 } from '../../service/client/Payment';
 import ModalPaymentPage from './Moda-Payment-Page1';
+import ModalAddAddressPayment from '../../forms/client/Modals-Add-Address-Client';
 
 const ImageButton = styled(ButtonBase)(({ theme }) => ({
   position: 'relative',
@@ -525,7 +525,7 @@ export default function PaymentPage1() {
       </Container>
       {listData && (
         <>
-          <ModalAddAddress
+          <ModalAddAddressPayment
             open={showModalsAddress}
             listData={listData}
             handleClose={handleCloseAddress}
