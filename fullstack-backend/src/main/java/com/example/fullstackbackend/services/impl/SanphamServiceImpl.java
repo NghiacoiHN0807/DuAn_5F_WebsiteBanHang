@@ -45,6 +45,7 @@ public class SanphamServiceImpl implements SanPhamService {
 
     @Override
     public List<SanPhamCustom> sanPhamCustom() {
+        setSpIsOut();
         List<SanPhamCustom> dtos = new ArrayList<>();
         for (Object[] row : sanphamRepository.getSpForAdmin()) {
             SanPhamCustom spCustom = new SanPhamCustom();
@@ -73,7 +74,7 @@ public class SanphamServiceImpl implements SanPhamService {
 
     @Override
     public List<SanPhamClientDTO> sanPhamForClient() {
-
+        setSpIsOut();
         List<Object[]> rows = sanphamRepository.getSpForClient();
 
         List<SanPhamClientDTO> dtos = new ArrayList<>();
@@ -247,6 +248,17 @@ public class SanphamServiceImpl implements SanPhamService {
         }
 
         return dtos;
+    }
+
+    @Override
+    public void setSpIsOut() {
+        List<SanPham> listSP = sanphamRepository.findAll();
+        for(SanPham sp : listSP){
+            if(sanphamRepository.setSpIsOut(sp.getIdSp()) == 1){
+                sp.setTrangThai(10);
+                sanphamRepository.save(sp);
+            }
+        }
     }
 
     @Override

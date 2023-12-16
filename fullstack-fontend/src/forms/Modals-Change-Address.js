@@ -27,16 +27,16 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHeadNoCheckBox, UserListToolbar } from '../sections/@dashboard/user';
 import { updateClientPayment2 } from '../service/client/Payment';
-import ModalAddAddressById from "./ModalsAddAddressById";
+import ModalAddAddressById from './ModalsAddAddressById';
 // APIs
 
 const TABLE_HEAD = [
-  {id: 'loaiDiaChi', label: 'Loại Địa Chỉ', alignRight: false},
-  {id: 'diaChiCuThe', label: 'Địa Chỉ Cụ Thể', alignCenter: true},
-  {id: 'diaChi', label: 'Địa Chỉ', alignCenter: true},
-  {id: 'tenNguoiNhan', label: 'Tên Người Nhận', alignCenter: true},
-  {id: 'sdt', label: 'Số Điện Thoại', alignCenter: true},
-  {id: ''},
+  { id: 'loaiDiaChi', label: 'Loại Địa Chỉ', alignRight: false },
+  { id: 'diaChiCuThe', label: 'Địa Chỉ Cụ Thể', alignCenter: true },
+  { id: 'diaChi', label: 'Địa Chỉ', alignCenter: true },
+  { id: 'tenNguoiNhan', label: 'Tên Người Nhận', alignCenter: true },
+  { id: 'sdt', label: 'Số Điện Thoại', alignCenter: true },
+  { id: '' },
 ];
 
 // ----------------------------------------------------------------------
@@ -87,8 +87,9 @@ const ModalChangeAddress = (props) => {
     handleClose: PropTypes.func.isRequired,
     listData: PropTypes.array.isRequired,
     getDetailHD: PropTypes.func.isRequired,
+    loadAddress: PropTypes.func.isRequired,
   };
-  const { open, handleClose, listData, getDetailHD } = props;
+  const { open, handleClose, listData, getDetailHD, loadAddress } = props;
 
   // Edit table
   const [page, setPage] = useState(0);
@@ -179,7 +180,6 @@ const ModalChangeAddress = (props) => {
   };
   const handleCloseAddress = () => {
     setShowModalKH(false);
-
   };
   return (
     <>
@@ -189,20 +189,20 @@ const ModalChangeAddress = (props) => {
           <DialogContent>
             <Card>
               <Button
-                  onClick={() => handleAddAddress()}
-                  sx={{
-                    backgroundColor: "black",
-                    color: "white",
-                    float: "right",
-                    marginRight: "10px",
-                    "&:hover": {
-                      backgroundColor: "white",
-                      color: "black",
-                    },
-                  }}
-                  disabled={tong ===5}
+                onClick={() => handleAddAddress()}
+                sx={{
+                  backgroundColor: 'black',
+                  color: 'white',
+                  float: 'right',
+                  marginRight: '10px',
+                  '&:hover': {
+                    backgroundColor: 'white',
+                    color: 'black',
+                  },
+                }}
+                disabled={tong === 5}
               >
-                {tong >=5 ? 'Khóa Thêm Địa Chỉ':'Thêm Địa Chỉ Mới' }
+                {tong >= 5 ? 'Khóa Thêm Địa Chỉ' : 'Thêm Địa Chỉ Mới'}
               </Button>
               <UserListToolbar
                 numSelected={selected.length}
@@ -228,26 +228,26 @@ const ModalChangeAddress = (props) => {
                         const selectedUser = selected.indexOf(loaiDiaChi) !== -1;
 
                         return (
-                            <TableRow hover key={index} tabIndex={-1} role="checkbox"
-                                      selected={selectedUser}>
-                              <TableCell component="th" scope="row" align="center">
-                                <Stack direction="row" alignItems="center" spacing={2}>
-                                  <Typography variant="subtitle2" noWrap>
-                                    {loaiDiaChi === 1 ? 'Nhà Riêng' : 'Văn Phòng'}
-                                  </Typography>
-                                </Stack>
-                              </TableCell>
-                              <TableCell align="center">{diaChiCuThe}</TableCell>
-                              <TableCell align="center">{tinhThanh}, {phuongXa}, {quanHuyen}</TableCell>
-                              <TableCell align="center">{tenNguoiNhan}</TableCell>
-                              <TableCell align="center">{sdt}</TableCell>
-                              <TableCell align="center">
-                                <Button variant="outlined" size="small"
-                                        onClick={() => handleChoose(row)}>
-                                  Chọn
-                                </Button>
-                              </TableCell>
-                            </TableRow>
+                          <TableRow hover key={index} tabIndex={-1} role="checkbox" selected={selectedUser}>
+                            <TableCell component="th" scope="row" align="center">
+                              <Stack direction="row" alignItems="center" spacing={2}>
+                                <Typography variant="subtitle2" noWrap>
+                                  {loaiDiaChi === 1 ? 'Nhà Riêng' : 'Văn Phòng'}
+                                </Typography>
+                              </Stack>
+                            </TableCell>
+                            <TableCell align="center">{diaChiCuThe}</TableCell>
+                            <TableCell align="center">
+                              {tinhThanh}, {phuongXa}, {quanHuyen}
+                            </TableCell>
+                            <TableCell align="center">{tenNguoiNhan}</TableCell>
+                            <TableCell align="center">{sdt}</TableCell>
+                            <TableCell align="center">
+                              <Button variant="outlined" size="small" onClick={() => handleChoose(row)}>
+                                Chọn
+                              </Button>
+                            </TableCell>
+                          </TableRow>
                         );
                       })}
                       {emptyRows > 0 && (
@@ -314,9 +314,10 @@ const ModalChangeAddress = (props) => {
         )}
       </div>
       <ModalAddAddressById
-          open={showModalsAddress}
-          handleClose={handleCloseAddress}
-          getAllData={getDetailHD}
+        open={showModalsAddress}
+        handleClose={handleCloseAddress}
+        getAllData={getDetailHD}
+        loadAddress={loadAddress}
       />
     </>
   );

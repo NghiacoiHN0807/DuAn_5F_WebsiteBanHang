@@ -30,7 +30,7 @@ import { pink } from '@mui/material/colors';
 import Timeline from '../../MappingTimeLine/Timeline';
 import TimelineEvent from '../../MappingTimeLine/TimelineEvent';
 import { viewAllHTTT } from '../../service/OrderManagementTimeLine';
-import { finByProductOnCart, findById } from '../../service/BillSevice';
+import { finByProductOnCart2, findById } from '../../service/BillSevice';
 // import ModalUpdateStatus from '../../forms/Modal-Update-Status';
 // import ModalPaymentComfirm from '../../forms/Modal-Payment-Confirm';
 import { getDetailOneHD } from '../../service/OderManagementSevice';
@@ -82,7 +82,7 @@ const OrderClientTimeline = ({ classes }) => {
 
   const selectDataCart = useCallback(async () => {
     try {
-      const res = await finByProductOnCart(idHdParam);
+      const res = await finByProductOnCart2(idHdParam);
       if (res) {
         console.log('Check DataCart: ', res);
         setDataCart(res);
@@ -278,8 +278,6 @@ const OrderClientTimeline = ({ classes }) => {
   const [showModalsUpdate, setShowModalsUpdate] = useState(false);
   const [itemUpdateClassify, setItemUpdateClassify] = useState({});
   const [itemUpdate, setItemUpdate] = useState({});
-  console.log('itemUpdate', itemUpdate);
-  console.log('itemUpdateClassify', itemUpdateClassify);
   const handleUpdateClassify = async (item) => {
     setShowModalsUpdate(true);
     try {
@@ -309,15 +307,22 @@ const OrderClientTimeline = ({ classes }) => {
   // Handle Change Address
   const [showModalsAddress, setShowModalAddress] = useState(false);
   const [listAddess, setListAddress] = useState([]);
-  const handleChangeAddress = async () => {
+
+  const loadAddress = async () => {
     if (listData[0].idHd.idKH) {
-      const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
-      console.log(getData);
-      setListAddress(getData);
-      setShowModalAddress(true);
+      try {
+        const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
+        setListAddress(getData);
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       console.log('Sửa Địa Chỉ Mà Không Có Tài Khoản');
     }
+  };
+  const handleChangeAddress = async () => {
+    await loadAddress();
+    setShowModalAddress(true);
   };
   const handleCloseAddress = () => {
     // getDetailHD();
@@ -407,14 +412,14 @@ const OrderClientTimeline = ({ classes }) => {
               <Typography variant="h6" gutterBottom>
                 Lịch Sử Thanh Toán{' '}
               </Typography>
-              <Button
+              {/* <Button
                 // onClick={() => handleReturnItem()}
                 size="small"
                 variant="outlined"
                 disabled={activeIndex < 3 || activeIndex > 3}
               >
                 Xác nhận thanh toán
-              </Button>
+              </Button> */}
             </Stack>
           </div>
           <div className="row row-botton">
@@ -608,6 +613,7 @@ const OrderClientTimeline = ({ classes }) => {
                 <ModalChangeAddress
                   open={showModalsAddress}
                   listData={listAddess}
+                  loadAddress={loadAddress}
                   handleClose={handleCloseAddress}
                   getDetailHD={getListData}
                 />

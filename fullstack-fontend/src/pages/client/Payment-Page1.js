@@ -35,6 +35,7 @@ import {
 } from '../../service/client/Payment';
 import ModalPaymentPage from './Moda-Payment-Page1';
 import ModalAddAddressPayment from '../../forms/client/Modals-Add-Address-Client';
+import ModalConfirmPayment1 from '../../forms/client/Modal-Confirm-Payment-Page1';
 
 const ImageButton = styled(ButtonBase)(({ theme }) => ({
   position: 'relative',
@@ -237,6 +238,8 @@ export default function PaymentPage1() {
     return emailPattern.test(email);
   };
 
+  const [openConfirm, setOpenConfirm] = useState(false);
+
   const handleDatHang = async () => {
     if (!isValidPhoneNumber(sdtKH)) {
       setAlertContent({
@@ -254,23 +257,29 @@ export default function PaymentPage1() {
         message: 'Email Sai Định Dạng Hoặc Không Phải Email Cá Nhân!!!',
       });
     } else if (isDeliveryChecked === false) {
-      setAlertContent({
-        type: 'success',
-        message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
-      });
-      await deleteProductOnCartPayment(idHdParam);
-      await updateClientPayment(idHdParam, tenKH, sdtKH, emailKH, diaChi);
-      navigate(`/client/client-timeline/${idHdParam}`);
+      setOpenConfirm(true);
+      // setAlertContent({
+      //   type: 'success',
+      //   message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
+      // });
+      // await deleteProductOnCartPayment(idHdParam);
+      // await updateClientPayment(idHdParam, tenKH, sdtKH, emailKH, diaChi);
+      // navigate(`/client/client-timeline/${idHdParam}`);
     } else if (isDeliveryChecked === true) {
       // if (listHTTT.length > 0) {
-      await updateClientPayment1(idHdParam, tenKH, sdtKH, emailKH, diaChi);
-      setAlertContent({
-        type: 'success',
-        message: 'Hãy Thanh Toán Trước. Cảm Ơn!!!',
-      });
-      const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
-      window.location.href = paymentOn;
+      setOpenConfirm(true);
+
+      // await updateClientPayment1(idHdParam, tenKH, sdtKH, emailKH, diaChi);
+      // setAlertContent({
+      //   type: 'success',
+      //   message: 'Hãy Thanh Toán Trước. Cảm Ơn!!!',
+      // });
+      // const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
+      // window.location.href = paymentOn;
     }
+  };
+  const handleCloseConfirm = () => {
+    setOpenConfirm(false);
   };
 
   // handle payment online
@@ -554,6 +563,16 @@ export default function PaymentPage1() {
         handleClose={handleClose}
         information={information}
         getDetailHD={getDetailHD}
+      />
+      <ModalConfirmPayment1
+        tenKH={tenKH}
+        sdtKH={sdtKH}
+        emailKH={emailKH}
+        open={openConfirm}
+        diaChi={diaChi}
+        handleClose={handleCloseConfirm}
+        isDeliveryChecked={isDeliveryChecked}
+        thanhTien={listHD.thanhTien}
       />
     </>
   );

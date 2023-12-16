@@ -29,7 +29,7 @@ import { pink } from '@mui/material/colors';
 import Timeline from '../MappingTimeLine/Timeline';
 import TimelineEvent from '../MappingTimeLine/TimelineEvent';
 import { viewAllHTTT } from '../service/OrderManagementTimeLine';
-import { finByProductOnCart, findById } from '../service/BillSevice';
+import { finByProductOnCart2, findById } from '../service/BillSevice';
 import ModalUpdateStatus from '../forms/Modal-Update-Status';
 import ModalPaymentComfirmTimeline from '../forms/Modal-Payment-Confirm-TimeLine';
 import { getDetailOneHD } from '../service/OderManagementSevice';
@@ -79,7 +79,7 @@ const OrderManagementTimeline = ({ classes }) => {
 
   const selectDataCart = useCallback(async () => {
     try {
-      const res = await finByProductOnCart(idHdParam);
+      const res = await finByProductOnCart2(idHdParam);
       if (res) {
         setDataCart(res);
       }
