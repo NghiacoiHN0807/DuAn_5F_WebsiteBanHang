@@ -94,6 +94,7 @@ export default function SelectAllBillOfClient() {
   const SelectAllBill = useCallback(async () => {
     try {
       const res = await viewAllHDByIDKH(idParam);
+
       console.log('ré: ', res);
       // setDataCart(res);
       const filterDataByStatus = (status) => {
@@ -103,7 +104,10 @@ export default function SelectAllBillOfClient() {
       };
 
       if (value === 0) {
-        setDataCart(res);
+        const desiredStatuses = [0, 1, 2, 3, 4, 5, 6, 8, 9, 10];
+        const filteredItems1 = res.filter((item) => desiredStatuses.includes(item.trangThai));
+
+        setDataCart(filteredItems1);
       } else if (value === 1) {
         setDataCart(filterDataByStatus(0));
       } else if (value === 2) {
