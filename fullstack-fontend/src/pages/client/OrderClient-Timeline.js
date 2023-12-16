@@ -278,8 +278,6 @@ const OrderClientTimeline = ({ classes }) => {
   const [showModalsUpdate, setShowModalsUpdate] = useState(false);
   const [itemUpdateClassify, setItemUpdateClassify] = useState({});
   const [itemUpdate, setItemUpdate] = useState({});
-  console.log('itemUpdate', itemUpdate);
-  console.log('itemUpdateClassify', itemUpdateClassify);
   const handleUpdateClassify = async (item) => {
     setShowModalsUpdate(true);
     try {
@@ -309,15 +307,22 @@ const OrderClientTimeline = ({ classes }) => {
   // Handle Change Address
   const [showModalsAddress, setShowModalAddress] = useState(false);
   const [listAddess, setListAddress] = useState([]);
-  const handleChangeAddress = async () => {
+
+  const loadAddress = async () => {
     if (listData[0].idHd.idKH) {
-      const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
-      console.log(getData);
-      setListAddress(getData);
-      setShowModalAddress(true);
+      try {
+        const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
+        setListAddress(getData);
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       console.log('Sửa Địa Chỉ Mà Không Có Tài Khoản');
     }
+  };
+  const handleChangeAddress = async () => {
+    await loadAddress();
+    setShowModalAddress(true);
   };
   const handleCloseAddress = () => {
     // getDetailHD();
@@ -608,6 +613,7 @@ const OrderClientTimeline = ({ classes }) => {
                 <ModalChangeAddress
                   open={showModalsAddress}
                   listData={listAddess}
+                  loadAddress={loadAddress}
                   handleClose={handleCloseAddress}
                   getDetailHD={getListData}
                 />
