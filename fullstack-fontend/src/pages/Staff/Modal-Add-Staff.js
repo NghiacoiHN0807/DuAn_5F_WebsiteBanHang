@@ -25,6 +25,7 @@ const AddTKNV = () => {
   const navigate = useNavigate();
   const [chucVuError, setChucVuError] = useState(false);
   const [helperText, setHelperText] = useState('');
+  const [helperTextSCC, setHelperTextSCC] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
 
@@ -35,50 +36,96 @@ const AddTKNV = () => {
     setAlertContent(null);
   };
 
-  let res;
+ 
+
+  const cccdRegex = /^\d{9,12}$/;
+  const validateFields = () => {
+    let isValid = true;
+    const newValidation = {};
+  
+    // Validate 'ho' field
+    if (!ho) {
+      newValidation.ho = 'Họ không được để trống';
+      isValid = false;
+    }
+  
+    // Validate 'ten' field
+    if (!ten) {
+      newValidation.ten = 'Tên không được để trống';
+      isValid = false;
+    }
+
+    if (!sdt) {
+      newValidation.sdt = 'Số điện thoại không được để trống';
+      isValid = false;
+    }
+    if (!email) {
+      newValidation.email = 'Email không được để trống';
+      isValid = false;
+    }
+    if (!matKhau) {
+      newValidation.matKhau = 'Mật khẩu không được để trống';
+      isValid = false;
+    }
+
+    if (!soCanCuoc) {
+      newValidation.soCanCuoc ='Không được để trống số căn cước';
+      isValid = false;
+    }else 
+    if (!cccdRegex.test(soCanCuoc)) {
+      newValidation.soCanCuoc ='Số Căn Cước phải có từ 9 đến 12 chữ số';
+      isValid = false;
+    }
+  
+    // Validate other fields similarly
+  
+    // Update the validation state
+    setValidation(newValidation);
+  
+    return isValid;
+  };
 
 
 
   const handleSave = async () => {
-    setSubmitted(true);
-
-    if (!chucVuId) {
-      setHelperText('Vui lòng chọn chức vụ');
+  
+    if (!validateFields()) {
+      // Validation failed, do not proceed with the API call
       return;
     }
-    try {
-      res = await postAddTaiKhoan(
-        maTaiKhoan,
-        chucVuId,
-        ho,
-        ten,
-        sdt,
-        email,
-        soCanCuoc,
-        matKhau,
-        trangThai);
-    } catch (error) {
-      if (error.response && error.response.data) {
-        console.log(error.response.data);
-        setValidation(error.response.data);
+      let res;
+      try {
+        const filteredChucVu = myChucVu.find(item => item.idCv === chucVuId);
+        res = await postAddTaiKhoan(
+          maTaiKhoan,
+          filteredChucVu,
+          ho,
+          ten,
+          sdt,
+          email,
+          soCanCuoc,
+          matKhau,
+          trangThai);
+      } catch (error) {
+        if (error.response && error.response.data) {
+          console.log(error.response.data);
+          setValidation(error.response.data);
+        }
+
       }
-
-    }
-
-    if (res && res.idTaiKhoan) {
-      const successMessage = {
-        type: 'success',
-        message: 'Thêm Nhân Viên Thành Công!',
-      };
-      localStorage.setItem('successMessage', JSON.stringify(successMessage));
-      navigate('/dashboard/staff');
-    } else {
-      setAlertContent({
-        type: 'error',
-        message: 'Thêm tài khoản thất bại!',
-      });
-    }
-
+      if (res && res.idTaiKhoan) {
+        const successMessage = {
+          type: 'success',
+          message: 'Thêm Nhân Viên Thành Công!',
+        };
+        localStorage.setItem('successMessage', JSON.stringify(successMessage));
+        navigate('/dashboard/staff');
+      } else {
+        setAlertContent({
+          type: 'error',
+          message: 'Thêm tài khoản thất bại!',
+        });
+      }
   };
 
 
@@ -88,6 +135,7 @@ const AddTKNV = () => {
   const getAllChucVu = async () => {
     const rs = await chucVu(0);
     setMyChucVu(rs);
+    console.log(rs);
   };
 
   useEffect(() => {
@@ -180,32 +228,28 @@ const AddTKNV = () => {
         noValidate
         autoComplete="off"
       >
-        <FormControl fullWidth margin="dense" error={!chucVuId && !!helperText}>
+        <FormControl fullWidth margin="dense">
           <InputLabel>Chức Vụ</InputLabel>
-          <Select value={chucVuId}
+          <Select defaultValue={8}
             onChange={(e) => {
               setChucVuId(e.target.value);
-              setHelperText('');
             }}>
-            {myChucVu
-              .filter((item) => item.idCv === 1 || item.idCv === 8)
-              .map((item, index) => (
-                <MenuItem key={index} value={item}>
-                  {item.tenCv}
+                <MenuItem  value={8}>
+                    Nhân Viên
                 </MenuItem>
-              ))}
+                <MenuItem  value={1}>
+                   Quản Lý
+                </MenuItem>
           </Select>
-          <FormHelperText>
-            {helperText}
-          </FormHelperText>
         </FormControl>
 
-        <TextField error={submitted && !!validation.ho} helperText={submitted && validation.ho} fullWidth margin="dense" label="Họ" value={ho} onChange={(event) => setHo(event.target.value)} />
-        <TextField error={submitted && !!validation.ho} helperText={submitted && validation.ho} fullWidth margin="dense" label="Tên" value={ten} onChange={(event) => setTen(event.target.value)} />
-        <TextField error={submitted && !!validation.matKhau} helperText={validation.matKhau} fullWidth margin="dense" label="Mật Khẩu" value={matKhau} onChange={(event) => setMatKhau(event.target.value)} />
-        <TextField error={submitted && !!validation.email} helperText={validation.email} fullWidth margin="dense" label="Email" value={email} onChange={(event) => setEmail(event.target.value)} />
-        <TextField error={submitted && !!validation.sdt} helperText={validation.sdt} fullWidth margin="dense" label="Số Điện Thoại" value={sdt} onChange={(event) => setSdt(event.target.value)} />
-        <TextField error={submitted && !!validation.soCanCuoc} helperText={validation.soCanCuoc} fullWidth margin="dense" label="Số Căn Cước" value={soCanCuoc} onChange={(event) => setSoCanCuoc(event.target.value)} />
+        <TextField error={ !!validation.ho} helperText={ validation.ho} fullWidth margin="dense" label="Họ"  onChange={(event) => setHo(event.target.value)} />
+        <TextField error={ !!validation.ten} helperText={ validation.ten} fullWidth margin="dense" label="Tên"  onChange={(event) => setTen(event.target.value)} />
+        <TextField error={ !!validation.matKhau} helperText={validation.matKhau} fullWidth margin="dense" label="Mật Khẩu"  onChange={(event) => setMatKhau(event.target.value)} />
+        <TextField error={ !!validation.email} helperText={validation.email} fullWidth margin="dense" label="Email" onChange={(event) => setEmail(event.target.value)} />
+        <TextField error={ !!validation.sdt} helperText={validation.sdt} fullWidth margin="dense" label="Số Điện Thoại" onChange={(event) => setSdt(event.target.value)} />
+        <TextField error={ !!validation.soCanCuoc} helperText={validation.soCanCuoc} fullWidth margin="dense" label="Số Căn Cước"  onChange={(event) => setSoCanCuoc(event.target.value)} />
+
         <Button size="large" variant="contained" color="success" onClick={handleSave} style={{ marginTop: '20px' }}>
           Thêm Tài Khoản Nhân Viên
         </Button>

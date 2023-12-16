@@ -194,7 +194,7 @@ export default function Cart() {
     } else if (totalPayment >= 10000000) {
       setAlertContent({
         type: 'warning',
-        message: 'Hóa Đơn Của Bạn Đã Vượt Quá 10TR. Hãy Liên Hệ Với Chúng Tôi Để Mua Lẻ',
+        message: 'Hóa Đơn Của Bạn Đã Vượt Quá 10TR. Hãy Liên Hệ Với Chúng Tôi Để Mua Sỉ',
       });
     } else {
       const res = await postAddBillAddBill(authorities, totalPayment, 2, 11);

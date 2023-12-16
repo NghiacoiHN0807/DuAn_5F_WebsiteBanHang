@@ -1,4 +1,4 @@
-import '../scss/Car-Bill-ADM.scss';
+import '../../scss/Car-Bill-ADM.scss';
 import {
   Button,
   Dialog,
@@ -9,33 +9,28 @@ import {
   Paper,
   TableRow,
   TableBody,
-  Avatar,
   Stack,
   TableCell,
   Typography,
   TableContainer,
   Card,
   TablePagination,
-  Snackbar,
-  Alert,
 } from '@mui/material';
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useParams } from 'react-router-dom';
-
 // components
-import Scrollbar from '../components/scrollbar';
+import Scrollbar from '../../components/scrollbar';
 // sections
-import { UserListHeadNoCheckBox, UserListToolbar } from '../sections/@dashboard/user';
+import { UserListHeadNoCheckBox, UserListToolbar } from '../../sections/@dashboard/user';
+import ModalAddAddressById from '../ModalsAddAddressById';
 // APIs
-import { getAllDataTaiKhoan } from '../service/BillSevice';
-import { updateKH, updateKH1 } from '../service/OrderManagementTimeLine';
 
 const TABLE_HEAD = [
-  { id: 'maTaiKhoan', label: 'Mã Khách Hàng', alignRight: false },
-  { id: 'hoTen', label: 'Tên Khách Hàng', alignRight: false },
-  { id: 'sdt', label: 'Số Điện Thoại', alignRight: false },
-  { id: 'email', label: 'Email', alignRight: false },
+  { id: 'loaiDiaChi', label: 'Loại Địa Chỉ', alignRight: false },
+  { id: 'diaChiCuThe', label: 'Địa Chỉ Cụ Thể', alignCenter: true },
+  { id: 'diaChi', label: 'Địa Chỉ', alignCenter: true },
+  { id: 'tenNguoiNhan', label: 'Tên Người Nhận', alignCenter: true },
+  { id: 'sdt', label: 'Số Điện Thoại', alignCenter: true },
   { id: '' },
 ];
 
@@ -67,6 +62,7 @@ function filterData(array, query) {
     })
   );
 }
+
 function applySortFilter(array, comparator, query) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -81,39 +77,21 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-const ModalAddKhachHang = (props) => {
-  ModalAddKhachHang.propTypes = {
+const ModalAddAddressPayment = (props) => {
+  ModalAddAddressPayment.propTypes = {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
+    listData: PropTypes.array.isRequired,
     getDetailHD: PropTypes.func.isRequired,
-    resetInformation: PropTypes.func.isRequired,
-    // setSelectedCustomerEmail: PropTypes.func.isRequired,
-    // setSelectedMaTk: PropTypes.func.isRequired,
+    setTenKH: PropTypes.func.isRequired,
+    setSDTKH: PropTypes.func.isRequired,
+    setDiaChi: PropTypes.func.isRequired,
+    setTienShip: PropTypes.func.isRequired,
+    getAllData: PropTypes.func.isRequired,
   };
-  const { open, handleClose, resetInformation, getDetailHD } = props;
-  //   open Data on Table
-  const [listData, setListData] = useState([]);
-
-  const getAllData = useCallback(async () => {
-    try {
-      const getData = await getAllDataTaiKhoan();
-      console.log('getData: ', getData);
-      if (getData) {
-        setListData(getData);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
-  // const [currentPage, setCurrentPage] = useState(0);
-
-  useEffect(() => {
-    getAllData();
-  }, [getAllData]);
+  const { open, handleClose, listData, setTenKH, setSDTKH, setDiaChi, setTienShip, getDetailHD, getAllData } = props;
 
   // Edit table
-
   const [page, setPage] = useState(0);
 
   const [order, setOrder] = useState('asc');
@@ -126,17 +104,7 @@ const ModalAddKhachHang = (props) => {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  // Open and Close menu
-  // const [object, getObject] = useState([]);
-
-  // const handleOpenMenu = (event, row) => {
-  //   console.log('Check event: ', event);
-  //   console.log('Check event: ', row);
-  //   getObject(row);
-
-  //   setOpen1(event.currentTarget);
-  // };
-
+  const tong = listData.length;
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -173,54 +141,47 @@ const ModalAddKhachHang = (props) => {
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
-  const [alertContent, setAlertContent] = useState(null);
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-    setAlertContent(null);
-  };
-
-  const param = useParams();
-  const idHdParam = param.id;
-
-  const handleDeleteKH = async () => {
-    try {
-      setAlertContent({
-        type: 'success',
-        message: 'Đã Chuyển Về Khách Lẻ!!!',
-      });
-      await updateKH1(idHdParam);
-      resetInformation();
-      getDetailHD();
-      handleClose();
-    } catch (error) {
-      console.error(error);
-    }
-  };
   // Get number
   const handleChoose = async (item) => {
-    try {
-      setAlertContent({
-        type: 'success',
-        message: 'Thêm Khách Hàng Thành Công!!!',
-      });
-      await updateKH(idHdParam, item.idTaiKhoan);
-    } catch (error) {
-      console.error(error);
-    }
-    getDetailHD();
+    console.log('item: ', item);
+    setTenKH(item.tenNguoiNhan);
+    setSDTKH(item.sdt);
+    setDiaChi(`${item.diaChiCuThe}, ${item.phuongXa}, ${item.quanHuyen}, ${item.tinhThanh}`);
+    setTienShip(item.phiShip);
     handleClose();
+    getDetailHD();
+  };
+  const [showModalsAddress, setShowModalKH] = useState(false);
+  const handleAddAddress = () => {
+    setShowModalKH(true);
+  };
+  const handleCloseAddress = () => {
+    setShowModalKH(false);
   };
 
   return (
     <>
       <div>
         <Dialog open={open} onClose={handleClose} maxWidth="xl" fullWidth>
-          <DialogTitle>DANH SÁCH TÀI KHOẢN KHÁCH HÀNG</DialogTitle>
+          <DialogTitle>DANH SÁCH ĐỊA CHỈ CỦA TÀI KHOẢN</DialogTitle>
           <DialogContent>
             <Card>
+              <Button
+                onClick={() => handleAddAddress()}
+                sx={{
+                  backgroundColor: 'black',
+                  color: 'white',
+                  float: 'right',
+                  marginRight: '10px',
+                  '&:hover': {
+                    backgroundColor: 'white',
+                    color: 'black',
+                  },
+                }}
+                disabled={tong === 5}
+              >
+                {tong >= 5 ? 'Khóa Thêm Địa Chỉ' : 'Thêm Địa Chỉ Mới'}
+              </Button>
               <UserListToolbar
                 numSelected={selected.length}
                 filterName={filterName}
@@ -239,28 +200,28 @@ const ModalAddKhachHang = (props) => {
                       onRequestSort={handleRequestSort}
                       onSelectAllClick={handleSelectAllClick}
                     />
+
                     <TableBody>
                       {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                        const { idTaiKhoan, maTaiKhoan, ho, ten, sdt, email } = row;
-                        const selectedUser = selected.indexOf(idTaiKhoan) !== -1;
+                        const { loaiDiaChi, diaChiCuThe, phuongXa, quanHuyen, tinhThanh, tenNguoiNhan, sdt } = row;
+                        const selectedUser = selected.indexOf(loaiDiaChi) !== -1;
 
                         return (
                           <TableRow hover key={index} tabIndex={-1} role="checkbox" selected={selectedUser}>
-                            <TableCell component="th" scope="row" padding="none">
+                            <TableCell component="th" scope="row" align="center">
                               <Stack direction="row" alignItems="center" spacing={2}>
-                                <Avatar alt={maTaiKhoan} src={`/assets/images/avatars/avatar_${index + 1}.jpg`} />
                                 <Typography variant="subtitle2" noWrap>
-                                  {maTaiKhoan}
+                                  {loaiDiaChi === 1 ? 'Nhà Riêng' : 'Văn Phòng'}
                                 </Typography>
                               </Stack>
                             </TableCell>
-                            {/* <TableCell align="left">{maTaiKhoan}</TableCell> */}
-                            <TableCell align="left">
-                              {ho} {ten}
+                            <TableCell align="center">{diaChiCuThe}</TableCell>
+                            <TableCell align="center">
+                              {tinhThanh}, {phuongXa}, {quanHuyen}
                             </TableCell>
-                            <TableCell align="left">{sdt}</TableCell>
-                            <TableCell align="left">{email}</TableCell>
-                            <TableCell align="right">
+                            <TableCell align="center">{tenNguoiNhan}</TableCell>
+                            <TableCell align="center">{sdt}</TableCell>
+                            <TableCell align="center">
                               <Button variant="outlined" size="small" onClick={() => handleChoose(row)}>
                                 Chọn
                               </Button>
@@ -315,23 +276,12 @@ const ModalAddKhachHang = (props) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Hủy</Button>
-            <Button onClick={handleDeleteKH}>Xóa Khách Hàng</Button>
+            <Button onClick={handleClose}>Hoàn Tất</Button>
           </DialogActions>
         </Dialog>
       </div>
-      {alertContent && (
-        <Snackbar
-          open
-          autoHideDuration={3000}
-          onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
-            {alertContent.message}
-          </Alert>
-        </Snackbar>
-      )}
+      <ModalAddAddressById open={showModalsAddress} handleClose={handleCloseAddress} getAllData={getAllData} />
     </>
   );
 };
-export default ModalAddKhachHang;
+export default ModalAddAddressPayment;

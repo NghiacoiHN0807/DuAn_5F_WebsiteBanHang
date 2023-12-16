@@ -40,7 +40,7 @@ const UpdateTkNV = (props) => {
   const [alertContent, setAlertContent] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState("");
-
+  const [helperTextSCC, setHelperTextSCC] = useState('');
   const getAllChucVu = async () => {
     const rs = await chucVu3(0);
     setMyChucVu(rs);
@@ -75,9 +75,61 @@ const UpdateTkNV = (props) => {
     getListData();
   }, [getListData]);
 
+ 
+  const cccdRegex = /^\d{9,12}$/;
+  const validateFields = () => {
+    let isValid = true;
+    const newValidation = {};
+  
+    // Validate 'ho' field
+    if (!ho) {
+      newValidation.ho = 'Họ không được để trống';
+      isValid = false;
+    }
+  
+    // Validate 'ten' field
+    if (!ten) {
+      newValidation.ten = 'Tên không được để trống';
+      isValid = false;
+    }
+
+    if (!sdt) {
+      newValidation.sdt = 'Số điện thoại không được để trống';
+      isValid = false;
+    }
+    if (!email) {
+      newValidation.email = 'Email không được để trống';
+      isValid = false;
+    }
+    if (!matKhau) {
+      newValidation.matKhau = 'Mật khẩu không được để trống';
+      isValid = false;
+    }
+
+    if (!soCanCuoc) {
+      newValidation.soCanCuoc ='Không được để trống số căn cước';
+      isValid = false;
+    }else 
+    if (!cccdRegex.test(soCanCuoc)) {
+      newValidation.soCanCuoc ='Số Căn Cước phải có từ 9 đến 12 chữ số';
+      isValid = false;
+    }
+  
+    // Validate other fields similarly
+  
+    // Update the validation state
+    setValidationErrors(newValidation);
+  
+    return isValid;
+  };
+
   const handleSave = async () => {
     let res;
     let tenCvObject;
+    if (!validateFields()) {
+      // Validation failed, do not proceed with the API call
+      return;
+    }
     try {
 
       tenCvObject = await detailTen(chucVu);
@@ -234,7 +286,7 @@ const UpdateTkNV = (props) => {
             }}
           />
           <TextField
-            error={!!validationErrors.soCanCuoc}
+            error={ !!validationErrors.soCanCuoc}
             helperText={validationErrors.soCanCuoc}
             fullWidth
             id="soCanCuoc"
