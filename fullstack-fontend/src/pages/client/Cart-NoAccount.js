@@ -9,12 +9,12 @@ import { useNavigate } from 'react-router-dom';
 import { listImg } from '../../service/client/Detail-Product';
 import {
   listProductOnCart,
-  postAddBillAddBill,
+  // postAddBillAddBill,
   postAddBillNoAccount,
   postAddDirectClient,
 } from '../../service/client/Detail-Cart';
 import ModalUpdateProductOnCartClientNoAccount from '../../forms/client/Modals-Update-Product-Cart-Client-NoAccount';
-import { findById, postAddBill } from '../../service/BillSevice';
+import { findById } from '../../service/BillSevice';
 
 const StyledProductImg = styled('img')({
   top: 0,
@@ -83,15 +83,28 @@ export default function CartNoAccount() {
   };
 
   const handleIncreaseQuantity = (item) => {
-    setQuantity(item.soLuong + 1);
-    const updatedCart = { ...currentCart };
-    const getGia = productOnCart.find((i) => i.idCtsp.idCtsp === item.idCtsp.idCtsp);
+    if (item.soLuong + 1 > 20) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Nếu Muốn Mua Sỉ. Hãy Liên Hệ Với Chúng Tôi',
+      });
+    } else if (item.soLuong + 1 > item.idCtsp.soLuongTon) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Số Lượng Tồn Không Đủ',
+      });
+    } else {
+      setQuantity(item.soLuong + 1);
+      // console.log(quantity);
+      const updatedCart = { ...currentCart };
+      const getGia = productOnCart.find((i) => i.idCtsp.idCtsp === item.idCtsp.idCtsp);
 
-    updatedCart[item.idCtsp.idCtsp].soLuong += 1;
-    updatedCart[item.idCtsp.idCtsp].donGia = getGia.idCtsp.giaThucTe * updatedCart[item.idCtsp.idCtsp].soLuong;
+      updatedCart[item.idCtsp.idCtsp].soLuong += 1;
+      updatedCart[item.idCtsp.idCtsp].donGia = getGia.idCtsp.giaThucTe * updatedCart[item.idCtsp.idCtsp].soLuong;
 
-    localStorage.setItem('cartProduct', JSON.stringify(updatedCart));
-    getDetail();
+      localStorage.setItem('cartProduct', JSON.stringify(updatedCart));
+      getDetail();
+    }
   };
 
   useEffect(() => {

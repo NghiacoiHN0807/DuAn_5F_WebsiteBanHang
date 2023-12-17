@@ -162,6 +162,7 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "            MIN(gia_thuc_te) as giam_gia,\n" +
             "            MAX(gia_thuc_te) as max_giam_gia\n" +
             "            FROM chi_tiet_san_pham\n" +
+            "            WHERE trang_thai = 0\n" +
             "            GROUP BY id_sp\n" +
             "            ) ctsp ON sp.id_sp = ctsp.id_sp\n" +
             " \n" +
@@ -275,4 +276,14 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "GROUP BY sp.id_sp, ctsp.min_gia_ban, ctsp.max_gia_ban, ctsp.giam_gia\n" +
             "LIMIT 8;\n", nativeQuery = true)
     List<Object[]> getRelatedProduct(@Param("idLsp") Integer idLsp, @Param("idSp") Integer idSp);
+
+    @Query(value = "SELECT \n" +
+            "    CASE\n" +
+            "        WHEN COUNT(*) = SUM(CASE WHEN trang_thai = 10 THEN 1 ELSE 0 END) THEN true\n" +
+            "        ELSE false\n" +
+            "    END AS result\n" +
+            "FROM chi_tiet_san_pham\n" +
+            "WHERE id_sp =:idSp", nativeQuery = true)
+
+    Integer setSpIsOut(@Param("idSp") Integer idSp);
 }

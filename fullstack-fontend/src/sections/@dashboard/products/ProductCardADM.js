@@ -88,11 +88,11 @@ export default function ShopProductCard({ product }) {
                   textDecoration: 'line-through',
                 }}
               >
-                {formatCurrency(giaThucTe)}
+                {formatCurrency(giaMin)}
               </Typography>
               <Typography component="span" variant="subtitle1">
                 {' '}
-                {formatCurrency(giaMin)}
+                {formatCurrency(giaThucTe)}
               </Typography>
             </Typography>
           ) : (

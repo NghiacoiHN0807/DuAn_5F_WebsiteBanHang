@@ -126,7 +126,7 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
             ctsp.setIdSp(spRepo.findById(idSp).orElse(null));
             ctsp.setIdMs(msRepo.findById(idMs).orElse(null));
             ctsp.setIdSize(sizeRepo.findById(idSize).orElse(null));
-            ctsp.setTrangThai(1);
+            ctsp.setTrangThai(9);
             return chitietsanphamRepository.save(ctsp);
         }
     }

@@ -17,6 +17,8 @@ public interface HoadonchitietSevice {
 
     List<Object[]> getListProductOncart(Integer idHd);
 
+    List<Object[]> getListProductOncart2(Integer idHd);
+
     Page<HoaDonChiTiet> getListProductByIDKH(Integer idKH, Integer pageNo, Integer size);
 
     ResponseEntity<?> add(HoaDonChiTiet add);

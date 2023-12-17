@@ -96,6 +96,7 @@ const ModalPaymentComfirmTimeline = (props) => {
             message: 'Thanh Toán Tại Quầy Thành Công!!!',
           });
           getListData();
+          handleClose();
         }
       }
     } catch (e) {

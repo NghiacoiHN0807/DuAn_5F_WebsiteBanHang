@@ -42,4 +42,5 @@ public interface ChitietsanphamService {
     ChiTietSanPham updateNumber(Integer idCtsp, BigDecimal giaNhap, BigDecimal giaBan, Integer soLuongTon, Integer trangThai);
 
     List<CTSPCustom> getCtspForAd(Integer idSp);
+
 }

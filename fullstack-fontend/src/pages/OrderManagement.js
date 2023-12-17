@@ -317,16 +317,16 @@ const OrderManagement = () => {
     setAlertContent(null);
   };
   // Handle delete
-  const [openDelete, setOpenDelete] = useState(false);
-  const [information, setInformation] = useState();
-  const handleDelete = () => {
-    setInformation(object);
-    setOpenDelete(true);
-  };
-  const handleClose = () => {
-    setOpenDelete(false);
-    getListData();
-  };
+  // const [openDelete, setOpenDelete] = useState(false);
+  // const [information, setInformation] = useState();
+  // const handleDelete = () => {
+  //   setInformation(object);
+  //   setOpenDelete(true);
+  // };
+  // const handleClose = () => {
+  //   setOpenDelete(false);
+  //   getListData();
+  // };
 
   // Format Date Time
   function formatDateTime(dateTimeString) {
@@ -553,13 +553,13 @@ const OrderManagement = () => {
           Edit
         </MenuItem>
 
-        <MenuItem onClick={() => handleDelete()} sx={{ color: 'error.main' }}>
+        {/* <MenuItem onClick={() => handleDelete()} sx={{ color: 'error.main' }}>
           <Iconify icon={'eva:trash-2-outline'} sx={{ mr: 2 }} />
           Delete
-        </MenuItem>
+        </MenuItem> */}
       </Popover>
       {/* Dialog xác nhận xóa */}
-      <ModalDeleteDirectSale open={openDelete} handleClose={handleClose} information={information} />
+      {/* <ModalDeleteDirectSale open={openDelete} handleClose={handleClose} information={information} /> */}
       {alertContent && (
         <Snackbar
           open

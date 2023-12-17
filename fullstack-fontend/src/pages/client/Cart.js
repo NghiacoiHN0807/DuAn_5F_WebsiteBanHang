@@ -83,6 +83,11 @@ export default function Cart() {
         type: 'warning',
         message: 'Nếu bạn Muốn Mua Sỉ. Hãy Liên hệ Với Chúng Tôi',
       });
+    } else if (item.soLuong >= item.idCtsp.soLuongTon) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Số Lượng Tồn Không Đủ',
+      });
     } else {
       setCurrentItemId(item.idCtsp.idCtsp);
       setQuantity(item.soLuong + 1);

@@ -70,7 +70,7 @@ const ModalUpdateStatus = (props) => {
           keepMounted
           onClose={handleClose}
           maxWidth="xl"
-          fullWidth
+          // fullWidth
           aria-describedby="alert-dialog-slide-description"
         >
           <DialogTitle>{'Cập Nhập Lịch Sử Hóa Đơn'}</DialogTitle>
