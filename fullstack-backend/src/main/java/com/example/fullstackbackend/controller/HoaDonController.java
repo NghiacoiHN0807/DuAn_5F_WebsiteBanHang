@@ -83,7 +83,7 @@ public class HoaDonController {
 
     public String buildEmailContent(String maHd, String ngayThayDoi, String trangThai) {
 
-        String content = "Bạn đã đặt đơn hàng trên 5F Store" ;
+        String content = "Bạn đã đặt đơn hàng trên 5F Store";
         content += "\nMã hóa đơn: " + maHd;
         content += "\nNgày thay đổi: " + ngayThayDoi;
         content += "\nTrạng thái: " + trangThai;
@@ -176,55 +176,59 @@ public class HoaDonController {
                                @RequestParam String moTa) {
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTrangThai(newHD.getTrangThai());
-            if(hoaDon.getEmail() != null && hoaDon.getEmail().isEmpty()){
-                if (hoaDon.getTrangThai() == 1){
+            if (hoaDon.getEmail() != null && hoaDon.getEmail().isEmpty()) {
+                if (hoaDon.getTrangThai() == 1) {
                     String trangThai = "Hóa đơn đã được xác nhận";
                     SimpleMailMessage message = new SimpleMailMessage();
                     message.setFrom(formMail);
                     message.setTo(hoaDon.getEmail());
-                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
+                    message.setSubject("Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                    message.setText(buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp), trangThai));
                     mailSender.send(message);
-                }  if (hoaDon.getTrangThai() == 3){
+                }
+                if (hoaDon.getTrangThai() == 3) {
                     String trangThai = "Đơn hàng đã chuyển cho đơn vị vận chuyển";
                     SimpleMailMessage message = new SimpleMailMessage();
                     message.setFrom(formMail);
                     message.setTo(hoaDon.getEmail());
-                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
+                    message.setSubject("Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                    message.setText(buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp), trangThai));
                     mailSender.send(message);
-                } if (hoaDon.getTrangThai() == 4){
+                }
+                if (hoaDon.getTrangThai() == 4) {
                     String trangThai = "Đơn hàng đã được xác nhận thanh toán";
                     SimpleMailMessage message = new SimpleMailMessage();
                     message.setFrom(formMail);
                     message.setTo(hoaDon.getEmail());
-                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
+                    message.setSubject("Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                    message.setText(buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp), trangThai));
                     mailSender.send(message);
                 }
-                if (hoaDon.getTrangThai() == 5){
+                if (hoaDon.getTrangThai() == 5) {
                     String trangThai = "Đơn hàng đã được nhận thành công";
                     SimpleMailMessage message = new SimpleMailMessage();
                     message.setFrom(formMail);
                     message.setTo(hoaDon.getEmail());
-                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
+                    message.setSubject("Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                    message.setText(buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp), trangThai));
                     mailSender.send(message);
-                } if (hoaDon.getTrangThai() == 6){
+                }
+                if (hoaDon.getTrangThai() == 6) {
                     String trangThai = "Đơn hàng đã được xác nhận đổi trả";
                     SimpleMailMessage message = new SimpleMailMessage();
                     message.setFrom(formMail);
                     message.setTo(hoaDon.getEmail());
-                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
+                    message.setSubject("Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                    message.setText(buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp), trangThai));
                     mailSender.send(message);
-                }   if (hoaDon.getTrangThai() == 10){
+                }
+                if (hoaDon.getTrangThai() == 10) {
                     String trangThai = "Đơn hàng đã bị hủy";
                     SimpleMailMessage message = new SimpleMailMessage();
                     message.setFrom(formMail);
                     message.setTo(hoaDon.getEmail());
-                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
+                    message.setSubject("Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                    message.setText(buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp), trangThai));
                     mailSender.send(message);
                 }
             }
@@ -243,7 +247,7 @@ public class HoaDonController {
 
                     System.out.println("Số Lượng Còn Lại:" + y.getSoLuongTon());
                     y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                    if(y.getSoLuongTon() <= 0){
+                    if (y.getSoLuongTon() <= 0) {
                         y.setTrangThai(10);
                     }
                     chitietsanphamSer.update(y);
@@ -257,7 +261,7 @@ public class HoaDonController {
                         chiTietSanPhams) {
                     System.out.println("Số Lượng Còn Lại:" + y.getSoLuongTon());
                     y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
-                    if(y.getSoLuongTon() <= 0){
+                    if (y.getSoLuongTon() <= 0) {
                         y.setTrangThai(10);
                     }
                     chitietsanphamSer.update(y);
@@ -303,7 +307,7 @@ public class HoaDonController {
                 for (ChiTietSanPham y :
                         chiTietSanPhams) {
                     y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                    if(y.getSoLuongTon() <= 0){
+                    if (y.getSoLuongTon() <= 0) {
                         y.setTrangThai(10);
                     }
                     chitietsanphamSer.update(y);
@@ -378,7 +382,7 @@ public class HoaDonController {
 
         return newHD1;
     }
-    
+
 
     @PutMapping("update-ship-online/{id}")
     public HoaDon updateShipOnline(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
@@ -492,10 +496,11 @@ public class HoaDonController {
         String totalPrice = request.getParameter("vnp_Amount");
         BigDecimal realPrice = new BigDecimal(totalPrice).divide(new BigDecimal(100));
         Integer idHd = Integer.valueOf(orderInfo);
+        //Detail HD by IdHd
+        Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
 
         if (paymentStatus == 1) {
-            //Detail HD by IdHd
-            Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
+
             BigDecimal getTongTien = getOne.get().getTongTien();
 
             BigDecimal tienMat = getTongTien.subtract(realPrice);
@@ -548,9 +553,13 @@ public class HoaDonController {
 
             return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
         } else {
-            response.sendRedirect("http://localhost:3000/dashboard/sales/card-bill/" + idHd);
-            return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
-
+            if (getOne.get().getTrangThai() <= 6) {
+                response.sendRedirect("http://localhost:3000/dashboard/bills/time-line/" + idHd);
+                return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
+            } else {
+                response.sendRedirect("http://localhost:3000/dashboard/sales/card-bill/" + idHd);
+                return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
+            }
         }
 
     }
