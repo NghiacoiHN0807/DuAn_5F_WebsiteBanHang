@@ -1,5 +1,6 @@
 import '../scss/Car-Bill-ADM.scss';
 import {
+    Backdrop,
     Box,
     Button,
     Container,
@@ -21,13 +22,14 @@ import PropTypes from 'prop-types';
 import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useAlert } from "../layouts/dashboard/AlertContext";
 import { getDiaChiById, postUpdateDiaChi } from "../service/diaChiSevice";
 // components
 // sections
 // APIs
-const ModalAddAddressById = (props) => {
-    ModalAddAddressById.propTypes = {
+const ModalsUpdateAddressById = (props) => {
+    ModalsUpdateAddressById.propTypes = {
         open: PropTypes.bool.isRequired,
         handleClose: PropTypes.func.isRequired,
         getAllData: PropTypes.func.isRequired,
@@ -355,6 +357,7 @@ const ModalAddAddressById = (props) => {
         }
         let res;
         try {
+            handleOpenBD();
             res = await postUpdateDiaChi(
                 diaChi.id,
                 taiKhoan,
@@ -371,19 +374,23 @@ const ModalAddAddressById = (props) => {
             console.log("Check res: ", res);
         } catch (error) {
             if (error.response && error.response.data) {
+                handleCloseBD();
                 setValidationErrors(error.response.data);
                 // showAlert('error', error.response.data);
                 showAlert('error', "Cập Nhập Địa Chỉ Thất Bại");
             } else {
+                handleCloseBD();
                 console.error("Error:", error);
             }
             return;
         }
         if (res && res.id) {
+            handleCloseBD();
             showAlert('success', 'Cập nhập địa chỉ Thành Công');
             handleClose();
             getAllData();
         } else {
+            handleCloseBD();
             showAlert('warning', 'Cập nhập thất bại');
         }
 
@@ -404,6 +411,13 @@ const ModalAddAddressById = (props) => {
     useEffect(() => {
         clearText()
     }, [handleClose]);
+    const [openBD, setOpenBD] = useState(false);
+    const handleCloseBD = () => {
+        setOpenBD(false);
+    };
+    const handleOpenBD = () => {
+        setOpenBD(true);
+    };
     return (
         <>
             <div>
@@ -576,8 +590,11 @@ const ModalAddAddressById = (props) => {
                         <Button onClick={handleClose}>Hủy</Button>
                     </DialogActions>
                 </Dialog>
+                <Backdrop sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}} open={openBD}>
+                    <CircularProgress color="inherit"/>
+                </Backdrop>
             </div>
         </>
     );
 };
-export default ModalAddAddressById;
+export default ModalsUpdateAddressById;

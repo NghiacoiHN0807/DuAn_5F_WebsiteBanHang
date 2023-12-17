@@ -8,17 +8,16 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import {Dialog, DialogContent, TextField} from "@mui/material";
+import {Backdrop, Dialog, DialogContent, TextField} from "@mui/material";
 import Link from "@mui/material/Link";
+import CircularProgress from "@mui/material/CircularProgress";
 import {postForgetPassword} from "../../../service/taiKhoanKhachHangSevice";
-import {useAlert} from "../../../layouts/dashboard/AlertContext";
 
 
 // ----------------------------------------------------------------------
 
 export default function ForgetPasswordForm() {
 
-    const {showAlert} = useAlert();
 
     const [email, setEmail] = useState("");
     // chuyen trang
@@ -29,13 +28,15 @@ export default function ForgetPasswordForm() {
 
         let res;
         try {
+            handleOpenBD();
             res = await postForgetPassword(
-                email,
+                email.trim(),
             );
             console.log("Check res: ", res);
         } catch (error) {
             if (error.response && error.response.data) {
                 console.log(error.response.data);
+                handleCloseBD();
                 setValidationErrors(error.response.data);
             } else {
                 console.error("Error:", error);
@@ -44,9 +45,10 @@ export default function ForgetPasswordForm() {
         }
 
         if (res.email) {
-           handlOpenAdd();
-            
-        } 
+            handleCloseBD();
+            handlOpenAdd();
+
+        }
 
     };
     const [openAdd, setOpenAdd] = useState(false);
@@ -58,6 +60,14 @@ export default function ForgetPasswordForm() {
     const handlCloseAdd = () => {
         setOpenAdd(false);
         navigate('/login');
+    };
+    // backdrop
+    const [openBD, setOpenBD] = useState(false);
+    const handleCloseBD = () => {
+        setOpenBD(false);
+    };
+    const handleOpenBD = () => {
+        setOpenBD(true);
     };
 
     return (
@@ -73,7 +83,7 @@ export default function ForgetPasswordForm() {
                 }}
             >
                 <Typography component="h1" variant="h3">
-                   Quên Mật Khẩu
+                    Quên Mật Khẩu
                 </Typography>
                 <Box component="form" sx={{mt: 3, textAlign: 'center', width: '100%'}}>
                     <Grid container spacing={2}>
@@ -95,7 +105,7 @@ export default function ForgetPasswordForm() {
                         onClick={() => handleSave()}
                         fullWidth
                         variant="contained"
-                        sx={{mt: 4, mb: 3 ,fontSize: '18px'}}
+                        sx={{mt: 4, mb: 3, fontSize: '18px'}}
                     >
                         Quên mật khẩu
                     </Button>
@@ -128,6 +138,9 @@ export default function ForgetPasswordForm() {
                 </DialogContent>
 
             </Dialog>
+            <Backdrop sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}} open={openBD}>
+                <CircularProgress color="inherit"/>
+            </Backdrop>
         </Container>
 
     );
