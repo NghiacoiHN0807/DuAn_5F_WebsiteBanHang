@@ -12,14 +12,12 @@ import {Backdrop, Dialog, DialogContent, TextField} from "@mui/material";
 import Link from "@mui/material/Link";
 import CircularProgress from "@mui/material/CircularProgress";
 import {postForgetPassword} from "../../../service/taiKhoanKhachHangSevice";
-import {useAlert} from "../../../layouts/dashboard/AlertContext";
 
 
 // ----------------------------------------------------------------------
 
 export default function ForgetPasswordForm() {
 
-    const {showAlert} = useAlert();
 
     const [email, setEmail] = useState("");
     // chuyen trang
@@ -32,7 +30,7 @@ export default function ForgetPasswordForm() {
         try {
             handleOpenBD();
             res = await postForgetPassword(
-                email,
+                email.trim(),
             );
             console.log("Check res: ", res);
         } catch (error) {

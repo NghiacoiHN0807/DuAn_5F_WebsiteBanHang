@@ -70,8 +70,8 @@ export default function LoginForm() {
         myHeaders.append('Authorization', 'Basic Og==');
 
         const raw = JSON.stringify({
-            username: params.email,
-            password: params.password,
+            username: params.email.trim(),
+            password: params.password.trim(),
         });
 
         const requestOptions = {
