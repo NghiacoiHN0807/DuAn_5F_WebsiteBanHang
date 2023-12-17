@@ -83,7 +83,7 @@ console.log('test:' , hdNgay);
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={ 'mdi:dollar'}  />
+            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={ 'raphael:dollar'}  />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
@@ -100,7 +100,7 @@ console.log('test:' , hdNgay);
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tỷ Lệ Trả Hàng (%)" total={rate} color="error" icon={'tabler:truck-return'} />
+            <AppWidgetSummary title="Tỷ Lệ Trả Hàng Trên Hóa Đơn(%)" total={rate} color="error" icon={'tabler:truck-return'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
