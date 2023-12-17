@@ -53,7 +53,6 @@ const AllAddress = () => {
     }, []);
 
 
-
     const columns = [
         {field: "index", headerName: "##", width: 30},
         {field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 130},
@@ -141,11 +140,6 @@ const AllAddress = () => {
         }));
 
 
-    const handlePageClick = (page) => {
-        getListData(page + 1);
-    };
-
-
     useEffect(() => {
         const filteredData =
             selectedStatus === "Tất cả"
@@ -230,38 +224,38 @@ const AllAddress = () => {
                     </Typography>
                 </Stack>
                 <Card>
-                <TextField
-                    variant="outlined"
-                    margin="dense"
-                    sx={{ml: 1, flex: 1}}
-                    placeholder="Tìm Kiếm"
-                    InputProps={{
-                        startAdornment: (
-                            <IconButton type="button" sx={{p: '10px'}} aria-label="search">
-                                <SearchIcon/>
-                            </IconButton>
-                        ),
-                    }}
-                    onChange={(e) => setSearchKeyword(e.target.value)}
-                />
-                <DataGrid
-                    sx={{
-                        border: 'none'
-                    }}
-                    rows={rows}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: {page: 0, pageSize: 10},
-                        },
-                    }}
-                    slots={{toolbar: CustomToolbar}}
-                    pageSizeOptions={[5, 10, 15]}
-                    onRowClick={(params) => handlClickRow(params.row)}
-                />
+                    <TextField
+                        variant="outlined"
+                        margin="dense"
+                        sx={{ml: 1, flex: 1}}
+                        placeholder="Tìm Kiếm"
+                        InputProps={{
+                            startAdornment: (
+                                <IconButton type="button" sx={{p: '10px'}} aria-label="search">
+                                    <SearchIcon/>
+                                </IconButton>
+                            ),
+                        }}
+                        onChange={(e) => setSearchKeyword(e.target.value)}
+                    />
+                    <DataGrid
+                        sx={{
+                            border: 'none'
+                        }}
+                        rows={rows}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: {page: 0, pageSize: 10},
+                            },
+                        }}
+                        slots={{toolbar: CustomToolbar}}
+                        pageSizeOptions={[5, 10, 15]}
+                        onRowClick={(params) => handlClickRow(params.row)}
+                    />
                 </Card>
             </Container>
-            <AlertSnackbar />
+            <AlertSnackbar/>
         </>
     );
 };

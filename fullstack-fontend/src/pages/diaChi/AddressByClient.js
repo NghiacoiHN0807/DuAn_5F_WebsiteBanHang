@@ -39,7 +39,7 @@ const AddressByClient = () => {
     const [selectedLoaiDiaChi, setSelectedLoaiDiaChi] = useState("Tất cả");
     const [originalListData, setOriginalListData] = useState([]);
     const navigate = useNavigate();
-    const [tong,setTong]=useState([]);
+    const [tong, setTong] = useState(0);
 
     const {showAlert} = useAlert();
 
@@ -47,20 +47,31 @@ const AddressByClient = () => {
         try {
             const res = await fetchDiaChiByTkAll(idTK);
             const count = await fetchCountDiaChi(idTK);
-            setTong(count);
-            setListData(res);
-            setOriginalListData(res);
+            // console.log(count)
+            if (count.statusCode === 200) {
+                setTong(0);
+                setListData(res);
+                setOriginalListData(res);
+                return;
+            }
+            if (count) {
+                setTong(count);
+                setListData(res);
+                setOriginalListData(res);
+
+            }
+
         } catch (error) {
             console.error(error);
         }
     };
 
     useEffect(() => {
-        getListData(idTK, 0);
+        getListData(idTK);
     }, [idTK]);
 
-    const fetchUpdatedData = (page) => {
-        getListData(idTK, page);
+    const fetchUpdatedData = () => {
+        getListData(idTK);
     };
 
 
@@ -155,7 +166,6 @@ const AddressByClient = () => {
             loaiDiaChi: item.loaiDiaChi,
             trangThai: item.trangThai,
         }));
-
 
 
     useEffect(() => {
@@ -262,48 +272,49 @@ const AddressByClient = () => {
             </Stack>
             <Card>
 
-            <Box sx={{ display: 'flex' }}>
-                <Box sx={{ flexGrow: 1 }}>
-                    <TextField
-                        margin="dense"
-                        variant="outlined"
-                        sx={{ml: 1, flex: 1}}
-                        placeholder="Tìm Kiếm"
-                        InputProps={{
-                            startAdornment: (
-                                <IconButton type="button" sx={{p: '10px'}} aria-label="search">
-                                    <SearchIcon/>
-                                </IconButton>
-                            ),
-                        }}
-                        onChange={(e) => setSearchKeyword(e.target.value)}
-                    />
+                <Box sx={{display: 'flex'}}>
+                    <Box sx={{flexGrow: 1}}>
+                        <TextField
+                            margin="dense"
+                            variant="outlined"
+                            sx={{ml: 1, flex: 1}}
+                            placeholder="Tìm Kiếm"
+                            InputProps={{
+                                startAdornment: (
+                                    <IconButton type="button" sx={{p: '10px'}} aria-label="search">
+                                        <SearchIcon/>
+                                    </IconButton>
+                                ),
+                            }}
+                            onChange={(e) => setSearchKeyword(e.target.value)}
+                        />
+                    </Box>
+                    <Box sx={{display: 'flex', alignItems: 'center'}}>
+                        <Button disabled={tong >= 5} variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>}
+                                onClick={() => handAdd()}>
+                            Tạo Địa Chỉ Mới
+                        </Button>
+                    </Box>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Button disabled={tong >= 5} variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => handAdd()}>
-                        Tạo Địa Chỉ Mới
-                    </Button>
-                </Box>
-            </Box>
 
-            <DataGrid
-                sx={{
-                    border: 'none'
-                }}
-                rows={rows}
-                columns={columns}
-                initialState={{
-                    pagination: {
-                        paginationModel: {page: 0, pageSize: 10},
-                    },
-                }}
-                slots={{toolbar: CustomToolbar}}
-                getRowSpacing={(params) => ({
-                    top: params.isFirstVisible ? 0 : 5,
-                    bottom: params.isLastVisible ? 0 : 5,
-                })}
-                pageSizeOptions={[5, 10, 15]}
-            />
+                <DataGrid
+                    sx={{
+                        border: 'none'
+                    }}
+                    rows={rows}
+                    columns={columns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: {page: 0, pageSize: 10},
+                        },
+                    }}
+                    slots={{toolbar: CustomToolbar}}
+                    getRowSpacing={(params) => ({
+                        top: params.isFirstVisible ? 0 : 5,
+                        bottom: params.isLastVisible ? 0 : 5,
+                    })}
+                    pageSizeOptions={[5, 10, 15]}
+                />
 
             </Card>
         </Container>

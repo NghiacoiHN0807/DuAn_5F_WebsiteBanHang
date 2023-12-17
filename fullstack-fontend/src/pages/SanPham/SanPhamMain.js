@@ -185,14 +185,26 @@ export default function UserPage() {
     setIsFiltered(true);
   };
 
-  const displayProducts = isFiltered ? listLoc : listSP;
+  const [dsList, setDsList] = useState([]);
+
+  const handleClearAll = (isPressed) => {
+    setIsFiltered(isPressed);
+  };
+
+  useEffect(() => {
+    if (isFiltered) {
+      setDsList(listLoc);
+    } else {
+      setDsList(listSP);
+    }
+  }, [isFiltered, listLoc, listSP]);
 
   function applySortFilter(array, comparator, query) {
-    let filteredArray = array;
+    const filteredArray = array;
 
-    if (statusFilter !== '') {
-      filteredArray = filteredArray.filter((_user) => _user.trangThai.toString() === statusFilter);
-    }
+    // if (statusFilter !== '') {
+    //   filteredArray = filteredArray.filter((_user) => _user.trangThai.toString() === statusFilter);
+    // }
 
     if (query) {
       return filterData(array, query);
@@ -256,12 +268,17 @@ export default function UserPage() {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - displayProducts.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - dsList.length) : 0;
 
   const filteredUsers =
-    displayProducts && displayProducts
-      ? applySortFilter(displayProducts, getComparator(order, orderBy), filterName)
+    dsList && dsList
+      ? applySortFilter(
+          dsList.filter((_user) => (statusFilter !== '' ? _user.trangThai.toString() === statusFilter : true)),
+          getComparator(order, orderBy),
+          filterName
+        )
       : [];
+
   const isNotFound = !filteredUsers.length && !!filterName;
 
   // Delete
@@ -414,6 +431,7 @@ export default function UserPage() {
                   onCloseFilter={handleCloseFilter}
                   listSP={listSP}
                   onFilter={handleFilter}
+                  onClearAll={handleClearAll}
                 />
               </Grid>
             </Grid>
