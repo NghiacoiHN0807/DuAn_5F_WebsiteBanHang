@@ -33,9 +33,8 @@ const ModalAddAddressById = (props) => {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     getAllData: PropTypes.func.isRequired,
-    loadAddress: PropTypes.func.isRequired,
   };
-  const { open, handleClose, getAllData, loadAddress } = props;
+  const { open, handleClose, getAllData } = props;
 
   const [idTK, setIdtk] = useState('');
 
@@ -266,7 +265,6 @@ const ModalAddAddressById = (props) => {
 
   const handleSave = async () => {
     if (!validateFields()) {
-      // Validation failed, do not proceed with the API call
       return;
     }
     try {
@@ -284,18 +282,11 @@ const ModalAddAddressById = (props) => {
       );
 
       // Reset form data and validation errors on success
-      if (res && res.taiKhoan) {
-        setTenNguoiNhan('');
-        setDiaChiCuThe('');
-        setSdt('');
-        setLoaiDiaChi('0');
-        setSelectedTinhThanh('');
-        setSelectedQuanHuyen('');
-        setSelectedPhuongXa('');
-        setValidationErrors('');
+      if (res) {
 
+        console.log(res);
         showAlert('success', 'Thêm Địa Chỉ thành công');
-        loadAddress();
+        clearText();
         handleClose();
         getAllData();
       } else {
@@ -304,7 +295,6 @@ const ModalAddAddressById = (props) => {
     } catch (error) {
       if (error.response && error.response.data) {
         setValidationErrors(error.response.data);
-        // showAlert('warning', error.response.data);
         showAlert('error', 'Thêm Địa Chỉ Thất Bại !');
       } else {
         console.error('Error:', error);

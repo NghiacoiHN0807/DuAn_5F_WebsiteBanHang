@@ -71,6 +71,7 @@ const ModalAddAddress = () => {
     };
     const handleCloseAddress = () => {
         setShowModal(false);
+        getAllData();
     };
 
     const [showModalsUpdate, setShowModalsUpdate] = useState(false);
@@ -80,6 +81,7 @@ const ModalAddAddress = () => {
     };
     const handleCloseUpdate = () => {
         setShowModalsUpdate(false);
+        getAllData();
     };
     const [open, setOpen] = useState(false);
     const [idDC, setIdDC] = useState("");
@@ -91,6 +93,7 @@ const ModalAddAddress = () => {
 
     const handleClose = () => {
         setOpen(false);
+        getAllData();
     };
 
 
