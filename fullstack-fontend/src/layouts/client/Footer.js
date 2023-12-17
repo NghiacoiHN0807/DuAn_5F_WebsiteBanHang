@@ -15,7 +15,7 @@ const Footer = () => (
           <div className="col-3">
             <Nav defaultActiveKey="/home" className="flex-column">
               <Nav.Link eventKey="disabled" disabled className="nav-links text-light">
-                Đăng Ký và Đăng Nhập %F Store
+                Đăng Ký và Đăng Nhập 5F Store
               </Nav.Link>
               <Nav.Link href="/home" className="nav-links text-light">
                 Đăng Ký
