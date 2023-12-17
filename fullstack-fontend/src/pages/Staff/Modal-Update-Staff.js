@@ -225,9 +225,9 @@ const UpdateTkNV = (props) => {
         </div>
         <div
           className="title"
-          style={{ textAlign: "center", margin: "20px 0" }}
+          style={{ textAlign: "center", margin: "20px 0", color: "black"}}
         >
-          <h4>Cập Nhập Tài Khoản</h4>
+          <h4 style={{fontSize: "34px"}}>Cập Nhập Tài Khoản</h4>
           <h5>Mã tài khoản: {Data.maTaiKhoan}</h5>
         </div>
 

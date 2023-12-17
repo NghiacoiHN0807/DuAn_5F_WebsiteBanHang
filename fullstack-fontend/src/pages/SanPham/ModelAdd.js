@@ -301,7 +301,7 @@ export default function AddSanPham() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Sản Phẩm | 5F Store </title>
       </Helmet>
 
       <Container>

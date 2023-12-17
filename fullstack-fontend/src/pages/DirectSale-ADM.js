@@ -270,7 +270,7 @@ export default function UserPage() {
   return (
     <>
       <Helmet>
-        <title> Sales | 5F Store </title>
+        <title> Bán Hàng | 5F Store </title>
       </Helmet>
 
       <Container>

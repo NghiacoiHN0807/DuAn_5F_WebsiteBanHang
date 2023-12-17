@@ -7,12 +7,10 @@ import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState, Fragment } from 'react';
 // Icon styles
-import IconButton from '@mui/material/IconButton';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
-import MailIcon from '@mui/icons-material/Mail';
 import { Avatar, Box, Chip, ListItemIcon, Menu, MenuItem, Tooltip, AppBar } from '@mui/material';
 import { Logout, PersonAdd, Settings, ShareLocation } from '@mui/icons-material';
 import logo5F from '../../assets/logo_5F.png';
@@ -111,6 +109,7 @@ const Header = () => {
   const handleLocation = () => {
     navigate(`/client/address`);
   };
+
   return (
     <>
       <SectionWithButton>
@@ -218,9 +217,9 @@ const Header = () => {
             </Container>
           </div>
           <Navbar collapseOnSelect expand="lg">
-            <Container>
+            <Container >
               <img src={logo5F} alt="logo_5F" height={'50px'} />
-              <Navbar.Brand href="#home">
+              <Navbar.Brand href="#home" >
                 <Link to="/client/home" className={'nav-link'}>
                   Trang Chủ
                 </Link>

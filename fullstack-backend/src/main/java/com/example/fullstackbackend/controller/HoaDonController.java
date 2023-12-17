@@ -176,7 +176,7 @@ public class HoaDonController {
                                @RequestParam String moTa) {
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTrangThai(newHD.getTrangThai());
-            if(hoaDon.getEmail() != null && hoaDon.getEmail().isEmpty()){
+            if(hoaDon.getEmail() != null && !hoaDon.getEmail().isEmpty()){
                 if (hoaDon.getTrangThai() == 1){
                     String trangThai = "Hóa đơn đã được xác nhận";
                     SimpleMailMessage message = new SimpleMailMessage();
@@ -492,10 +492,11 @@ public class HoaDonController {
         String totalPrice = request.getParameter("vnp_Amount");
         BigDecimal realPrice = new BigDecimal(totalPrice).divide(new BigDecimal(100));
         Integer idHd = Integer.valueOf(orderInfo);
+        //Detail HD by IdHd
+        Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
 
         if (paymentStatus == 1) {
-            //Detail HD by IdHd
-            Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
+
             BigDecimal getTongTien = getOne.get().getTongTien();
 
             BigDecimal tienMat = getTongTien.subtract(realPrice);
@@ -548,9 +549,13 @@ public class HoaDonController {
 
             return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
         } else {
-            response.sendRedirect("http://localhost:3000/dashboard/sales/card-bill/" + idHd);
-            return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
-
+            if (getOne.get().getTrangThai() <= 6) {
+                response.sendRedirect("http://localhost:3000/dashboard/bills/time-line/" + idHd);
+                return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
+            } else {
+                response.sendRedirect("http://localhost:3000/dashboard/sales/card-bill/" + idHd);
+                return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
+            }
         }
 
     }
