@@ -237,7 +237,7 @@ export default function DiscountPage() {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listData.length) : 0;
 
   const filteredUsers =
-    listData && listData ? applySortFilter(listData, getComparator(order, orderBy), filterName) : [];
+    listData && listData ? applySortFilter(listData.filter((_user) => (statusFilter !== '' ? _user.trangThai.toString() === statusFilter : true)), getComparator(order, orderBy), filterName) : [];
   const isNotFound = !filteredUsers.length && !!filterName;
 
 

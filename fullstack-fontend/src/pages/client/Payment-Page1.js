@@ -134,7 +134,7 @@ export default function PaymentPage1() {
   }, [idHdParam]);
   useEffect(() => {
     selectDataCart();
-  }, [selectDataCart]);
+  }, []);
 
   const handleClose = () => {
     setOpenCoupon(false);
