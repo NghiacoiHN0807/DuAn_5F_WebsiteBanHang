@@ -614,7 +614,7 @@ const OrderClientTimeline = ({ classes }) => {
                   open={showModalsAddress}
                   listData={listAddess}
                   handleClose={handleCloseAddress}
-                  getDetailHD={loadAddress}
+                  loadAddress={loadAddress}
                 />
               </>
             )}

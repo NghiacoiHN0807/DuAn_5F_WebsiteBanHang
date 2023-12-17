@@ -1,5 +1,6 @@
 import '../scss/Car-Bill-ADM.scss';
 import {
+  Backdrop,
   Box,
   Button,
   Container,
@@ -22,6 +23,7 @@ import PropTypes from 'prop-types';
 import AddLocationAltIcon from '@mui/icons-material/AddLocationAlt';
 import { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
+import CircularProgress from "@mui/material/CircularProgress";
 import { useAlert } from '../layouts/dashboard/AlertContext';
 import { getDetailOneTK } from '../service/taiKhoanKhachHangSevice';
 import { postAddDiaChi } from '../service/diaChiSevice';
@@ -268,6 +270,7 @@ const ModalAddAddressById = (props) => {
       return;
     }
     try {
+      handleOpenBD();
       const res = await postAddDiaChi(
         taiKhoan,
         diaChiCuThe,
@@ -283,20 +286,23 @@ const ModalAddAddressById = (props) => {
 
       // Reset form data and validation errors on success
       if (res) {
-
+        handleCloseBD();
         console.log(res);
         showAlert('success', 'Thêm Địa Chỉ thành công');
         clearText();
         handleClose();
         getAllData();
       } else {
+        handleCloseBD();
         showAlert('warning', 'Chỉ Tối Đa 5 Địa Chỉ !');
       }
     } catch (error) {
       if (error.response && error.response.data) {
+        handleCloseBD();
         setValidationErrors(error.response.data);
         showAlert('error', 'Thêm Địa Chỉ Thất Bại !');
       } else {
+        handleCloseBD();
         console.error('Error:', error);
       }
     }
@@ -318,6 +324,13 @@ const ModalAddAddressById = (props) => {
     clearText();
   }, [handleClose]);
 
+  const [openBD, setOpenBD] = useState(false);
+  const handleCloseBD = () => {
+    setOpenBD(false);
+  };
+  const handleOpenBD = () => {
+    setOpenBD(true);
+  };
   return (
     <>
       <div>
@@ -485,6 +498,9 @@ const ModalAddAddressById = (props) => {
             <Button onClick={handleClose}>Hủy</Button>
           </DialogActions>
         </Dialog>
+        <Backdrop sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}} open={openBD}>
+          <CircularProgress color="inherit"/>
+        </Backdrop>
       </div>
     </>
   );

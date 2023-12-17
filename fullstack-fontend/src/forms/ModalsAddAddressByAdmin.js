@@ -30,30 +30,15 @@ import { postAddDiaChi } from '../service/diaChiSevice';
 // components
 // sections
 // APIs
-const ModalAddAddressById = (props) => {
-  ModalAddAddressById.propTypes = {
+const ModalsAddAddressByAdmin = (props) => {
+  ModalsAddAddressByAdmin.propTypes = {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     getAllData: PropTypes.func.isRequired,
+    idTaiKhoan: PropTypes.string,
   };
-  const { open, handleClose, getAllData } = props;
+  const { open, handleClose, getAllData,idTaiKhoan } = props;
 
-  const [idTK, setIdtk] = useState('');
-
-  const getTaiKhoanKH = useCallback(async () => {
-    try {
-      // Get KH
-      const getLocalStore = localStorage.getItem('userFormToken');
-      const authorities = getLocalStore ? JSON.parse(getLocalStore).taiKhoan : '';
-      setIdtk(authorities.idTaiKhoan);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
-  useEffect(() => {
-    getTaiKhoanKH();
-  }, [getTaiKhoanKH]);
 
   const [taiKhoan, setTaiKhoan] = useState('');
   const [tenNguoiNhan, setTenNguoiNhan] = useState('');
@@ -196,11 +181,11 @@ const ModalAddAddressById = (props) => {
   useEffect(() => {
     // Call getTaiKhoan when open becomes true
     if (open) {
-      getTaiKhoan(idTK);
+      getTaiKhoan(idTaiKhoan);
     }
-  }, [open, idTK]);
-  const getTaiKhoan = async (idTK) => {
-    const resTK = await getDetailOneTK(idTK);
+  }, [open, idTaiKhoan]);
+  const getTaiKhoan = async (idTaiKhoan) => {
+    const resTK = await getDetailOneTK(idTaiKhoan);
     console.log(resTK);
     setTaiKhoan(resTK);
   };
@@ -505,4 +490,4 @@ const ModalAddAddressById = (props) => {
     </>
   );
 };
-export default ModalAddAddressById;
+export default ModalsAddAddressByAdmin;

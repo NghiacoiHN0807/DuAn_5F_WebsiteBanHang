@@ -1,4 +1,5 @@
 import {
+    Backdrop,
     Button,
     Dialog,
     DialogActions,
@@ -20,6 +21,7 @@ import {Container} from "@mui/system";
 import {Helmet} from "react-helmet-async";
 
 // sections
+import CircularProgress from "@mui/material/CircularProgress";
 import {selectDiaChiByTK} from "../../service/client/Payment";
 import ModalAddAddressById from "../../forms/ModalsAddAddressById";
 import {deleteDiaChi} from "../../service/diaChiSevice";
@@ -54,11 +56,14 @@ const ModalAddAddress = () => {
     }, [getAllData]);
 
     const handleDelete = async (item) => {
+        handleOpenBD();
         const res = await deleteDiaChi(item.id);
         if (res) {
             getAllData();
+            handleCloseBD();
             handleClose();
         } else {
+            handleCloseBD();
             handleClose();
         }
     };
@@ -94,6 +99,13 @@ const ModalAddAddress = () => {
     const handleClose = () => {
         setOpen(false);
         getAllData();
+    };
+    const [openBD, setOpenBD] = useState(false);
+    const handleCloseBD = () => {
+        setOpenBD(false);
+    };
+    const handleOpenBD = () => {
+        setOpenBD(true);
     };
 
 
@@ -202,6 +214,9 @@ const ModalAddAddress = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <Backdrop sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}} open={openBD}>
+                <CircularProgress color="inherit"/>
+            </Backdrop>
         </>
     );
 };

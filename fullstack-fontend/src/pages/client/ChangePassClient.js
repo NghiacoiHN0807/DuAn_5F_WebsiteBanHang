@@ -78,16 +78,16 @@ const ChangePassClient = () => {
             setPassChangeError('Mật Khẩu Mới Xác Nhận Đang Trống');
             hasError = true;
         }
-        if (passCheck !== passChange){
+        if (passCheck.trim() !== passChange.trim()){
             setPassCheckError("Mật Khẩu đang không trùng nhau hãy nhập lại");
             setPassChangeError("Mật Khẩu đang không trùng nhau hãy nhập lại");
             hasError = true;
         }
-        if (passChange && !passwordRegex.test(passChange)) {
+        if (passChange.trim() && !passwordRegex.test(passChange.trim())) {
             setPassCheckError('Mật khẩu mới phải có 1 chữ Hoa , 1 chữ số và dài 8 ký tự');
             hasError = true;
         }
-        if (passCheck && !passwordRegex.test(passCheck)) {
+        if (passCheck.trim() && !passwordRegex.test(passCheck.trim())) {
             setPassCheckError('Mật khẩu mới phải có 1 chữ Hoa , 1 chữ số và dài 8 ký tự');
             hasError = true;
         }
@@ -104,8 +104,8 @@ const ChangePassClient = () => {
                 email,
                 matKhau,
                 trangThai,
-                pass,
-                passChange
+                pass.trim(),
+                passChange.trim()
             );
             // console.log("Check res: ", res);
         } catch (error) {
@@ -113,6 +113,7 @@ const ChangePassClient = () => {
                 handleCloseBD();
                setPassError(error.response.data.matKhau);
             } else {
+                handleCloseBD();
                 console.error("Error:", error);
             }
             return;
@@ -155,7 +156,9 @@ const ChangePassClient = () => {
                 <div>
                     <TableContainer sx={{ border: 'none', boxShadow: 'none' }}>
                     <Table  sx={{
-                        minWidth: 700,
+                        minWidth: 'auto', // Auto width
+                        // Full width
+                        maxWidth: 'auto', // No maximum width
                         background: 'transparent',
                         '& .MuiTableCell-root': {
                             border: 'none'
@@ -184,8 +187,8 @@ const ChangePassClient = () => {
                                                    error={!!passError}
                                                    helperText={passError}
                                                    onChange={(event) => {
-                                                       setPass(event.target.value.trim);
-                                                       if(event.target.value.trim()) {
+                                                       setPass(event.target.value);
+                                                       if(event.target.value) {
                                                            setPassError(null);
                                                        }
                                                    }}  />
@@ -198,8 +201,8 @@ const ChangePassClient = () => {
                                                    error={!!passCheckError}
                                                    helperText={passCheckError}
                                                    onChange={(event) => {
-                                                       setPassCheck(event.target.value.trim);
-                                                       if(event.target.value.trim()) {
+                                                       setPassCheck(event.target.value);
+                                                       if(event.target.value) {
                                                            setPassCheckError(null);
                                                        }
                                                    }} />
@@ -211,10 +214,9 @@ const ChangePassClient = () => {
                                         <TextField variant="standard"
                                                    error={!!passChangeError}
                                                    helperText={passChangeError}
-                                                   inputProps={{maxLength: 10}}
                                                    onChange={(event) => {
-                                                       setPassChange(event.target.value.trim);
-                                                       if(event.target.value.trim()) {
+                                                       setPassChange(event.target.value);
+                                                       if(event.target.value) {
                                                            setPassChangeError(null);
                                                        }
                                                    }} />
