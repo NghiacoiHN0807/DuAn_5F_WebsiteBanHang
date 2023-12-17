@@ -265,7 +265,6 @@ export default function AddSanPham() {
     setTenSp(value);
     setEmptyTen(value.trim() === '');
     const isDuplicate = listSP.some((item) => item.tenSp === value);
-    console.log(listSP, 'listSP');
     setDuplicateAdd(isDuplicate);
   };
 

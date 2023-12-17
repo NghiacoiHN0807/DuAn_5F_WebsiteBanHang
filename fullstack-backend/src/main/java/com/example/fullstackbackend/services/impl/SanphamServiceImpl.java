@@ -50,8 +50,8 @@ public class SanphamServiceImpl implements SanPhamService {
         for (Object[] row : sanphamRepository.getSpForAdmin()) {
             SanPhamCustom spCustom = new SanPhamCustom();
             spCustom.setIdSp((Integer) row[0]);
-            spCustom.setTenSp((String) row[1]);
-            spCustom.setMaSp((String) row[2]);
+            spCustom.setMaSp((String) row[1]);
+            spCustom.setTenSp((String) row[2]);
             spCustom.setChatLieus((String) row[3]);
             spCustom.setLoaiSPs((String) row[4]);
             spCustom.setXuatXus((String) row[5]);
