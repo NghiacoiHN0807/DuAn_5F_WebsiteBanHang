@@ -11,6 +11,7 @@ import dayjs from 'dayjs';
 import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { add } from "../../service/CouponsService";
 import Iconify from "../../components/iconify";
+import ModalComfirm from "../../forms/Modal-Comfirm";
 
 const AddCoupons = () => {
     const todayAtNoon = dayjs().set('hour', 12).startOf('hour');
@@ -18,6 +19,7 @@ const AddCoupons = () => {
     const [ngayBatDau, setNgayBatDau] = useState(dayjs().set('hour', 12).startOf('hour'));
     const [ngayKetThuc, setNgayKetThuc] = useState(dayjs().set('hour', 12).startOf('hour'));
     const [alertContent, setAlertContent] = useState(null);
+    const [open, setOpen] = useState(null);
 
 
     // chuyen trang
@@ -40,6 +42,15 @@ const AddCoupons = () => {
         setCoupon({ ...coupon, [e.target.name]: e.target.value });
     };
 
+    const openModal = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+
+    }
+
     const handleSnackbarClose = (event, reason) => {
         if (reason === 'clickaway') {
             return;
@@ -57,9 +68,7 @@ const AddCoupons = () => {
 
     console.log("couponAdd: ", coupon);
 
-    const handleSave = async (e) => {
-        e.preventDefault();
-
+    const handleSave = async () => {
         if (!tenChuongTrinh.trim()) {
             setAlertContent({
                 type: 'warning',
@@ -359,7 +368,7 @@ const AddCoupons = () => {
                     <Button
                         size={"large"}
                         variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}
-                        onClick={(e) => handleSave(e)}
+                        onClick={() => openModal()}
                         style={{ marginTop: "20px" }} // Make button wider
                     >
                         Thêm Coupon Mới
@@ -380,7 +389,7 @@ const AddCoupons = () => {
                     </Alert>
                 </Snackbar>
             )}
-
+            <ModalComfirm open={open} handleClose={handleClose} information={handleSave} title={"Xác nhận thêm"} discription={"Xác nhận thêm coupon"} />
         </>
     );
 };

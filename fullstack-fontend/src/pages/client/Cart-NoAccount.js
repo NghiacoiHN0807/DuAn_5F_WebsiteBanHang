@@ -108,7 +108,7 @@ export default function CartNoAccount() {
   };
 
   useEffect(() => {
-    const updateProductOnCart = async () => {};
+    const updateProductOnCart = async () => { };
     updateProductOnCart();
   }, [quantity]);
 
@@ -367,7 +367,7 @@ export default function CartNoAccount() {
                       ))}
                   </div>
                 </div>
-                <div className="container-buy-block box-shadow">
+                <div className="container container-buy-block box-shadow">
                   <div className="container-voucher-block">
                     <div className="container-voucher">
                       <i className="fa-solid fa-clipboard-list voucher-icon" />

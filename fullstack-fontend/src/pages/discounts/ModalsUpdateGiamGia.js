@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate, useParams } from "react-router-dom";
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -11,6 +11,7 @@ import { Col, Image, Table } from 'react-bootstrap';
 import { detail, getAllSanPham, getDetailSanPhamById, update } from "../../service/giamGiaService";
 import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
+import ModalComfirm from '../../forms/Modal-Comfirm';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -99,7 +100,7 @@ const ModelUpdateGiamGia = (props) => {
 
   console.log("Img: ", image)
 
-  React.useEffect(() => {
+  useEffect(() => {
     getAllSp();
   }, [])
 
@@ -171,6 +172,18 @@ const ModelUpdateGiamGia = (props) => {
     setchiTietList([]); // Xóa các phần tử đã chọn khỏi chiTietList
     setChecked([]); // Xóa các phần tử đã chọn
   };
+
+
+  const [open, setOpen] = useState(false);
+
+  const openModal = () => {
+    setOpen(true);
+  }
+
+  const handleClose = () => {
+    setOpen(false);
+
+  }
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -260,8 +273,7 @@ const ModelUpdateGiamGia = (props) => {
   };
   console.log(selected);
 
-  const handleSave = async (e) => {
-    e.preventDefault();
+  const handleSave = async () => {
     if (!maGiamGia.trim() || !tenChuongTrinh.trim() || !ngayBatDau || !ngayKetThuc) {
       setAlertContent({
         type: 'warning',
@@ -518,8 +530,9 @@ const ModelUpdateGiamGia = (props) => {
                   </LocalizationProvider>
                 </div> */}
 
-                <button onClick={(e) => handleSave(e)} className="btn bg-primary text-light d-flex align-items-end">Thêm</button>
+
               </form>
+              <button onClick={() => openModal()} className="btn bg-primary text-light d-flex align-items-end">Sửa</button>
             </div>
           </Modal.Body>
         </div>
@@ -679,6 +692,7 @@ const ModelUpdateGiamGia = (props) => {
           </Alert>
         </Snackbar>
       )}
+      <ModalComfirm open={open} handleClose={handleClose} information={handleSave} title={"Xác nhận sửa"} discription={"Xác nhận sửa giảm giá"} />
     </>
   );
 };

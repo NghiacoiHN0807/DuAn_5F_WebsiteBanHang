@@ -107,6 +107,8 @@ export default function Cart() {
       }
     };
     updateProductOnCart();
+    setSelectAll(null);
+    setTotalPayment(0);
   }, [quantity, currentItemId, getDetail]);
 
   const [alertContent, setAlertContent] = useState(null);
