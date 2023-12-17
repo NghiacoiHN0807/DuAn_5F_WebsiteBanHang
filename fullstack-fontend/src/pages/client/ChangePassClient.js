@@ -1,16 +1,15 @@
 import {useEffect, useState} from "react";
 import {Helmet} from "react-helmet-async";
 import {
+    Backdrop,
     Button,
     Container,
     Dialog,
     DialogContent,
-    Paper,
     Table,
     TableBody,
     TableCell,
     TableContainer,
-    TableHead,
     TableRow,
     TextField,
     Typography
@@ -18,6 +17,7 @@ import {
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 import {useNavigate} from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 import {getDetailOneTK, postChangePassTaiKhoanKhachHang} from "../../service/taiKhoanKhachHangSevice";
 
 
@@ -94,6 +94,7 @@ const ChangePassClient = () => {
         if(!hasError) {
         let res;
         try {
+            handleOpenBD();
             res = await postChangePassTaiKhoanKhachHang(
                 Data.idTaiKhoan,
                 Data.maTaiKhoan,
@@ -109,6 +110,7 @@ const ChangePassClient = () => {
             // console.log("Check res: ", res);
         } catch (error) {
             if (error.response && error.response.data) {
+                handleCloseBD();
                setPassError(error.response.data.matKhau);
             } else {
                 console.error("Error:", error);
@@ -116,11 +118,12 @@ const ChangePassClient = () => {
             return;
         }
         if (res) {
+            handleCloseBD();
             handlOpenAdd();
         }
             }
     };
-    const [openAdd, setOpenAdd] = useState(false);
+    const [openAdd,  setOpenAdd] = useState(false);
 
     const handlOpenAdd = () => {
         setOpenAdd(true);
@@ -132,7 +135,16 @@ const ChangePassClient = () => {
         localStorage.removeItem('userFormToken');
         navigate('/login');
     };
+    // backdrop
+    const [openBD, setOpenBD] = useState(false);
 
+    const handleOpenBD = () => {
+        setOpenBD(true);
+    };
+    const handleCloseBD = () => {
+        setOpenBD(false);
+    };
+  
 
     return (
         <>
@@ -247,7 +259,9 @@ const ChangePassClient = () => {
                 </DialogContent>
 
             </Dialog>
-
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={openBD}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
         </>
     );
 };
