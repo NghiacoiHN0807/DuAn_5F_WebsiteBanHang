@@ -145,7 +145,7 @@ export default function LoginForm() {
                 </GoogleOAuthProvider>
 
 
-                <TextField name="email" label="Email" value={params.email} onChange={(e) => getParam(e)}/>
+                <TextField name="email" label="Email" value={params.email.trim()} onChange={(e) => getParam(e)}/>
 
                 <TextField
                     name="password"

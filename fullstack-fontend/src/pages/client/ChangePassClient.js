@@ -184,8 +184,8 @@ const ChangePassClient = () => {
                                                    error={!!passError}
                                                    helperText={passError}
                                                    onChange={(event) => {
-                                                       setPass(event.target.value);
-                                                       if(event.target.value) {
+                                                       setPass(event.target.value.trim);
+                                                       if(event.target.value.trim()) {
                                                            setPassError(null);
                                                        }
                                                    }}  />
@@ -198,8 +198,8 @@ const ChangePassClient = () => {
                                                    error={!!passCheckError}
                                                    helperText={passCheckError}
                                                    onChange={(event) => {
-                                                       setPassCheck(event.target.value);
-                                                       if(event.target.value) {
+                                                       setPassCheck(event.target.value.trim);
+                                                       if(event.target.value.trim()) {
                                                            setPassCheckError(null);
                                                        }
                                                    }} />
@@ -213,8 +213,8 @@ const ChangePassClient = () => {
                                                    helperText={passChangeError}
                                                    inputProps={{maxLength: 10}}
                                                    onChange={(event) => {
-                                                       setPassChange(event.target.value);
-                                                       if(event.target.value) {
+                                                       setPassChange(event.target.value.trim);
+                                                       if(event.target.value.trim()) {
                                                            setPassChangeError(null);
                                                        }
                                                    }} />
