@@ -176,7 +176,7 @@ public class HoaDonController {
                                @RequestParam String moTa) {
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTrangThai(newHD.getTrangThai());
-            if(hoaDon.getEmail() != null && hoaDon.getEmail().isEmpty()){
+            if(hoaDon.getEmail() != null && !hoaDon.getEmail().isEmpty()){
                 if (hoaDon.getTrangThai() == 1){
                     String trangThai = "Hóa đơn đã được xác nhận";
                     SimpleMailMessage message = new SimpleMailMessage();
