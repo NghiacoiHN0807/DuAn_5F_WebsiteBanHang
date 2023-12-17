@@ -157,7 +157,7 @@ const UpdateClients = () => {
     return (
         <>
             <Helmet>
-                <title> Client || 5F Store </title>
+                <title> Khách Hàng | 5F Store </title>
             </Helmet>
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>

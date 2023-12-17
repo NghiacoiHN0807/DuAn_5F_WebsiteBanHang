@@ -389,7 +389,7 @@ const OrderManagement = () => {
   return (
     <>
       <Helmet>
-        <title> Bills | Minimal UI </title>
+        <title> Hóa Đơn | 5F Store </title>
       </Helmet>
 
       <Container>

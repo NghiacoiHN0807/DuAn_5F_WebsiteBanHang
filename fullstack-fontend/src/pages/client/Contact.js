@@ -13,28 +13,15 @@ const Contact = () => {
 
   return (
     <div className="contact-container">
-      <h1 className="contact-title">CONTACT</h1>
-      <p className="contact-description"><i>Fan? Drop a note!</i></p>
+      <h1 className="contact-title">Về Chúng Tôi</h1>
+      <p className="contact-description"><i>bạn cần gì? hãy liên hệ!</i></p>
       <div className="contact-row">
         <div className="contact-info">
-          <p className="info" /><i className="fa fa-map-marker" /> Hà Nội, fpt polytechnic<br />
-          <p className="info" /><i className="fa fa-phone" /> Phone: +84 353 200 002<br />
-          <p className="info" /><i className="fa fa-envelope" /> Email: mail@mail.com<br />
+          <p className="info" /><i className="fa fa-map-marker" />Địa Chỉ : Fpt polytechnic - Trịnh Văn Bô - Nam Từ Liêm - Hà Nội<br />
+          <p className="info" /><i className="fa fa-phone" /> Số Điện Thoại : +84 353 200 248<br />
+          <p className="info" /><i className="fa fa-envelope" /> Email: 5fstore.contact@gmail.com<br />
         </div>
-        <div className="contact-form">
-          <form onSubmit={handleSubmit}>
-            <div className="form-row">
-              <div className="form-half">
-                <input className="form-input" type="text" placeholder="Name" required name="Name" />
-              </div>
-              <div className="form-half">
-                <input className="form-input" type="text" placeholder="Email" required name="Email" />
-              </div>
-            </div>
-            <input className="form-input" type="text" placeholder="Message" required name="Message" />
-            <button className="form-button" type="submit">SEND</button>
-          </form>
-        </div>
+       
       </div>
       <div >
         <img src={mapImage} alt="Map" className="w3-image w3-greyscale-min" style={{ width: '100%' }} />
