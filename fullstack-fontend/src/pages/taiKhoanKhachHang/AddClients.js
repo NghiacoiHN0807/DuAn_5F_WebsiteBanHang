@@ -2,7 +2,21 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import {toast} from "react-toastify";
 import { Helmet } from "react-helmet-async";
-import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Stack, TextField, Typography } from "@mui/material";
+import {
+    Backdrop,
+    Box,
+    Button,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Stack,
+    TextField,
+    Typography
+} from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 import { postAddTaiKhoanKhachHang } from "../../service/taiKhoanKhachHangSevice";
 import Iconify from "../../components/iconify";
 import { useAlert } from "../../layouts/dashboard/AlertContext";
@@ -63,12 +77,12 @@ const AddClients = () => {
     }, [email]);
 
     const handleSave = async () => {
-        handleClose();
         if (!validateFields()) {
             return;
         }
         let res;
         try {
+            handleOpenBD();
             res = await postAddTaiKhoanKhachHang(
                 maTaiKhoan,
                 ho,
@@ -82,17 +96,21 @@ const AddClients = () => {
         } catch (error) {
             if (error.response && error.response.data) {
                 console.log(error.response.data);
+                handleCloseBD();
                 setValidationErrors(error.response.data);
             } else {
+                handleCloseBD();
                 console.error("Error:", error);
             }
             return;
         }
 
         if (res && res.idTaiKhoan) {
+            handleCloseBD();
             showAlert('success', 'Thêm Thành Công');
             navigate("/dashboard/clients");
         } else {
+            handleCloseBD();
             showAlert('warning', 'Thêm Thất Bại');
         }
 
@@ -105,11 +123,19 @@ const AddClients = () => {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const [openBD, setOpenBD] = useState(false);
+    const handleCloseBD = () => {
+        setOpenBD(false);
+    };
+    const handleOpenBD = () => {
+        setOpenBD(true);
+    };
     return (
         <>
 
             <Helmet>
-                <title> Client || 5F Store </title>
+                <title> Khách Hàng | 5F Store </title>
             </Helmet>
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -197,7 +223,9 @@ const AddClients = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-
+            <Backdrop sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}} open={openBD}>
+                <CircularProgress color="inherit"/>
+            </Backdrop>
 
         </>
     );

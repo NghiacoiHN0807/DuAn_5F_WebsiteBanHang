@@ -84,10 +84,14 @@ export default function ModalQuickAtt({
 
   // add
   const handleAdd = async () => {
-    if (tenAdd.trim() === '' || listAtt.some((item) => item[phanTu.ten] === tenAdd)) {
+    if (tenAdd.trim() === '') {
       setEmptyAdd(true);
+    }
+    if (listAtt.some((item) => item[phanTu.ten] === tenAdd)) {
       setDuplicateAdd(true);
-    } else {
+    }
+
+    if (!emptyAdd && !duplicateAdd) {
       const res = await addFunc(null, tenAdd, 0);
       getAllList();
       if (res && res[phanTu.ma]) {

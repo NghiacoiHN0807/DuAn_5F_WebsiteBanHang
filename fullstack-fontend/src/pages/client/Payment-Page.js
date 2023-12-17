@@ -303,12 +303,12 @@ export default function PaymentPage() {
   }
   // Check Validated numberphone
   function isValidPhoneNumber(phoneNumber) {
-    const phoneRegex = /^(03|09)\d{8}$/;
+    const phoneRegex = /^(0|\+84)(\s|\.)?((3[2-9])|(5[689])|(7[06-9])|(8[1-689])|(9[0-46-9]))(\d)(\s|\.)?(\d{3})(\s|\.)?(\d{3})$/;
     return phoneRegex.test(phoneNumber);
   }
   const containsNumber = (text) => /\d/.test(text);
   const isValidEmail = (email) => {
-    const emailPattern = /^[a-zA-Z0-9._-]+@gmail\.com$/;
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     return emailPattern.test(email);
   };
 

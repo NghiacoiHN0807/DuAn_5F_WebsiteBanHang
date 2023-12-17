@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import {
+    Backdrop,
     Box,
     Button,
     Container,
@@ -19,6 +20,7 @@ import {
     Typography
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useAlert } from "../../layouts/dashboard/AlertContext";
 import { getDetailOneTK, postUpdateTaiKhoanKhachHang } from "../../service/taiKhoanKhachHangSevice";
 import Iconify from "../../components/iconify";
@@ -104,6 +106,7 @@ const UpdateClients = () => {
         }
         let res;
         try {
+            handleOpenBD();
             res = await postUpdateTaiKhoanKhachHang(
                 Data.idTaiKhoan,
                 Data.maTaiKhoan,
@@ -117,17 +120,21 @@ const UpdateClients = () => {
             console.log("Check res: ", res);
         } catch (error) {
             if (error.response && error.response.data) {
+                handleCloseBD();
                 console.log(error.response.data);
                 setValidationErrors(error.response.data);
             } else {
+                handleCloseBD();
                 console.error("Error:", error);
             }
             return;
         }
         if (res && res.idTaiKhoan) {
+            handleCloseBD();
             showAlert('success', 'Cập nhật Tài Khoản Khách Hàng Thành Công');
             navigate("/dashboard/clients");
         } else {
+            handleCloseBD();
             showAlert('warning', 'Cập nhật Thất Bại');
         }
 
@@ -140,10 +147,17 @@ const UpdateClients = () => {
     const handleClose = () => {
         setOpen(false);
     };
+    const [openBD, setOpenBD] = useState(false);
+    const handleCloseBD = () => {
+        setOpenBD(false);
+    };
+    const handleOpenBD = () => {
+        setOpenBD(true);
+    };
     return (
         <>
             <Helmet>
-                <title> Client || 5F Store </title>
+                <title> Khách Hàng | 5F Store </title>
             </Helmet>
             <Container>
                 <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -261,7 +275,9 @@ const UpdateClients = () => {
                     </Button>
                 </DialogActions>
             </Dialog>
-
+            <Backdrop sx={{color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1}} open={openBD}>
+                <CircularProgress color="inherit"/>
+            </Backdrop>
 
         </>
     );

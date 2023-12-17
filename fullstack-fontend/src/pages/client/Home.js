@@ -222,9 +222,9 @@ const Home = () => {
   return (
     <>
       <section className="gray-background-home">
-        <div>
-          <h6 className="hello">XIN CHÀO CÁC BẠN</h6>
-          <p>Chào Mừng Đến Với Cửa Hàng 5F Store</p>
+        <div >
+          <h6 className="hello" style={{fontSize: "37px", paddingTop: "50px"}}>XIN CHÀO CÁC BẠN</h6>
+          <p style={{fontSize: "32px"}}>Chào Mừng Đến Với Cửa Hàng 5F Store</p>
         </div>
 
         <div>
