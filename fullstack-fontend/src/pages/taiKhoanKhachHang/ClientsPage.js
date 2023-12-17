@@ -1,19 +1,11 @@
-import { useEffect, useState } from "react";
-import { Helmet } from "react-helmet-async";
-import { useNavigate } from "react-router-dom";
-import {
-    DataGrid,
-    GridActionsCellItem,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarDensitySelector,
-    GridToolbarExport,
-    GridToolbarFilterButton
-} from "@mui/x-data-grid";
-import Badge from "react-bootstrap/Badge";
+import {useEffect, useState} from "react";
+import {Helmet} from "react-helmet-async";
+import {useNavigate} from "react-router-dom";
+import {DataGrid, GridToolbarContainer, GridToolbarExport} from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
     Button,
+    Chip,
     Container,
     Dialog,
     DialogActions,
@@ -23,6 +15,7 @@ import {
     FormControl,
     IconButton,
     InputLabel,
+    Menu,
     MenuItem,
     Select,
     Stack,
@@ -35,9 +28,9 @@ import AddLocationAltIcon from "@mui/icons-material/AddLocationAlt";
 
 
 import Card from "@mui/material/Card";
-import { deleteTaiKhoanKH, fetchAllTKKH } from "../../service/taiKhoanKhachHangSevice";
+import {deleteTaiKhoanKH, fetchAllTKKH} from "../../service/taiKhoanKhachHangSevice";
 import Iconify from "../../components/iconify";
-import { useAlert } from "../../layouts/dashboard/AlertContext";
+import {useAlert} from "../../layouts/dashboard/AlertContext";
 
 
 const ClientPage = () => {
@@ -69,40 +62,37 @@ const ClientPage = () => {
     const columns = [
         { field: "index", headerName: "Index", width: 100 },
         { field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 120 },
-        { field: "tenKh", headerName: "Tên Khách Hàng", width: 180 },
+        { field: "tenKh", headerName: "Tên Khách Hàng", width: 240 },
         { field: "sdtKh", headerName: "Số Điện Thoại", width: 120, },
-        { field: "email", headerName: "Email", width: 200, },
+        { field: "email", headerName: "Email", width: 220, },
         {
             field: "trangThai",
             headerName: "Trạng Thái",
             width: 200,
             renderCell: (params) => {
                 const { value: trangThai } = params;
-                let badgeVariant;
+                let chipColor;
                 let statusText;
 
                 switch (trangThai) {
                     case 0:
-                        badgeVariant = "primary";
+                        chipColor = "success";
                         statusText = "Đã kích hoạt";
                         break;
                     case 10:
-                        badgeVariant = "info";
+                        chipColor = "error";
                         statusText = "Đã Ngưng hoạt động";
                         break;
                     default:
-                        badgeVariant = "light";
+                        chipColor = "default";
                         statusText = "Chưa Kích Hoạt";
                         break;
                 }
 
                 return (
-                    <Badge bg={badgeVariant} text="dark">
-                        {statusText}
-                    </Badge>
+                    <Chip label={statusText} color={chipColor} />
                 );
             },
-
         },
 
         {
@@ -111,28 +101,43 @@ const ClientPage = () => {
             width: 100,
             renderCell: (params) => {
                 const { row } = params;
-                return [
-                    <GridActionsCellItem
-                        key={`edit-${row.id}`}
-                        color="info"
-                        onClick={() => handlClickRow(row)}
-                        icon={<EditIcon />}
-                    />,
-                    <GridActionsCellItem
-                        key={`add-${row.id}`}
-                        color="inherit"
-                        icon={<AddLocationAltIcon />}
-                        onClick={() => handAddDiaChi(row)}
-                    />,
-                    <GridActionsCellItem
-                        key={`delete-${row.id}`}
-                        color="error"
-                        icon={<DeleteIcon />}
-                        onClick={() => handleClickOpenDelete(row)}
-                    />
-                ];
+                // eslint-disable-next-line react-hooks/rules-of-hooks
+                const [anchorEl, setAnchorEl] = useState(null);
+
+                const handleClick = (event) => {
+                    setAnchorEl(event.currentTarget);
+                };
+
+                const handleClose = () => {
+                    setAnchorEl(null);
+                };
+
+                return (
+                    <>
+                        <IconButton size="large" color="inherit" onClick={handleClick}>
+                            <Iconify icon={'eva:more-vertical-fill'} />
+                        </IconButton>
+                        <Menu
+                            id={`menu-${row.id}`}
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleClose}
+                        >
+                            <MenuItem  onClick={() => handlClickRow(row)} sx={{color : 'green'}} >
+                                <EditIcon sx={{ marginRight: 1 }}/> Cập nhật
+                            </MenuItem>
+                            <MenuItem onClick={() => handAddDiaChi(row)} sx={{color : 'brown'}}>
+                                <AddLocationAltIcon sx={{ marginRight: 1 }}/>Địa Chỉ
+                            </MenuItem>
+                            <MenuItem onClick={() => handleClickOpenDelete(row)} sx={{color : 'red'}}>
+                                <DeleteIcon sx={{ marginRight: 1 }}/>Xóa
+                            </MenuItem>
+                        </Menu>
+                    </>
+                );
             },
         },
+
     ];
     // Xử lý dữ liệu của bảng vào mảng rows
     const rows = listData
@@ -170,17 +175,15 @@ const ClientPage = () => {
 
 
     const handAdd = () => {
-        showAlert('success', 'Chuyển trang thêm Thành Công');
         navigate("/dashboard/clients/add");
 
     };
     const handAddDiaChi = (item) => {
-        showAlert('success', 'Chuyển trang địa chỉ Thành Công');
         navigate(`/dashboard/address/${item.maTaiKhoan}`);
     };
 
     const handlClickRow = (item) => {
-        showAlert('success', 'Chuyển trang update Thành Công');
+
         navigate(`/dashboard/clients/detail/${item.idTaiKhoan}`);
 
     };
