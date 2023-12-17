@@ -117,4 +117,11 @@ public class ChitietsanphamController {
         return ResponseEntity.ok(pageSp);
     }
 
+    @GetMapping("checkAttExist/{idSp}/{idMs}/{idSize}")
+    public ChiTietSanPham checkAttExist(@PathVariable("idSp") Integer idSp,
+                                          @PathVariable("idMs") Integer idMs,
+                                          @PathVariable("idSize") Integer idSize) {
+        return chitietsanphamSevice.checkAttExist(idSp, idMs, idSize);
+    }
+
 }

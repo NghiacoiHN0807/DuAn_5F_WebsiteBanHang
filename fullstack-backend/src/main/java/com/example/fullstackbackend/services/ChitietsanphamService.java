@@ -43,4 +43,6 @@ public interface ChitietsanphamService {
 
     List<CTSPCustom> getCtspForAd(Integer idSp);
 
+    ChiTietSanPham checkAttExist(Integer idSp, Integer idMs, Integer idSize);
+
 }
