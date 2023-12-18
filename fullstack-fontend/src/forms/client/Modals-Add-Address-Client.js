@@ -209,7 +209,7 @@ const ModalAddAddressPayment = (props) => {
                             <TableCell component="th" scope="row" align="center">
                               <Stack direction="row" alignItems="center" spacing={2}>
                                 <Typography variant="subtitle2" noWrap>
-                                  {loaiDiaChi === 1 ? 'Nhà Riêng' : 'Văn Phòng'}
+                                  {loaiDiaChi === 0 ? 'Nhà Riêng' : 'Nơi Làm Việc '}
                                 </Typography>
                               </Stack>
                             </TableCell>

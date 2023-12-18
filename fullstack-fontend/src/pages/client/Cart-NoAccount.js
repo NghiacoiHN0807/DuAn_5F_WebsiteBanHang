@@ -110,7 +110,7 @@ export default function CartNoAccount() {
   };
 
   useEffect(() => {
-    const updateProductOnCart = async () => { };
+    const updateProductOnCart = async () => {};
     updateProductOnCart();
   }, [quantity]);
 
@@ -212,7 +212,9 @@ export default function CartNoAccount() {
         type: 'success',
         message: 'Tạo thành công hóa đơn',
       });
-      navigate(`/client/payment-noaccount/${res.idHd}`);
+      setTimeout(() => {
+        navigate(`/client/payment-noaccount/${res.idHd}`);
+      }, 200);
     }
   };
 
