@@ -214,7 +214,9 @@ export default function Cart() {
         type: 'success',
         message: 'Tạo thành công hóa đơn',
       });
-      navigate(`/client/payment/${res.idHd}`);
+      setTimeout(() => {
+        navigate(`/client/payment/${res.idHd}`);
+      }, 200);
     }
   };
 

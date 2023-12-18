@@ -286,6 +286,9 @@ export default function UpdateSanPham() {
   const handleClostEditAtt = () => {
     getListData();
     setOpenEditAtt(false);
+    setGiaBanErr(false);
+    setGiaNhapErr(false);
+    setSoLuongErr(false);
   };
 
   // alert

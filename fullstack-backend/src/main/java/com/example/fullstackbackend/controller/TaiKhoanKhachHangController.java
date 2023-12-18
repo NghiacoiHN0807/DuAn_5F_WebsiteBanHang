@@ -1,7 +1,9 @@
 package com.example.fullstackbackend.controller;
 
+import com.example.fullstackbackend.entity.GioHang;
 import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.exception.TaiKhoanKHNotFoundException;
+import com.example.fullstackbackend.repository.GioHangReponsitory;
 import com.example.fullstackbackend.services.TaiKhoanKhachHangSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +26,15 @@ public class TaiKhoanKhachHangController {
     @Autowired
     private TaiKhoanKhachHangSevice TaiKhoanKhachHangKHSevice;
 
-//    @GetMapping("view-all")
+    //    @GetMapping("view-all")
 //    public Page<TaiKhoan> viewAll(@RequestParam(defaultValue = "0") Integer page,
 //                                  @RequestParam(defaultValue = "15") Integer size,
 //                                  @RequestParam("p") Optional<Integer> p) {
 //
 //        return TaiKhoanKhachHangKHSevice.Page(p.orElse(page), size);
 //    }
+    @Autowired
+    private GioHangReponsitory gioHangReponsitory;
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @GetMapping("view-all")
@@ -60,6 +64,13 @@ public class TaiKhoanKhachHangController {
             }
 
             TaiKhoan addTK = TaiKhoanKhachHangKHSevice.add(taiKhoankh);
+            GioHang gioHang = new GioHang();
+            gioHang.setIdKh(addTK);
+            gioHang.setMaGioHang(null);
+            gioHang.setNgayTao(null);
+            gioHang.setTrangThai(0);
+            gioHangReponsitory.save(gioHang);
+
             return ResponseEntity.ok(addTK);
         }
     }
