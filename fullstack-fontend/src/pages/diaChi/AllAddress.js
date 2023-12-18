@@ -54,7 +54,7 @@ const AllAddress = () => {
 
 
     const columns = [
-        {field: "index", headerName: "##", width: 30},
+        {field: "index", headerName: "##", width: 80},
         {field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 130},
         {field: "tenNguoiNhan", headerName: "Tên Người Nhận", width: 120},
         {field: "sdtKh", headerName: "Số Điện Thoại", width: 120,},
@@ -73,6 +73,10 @@ const AllAddress = () => {
                         chipColor = "primary";
                         statusText = "Nơi Làm Việc";
                         break;
+                    case 0:
+                        chipColor = "default";
+                        statusText = "Nhà Riêng";
+                        break;
                     default:
                         chipColor = "default";
                         statusText = "Nhà Riêng";
@@ -80,7 +84,7 @@ const AllAddress = () => {
                 }
 
                 return (
-                    <Chip label={statusText} color={chipColor} />
+                    <Chip label={statusText} color={chipColor}/>
                 );
             },
         },
@@ -108,7 +112,7 @@ const AllAddress = () => {
                 }
 
                 return (
-                    <Chip label={statusText} color={chipColor} />
+                    <Chip label={statusText} color={chipColor}/>
                 );
             },
         },
@@ -168,35 +172,30 @@ const AllAddress = () => {
     function CustomToolbar() {
         return (
             <GridToolbarContainer>
-
-                <FormControl variant="standard" sx={{m: 1, minWidth: 120}}>
-                    <InputLabel id="status-select">Trạng Thái:</InputLabel>
-                    <Select
-                        labelId="status-select"
-                        id="status-select"
-                        value={selectedStatus}
-                        label="Trạng Thái"
-                        onChange={(e) => setSelectedStatus(e.target.value)}
-                    >
-                        <MenuItem value={"Tất cả"}>Tất Cả</MenuItem>
-                        <MenuItem value={0}>Đang Hoạt Động</MenuItem>
-                        <MenuItem value={10}>Đã Bị Xóa</MenuItem>
-                    </Select>
-                </FormControl>
-                <FormControl variant="standard" sx={{m: 1, minWidth: 120}}>
-                    <InputLabel id="status-select">Loại Địa Chỉ:</InputLabel>
-                    <Select
-                        labelId="status-select"
-                        id="status-select"
-                        value={selectedStatus}
-                        label="Trạng Thái"
-                        onChange={(e) => setSelectedLoaiDiaChi(e.target.value)}
-                    >
-                        <MenuItem value={"Tất cả"}>Tất Cả</MenuItem>
-                        <MenuItem value={0}>Nhà Riêng</MenuItem>
-                        <MenuItem value={1}>Nơi Làm Việc</MenuItem>
-                    </Select>
-                </FormControl>
+                <TextField
+                    sx={{m: 1, minWidth: 180}}
+                    select
+                    id="status-select"
+                    value={selectedStatus}
+                    label="Trạng Thái"
+                    onChange={(e) => setSelectedStatus(e.target.value)}
+                >
+                    <MenuItem value="Tất cả">Tất Cả</MenuItem>
+                    <MenuItem value="0">Đang Hoạt Động</MenuItem>
+                    <MenuItem value="10">Đã Bị Xóa</MenuItem>
+                </TextField>
+                <TextField
+                    sx={{m: 1, minWidth: 160}}
+                    select
+                    id="status-select-dia-Chi"
+                    value={selectedLoaiDiaChi}
+                    label="Loại Địa Chỉ"
+                    onChange={(e) => setSelectedLoaiDiaChi(e.target.value)}
+                >
+                    <MenuItem value="Tất cả">Tất Cả</MenuItem>
+                    <MenuItem value="0">Nhà Riêng</MenuItem>
+                    <MenuItem value="1">Nơi Làm Việc</MenuItem>
+                </TextField>
                 <GridToolbarExport
                     csvOptions={{
                         fileName: 'address',

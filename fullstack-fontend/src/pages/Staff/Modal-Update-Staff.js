@@ -70,7 +70,7 @@ const UpdateTkNV = (props) => {
       setMatKhau(res.matKhau);
       setSoCanCuoc(res.soCanCuoc);
       setTrangThai(res.trangThai);
-      console.log("check res: ", res);
+      // console.log("check res: ", res);
     } catch (error) {
       console.log("error: ", error);
     }

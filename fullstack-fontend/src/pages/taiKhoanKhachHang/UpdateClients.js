@@ -49,7 +49,7 @@ const UpdateClients = () => {
             setSdt(res.sdt);
             setMatKhau(res.matKhau);
             setTrangThai(res.trangThai);
-            console.log("check res: ", res);
+            // console.log("check res: ", res);
         } catch (error) {
             console.log("error: ", error);
         }

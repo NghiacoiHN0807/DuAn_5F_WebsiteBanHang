@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Helmet} from "react-helmet-async";
 import {useNavigate} from "react-router-dom";
 import {DataGrid, GridToolbarContainer, GridToolbarExport} from "@mui/x-data-grid";
@@ -60,15 +60,15 @@ const ClientPage = () => {
 
 
     const columns = [
-        { field: "index", headerName: "Index", width: 100 },
+        { field: "index", headerName: "###", width: 80},
         { field: "maTaiKhoan", headerName: "Mã Tài Khoản", width: 120 },
         { field: "tenKh", headerName: "Tên Khách Hàng", width: 240 },
-        { field: "sdtKh", headerName: "Số Điện Thoại", width: 120, },
-        { field: "email", headerName: "Email", width: 220, },
+        { field: "sdtKh", headerName: "Số Điện Thoại", width: 140, },
+        { field: "email", headerName: "Email", width: 260, },
         {
             field: "trangThai",
             headerName: "Trạng Thái",
-            width: 200,
+            width: 180,
             renderCell: (params) => {
                 const { value: trangThai } = params;
                 let chipColor;
@@ -217,22 +217,18 @@ const ClientPage = () => {
     function CustomToolbar() {
         return (
             <GridToolbarContainer>
-
-
-                <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-                    <InputLabel id="status-select">Trạng Thái:</InputLabel>
-                    <Select
-                        labelId="status-select"
-                        id="status-select"
-                        value={selectedStatus}
-                        label="Trạng Thái"
-                        onChange={(e) => setSelectedStatus(e.target.value)}
-                    >
-                        <MenuItem value={"Tất cả"}>Tất Cả</MenuItem>
-                        <MenuItem value={0}>Đang Hoạt Động</MenuItem>
-                        <MenuItem value={10}>Đã Bị Khóa</MenuItem>
-                    </Select>
-                </FormControl>
+                <TextField
+                    sx={{m: 1, minWidth: 180}}
+                    select
+                    id="status-select"
+                    value={selectedStatus}
+                    label="Trạng Thái"
+                    onChange={(e) => setSelectedStatus(e.target.value)}
+                >
+                    <MenuItem value={"Tất cả"}>Tất Cả</MenuItem>
+                    <MenuItem value={0}>Đang Hoạt Động</MenuItem>
+                    <MenuItem value={10}>Đã Bị Xóa</MenuItem>
+                </TextField>
                 <GridToolbarExport
                     csvOptions={{
                         fileName: 'Client',

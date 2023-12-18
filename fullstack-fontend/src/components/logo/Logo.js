@@ -8,7 +8,7 @@ import logo5F from '../../assets/logo_5F.png';
 
 // ----------------------------------------------------------------------
 
-const Logo = forwardRef(({ disabledLink = false, sx }) => {
+const Logo = forwardRef(({ disabledLink = false, sx },ref) => {
   // other, ref
   // const theme = useTheme();
 
@@ -75,7 +75,7 @@ const Logo = forwardRef(({ disabledLink = false, sx }) => {
   }
 
   return (
-    <Link to="/" component={RouterLink} sx={{ display: 'contents' }}>
+    <Link to="/" component={RouterLink} sx={{ display: 'contents' }} ref={ref}>
       {logo}
     </Link>
   );
