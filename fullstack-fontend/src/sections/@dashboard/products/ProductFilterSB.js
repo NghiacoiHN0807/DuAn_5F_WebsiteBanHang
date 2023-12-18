@@ -315,7 +315,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
 
             <div>
               <Typography variant="subtitle1" gutterBottom>
-                Tay áo
+                Ống tay áo / Ống quần
               </Typography>
 
               {listTayAo.length > 0 && (
@@ -336,7 +336,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
 
             <div>
               <Typography variant="subtitle1" gutterBottom>
-                Cổ áo
+                Loại cổ áo / Loại ống quần
               </Typography>
 
               {listCoAo.length > 0 && (
