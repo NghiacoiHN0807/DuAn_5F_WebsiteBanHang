@@ -137,8 +137,8 @@ public class SanphamServiceImpl implements SanPhamService {
     }
 
     @Override
-    public SanPhamWithMinImageDTO getSanPhamWithMinImageUrlByIdSp(Integer idSp) {
-        List<Object[]> results = sanphamRepository.getSanPhamWithMinImageUrlByIdSp(idSp);
+    public List<SanPhamWithMinImageDTO> getSanPhamWithMinImageUrlByIdGg(Integer idGg) {
+        List<Object[]> results = sanphamRepository.getSanPhamWithMinImageUrlByIdGiamGia(idGg);
 
         List<SanPhamWithMinImageDTO> dto = new ArrayList<>();
         for (Object[] row : results) {
@@ -159,7 +159,7 @@ public class SanphamServiceImpl implements SanPhamService {
             dto.add(new SanPhamWithMinImageDTO(sp, imageUrl));
         }
 
-        return dto.get(0);
+        return dto;
     }
 
     @Override
