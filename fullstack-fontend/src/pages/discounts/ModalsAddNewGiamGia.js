@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { vi } from 'date-fns/locale'; // Import locale cho tiếng Việt
 import Modal from 'react-bootstrap/Modal';
 import { useNavigate } from 'react-router-dom';
@@ -45,14 +45,14 @@ const ModelAddNewGiamGia = () => {
   // const { show, handleClose, isDataGiamGia, getGiamGia } = props;
   // console.log(dataSanPham)
   const navigate = useNavigate();
-  const [checked, setChecked] = React.useState([]);
-  const [left, setLeft] = React.useState([]);
-  const [right, setRight] = React.useState([]);
-  const [leftPage, setLeftPage] = React.useState(0);
-  const [leftRowsPerPage, setLeftRowsPerPage] = React.useState(5);
-  const [rightPage, setRightPage] = React.useState(0);
-  const [rightRowsPerPage, setRightRowsPerPage] = React.useState(5);
-  const [chiTietList, setchiTietList] = React.useState([]);
+  const [checked, setChecked] = useState([]);
+  const [left, setLeft] = useState([]);
+  const [right, setRight] = useState([]);
+  const [leftPage, setLeftPage] = useState(0);
+  const [leftRowsPerPage, setLeftRowsPerPage] = useState(5);
+  const [rightPage, setRightPage] = useState(0);
+  const [rightRowsPerPage, setRightRowsPerPage] = useState(5);
+  const [chiTietList, setchiTietList] = useState([]);
   const [image, setImage] = useState([]);
   const [alertContent, setAlertContent] = useState(null);
 
@@ -65,7 +65,7 @@ const ModelAddNewGiamGia = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getAllSp();
   }, []);
 
