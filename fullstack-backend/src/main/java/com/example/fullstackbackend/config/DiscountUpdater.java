@@ -33,7 +33,7 @@ public class DiscountUpdater {
 
     private final SanPhamService sanPhamService;
 
-    @Scheduled(cron = "0/1 * * * * *", zone = "Asia/Ho_Chi_Minh")
+    @Scheduled(cron = "0 * * * * *", zone = "Asia/Ho_Chi_Minh")
     @Transactional
     public void updateDiscount() {
         List<GiamGia> giamGias = giamGiaRepository.findAll();
@@ -93,7 +93,7 @@ public class DiscountUpdater {
 
     }
 
-    @Scheduled(cron = "0/1 * * * * *", zone = "Asia/Ho_Chi_Minh")
+    @Scheduled(cron = "0 * * * * *", zone = "Asia/Ho_Chi_Minh")
     @Transactional
     public void updateDiscount1() {
         List<GiamGia> giamGias = giamGiaRepository.findAll();

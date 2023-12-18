@@ -8,22 +8,21 @@ import React, { useState, useEffect } from 'react';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faSackDollar } from '@fortawesome/free-solid-svg-icons';
 
-
 // components
-import { totalRevenue, totalInvoieces, totalTheoNgay, tyLeTraHang, tongSpDaBan } from '../service/bill-service'
-import { topSpTrending } from '../service/san-pham-service'
+import { totalRevenue, totalInvoieces, totalTheoNgay, tyLeTraHang, tongSpDaBan } from '../service/bill-service';
+import { topSpTrending } from '../service/san-pham-service';
 
 // sections
 import {
-  AppTasks,
-  AppNewsUpdate,
-  AppOrderTimeline,
+  // AppTasks,
+  // AppNewsUpdate,
+  // AppOrderTimeline,
   AppCurrentVisits,
   AppWebsiteVisits,
-  AppTrafficBySite,
+  // AppTrafficBySite,
   AppWidgetSummary,
-  AppCurrentSubject,
-  AppConversionRates,
+  // AppCurrentSubject,
+  // AppConversionRates,
 } from '../sections/@dashboard/app';
 
 // ----------------------------------------------------------------------
@@ -58,7 +57,7 @@ export default function DashboardAppPage() {
       setAllSp(Number(allSpres));
       setheoNgay(response);
       setSpTrending(trendingResponse);
-      
+
       // Set trending data
     };
 
@@ -82,7 +81,7 @@ export default function DashboardAppPage() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={ 'raphael:dollar'}  />
+            <AppWidgetSummary title="Tổng Doanh Thu (vnđ)" total={totalBill} icon={'raphael:dollar'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
@@ -90,16 +89,16 @@ export default function DashboardAppPage() {
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary
-              title="Tổng sản phẩm đã bán"
-              total={allSp}
-              color="warning"
-              icon={'ion:shirt'}
-            />
+            <AppWidgetSummary title="Tổng sản phẩm đã bán" total={allSp} color="warning" icon={'ion:shirt'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Tỷ Lệ Trả Hàng Trên Hóa Đơn(%)" total={rate} color="error" icon={'tabler:truck-return'} />
+            <AppWidgetSummary
+              title="Tỷ Lệ Trả Hàng Trên Hóa Đơn(%)"
+              total={rate}
+              color="error"
+              icon={'tabler:truck-return'}
+            />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
