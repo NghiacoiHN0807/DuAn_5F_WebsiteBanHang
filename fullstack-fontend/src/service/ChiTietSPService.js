@@ -45,6 +45,8 @@ const updateNumber = (idCtsp, giaNhap, giaBan, soLuongTon, trangThai) =>
     trangThai,
   });
 
+const checkAttExist = (idSp, idMs, idSize) => custom.get(`/chi-tiet-san-pham/checkAttExist/${idSp}/${idMs}/${idSize}`);
+
 export {
   fetchAllCTSP,
   postAddCTSP,
@@ -55,4 +57,5 @@ export {
   updateNumber,
   detailCTSP,
   fetchListAtt,
+  checkAttExist,
 };

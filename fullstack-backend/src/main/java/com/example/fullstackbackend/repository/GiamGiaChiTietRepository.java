@@ -81,4 +81,6 @@ public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, 
     List<GiamGiaChiTiet> findByIdGiamGia(@Param("idGiamGia") Integer idGiamGia);
 
     List<GiamGiaChiTiet> findAllByIdGiamGia_IdGiamGia(Integer idGgct);
+
+    GiamGiaChiTiet findByIdSp_IdSp(Integer idSp);
 }

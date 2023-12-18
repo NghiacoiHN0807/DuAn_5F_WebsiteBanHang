@@ -54,7 +54,8 @@ const DetailProduct = () => {
       // Create the price range string
       const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
       const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
-      const priceRange = minPrice === maxPrice ? formattedMinPrice : `${formattedMinPrice} - ${formattedMaxPrice}`;
+      const priceRange =
+        minPrice === maxPrice ? formatCurrency(minPrice) : `${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}`;
       setPrice(priceRange);
       setDetailProduct(getOneSP);
       setDetailImg(getOneSP1);
@@ -75,7 +76,7 @@ const DetailProduct = () => {
     setUniqueSizes([...new Set(sizes)]);
   }, [detailProduct]);
 
-  console.log("detailProduct", detailProduct)
+  console.log('detailProduct', detailProduct);
   // Set select one MS and Size
   const uniqueSizes = [...new Set(detailProduct.map((size) => size.idSize.tenSize))];
   const uniqueMS = [...new Set(detailProduct.map((ms) => ms.idMs.tenMs))];
@@ -296,19 +297,20 @@ const DetailProduct = () => {
             </Typography>
             <div className="price-product">
               <Typography variant="subtitle1">
-                {selectSoLuongTon.length > 0 && selectSoLuongTon[0].idSp.trangThai === 1 && (<Typography
-                  component="span"
-                  variant="body1"
-                  sx={{
-                    color: 'text.disabled',
-                    textDecoration: 'line-through',
-                    fontSize: '14px',
-                    marginRight: '15px',
-                  }}
-                >
-                  {detailProduct.length > 0 && detailProduct[0].giaBan && formatCurrency(detailProduct[0].giaBan)}
-                </Typography>)}
-
+                {selectSoLuongTon.length > 0 && selectSoLuongTon[0].idSp.trangThai === 1 && (
+                  <Typography
+                    component="span"
+                    variant="body1"
+                    sx={{
+                      color: 'text.disabled',
+                      textDecoration: 'line-through',
+                      fontSize: '14px',
+                      marginRight: '15px',
+                    }}
+                  >
+                    {detailProduct.length > 0 && detailProduct[0].giaBan && formatCurrency(detailProduct[0].giaBan)}
+                  </Typography>
+                )}
                 &nbsp;
                 {selectSoLuongTon.length > 0 ? formatCurrency(selectSoLuongTon[0].giaThucTe) : price}
               </Typography>
@@ -340,40 +342,40 @@ const DetailProduct = () => {
                 <div>
                   {availableColors.length > 0
                     ? // Hiển thị danh sách màu sắc từ availableColors
-                    availableColors.map((mauSac, msIndex) => (
-                      <Button
-                        style={{
-                          marginRight: '4px',
-                          marginBottom: '4px',
-                          marginLeft: '10px',
-                          height: '25px',
-                        }}
-                        key={`size-button-${msIndex}`}
-                        onClick={() => handleShowMS(mauSac)}
-                        variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
-                        size="small"
-                        className=""
-                      >
-                        {mauSac}
-                      </Button>
-                    ))
+                      availableColors.map((mauSac, msIndex) => (
+                        <Button
+                          style={{
+                            marginRight: '4px',
+                            marginBottom: '4px',
+                            marginLeft: '10px',
+                            height: '25px',
+                          }}
+                          key={`size-button-${msIndex}`}
+                          onClick={() => handleShowMS(mauSac)}
+                          variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
+                          size="small"
+                          className=""
+                        >
+                          {mauSac}
+                        </Button>
+                      ))
                     : // Hiển thị dữ liệu từ dataDetail
-                    uniqueMS.map((item, index) => (
-                      <Button
-                        style={{
-                          marginLeft: '10px',
-                          height: '25px',
-                          marginRight: '4px',
-                          marginBottom: '4px',
-                        }}
-                        key={`size-button-${index}`}
-                        onClick={() => handleShowMS(item)}
-                        variant={selectedMauSac === item ? 'contained' : 'outlined'}
-                        size="small"
-                      >
-                        {item}
-                      </Button>
-                    ))}
+                      uniqueMS.map((item, index) => (
+                        <Button
+                          style={{
+                            marginLeft: '10px',
+                            height: '25px',
+                            marginRight: '4px',
+                            marginBottom: '4px',
+                          }}
+                          key={`size-button-${index}`}
+                          onClick={() => handleShowMS(item)}
+                          variant={selectedMauSac === item ? 'contained' : 'outlined'}
+                          size="small"
+                        >
+                          {item}
+                        </Button>
+                      ))}
                 </div>
               </Box>
             </div>

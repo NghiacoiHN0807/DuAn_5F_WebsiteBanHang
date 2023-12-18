@@ -19,11 +19,13 @@ const filerDate = (pageNo, size, first, last) =>
 
 const getAllSanPham = () => custom.get(`/san-pham/minimage`);
 
-const getDetailSanPhamById = (idSp) => custom.get(`/san-pham/minimage/${idSp}`);
+const getDetailSanPhamById = (idGg) => custom.get(`/san-pham/minimage/${idGg}`);
 
 const getSanPhamDetails = () => custom.get(`/san-pham/dto`);
 
 const detail = (id) => custom.get(`/giam-gia-chi-tiet/api/detail/${id}`);
+
+const findGiamctByIdgg = (idGg) => custom.get(`/giam-gia-chi-tiet/api/get-ggct-idgg/${idGg}`);
 
 const remove = (id) => custom.delete(`/giam-gia-chi-tiet/api/remove/${id}`);
 
@@ -68,5 +70,6 @@ export {
   detailChiTietSanPham,
   getCtspByIdSp,
   getDetailSanPhamById,
-  removeAll
+  removeAll,
+  findGiamctByIdgg
 };

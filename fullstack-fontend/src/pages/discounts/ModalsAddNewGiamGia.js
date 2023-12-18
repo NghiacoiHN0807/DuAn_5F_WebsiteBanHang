@@ -27,6 +27,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { add, getAllSanPham } from '../../service/giamGiaService';
 import '../../scss/GiamGiaClient.scss';
 import '../../scss/GiamGiaAdd.scss';
+import ModalComfirm from '../../forms/Modal-Comfirm';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -135,6 +136,18 @@ const ModelAddNewGiamGia = () => {
     setChecked([]); // Xóa các phần tử đã chọn
   };
 
+
+  const [open, setOpen] = useState(null);
+
+  const openModal = () => {
+    setOpen(true);
+  }
+
+  const handleClose = () => {
+    setOpen(false);
+
+  }
+
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -199,8 +212,7 @@ const ModelAddNewGiamGia = () => {
     setSelected(e.target.value);
   };
 
-  const handleSave = async (e) => {
-    e.preventDefault();
+  const handleSave = async () => {
     if (!maGiamGia.trim() || !tenChuongTrinh.trim() || !ngayBatDau || !ngayKetThuc) {
       setAlertContent({
         type: 'warning',
@@ -464,7 +476,7 @@ const ModelAddNewGiamGia = () => {
                   </LocalizationProvider>
                 </div> */}
 
-                <Button onClick={(e) => handleSave(e)} className="btn bg-primary text-light d-flex align-items-end">
+                <Button onClick={() => openModal()} className="btn bg-primary text-light d-flex align-items-end">
                   Thêm
                 </Button>
               </form>
@@ -640,6 +652,7 @@ const ModelAddNewGiamGia = () => {
           </Alert>
         </Snackbar>
       )}
+      <ModalComfirm open={open} handleClose={handleClose} information={handleSave} title={"Xác nhận thêm"} discription={"Xác nhận thêm giảm giá"} />
     </>
   );
 };

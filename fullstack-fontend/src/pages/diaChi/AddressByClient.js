@@ -6,7 +6,7 @@ import Stack from "@mui/material/Stack";
 import {DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarExport,} from "@mui/x-data-grid";
 import {
     Box,
-    Button,
+    Button, Chip,
     Container,
     Dialog,
     DialogActions,
@@ -83,48 +83,55 @@ const AddressByClient = () => {
         {field: "diaChi", headerName: "Địa Chỉ", width: 200,},
         {field: "diaChiCuThe", headerName: "Địa Chỉ Cụ Thể", width: 210,},
         {
-            field: "loaiDiaChi", headerName: "Loại Địa Chỉ", width: 100, renderCell: (params) => {
+            field: "loaiDiaChi",
+            headerName: "Loại Địa Chỉ",
+            width: 150,
+            renderCell: (params) => {
                 const {value: loaiDiaChi} = params;
-                let badgeVariant;
+                let chipColor;
                 let statusText;
                 switch (loaiDiaChi) {
                     case 1:
-                        badgeVariant = "primary";
+                        chipColor = "primary";
                         statusText = "Nơi Làm Việc";
                         break;
                     default:
-                        badgeVariant = "light";
+                        chipColor = "default";
                         statusText = "Nhà Riêng";
                         break;
                 }
 
-                return (<Badge bg={badgeVariant} text="dark">
-                    {statusText}
-                </Badge>);
+                return (
+                    <Chip label={statusText} color={chipColor} />
+                );
             },
-        }, {
-            field: "trangThai", headerName: "Trạng Thái", width: 160, renderCell: (params) => {
+        },
+        {
+            field: "trangThai",
+            headerName: "Trạng Thái",
+            width: 180,
+            renderCell: (params) => {
                 const {value: trangThai} = params;
-                let badgeVariant;
+                let chipColor
                 let statusText;
                 switch (trangThai) {
                     case 0:
-                        badgeVariant = "primary";
+                        chipColor = "success";
                         statusText = "Đang Hoạt Động";
                         break;
                     case 10:
-                        badgeVariant = "info";
+                        chipColor = "error";
                         statusText = "Đã Bị Xóa";
                         break;
                     default:
-                        badgeVariant = "light";
+                        chipColor = "default";
                         statusText = "Đang Bị Null";
                         break;
                 }
 
-                return (<Badge bg={badgeVariant} text="dark">
-                    {statusText}
-                </Badge>);
+                return (
+                    <Chip label={statusText} color={chipColor} />
+                );
             },
         }, {
             field: "actions", headerName: "Hành Động", width: 100, renderCell: (params) => {
