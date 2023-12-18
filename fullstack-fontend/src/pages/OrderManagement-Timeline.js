@@ -302,18 +302,22 @@ const OrderManagementTimeline = ({ classes }) => {
   const [listAddess, setListAddress] = useState([]);
   const [showModalsAddress1, setShowModalAddress1] = useState(false);
 
-  const handleChangeAddress = async () => {
+  const loadAddress = async () => {
     if (listData[0].idHd.idKH) {
-      const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
-      console.log(getData);
-      setListAddress(getData);
-      setShowModalAddress(true);
+      try {
+        const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
+        setListAddress(getData);
+      } catch (error) {
+        console.error(error);
+      }
     } else {
-      setShowModalAddress1(true);
       console.log('Sửa Địa Chỉ Mà Không Có Tài Khoản');
     }
   };
-
+  const handleChangeAddress = async () => {
+    await loadAddress();
+    setShowModalAddress(true);
+  };
   const handleCloseAddress = () => {
     // getDetailHD();
     setShowModalAddress(false);
@@ -627,7 +631,8 @@ const OrderManagementTimeline = ({ classes }) => {
             open={showModalsAddress}
             listData={listAddess}
             handleClose={handleCloseAddress}
-            loadData={handleChangeAddress}
+            loadData={loadAddress}
+            getListData={getListData}
             idTaiKhoan={idTaiKhoan}
           />
         </>
