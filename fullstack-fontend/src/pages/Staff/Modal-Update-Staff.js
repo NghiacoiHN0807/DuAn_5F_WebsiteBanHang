@@ -146,6 +146,7 @@ const UpdateTkNV = (props) => {
   }, [matKhau]);
 
   const handleSave = async () => {
+    handleClose();
     let res;
     let tenCvObject;
     if (!validateFields()) {

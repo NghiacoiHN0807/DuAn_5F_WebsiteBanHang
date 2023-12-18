@@ -209,6 +209,7 @@ const AddClients = () => {
                 onClose={handleClose}
                 aria-labelledby="alert-dialog-title"
                 aria-describedby="alert-dialog-description"
+                sx={{zIndex:1200}}
             >
                 <DialogTitle id="alert-dialog-title">{"Xác nhận thêm?"}</DialogTitle>
                 <DialogContent>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useNavigate, useParams } from "react-router-dom";
 import { DateTimePicker, LocalizationProvider } from '@mui/x-date-pickers';
@@ -8,9 +8,10 @@ import { DemoContainer, DemoItem } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Alert, Button, Checkbox, Chip, Grid, Paper, Snackbar, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
 import { Col, Image, Table } from 'react-bootstrap';
-import { detail, getAllSanPham, getDetailSanPhamById, update } from "../../service/giamGiaService";
+import { detail, findGiamctByIdgg, getAllSanPham, getDetailSanPhamById, update } from "../../service/giamGiaService";
 import "../../scss/GiamGiaClient.scss";
 import "../../scss/GiamGiaAdd.scss";
+import ModalComfirm from '../../forms/Modal-Comfirm';
 
 function not(a, b) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -26,21 +27,22 @@ function union(a, b) {
 
 const ModelUpdateGiamGia = (props) => {
 
-  console.log("Data: ", props.data);
-
   const { id } = useParams();
+
+  console.log("id: ", id);
 
   // const { show, handleClose, isDataGiamGia, getGiamGia } = props;
   // console.log(dataSanPham)
   const navigate = useNavigate();
-  const [checked, setChecked] = React.useState([]);
-  const [left, setLeft] = React.useState([]);
-  const [right, setRight] = React.useState([]);
-  const [leftPage, setLeftPage] = React.useState(0);
-  const [leftRowsPerPage, setLeftRowsPerPage] = React.useState(5);
-  const [rightPage, setRightPage] = React.useState(0);
-  const [rightRowsPerPage, setRightRowsPerPage] = React.useState(5);
-  const [chiTietList, setchiTietList] = React.useState([]);
+  const [checked, setChecked] = useState([]);
+  const [left, setLeft] = useState([]);
+  const [right, setRight] = useState([]);
+  const [leftPage, setLeftPage] = useState(0);
+  const [leftRowsPerPage, setLeftRowsPerPage] = useState(5);
+  const [rightPage, setRightPage] = useState(0);
+  const [rightRowsPerPage, setRightRowsPerPage] = useState(5);
+  const [chiTietList, setchiTietList] = useState([]);
+  const [idSpList, setIdSpList] = useState([]);
   const [image, setImage] = useState([]);
   const [images, setImages] = useState({});
   const [alertContent, setAlertContent] = useState(null);
@@ -58,12 +60,16 @@ const ModelUpdateGiamGia = (props) => {
   });
 
   const [selected, setSelected] = useState("");
+  const [giamGiaChiTiet, setGiamGiaChiTiet] = useState([]);
   const getAllSp = async () => {
     try {
+      const giamGiaChiTiet = await findGiamctByIdgg(id);
+      console.log("giamGiaChiTiet: ", giamGiaChiTiet)
+      setGiamGiaChiTiet(giamGiaChiTiet);
       const res = await getAllSanPham();
-      const resDetail = await detail(id);
-      console.log("resDetail: ", resDetail.data.idSp.idSp)
-      const resDetailRight = await getDetailSanPhamById(resDetail.data.idSp.idSp);
+      const resDetail = await detail(giamGiaChiTiet[0].idGgct);
+      console.log("resDetail: ", resDetail.data.idGiamGia.idGiamGia)
+      const resDetailRight = await getDetailSanPhamById(resDetail.data.idGiamGia.idGiamGia);
       console.log("resDetailRight: ", resDetailRight)
 
       // Check if resDetailRight is an object
@@ -99,7 +105,7 @@ const ModelUpdateGiamGia = (props) => {
 
   console.log("Img: ", image)
 
-  React.useEffect(() => {
+  useEffect(() => {
     getAllSp();
   }, [])
 
@@ -127,12 +133,10 @@ const ModelUpdateGiamGia = (props) => {
         newchiTietList.splice(currentIndex, 1);
       }
       setchiTietList(newchiTietList);
+      const idSps = newchiTietList.map(item => item.sanPham.idSp);
+      setIdSpList(idSps);
     }
   };
-
-
-
-
 
   const numberOfChecked = (items) => intersection(checked, items).length;
 
@@ -143,6 +147,8 @@ const ModelUpdateGiamGia = (props) => {
       setChecked(union(checked, items));
     }
   };
+
+
 
   const handleCheckedRight = () => {
     const newRight = right.concat(leftChecked);
@@ -155,7 +161,8 @@ const ModelUpdateGiamGia = (props) => {
     setChecked(not(checked, leftChecked));
 
     setchiTietList([...chiTietList, ...leftChecked]);
-    console.log([...chiTietList, ...leftChecked])
+    const newIdSpList = leftChecked.map(item => item.sanPham.idSp);
+    setIdSpList([...idSpList, ...newIdSpList]);
   };
 
 
@@ -171,6 +178,17 @@ const ModelUpdateGiamGia = (props) => {
     setchiTietList([]); // Xóa các phần tử đã chọn khỏi chiTietList
     setChecked([]); // Xóa các phần tử đã chọn
   };
+
+  const [open, setOpen] = useState(false);
+
+  const openModal = () => {
+    setOpen(true);
+  }
+
+  const handleClose = () => {
+    setOpen(false);
+
+  }
 
   const handleSnackbarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -215,6 +233,7 @@ const ModelUpdateGiamGia = (props) => {
   }
 
   console.log(chiTietList)
+  console.log(idSpList)
 
   const { maGiamGia, tenChuongTrinh, ngayBatDau, ngayKetThuc, mucGiamPhanTram, mucGiamTienMat } = giamGia;
 
@@ -260,8 +279,7 @@ const ModelUpdateGiamGia = (props) => {
   };
   console.log(selected);
 
-  const handleSave = async (e) => {
-    e.preventDefault();
+  const handleSave = async () => {
     if (!maGiamGia.trim() || !tenChuongTrinh.trim() || !ngayBatDau || !ngayKetThuc) {
       setAlertContent({
         type: 'warning',
@@ -342,7 +360,9 @@ const ModelUpdateGiamGia = (props) => {
 
 
     // Trích xuất danh sách idSp từ chiTietList
-    const idSpList = chiTietList.map(item => item.sanPham.idSp);
+    // const idSpList = right.map(item => item.sanPham.idSp);
+
+    console.log("idSpList: ", idSpList)
 
     // Cập nhật state listIdSp
     const giamGiaChiTietOk = {
@@ -518,8 +538,9 @@ const ModelUpdateGiamGia = (props) => {
                   </LocalizationProvider>
                 </div> */}
 
-                <button onClick={(e) => handleSave(e)} className="btn bg-primary text-light d-flex align-items-end">Thêm</button>
+
               </form>
+              <button onClick={() => openModal()} className="btn bg-primary text-light d-flex align-items-end">Sửa</button>
             </div>
           </Modal.Body>
         </div>
@@ -679,6 +700,7 @@ const ModelUpdateGiamGia = (props) => {
           </Alert>
         </Snackbar>
       )}
+      <ModalComfirm open={open} handleClose={handleClose} information={handleSave} title={"Xác nhận sửa"} discription={"Xác nhận sửa giảm giá"} />
     </>
   );
 };

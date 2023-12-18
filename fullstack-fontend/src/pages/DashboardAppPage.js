@@ -64,7 +64,6 @@ export default function DashboardAppPage() {
 
     fetchData();
   }, []);
-console.log('test:' , hdNgay);
   const currentVisitsData = spTrending.map((item) => ({
     label: item[1], // Tên quốc gia, ví dụ "Ao Kakame"
     value: item[0], // Số lượng lượt truy cập, ví dụ 5z`
