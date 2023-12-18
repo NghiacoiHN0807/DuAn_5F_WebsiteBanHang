@@ -1,16 +1,15 @@
 import {useEffect, useState} from "react";
 import {Helmet} from "react-helmet-async";
 import {
+    Backdrop,
     Button,
     Container,
     Dialog,
     DialogContent,
-    Paper,
     Table,
     TableBody,
     TableCell,
     TableContainer,
-    TableHead,
     TableRow,
     TextField,
     Typography
@@ -18,6 +17,7 @@ import {
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 import {useNavigate} from "react-router-dom";
+import CircularProgress from "@mui/material/CircularProgress";
 import {getDetailOneTK, postChangePassTaiKhoanKhachHang} from "../../service/taiKhoanKhachHangSevice";
 
 
@@ -78,22 +78,23 @@ const ChangePassClient = () => {
             setPassChangeError('Mật Khẩu Mới Xác Nhận Đang Trống');
             hasError = true;
         }
-        if (passCheck !== passChange){
+        if (passCheck.trim() !== passChange.trim()){
             setPassCheckError("Mật Khẩu đang không trùng nhau hãy nhập lại");
             setPassChangeError("Mật Khẩu đang không trùng nhau hãy nhập lại");
             hasError = true;
         }
-        if (passChange && !passwordRegex.test(passChange)) {
+        if (passChange.trim() && !passwordRegex.test(passChange.trim())) {
             setPassCheckError('Mật khẩu mới phải có 1 chữ Hoa , 1 chữ số và dài 8 ký tự');
             hasError = true;
         }
-        if (passCheck && !passwordRegex.test(passCheck)) {
+        if (passCheck.trim() && !passwordRegex.test(passCheck.trim())) {
             setPassCheckError('Mật khẩu mới phải có 1 chữ Hoa , 1 chữ số và dài 8 ký tự');
             hasError = true;
         }
         if(!hasError) {
         let res;
         try {
+            handleOpenBD();
             res = await postChangePassTaiKhoanKhachHang(
                 Data.idTaiKhoan,
                 Data.maTaiKhoan,
@@ -103,24 +104,27 @@ const ChangePassClient = () => {
                 email,
                 matKhau,
                 trangThai,
-                pass,
-                passChange
+                pass.trim(),
+                passChange.trim()
             );
             // console.log("Check res: ", res);
         } catch (error) {
             if (error.response && error.response.data) {
+                handleCloseBD();
                setPassError(error.response.data.matKhau);
             } else {
+                handleCloseBD();
                 console.error("Error:", error);
             }
             return;
         }
         if (res) {
+            handleCloseBD();
             handlOpenAdd();
         }
             }
     };
-    const [openAdd, setOpenAdd] = useState(false);
+    const [openAdd,  setOpenAdd] = useState(false);
 
     const handlOpenAdd = () => {
         setOpenAdd(true);
@@ -132,7 +136,16 @@ const ChangePassClient = () => {
         localStorage.removeItem('userFormToken');
         navigate('/login');
     };
+    // backdrop
+    const [openBD, setOpenBD] = useState(false);
 
+    const handleOpenBD = () => {
+        setOpenBD(true);
+    };
+    const handleCloseBD = () => {
+        setOpenBD(false);
+    };
+  
 
     return (
         <>
@@ -143,7 +156,9 @@ const ChangePassClient = () => {
                 <div>
                     <TableContainer sx={{ border: 'none', boxShadow: 'none' }}>
                     <Table  sx={{
-                        minWidth: 700,
+                        minWidth: 'auto', // Auto width
+                        // Full width
+                        maxWidth: 'auto', // No maximum width
                         background: 'transparent',
                         '& .MuiTableCell-root': {
                             border: 'none'
@@ -199,7 +214,6 @@ const ChangePassClient = () => {
                                         <TextField variant="standard"
                                                    error={!!passChangeError}
                                                    helperText={passChangeError}
-                                                   inputProps={{maxLength: 10}}
                                                    onChange={(event) => {
                                                        setPassChange(event.target.value);
                                                        if(event.target.value) {
@@ -247,7 +261,9 @@ const ChangePassClient = () => {
                 </DialogContent>
 
             </Dialog>
-
+            <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={openBD}>
+                <CircularProgress color="inherit" />
+            </Backdrop>
         </>
     );
 };

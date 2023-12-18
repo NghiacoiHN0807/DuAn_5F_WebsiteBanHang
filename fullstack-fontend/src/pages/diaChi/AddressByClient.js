@@ -6,7 +6,7 @@ import Stack from "@mui/material/Stack";
 import {DataGrid, GridActionsCellItem, GridToolbarContainer, GridToolbarExport,} from "@mui/x-data-grid";
 import {
     Box,
-    Button,
+    Button, Chip,
     Container,
     Dialog,
     DialogActions,
@@ -39,7 +39,7 @@ const AddressByClient = () => {
     const [selectedLoaiDiaChi, setSelectedLoaiDiaChi] = useState("Tất cả");
     const [originalListData, setOriginalListData] = useState([]);
     const navigate = useNavigate();
-    const [tong,setTong]=useState([]);
+    const [tong, setTong] = useState(0);
 
     const {showAlert} = useAlert();
 
@@ -47,20 +47,31 @@ const AddressByClient = () => {
         try {
             const res = await fetchDiaChiByTkAll(idTK);
             const count = await fetchCountDiaChi(idTK);
-            setTong(count);
-            setListData(res);
-            setOriginalListData(res);
+            // console.log(count)
+            if (count.statusCode === 200) {
+                setTong(0);
+                setListData(res);
+                setOriginalListData(res);
+                return;
+            }
+            if (count) {
+                setTong(count);
+                setListData(res);
+                setOriginalListData(res);
+
+            }
+
         } catch (error) {
             console.error(error);
         }
     };
 
     useEffect(() => {
-        getListData(idTK, 0);
+        getListData(idTK);
     }, [idTK]);
 
-    const fetchUpdatedData = (page) => {
-        getListData(idTK, page);
+    const fetchUpdatedData = () => {
+        getListData(idTK);
     };
 
 
@@ -72,48 +83,55 @@ const AddressByClient = () => {
         {field: "diaChi", headerName: "Địa Chỉ", width: 200,},
         {field: "diaChiCuThe", headerName: "Địa Chỉ Cụ Thể", width: 210,},
         {
-            field: "loaiDiaChi", headerName: "Loại Địa Chỉ", width: 100, renderCell: (params) => {
+            field: "loaiDiaChi",
+            headerName: "Loại Địa Chỉ",
+            width: 150,
+            renderCell: (params) => {
                 const {value: loaiDiaChi} = params;
-                let badgeVariant;
+                let chipColor;
                 let statusText;
                 switch (loaiDiaChi) {
                     case 1:
-                        badgeVariant = "primary";
+                        chipColor = "primary";
                         statusText = "Nơi Làm Việc";
                         break;
                     default:
-                        badgeVariant = "light";
+                        chipColor = "default";
                         statusText = "Nhà Riêng";
                         break;
                 }
 
-                return (<Badge bg={badgeVariant} text="dark">
-                    {statusText}
-                </Badge>);
+                return (
+                    <Chip label={statusText} color={chipColor} />
+                );
             },
-        }, {
-            field: "trangThai", headerName: "Trạng Thái", width: 160, renderCell: (params) => {
+        },
+        {
+            field: "trangThai",
+            headerName: "Trạng Thái",
+            width: 180,
+            renderCell: (params) => {
                 const {value: trangThai} = params;
-                let badgeVariant;
+                let chipColor
                 let statusText;
                 switch (trangThai) {
                     case 0:
-                        badgeVariant = "primary";
+                        chipColor = "success";
                         statusText = "Đang Hoạt Động";
                         break;
                     case 10:
-                        badgeVariant = "info";
+                        chipColor = "error";
                         statusText = "Đã Bị Xóa";
                         break;
                     default:
-                        badgeVariant = "light";
+                        chipColor = "default";
                         statusText = "Đang Bị Null";
                         break;
                 }
 
-                return (<Badge bg={badgeVariant} text="dark">
-                    {statusText}
-                </Badge>);
+                return (
+                    <Chip label={statusText} color={chipColor} />
+                );
             },
         }, {
             field: "actions", headerName: "Hành Động", width: 100, renderCell: (params) => {
@@ -155,7 +173,6 @@ const AddressByClient = () => {
             loaiDiaChi: item.loaiDiaChi,
             trangThai: item.trangThai,
         }));
-
 
 
     useEffect(() => {
@@ -249,7 +266,7 @@ const AddressByClient = () => {
     return (<>
 
         <Helmet>
-            <title> Address || 5F Store </title>
+            <title> Địa Chỉ | 5F Store </title>
         </Helmet>
         <Container>
             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
@@ -262,48 +279,49 @@ const AddressByClient = () => {
             </Stack>
             <Card>
 
-            <Box sx={{ display: 'flex' }}>
-                <Box sx={{ flexGrow: 1 }}>
-                    <TextField
-                        margin="dense"
-                        variant="outlined"
-                        sx={{ml: 1, flex: 1}}
-                        placeholder="Tìm Kiếm"
-                        InputProps={{
-                            startAdornment: (
-                                <IconButton type="button" sx={{p: '10px'}} aria-label="search">
-                                    <SearchIcon/>
-                                </IconButton>
-                            ),
-                        }}
-                        onChange={(e) => setSearchKeyword(e.target.value)}
-                    />
+                <Box sx={{display: 'flex'}}>
+                    <Box sx={{flexGrow: 1}}>
+                        <TextField
+                            margin="dense"
+                            variant="outlined"
+                            sx={{ml: 1, flex: 1}}
+                            placeholder="Tìm Kiếm"
+                            InputProps={{
+                                startAdornment: (
+                                    <IconButton type="button" sx={{p: '10px'}} aria-label="search">
+                                        <SearchIcon/>
+                                    </IconButton>
+                                ),
+                            }}
+                            onChange={(e) => setSearchKeyword(e.target.value)}
+                        />
+                    </Box>
+                    <Box sx={{display: 'flex', alignItems: 'center'}}>
+                        <Button disabled={tong >= 5} variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>}
+                                onClick={() => handAdd()}>
+                            Tạo Địa Chỉ Mới
+                        </Button>
+                    </Box>
                 </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <Button disabled={tong >= 5} variant="contained" startIcon={<Iconify icon="eva:plus-fill"/>} onClick={() => handAdd()}>
-                        Tạo Địa Chỉ Mới
-                    </Button>
-                </Box>
-            </Box>
 
-            <DataGrid
-                sx={{
-                    border: 'none'
-                }}
-                rows={rows}
-                columns={columns}
-                initialState={{
-                    pagination: {
-                        paginationModel: {page: 0, pageSize: 10},
-                    },
-                }}
-                slots={{toolbar: CustomToolbar}}
-                getRowSpacing={(params) => ({
-                    top: params.isFirstVisible ? 0 : 5,
-                    bottom: params.isLastVisible ? 0 : 5,
-                })}
-                pageSizeOptions={[5, 10, 15]}
-            />
+                <DataGrid
+                    sx={{
+                        border: 'none'
+                    }}
+                    rows={rows}
+                    columns={columns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: {page: 0, pageSize: 10},
+                        },
+                    }}
+                    slots={{toolbar: CustomToolbar}}
+                    getRowSpacing={(params) => ({
+                        top: params.isFirstVisible ? 0 : 5,
+                        bottom: params.isLastVisible ? 0 : 5,
+                    })}
+                    pageSizeOptions={[5, 10, 15]}
+                />
 
             </Card>
         </Container>

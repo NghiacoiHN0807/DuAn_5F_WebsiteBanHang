@@ -27,7 +27,8 @@ import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHeadNoCheckBox, UserListToolbar } from '../sections/@dashboard/user';
 import { updateClientPayment2 } from '../service/client/Payment';
-import ModalAddAddressById from './ModalsAddAddressById';
+import ModalsAddAddressByAdmin from "./ModalsAddAddressByAdmin";
+
 // APIs
 
 const TABLE_HEAD = [
@@ -86,10 +87,10 @@ const ModalChangeAddress = (props) => {
     open: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     listData: PropTypes.array.isRequired,
-    getDetailHD: PropTypes.func.isRequired,
-    loadAddress: PropTypes.func.isRequired,
+    loadData: PropTypes.func.isRequired,
+    idTaiKhoan : PropTypes.string,
   };
-  const { open, handleClose, listData, getDetailHD, loadAddress } = props;
+  const { open, handleClose, listData, loadData, idTaiKhoan } = props;
 
   // Edit table
   const [page, setPage] = useState(0);
@@ -165,7 +166,7 @@ const ModalChangeAddress = (props) => {
         message: 'Cập Nhập Địa Chỉ Thành Công',
       });
       handleClose();
-      getDetailHD();
+      loadData();
     } catch (error) {
       setAlertContent({
         type: 'warning',
@@ -313,11 +314,11 @@ const ModalChangeAddress = (props) => {
           </Snackbar>
         )}
       </div>
-      <ModalAddAddressById
+      <ModalsAddAddressByAdmin
         open={showModalsAddress}
         handleClose={handleCloseAddress}
-        getAllData={getDetailHD}
-        loadAddress={loadAddress}
+        getAllData={loadData}
+        idTaiKhoan={idTaiKhoan}
       />
     </>
   );

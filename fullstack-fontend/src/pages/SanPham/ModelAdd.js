@@ -265,7 +265,6 @@ export default function AddSanPham() {
     setTenSp(value);
     setEmptyTen(value.trim() === '');
     const isDuplicate = listSP.some((item) => item.tenSp === value);
-    console.log(listSP, 'listSP');
     setDuplicateAdd(isDuplicate);
   };
 
@@ -302,7 +301,7 @@ export default function AddSanPham() {
   return (
     <>
       <Helmet>
-        <title> User | Minimal UI </title>
+        <title> Sản Phẩm | 5F Store </title>
       </Helmet>
 
       <Container>

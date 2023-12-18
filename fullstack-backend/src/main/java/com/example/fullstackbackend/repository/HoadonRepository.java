@@ -56,7 +56,8 @@ public interface HoadonRepository extends JpaRepository<HoaDon, Integer> {
     @Query(value = "SELECT DATE(ngay_thanh_toan) AS Ngay, SUM(thanh_tien) AS TongDoanhThu\n" +
             "FROM duan_5f.hoa_don\n" +
             "WHERE ngay_thanh_toan IS NOT NULL\n" +
-            "GROUP BY DATE(ngay_thanh_toan)", nativeQuery = true)
+            "GROUP BY DATE(ngay_thanh_toan)\n" +
+            "ORDER BY Ngay ASC;", nativeQuery = true)
     List<Object[]> getTotalRevenueByDay();
 
     @Query(value = "SELECT\n" +

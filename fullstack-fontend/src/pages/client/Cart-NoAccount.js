@@ -83,12 +83,14 @@ export default function CartNoAccount() {
   };
 
   const handleIncreaseQuantity = (item) => {
+    console.log('imgData: ', item.soLuong);
+    console.log('imgData: ', item.idCtsp.soLuongTon);
     if (item.soLuong + 1 > 20) {
       setAlertContent({
         type: 'warning',
         message: 'Nếu Muốn Mua Sỉ. Hãy Liên Hệ Với Chúng Tôi',
       });
-    } else if (item.soLuong + 1 > item.idCtsp.soLuongTon) {
+    } else if (item.soLuong >= item.idCtsp.soLuongTon) {
       setAlertContent({
         type: 'warning',
         message: 'Số Lượng Tồn Không Đủ',

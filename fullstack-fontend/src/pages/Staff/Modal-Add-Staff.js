@@ -205,9 +205,9 @@ const AddTKNV = () => {
       </div>
       <div
         className="title"
-        style={{ textAlign: "center", margin: "20px 0" }}
+        style={{ textAlign: "center", margin: "20px 0", color: "black" }}
       >
-        <h4>Thêm Tài Khoản</h4>
+        <h4 style={{fontSize: "34px"}}>Thêm Tài Khoản</h4>
       </div>
 
       <div>

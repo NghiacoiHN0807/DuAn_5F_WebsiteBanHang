@@ -1,9 +1,11 @@
 import Nav from 'react-bootstrap/Nav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { faLocationDot, faEnvelope, faPhone } from '@fortawesome/free-solid-svg-icons';
 import logoFB from '../../assets/logo-facebook.png';
 import logoYTB from '../../assets/logo-youtube.png';
 import logoIG from '../../assets/logo-instargram.png';
+import logo5F from '../../assets/logo_5F.png';
+
 
 const Footer = () => (
   <>
@@ -13,58 +15,50 @@ const Footer = () => (
           <div className="col-3">
             <Nav defaultActiveKey="/home" className="flex-column">
               <Nav.Link eventKey="disabled" disabled className="nav-links text-light">
-                FIND OUR STORE
+                Đăng Ký và Đăng Nhập 5F Store
               </Nav.Link>
               <Nav.Link href="/home" className="nav-links text-light">
-                SIGN IN
+                Đăng Ký
               </Nav.Link>
               <Nav.Link eventKey="link-1" className="nav-links text-light">
-                SIGN UP
+                Đăng Nhập
               </Nav.Link>
             </Nav>
           </div>
           <div className="col-3">
             <Nav defaultActiveKey="/home" className="flex-column">
               <Nav.Link eventKey="disabled" disabled className="nav-links text-light">
-                GET HELP
+                Trang Chủ
               </Nav.Link>
               <Nav.Link href="/home" className="nav-links text-light">
-                SEND FEEDBACK
+                Sản Phẩm
               </Nav.Link>
               <Nav.Link eventKey="link-1" className="nav-links text-light">
-                Link
+                Giảm Giá
               </Nav.Link>
               <Nav.Link eventKey="link-2" className="nav-links text-light">
-                Link
+                Sản Phẩm Đang Được Giảm Giá
               </Nav.Link>
             </Nav>
           </div>
           <div className="col-3">
             <Nav defaultActiveKey="/home" className="flex-column">
               <Nav.Link eventKey="disabled" disabled className="nav-links text-light">
-                ABOUT ME
+                Về Chúng Tôi
               </Nav.Link>
               <Nav.Link href="/home" className="nav-links text-light">
-                NEWS
+                Liện Hệ
               </Nav.Link>
               <Nav.Link eventKey="link-1" className="nav-links text-light">
-                SALES
+                Chi Tiết Sản Phẩm
               </Nav.Link>
-              <Nav.Link eventKey="link-2" className="nav-links text-light">
-                PRODUCTS
-              </Nav.Link>
+
             </Nav>
           </div>
           <div className="col-3">
-            <Nav.Link type="" className="social-link">
-              <img src={logoFB} alt="logofb" className="social-icon" />
-            </Nav.Link>
-            <Nav.Link type="" className="social-link">
-              <img src={logoIG} alt="logoig" className="social-icon" />
-            </Nav.Link>
-            <Nav.Link type="" className="social-link">
-              <img src={logoYTB} alt="logoytb" className="social-icon" />
-            </Nav.Link>
+            <div className="logo">
+              <img src={logo5F} alt="logo_5F" height={'50px'} style={{ filter: 'grayscale(100%)' }} />
+            </div>
           </div>
         </div>
         <div className="row">

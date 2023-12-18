@@ -29,13 +29,14 @@ import {
 import { CSVLink } from 'react-csv';
 // import { filter } from 'lodash';
 import { makeStyles } from '@material-ui/core';
+import GetAppIcon from '@mui/icons-material/GetApp';
 
 // components
 import Iconify from '../components/iconify';
 import Scrollbar from '../components/scrollbar';
 // sections
 import { UserListHeadNoCheckBox, UserListToolbar } from '../sections/@dashboard/user';
-import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
+// import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 import { getAllOrderManagement } from '../service/OderManagementSevice';
 import { postAddBill } from '../service/BillSevice';
 
@@ -210,7 +211,11 @@ const OrderManagement = () => {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listData.length) : 0;
 
-  const filteredUsers = applySortFilter(listData, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(
+    listData.filter((_user) => (statusFilter !== '' ? _user.trangThai.toString() === statusFilter : true)),
+    getComparator(order, orderBy),
+    filterName
+  );
 
   const isNotFound = !filteredUsers.length && !!filterName;
 
@@ -384,7 +389,7 @@ const OrderManagement = () => {
   return (
     <>
       <Helmet>
-        <title> Bills | Minimal UI </title>
+        <title> Hóa Đơn | 5F Store </title>
       </Helmet>
 
       <Container>
@@ -392,9 +397,7 @@ const OrderManagement = () => {
           <Typography variant="h4" gutterBottom>
             Hóa Đơn
           </Typography>
-          <CSVLink data={selectedExports} onClick={handleExportData}>
-            Download me
-          </CSVLink>
+
           <Button onClick={() => handleAdd()} variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}>
             Thêm Hóa Đơn
           </Button>
@@ -409,6 +412,7 @@ const OrderManagement = () => {
                 <TextField
                   label="Ngày Bắt Đầu"
                   type="date"
+                  size="small"
                   value={startDateFilter}
                   onChange={(event) => setStartDateFilter(event.target.value)}
                   InputLabelProps={{
@@ -417,6 +421,7 @@ const OrderManagement = () => {
                 />
                 <TextField
                   label="Ngày Kết Thúc"
+                  size="small"
                   type="date"
                   value={endDateFilter}
                   onChange={(event) => setEndDateFilter(event.target.value)}
@@ -428,6 +433,7 @@ const OrderManagement = () => {
                   select
                   label="Trạng Thái"
                   value={statusFilter}
+                  size="small"
                   onChange={(event) => setStatusFilter(event.target.value)}
                 >
                   <MenuItem value="">Tất Cả</MenuItem>
@@ -441,6 +447,11 @@ const OrderManagement = () => {
                   <MenuItem value="9">Đã Thanh Toán Tại Quầy</MenuItem>
                   <MenuItem value="10">Đã Bị Hủy</MenuItem>
                 </TextField>
+                <CSVLink data={selectedExports} onClick={handleExportData}>
+                  <Button aria-label="download" variant="contained" startIcon={<GetAppIcon />} color="success">
+                    Xuất Excel
+                  </Button>
+                </CSVLink>
               </Grid>
               <Table>
                 <UserListHeadNoCheckBox

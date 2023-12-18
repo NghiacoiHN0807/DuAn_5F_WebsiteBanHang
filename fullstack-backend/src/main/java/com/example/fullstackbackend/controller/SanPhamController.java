@@ -139,7 +139,7 @@ public class SanPhamController {
         return ResponseEntity.ok(pageSp);
     }
 
-    @GetMapping("getSpForClient")
+        @GetMapping("getSpForClient")
     public ResponseEntity<List<SanPhamClientDTO>> getSpForClient() {
         List<SanPhamClientDTO> pageSp = sanPhamService.sanPhamForClient();
         return ResponseEntity.ok(pageSp);

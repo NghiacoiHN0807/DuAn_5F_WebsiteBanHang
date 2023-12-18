@@ -74,4 +74,11 @@ public interface ChitietsanphamRepository extends JpaRepository<ChiTietSanPham, 
             "  size sz ON ctsp.id_size = sz.id_size\n" +
             "WHERE id_sp = :idSp", nativeQuery = true)
     List<Object[]> ctspForAd(@Param("idSp") Integer idSp);
+
+    @Query(value = "SELECT *\n" +
+            "FROM chi_tiet_san_pham\n" +
+            "WHERE id_sp =:idSp AND id_ms =:idMs AND id_size =:idSize", nativeQuery = true)
+    ChiTietSanPham checkAttExist(@Param("idSp") Integer idSp,
+                                                @Param("idMs") Integer idMs,
+                                                @Param("idSize") Integer idSize);
 }
