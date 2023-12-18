@@ -131,13 +131,13 @@ export default function AddSanPham() {
 
       const res = await postAddSanPham(
         null,
-        tenSp,
+        tenSp.trim(),
         getObjChatLieu,
         getObjLoaiSP,
         getObjXuatXu,
         getObjCoAo,
         getObjTayAo,
-        moTa,
+        moTa.trim(),
         9
       );
 
@@ -186,9 +186,9 @@ export default function AddSanPham() {
         return postAddXuatXu;
       case 'Loại sản phẩm':
         return postAddLoaiSP;
-      case 'Loại cổ áo':
+      case 'Loại cổ áo / Loại ống quần':
         return postAddLoaiCoAo;
-      case 'Ống tay áo':
+      case 'Ống tay áo / Ống quần':
         return postAddOngTayAo;
       default:
         return emptyFunc;
@@ -203,9 +203,9 @@ export default function AddSanPham() {
         return putUpdateXuatXu;
       case 'Loại sản phẩm':
         return putUpdateLoaiSP;
-      case 'Loại cổ áo':
+      case 'Loại cổ áo / Loại ống quần':
         return putUpdateLoaiCoAo;
-      case 'Ống tay áo':
+      case 'Ống tay áo / Ống quần':
         return putUpdateOngTayAo;
       default:
         return emptyFunc;
@@ -220,9 +220,9 @@ export default function AddSanPham() {
         return detailXX;
       case 'Loại sản phẩm':
         return detailLSP;
-      case 'Loại cổ áo':
+      case 'Loại cổ áo / Loại ống quần':
         return detailCoAo;
-      case 'Ống tay áo':
+      case 'Ống tay áo / Ống quần':
         return detailTayAo;
       default:
         return emptyFunc;
@@ -248,10 +248,10 @@ export default function AddSanPham() {
     if (phanTu.att === 'Xuất xứ') {
       setListAtt(listXX);
     }
-    if (phanTu.att === 'Loại cổ áo') {
+    if (phanTu.att === 'Loại cổ áo / Loại ống quần') {
       setListAtt(listCoAo);
     }
-    if (phanTu.att === 'Ống tay áo') {
+    if (phanTu.att === 'Ống tay áo / Ống quần') {
       setListAtt(listTayAo);
     }
   }, [listCL, listLSP, listXX, listTayAo, listCoAo, phanTu]);
@@ -419,11 +419,11 @@ export default function AddSanPham() {
 
             <Grid item xs={5}>
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Loại cổ áo</InputLabel>
+                <InputLabel id="demo-simple-select-label">Loại cổ áo / Loại ống quần</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  label="Loại cổ áo"
+                  label="Loại cổ áo / Loại ống quần"
                   value={coAo}
                   onChange={(event) => handleAttChange(event.target.value, setCoAo, setEmptyCoAo)}
                   error={emptyCoAo}
@@ -442,7 +442,7 @@ export default function AddSanPham() {
               <Button
                 variant="outlined"
                 size="large"
-                onClick={() => handleOpenQuickAtt('Loại cổ áo', 'idCoAo', 'maCoAo', 'loaiCoAo')}
+                onClick={() => handleOpenQuickAtt('Loại cổ áo / Loại ống quần', 'idCoAo', 'maCoAo', 'loaiCoAo')}
               >
                 <MoreHorizIcon />
               </Button>
@@ -450,11 +450,11 @@ export default function AddSanPham() {
 
             <Grid item xs={5}>
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Ống tay áo</InputLabel>
+                <InputLabel id="demo-simple-select-label">Ống tay áo / Ống quần</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  label="Ống tay áo"
+                  label="Ống tay áo / Ống quần"
                   value={tayAo}
                   onChange={(event) => handleAttChange(event.target.value, setTayAo, setEmptyTayAo)}
                   error={emptyTayAo}
@@ -473,7 +473,7 @@ export default function AddSanPham() {
               <Button
                 variant="outlined"
                 size="large"
-                onClick={() => handleOpenQuickAtt('Ống tay áo', 'idTayAo', 'maTayAo', 'loaiTayAo')}
+                onClick={() => handleOpenQuickAtt('Ống tay áo / Ống quần', 'idTayAo', 'maTayAo', 'loaiTayAo')}
               >
                 <MoreHorizIcon />
               </Button>
