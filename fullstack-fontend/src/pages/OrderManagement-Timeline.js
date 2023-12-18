@@ -302,19 +302,22 @@ const OrderManagementTimeline = ({ classes }) => {
   const [listAddess, setListAddress] = useState([]);
   const [showModalsAddress1, setShowModalAddress1] = useState(false);
 
-  const handleChangeAddress = async () => {
+  const loadAddress = async () => {
     if (listData[0].idHd.idKH) {
-      console.log("listData", listData)
-      const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
-      console.log(getData);
-      setListAddress(getData);
-      setShowModalAddress(true);
+      try {
+        const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
+        setListAddress(getData);
+      } catch (error) {
+        console.error(error);
+      }
     } else {
-      setShowModalAddress1(true);
       console.log('Sửa Địa Chỉ Mà Không Có Tài Khoản');
     }
   };
-
+  const handleChangeAddress = async () => {
+    await loadAddress();
+    setShowModalAddress(true);
+  };
   const handleCloseAddress = () => {
     // getDetailHD();
     setShowModalAddress(false);
@@ -353,22 +356,22 @@ const OrderManagementTimeline = ({ classes }) => {
             {activeIndex === 0
               ? 'Xác Nhận Hóa Đơn'
               : activeIndex === 1
-                ? 'Xác Nhận Thông Tin'
-                : activeIndex === 2
-                  ? 'Chuyển Cho Đơn Vị'
-                  : activeIndex === 3 && listHTTT.length <= 0
-                    ? 'Xác Nhận Thanh Toán'
-                    : activeIndex === 3 && listHTTT.length >= 0
-                      ? 'Giao Thành Công'
-                      : activeIndex === 4
-                        ? 'Giao Thành Công'
-                        : activeIndex === 5
-                          ? 'Đã Giao Thành Công'
-                          : activeIndex === 9
-                            ? 'Đơn Đã Hoàn Thành'
-                            : activeIndex === 10
-                              ? 'Đơn Hàng Đã Bị Hủy'
-                              : 'Đơn Đã Hoàn Thành1'}
+              ? 'Xác Nhận Thông Tin'
+              : activeIndex === 2
+              ? 'Chuyển Cho Đơn Vị'
+              : activeIndex === 3 && listHTTT.length <= 0
+              ? 'Xác Nhận Thanh Toán'
+              : activeIndex === 3 && listHTTT.length >= 0
+              ? 'Giao Thành Công'
+              : activeIndex === 4
+              ? 'Giao Thành Công'
+              : activeIndex === 5
+              ? 'Đã Giao Thành Công'
+              : activeIndex === 9
+              ? 'Đơn Đã Hoàn Thành'
+              : activeIndex === 10
+              ? 'Đơn Hàng Đã Bị Hủy'
+              : 'Đơn Đã Hoàn Thành1'}
           </Button>{' '}
           <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 1}>
             Hủy Đơn Hàng
@@ -628,7 +631,8 @@ const OrderManagementTimeline = ({ classes }) => {
             open={showModalsAddress}
             listData={listAddess}
             handleClose={handleCloseAddress}
-            loadData={handleChangeAddress}
+            loadData={loadAddress}
+            getListData={getListData}
             idTaiKhoan={idTaiKhoan}
           />
         </>
