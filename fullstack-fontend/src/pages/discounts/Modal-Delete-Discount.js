@@ -26,14 +26,14 @@ export default function ModalDeleteDiscount(props) {
   }, [information]);
 
   const handleDelete = async () => {
-    if (information.trangThai === 0) {
+    if (information.trangThai === 0 || information.trangThai === 1) {
       console.log(information.idGgct);
       await remove(information.idGgct);
       setAlertContent({
         type: 'success',
         message: 'Xóa thành công!',
       });
-    } else if (information.trangThai === 1) {
+    } else if (information.trangThai === 10) {
       setAlertContent({
         type: 'warning',
         message: 'Không thể xóa!!!',

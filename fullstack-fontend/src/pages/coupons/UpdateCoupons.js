@@ -15,8 +15,8 @@ import { useAlert } from "../../layouts/dashboard/AlertContext";
 import ModalComfirm from "../../forms/Modal-Comfirm";
 
 const UpdateCoupons = () => {
-    const todayAtNoon = dayjs().set('hour', 12).startOf('hour');
-    const todayAt9AM = dayjs().set('hour', 9).startOf('hour');
+    const todayAtNoon = dayjs();
+    const todayAt9AM = dayjs();
     const [randomCode, setRandomCode] = useState("");
     const [alertContent, setAlertContent] = useState(null);
     const { id } = useParams();
@@ -158,6 +158,15 @@ const UpdateCoupons = () => {
         }
         const checkDateValidity = () => dayjs(thoiGianKetThuc).isAfter(dayjs(thoiGianTao));
 
+        const checkDateValidityNow = () => thoiGianTao.isAfter(dayjs());
+
+        if (!checkDateValidityNow()) {
+            setAlertContent({
+                type: 'warning',
+                message: 'Chương trình phải giảm giá sau ít nhất 5 phút!',
+            });
+            return;
+        }
         if (!checkDateValidity()) {
             setAlertContent({
                 type: 'warning',
@@ -185,10 +194,11 @@ const UpdateCoupons = () => {
             console.log("Check res: ", res);
 
             if (res && res.idCoupon) {
-                setAlertContent({
+                const successMessage = {
                     type: 'success',
                     message: 'Thêm Thành Công!',
-                });
+                };
+                localStorage.setItem('successMessage', JSON.stringify(successMessage));
                 navigate("/dashboard/coupons");
             } else {
                 setAlertContent({
