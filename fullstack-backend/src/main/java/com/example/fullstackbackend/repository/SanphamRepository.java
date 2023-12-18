@@ -18,27 +18,31 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
     Page<SanPham> findAllByTinhTrang(@Param("tinhTrang") Integer tinhTrang, Pageable pageable);
 
     @Query(value = "SELECT \n" +
-            "    sp.*, \n" +
-            "    MIN(img.images),\n" +
-            "    MIN(ctsp.gia_ban) AS gia_ban_nho_nhat,\n" +
-            "    MAX(ctsp.gia_ban) AS gia_ban_lon_nhat\n" +
-            "FROM \n" +
-            "    san_pham sp\n" +
-            "LEFT JOIN \n" +
-            "\tImages img ON sp.id_sp = img.id_sp\n" +
-            "LEFT JOIN \n" +
-            "    chi_tiet_san_pham ctsp ON sp.id_sp = ctsp.id_sp\n" +
-            "WHERE \n" +
-            "    ctsp.gia_ban = ctsp.gia_thuc_te\n" +
-            "GROUP BY \n" +
-            "    sp.id_sp, sp.ten_sp;", nativeQuery = true)
+            "                sp.*, \n" +
+            "                MIN(img.images),\n" +
+            "                MIN(ctsp.gia_ban) AS gia_ban_nho_nhat,\n" +
+            "                MAX(ctsp.gia_ban) AS gia_ban_lon_nhat,\n" +
+            "                ggct.trang_thai\n" +
+            "            FROM \n" +
+            "                san_pham sp\n" +
+            "            LEFT JOIN \n" +
+            "            Images img ON sp.id_sp = img.id_sp\n" +
+            "            LEFT JOIN \n" +
+            "                chi_tiet_san_pham ctsp ON sp.id_sp = ctsp.id_sp\n" +
+            "\t\t\tLEFT JOIN\n" +
+            "\t\t\t\tgiam_gia_chi_tiet ggct ON sp.id_sp = ggct.id_sp\n" +
+            "            WHERE \n" +
+            "                ctsp.gia_ban = ctsp.gia_thuc_te\n" +
+            "            GROUP BY \n" +
+            "                sp.id_sp, sp.ten_sp, ggct.trang_thai;", nativeQuery = true)
     List<Object[]> getSanPhamWithMinImageUrl();
 
     @Query(value = "SELECT  \n" +
             "                            sp.*,  \n" +
             "                            MIN(img.images), \n" +
             "                            MIN(ctsp.gia_ban) AS gia_ban_nho_nhat, \n" +
-            "                            MAX(ctsp.gia_ban) AS gia_ban_lon_nhat \n" +
+            "                            MAX(ctsp.gia_ban) AS gia_ban_lon_nhat,\n" +
+            "                            ggct.trang_thai \n" +
             "                        FROM  \n" +
             "                            san_pham sp \n" +
             "                        LEFT JOIN  \n" +
@@ -50,9 +54,9 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "\t\t\t\t\t\tLEFT JOIN\n" +
             "\t\t\t\t\t\t\tgiam_gia gg ON ggct.id_giam_gia = gg.id_giam_gia\n" +
             "                        WHERE  \n" +
-            "                            gg.id_giam_gia =:idGg AND ggct.trang_thai = 0\n" +
+            "                            gg.id_giam_gia =:idGg AND (ggct.trang_thai = 0 OR ggct.trang_thai = 1)\n" +
             "                        GROUP BY  \n" +
-            "                            sp.id_sp, sp.ten_sp", nativeQuery = true)
+            "                            sp.id_sp, sp.ten_sp, ggct.trang_thai", nativeQuery = true)
     List<Object[]> getSanPhamWithMinImageUrlByIdGiamGia(@Param("idGg") Integer idGg);
 
     @Query(value =
@@ -92,8 +96,7 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
                     "        id_sp\n" +
                     ") images ON san_pham.id_sp = images.id_sp\n" +
                     "WHERE \n" +
-                    "    chi_tiet_san_pham.gia_thuc_te < chi_tiet_san_pham.gia_ban \n" +
-                    "    AND giam_gia_chi_tiet.trang_thai = 0\n" +
+                    "    giam_gia_chi_tiet.trang_thai = 0 OR giam_gia_chi_tiet.trang_thai = 1\n" +
                     "GROUP BY \n" +
                     "    san_pham.id_sp, \n" +
                     "    san_pham.ten_sp,\n" +

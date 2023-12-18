@@ -14,10 +14,10 @@ import Iconify from "../../components/iconify";
 import ModalComfirm from "../../forms/Modal-Comfirm";
 
 const AddCoupons = () => {
-    const todayAtNoon = dayjs().set('hour', 12).startOf('hour');
-    const todayAt9AM = dayjs().set('hour', 9).startOf('hour');
-    const [ngayBatDau, setNgayBatDau] = useState(dayjs().set('hour', 12).startOf('hour'));
-    const [ngayKetThuc, setNgayKetThuc] = useState(dayjs().set('hour', 12).startOf('hour'));
+    const todayAtNoon = dayjs();
+    const todayAt9AM = dayjs();
+    const [ngayBatDau, setNgayBatDau] = useState(dayjs());
+    const [ngayKetThuc, setNgayKetThuc] = useState(dayjs());
     const [alertContent, setAlertContent] = useState(null);
     const [open, setOpen] = useState(null);
 
@@ -143,10 +143,20 @@ const AddCoupons = () => {
         }
         const checkDateValidity = () => dayjs(ngayKetThuc).isAfter(dayjs(ngayBatDau));
 
+        const checkDateValidityNow = () => ngayBatDau.isAfter(dayjs());
+
+        if (!checkDateValidityNow()) {
+            setAlertContent({
+                type: 'warning',
+                message: 'Chương trình phải giảm giá sau ít nhất 5 phút!',
+            });
+            return;
+        }
+
         if (!checkDateValidity()) {
             setAlertContent({
                 type: 'warning',
-                message: 'Ngày kết thúc phải sau ngày bắt đầu!',
+                message: 'Thời gian kết thúc phải sau thời gian bắt đầu!',
             });
             return;
         }
@@ -167,10 +177,11 @@ const AddCoupons = () => {
             console.log("Check res: ", res);
 
             if (res && res.idCoupon) {
-                setAlertContent({
+                const successMessage = {
                     type: 'success',
                     message: 'Thêm Thành Công!',
-                });
+                };
+                localStorage.setItem('successMessage', JSON.stringify(successMessage));
                 navigate("/dashboard/coupons");
             } else {
                 setAlertContent({

@@ -162,6 +162,11 @@ export default function DiscountPage() {
   // const [currentPage, setCurrentPage] = useState(0);
   useEffect(() => {
     getListData();
+    const storedMessage = localStorage.getItem('successMessage');
+    if (storedMessage) {
+      setAlertContent(JSON.parse(storedMessage));
+      localStorage.removeItem('successMessage');
+    }
   }, [startDateFilter, endDateFilter, statusFilter, minAmountFilter, maxAmountFilter]);
 
   // Open and Close menu
@@ -255,6 +260,11 @@ export default function DiscountPage() {
       color="secondary"
       variant="outlined"
       style={{ color: 'white', backgroundColor: 'red', border: 'none' }}
+    /> : trangThai === 1 ? <Chip
+      label="Chờ giảm giá"
+      color="warning"
+      variant="outlined"
+      style={{ color: 'black', backgroundColor: 'yellow', border: 'none' }}
     /> : <Chip
       label="Không xác định"
       color="warning"
@@ -262,6 +272,10 @@ export default function DiscountPage() {
       style={{ color: 'white', backgroundColor: 'red', border: 'none' }}
     />;
   }
+
+
+  // const giaMap = ()
+
   const navigate = useNavigate();
 
   // Create a new Detail Direct
@@ -433,7 +447,7 @@ export default function DiscountPage() {
             >
               <MenuItem value="">Tất Cả</MenuItem>
               <MenuItem value="0">Hoạt Động</MenuItem>
-              <MenuItem value="10">Dừng Hoạt Động</MenuItem>
+              <MenuItem value="1">Chờ giảm giá</MenuItem>
             </TextField>
             <TextField
               label="Số Tiền Tối Thiểu"

@@ -74,8 +74,8 @@ public interface GiamGiaChiTietRepository extends JpaRepository<GiamGiaChiTiet, 
     void updateTrangThaiGiamGia(@Param("trangThai") Integer trangThai, @Param("idGiamGia") Integer idGiamGia);
 
     @Modifying
-    @Query(value = "update giam_gia_chi_tiet set trang_thai = :trangThai where id_giam_gia = :idGiamGia", nativeQuery = true)
-    void updateTrangThaiGiamGiaChiTiet(@Param("trangThai") Integer trangThai, @Param("idGiamGia") Integer idGiamGia);
+    @Query(value = "update giam_gia_chi_tiet set trang_thai = :trangThai where id_giam_gia = :idGiamGia and trang_thai = :trangThaiO", nativeQuery = true)
+    void updateTrangThaiGiamGiaChiTiet(@Param("trangThai") Integer trangThai, @Param("idGiamGia") Integer idGiamGia, @Param("trangThaiO") Integer trangThaiO);
 
     @Query(value = "select * from giam_gia_chi_tiet where id_giam_gia = :idGiamGia", nativeQuery = true)
     List<GiamGiaChiTiet> findByIdGiamGia(@Param("idGiamGia") Integer idGiamGia);

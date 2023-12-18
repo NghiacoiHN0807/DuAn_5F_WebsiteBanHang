@@ -99,12 +99,6 @@ export default function UserStaff() {
     const fetchData = async () => {
       const res = await taiKhoan(0);
       setListData(res);
-
-      const storedMessage = localStorage.getItem('successMessage');
-      if (storedMessage) {
-        setAlertContent(JSON.parse(storedMessage));
-        localStorage.removeItem('successMessage');
-      }
     };
 
     fetchData();
