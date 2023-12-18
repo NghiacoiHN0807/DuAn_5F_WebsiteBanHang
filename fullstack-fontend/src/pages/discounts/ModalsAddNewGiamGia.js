@@ -59,14 +59,11 @@ const ModelAddNewGiamGia = () => {
   const getAllSp = async () => {
     try {
       const res = await getAllSanPham();
-      console.log('data: ', res);
       setLeft(res);
     } catch (error) {
       console.error('Error loading images:', error);
     }
   };
-
-  console.log('Img: ', image);
 
   React.useEffect(() => {
     getAllSp();
@@ -120,7 +117,6 @@ const ModelAddNewGiamGia = () => {
     setChecked(not(checked, leftChecked));
 
     setchiTietList([...chiTietList, ...leftChecked]);
-    console.log([...chiTietList, ...leftChecked]);
   };
 
   const handleCheckedLeft = () => {
@@ -197,15 +193,11 @@ const ModelAddNewGiamGia = () => {
     trangThai: 0,
   });
 
-  console.log(chiTietList);
-
   const { maGiamGia, tenChuongTrinh, mucGiamPhanTram, mucGiamTienMat } = giamGia;
 
   const onInputChange = (e) => {
     setGiamGia({ ...giamGia, [e.target.name]: e.target.value });
   };
-
-  console.log(giamGia);
 
   const [selected, setSelected] = useState('');
   const changeHandler = (e) => {
@@ -321,8 +313,6 @@ const ModelAddNewGiamGia = () => {
       // const formattedDateFirst = format(ngay, 'dd/MM/yyyy HH:mm:ss', { locale: vi });
       // const formattedDateLast = format(ngaykt, 'dd/MM/yyyy HH:mm:ss', { locale: vi });
 
-      console.log('ngay', ngay);
-
       const giaGiaAa = {
         maGiamGia: giamGia.maGiamGia,
         tenChuongTrinh: giamGia.tenChuongTrinh,
@@ -333,8 +323,6 @@ const ModelAddNewGiamGia = () => {
         trangThai: 0,
       };
 
-      console.log('giaGiaAa', giaGiaAa);
-
       // Trích xuất danh sách idSp từ chiTietList
       const idSpList = chiTietList.map((item) => item.sanPham.idSp);
 
@@ -343,7 +331,6 @@ const ModelAddNewGiamGia = () => {
         giamGia: giaGiaAa,
         idSp: idSpList,
       };
-      console.log('giamGiaChiTietOk', giamGiaChiTietOk);
 
       const response = await add(giamGiaChiTietOk);
 

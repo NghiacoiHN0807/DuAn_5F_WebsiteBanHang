@@ -142,7 +142,6 @@ export default function DiscountPage() {
       if (order !== 0) return order;
       return a[1] - b[1];
     });
-    console.log("filteredArray: ", filteredArray)
 
     return stabilizedThis.map((el) => el[0]);
   }
@@ -151,7 +150,6 @@ export default function DiscountPage() {
   const getListData = async () => {
     try {
       const res = await getSanPhamDetails();
-      console.log('Check res: ', res);
       setListData(res);
 
       // setNumberPages(Math.ceil(res.totalPages));
@@ -172,8 +170,6 @@ export default function DiscountPage() {
   // Open and Close menu
   const [object, getObject] = useState([]);
   const handleOpenMenu = (event, row) => {
-    console.log('Check event: ', event);
-    console.log('Check row: ', row);
     getObject(row);
 
     setOpen(event.currentTarget);
@@ -198,7 +194,6 @@ export default function DiscountPage() {
     setSelected([]);
   };
 
-  console.log(selected);
 
   const handleClick = (event, idGgct) => {
     const selectedIndex = selected.indexOf(idGgct);
@@ -246,8 +241,6 @@ export default function DiscountPage() {
     listData && listData ? applySortFilter(listData.filter((_user) => (statusFilter !== '' ? _user.trangThai.toString() === statusFilter : true)), getComparator(order, orderBy), filterName) : [];
   const isNotFound = !filteredUsers.length && !!filterName;
 
-
-  console.log("filteredUsers: ", filteredUsers)
   // Set status of trangThai
   function mapTrangThaiToStatus(trangThai) {
     return trangThai === 0 ? <Chip
@@ -321,7 +314,6 @@ export default function DiscountPage() {
 
   // Handle edit
   const handleEdit = () => {
-    console.log("object", object);
     navigate(`/dashboard/discount/update/${object.idGiamGia}`);
   };
 
