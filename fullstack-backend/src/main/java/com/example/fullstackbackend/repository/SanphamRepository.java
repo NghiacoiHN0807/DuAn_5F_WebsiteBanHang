@@ -119,24 +119,29 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "    GROUP_CONCAT(DISTINCT sp.id_co_ao) as id_co_ao,\n" +
             "    GROUP_CONCAT(DISTINCT ct.id_size) as id_size,\n" +
             "    GROUP_CONCAT(DISTINCT ct.id_ms) as id_ms,\n" +
-            "    \n" +
             "    sp.mo_ta,\n" +
             "    sp.trang_thai,\n" +
             "    (SELECT img.images FROM images img WHERE img.id_sp = sp.id_sp ORDER BY img.id_images LIMIT 1) AS first_image,\n" +
             "    ctsp.min_gia_ban,\n" +
             "    ctsp.max_gia_ban,\n" +
             "    ctsp.giam_gia\n" +
-            "FROM san_pham sp\n" +
-            "LEFT JOIN chi_tiet_san_pham ct ON sp.id_sp = ct.id_sp\n" +
-            "LEFT JOIN (\n" +
-            "    SELECT id_sp,\n" +
+            "FROM\n" +
+            "    san_pham sp\n" +
+            "LEFT JOIN\n" +
+            "    chi_tiet_san_pham ct ON sp.id_sp = ct.id_sp\n" +
+            "LEFT JOIN\n" +
+            "    (SELECT\n" +
+            "        id_sp,\n" +
             "        MIN(gia_ban) as min_gia_ban,\n" +
             "        MAX(gia_ban) as max_gia_ban,\n" +
             "        MIN(gia_thuc_te) as giam_gia\n" +
-            "    FROM chi_tiet_san_pham\n" +
-            "    GROUP BY id_sp\n" +
-            ") ctsp ON sp.id_sp = ctsp.id_sp\n" +
-            "GROUP BY sp.id_sp, ctsp.min_gia_ban, ctsp.max_gia_ban, ctsp.giam_gia;\n", nativeQuery = true)
+            "    FROM\n" +
+            "        chi_tiet_san_pham\n" +
+            "    GROUP BY\n" +
+            "        id_sp) ctsp ON sp.id_sp = ctsp.id_sp\n" +
+            "GROUP BY\n" +
+            "    sp.id_sp, ctsp.min_gia_ban, ctsp.max_gia_ban, ctsp.giam_gia\n" +
+            "ORDER BY id_sp DESC", nativeQuery = true)
     List<Object[]> getSpForAdmin();
 
     @Query(value = "SELECT\n" +
