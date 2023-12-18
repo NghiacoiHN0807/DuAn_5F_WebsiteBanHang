@@ -108,8 +108,8 @@ const ChangePass = () => {
                 matKhau,
                 soCanCuoc,
                 trangThai,
-                pass,
-                passChange
+                pass.trim(),
+                passChange.trim()
             );
             // console.log("Check res: ", res);
         } catch (error) {
@@ -204,7 +204,6 @@ const ChangePass = () => {
                                         <TextField variant="standard"
                                                    error={!!passChangeError}
                                                    helperText={passChangeError}
-                                                   inputProps={{maxLength: 10}}
                                                    onChange={(event) => {
                                                        setPassChange(event.target.value);
                                                        if(event.target.value) {

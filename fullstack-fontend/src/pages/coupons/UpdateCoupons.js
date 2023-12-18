@@ -12,6 +12,7 @@ import { DemoContainer, DemoItem } from "@mui/x-date-pickers/internals/demo";
 import { detail, update } from "../../service/CouponsService";
 import Iconify from "../../components/iconify";
 import { useAlert } from "../../layouts/dashboard/AlertContext";
+import ModalComfirm from "../../forms/Modal-Comfirm";
 
 const UpdateCoupons = () => {
     const todayAtNoon = dayjs().set('hour', 12).startOf('hour');
@@ -33,6 +34,18 @@ const UpdateCoupons = () => {
         phanTram: '',
         tienToiThieu: ''
     });
+
+
+    const [open, setOpen] = useState(null);
+
+    const openModal = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+
+    }
 
     // const {name, code, moTa, thoiGianKetThuc, soLuongHienTai, hoaDon, phanTram, tienToiThieu, soLuongHienTaiHienTai} = coupon;
 
@@ -70,9 +83,7 @@ const UpdateCoupons = () => {
             thoiGianKetThuc: newDatetime
         })
     }
-    const handleSave = async (e) => {
-        e.preventDefault();
-
+    const handleSave = async () => {
         if (!tenChuongTrinh.trim()) {
             setAlertContent({
                 type: 'warning',
@@ -383,7 +394,7 @@ const UpdateCoupons = () => {
                     <Button
                         size={"large"}
                         variant="contained" startIcon={<Iconify icon="eva:plus-fill" />}
-                        onClick={(e) => handleSave(e)}
+                        onClick={() => openModal()}
                         style={{ marginTop: "20px" }} // Make button wider
                     >
                         Update Coupon
@@ -404,7 +415,7 @@ const UpdateCoupons = () => {
                     </Alert>
                 </Snackbar>
             )}
-
+            <ModalComfirm open={open} handleClose={handleClose} information={handleSave} title={"Xác nhận sửa"} discription={"Xác nhận sửa coupon"} />
         </>
     );
 };

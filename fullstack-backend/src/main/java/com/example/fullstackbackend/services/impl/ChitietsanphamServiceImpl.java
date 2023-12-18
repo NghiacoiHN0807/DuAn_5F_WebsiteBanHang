@@ -162,5 +162,10 @@ public class ChitietsanphamServiceImpl implements ChitietsanphamService {
         return dtos;
     }
 
+    @Override
+    public ChiTietSanPham checkAttExist(Integer idSp, Integer idMs, Integer idSize) {
+        return chitietsanphamRepository.checkAttExist(idSp, idMs, idSize);
+    }
+
 
 }

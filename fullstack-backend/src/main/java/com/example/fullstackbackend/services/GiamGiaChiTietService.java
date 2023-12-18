@@ -42,4 +42,6 @@ public interface GiamGiaChiTietService {
 
     Boolean removeAll(List<Integer> ids);
 
+    List<GiamGiaChiTiet> findByIdGiamGia(Integer idGg);
+
 }

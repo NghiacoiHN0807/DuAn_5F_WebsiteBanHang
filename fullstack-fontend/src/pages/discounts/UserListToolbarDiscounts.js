@@ -76,7 +76,7 @@ export default function UserListToolbarDiscounts({ numSelected, filterName, onFi
           <StyledSearch
             value={filterName}
             onChange={onFilterName}
-            placeholder="Search user..."
+            placeholder="Tìm kiếm..."
             startAdornment={
               <InputAdornment position="start">
                 <Iconify icon="eva:search-fill" sx={{ color: 'text.disabled', width: 20, height: 20 }} />
@@ -94,7 +94,7 @@ export default function UserListToolbarDiscounts({ numSelected, filterName, onFi
         ) : (
           <Tooltip title="Filter list">
             <IconButton>
-              <Iconify icon="ic:round-filter-list" />
+              {/* <Iconify icon="ic:round-filter-list" /> */}
             </IconButton>
           </Tooltip>
         )}
