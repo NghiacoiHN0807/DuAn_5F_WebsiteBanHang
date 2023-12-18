@@ -59,6 +59,8 @@ const OrderClientTimeline = ({ classes }) => {
   const [listData, setListData] = useState([]);
   const [listHTTT, setListHTTT] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [idTaiKhoan,setIdTaiKhoan] = useState('');
+
 
   //   Select bill
   const getListData = useCallback(async () => {
@@ -70,6 +72,7 @@ const OrderClientTimeline = ({ classes }) => {
       setListData(res);
       setListHTTT(res1);
       setActiveIndex(res[0].idHd.trangThai);
+      setIdTaiKhoan(res[0].idHd.idKH.idTaiKhoan);
     } catch (error) {
       console.log('error: ', error);
     }
@@ -614,7 +617,9 @@ const OrderClientTimeline = ({ classes }) => {
                   open={showModalsAddress}
                   listData={listAddess}
                   handleClose={handleCloseAddress}
-                  loadAddress={loadAddress}
+                  loadData={loadAddress}
+                  idTaiKhoan={idTaiKhoan}
+                  getListData={getListData}
                 />
               </>
             )}

@@ -88,9 +88,10 @@ const ModalChangeAddress = (props) => {
     handleClose: PropTypes.func.isRequired,
     listData: PropTypes.array.isRequired,
     loadData: PropTypes.func.isRequired,
+    getListData: PropTypes.func.isRequired,
     idTaiKhoan : PropTypes.string,
   };
-  const { open, handleClose, listData, loadData, idTaiKhoan } = props;
+  const { open, handleClose, listData, loadData, idTaiKhoan,getListData } = props;
 
   // Edit table
   const [page, setPage] = useState(0);
@@ -167,6 +168,7 @@ const ModalChangeAddress = (props) => {
       });
       handleClose();
       loadData();
+      getListData();
     } catch (error) {
       setAlertContent({
         type: 'warning',

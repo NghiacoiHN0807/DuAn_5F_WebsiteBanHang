@@ -58,12 +58,14 @@ const OrderManagementTimeline = ({ classes }) => {
   const [listData, setListData] = useState([]);
   const [listHTTT, setListHTTT] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [idTaiKhoan,setIdTaiKhoan] = useState('');
+  const [idTaiKhoan, setIdTaiKhoan] = useState('');
   //   Select bill
   const getListData = useCallback(async () => {
     try {
       const res = await getDetailOneHD(idHdParam);
       const res1 = await viewAllHTTT(idHdParam);
+      console.log('listData: ', res);
+
       setListData(res);
       setListHTTT(res1);
       setActiveIndex(res[0].idHd.trangThai);
@@ -302,19 +304,22 @@ const OrderManagementTimeline = ({ classes }) => {
   const [listAddess, setListAddress] = useState([]);
   const [showModalsAddress1, setShowModalAddress1] = useState(false);
 
-  const handleChangeAddress = async () => {
+  const loadAddress = async () => {
     if (listData[0].idHd.idKH) {
-      console.log("listData", listData)
-      const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
-      console.log(getData);
-      setListAddress(getData);
-      setShowModalAddress(true);
+      try {
+        const getData = await selectDiaChiByTK(listData[0].idHd.idKH.maTaiKhoan);
+        setListAddress(getData);
+      } catch (error) {
+        console.error(error);
+      }
     } else {
-      setShowModalAddress1(true);
       console.log('Sửa Địa Chỉ Mà Không Có Tài Khoản');
     }
   };
-
+  const handleChangeAddress = async () => {
+    await loadAddress();
+    setShowModalAddress(true);
+  };
   const handleCloseAddress = () => {
     // getDetailHD();
     setShowModalAddress(false);
@@ -353,22 +358,22 @@ const OrderManagementTimeline = ({ classes }) => {
             {activeIndex === 0
               ? 'Xác Nhận Hóa Đơn'
               : activeIndex === 1
-                ? 'Xác Nhận Thông Tin'
-                : activeIndex === 2
-                  ? 'Chuyển Cho Đơn Vị'
-                  : activeIndex === 3 && listHTTT.length <= 0
-                    ? 'Xác Nhận Thanh Toán'
-                    : activeIndex === 3 && listHTTT.length >= 0
-                      ? 'Giao Thành Công'
-                      : activeIndex === 4
-                        ? 'Giao Thành Công'
-                        : activeIndex === 5
-                          ? 'Đã Giao Thành Công'
-                          : activeIndex === 9
-                            ? 'Đơn Đã Hoàn Thành'
-                            : activeIndex === 10
-                              ? 'Đơn Hàng Đã Bị Hủy'
-                              : 'Đơn Đã Hoàn Thành1'}
+              ? 'Xác Nhận Thông Tin'
+              : activeIndex === 2
+              ? 'Chuyển Cho Đơn Vị'
+              : activeIndex === 3 && listHTTT.length <= 0
+              ? 'Xác Nhận Thanh Toán'
+              : activeIndex === 3 && listHTTT.length >= 0
+              ? 'Giao Thành Công'
+              : activeIndex === 4
+              ? 'Giao Thành Công'
+              : activeIndex === 5
+              ? 'Đã Giao Thành Công'
+              : activeIndex === 9
+              ? 'Đơn Đã Hoàn Thành'
+              : activeIndex === 10
+              ? 'Đơn Hàng Đã Bị Hủy'
+              : 'Đơn Đã Hoàn Thành1'}
           </Button>{' '}
           <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 1}>
             Hủy Đơn Hàng
@@ -400,10 +405,20 @@ const OrderManagementTimeline = ({ classes }) => {
               <Grid item xs={12} sm={6} md={6}>
                 {listData[0].idHd.tenKh ? (
                   <>
-                    <h6>Tên Khách Hàng: {listData[0].idHd.tenKh}</h6>
-                    <h6>Số Điện Thoại: {listData[0].idHd.sdtKh}</h6>
-                    <h6>Địa Chỉ: {listData[0].idHd.diaChi}</h6>
+                    {listData[0].idHd.tenKh && <h6>Tên Khách Hàng: {listData[0].idHd.tenKh}</h6>}
+                    {listData[0].idHd.sdtKh && <h6>Số Điện Thoại: {listData[0].idHd.sdtKh}</h6>}
+                    {listData[0].idHd.diaChi && <h6>Địa Chỉ: {listData[0].idHd.diaChi}</h6>}
                     {listData[0].idHd.email && <h6>Email: {listData[0].idHd.email}</h6>}
+                  </>
+                ) : listData[0].idHd.tenKh === '' && listData[0].idHd.idKH ? (
+                  <>
+                    {listData[0].idHd.idKH.ho && listData[0].idHd.idKH.ten && (
+                      <h6>
+                        Tên Khách Hàng: {listData[0].idHd.idKH.ho} &nbsp;{listData[0].idHd.idKH.ten}
+                      </h6>
+                    )}
+                    {listData[0].idHd.idKH.sdt && <h6>Số Điện Thoại: {listData[0].idHd.idKH.sdt}</h6>}
+                    {listData[0].idHd.idKH.email && <h6>Email: {listData[0].idHd.idKH.email}</h6>}
                   </>
                 ) : (
                   <>
@@ -628,7 +643,8 @@ const OrderManagementTimeline = ({ classes }) => {
             open={showModalsAddress}
             listData={listAddess}
             handleClose={handleCloseAddress}
-            loadData={handleChangeAddress}
+            loadData={loadAddress}
+            getListData={getListData}
             idTaiKhoan={idTaiKhoan}
           />
         </>

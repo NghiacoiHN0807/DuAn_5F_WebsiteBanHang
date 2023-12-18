@@ -1,8 +1,6 @@
 package com.example.fullstackbackend.services;
 
 import com.example.fullstackbackend.DTO.GiamGiaDTO;
-import com.example.fullstackbackend.entity.ChiTietSanPham;
-import com.example.fullstackbackend.entity.GiamGia;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
 
 import java.math.BigDecimal;
@@ -36,9 +34,9 @@ public interface GiamGiaChiTietService {
 
     BigDecimal mucGiam(Integer idSp);
 
-    GiamGia insert(GiamGiaDTO giamGiaDTO);
+    GiamGiaDTO insert(GiamGiaDTO giamGiaDTO);
 
-    GiamGia updateDto(GiamGiaDTO giamGiaDTO, Integer id);
+    GiamGiaDTO updateDto(GiamGiaDTO giamGiaDTO, Integer id);
 
     Boolean removeAll(List<Integer> ids);
 

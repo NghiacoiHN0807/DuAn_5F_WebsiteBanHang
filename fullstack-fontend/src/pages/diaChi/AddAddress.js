@@ -60,7 +60,7 @@ const AddAddress = () => {
                         token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
                     },
                 });
-                console.log('response: ', response.data.data);
+                // console.log('response: ', response.data.data);
                 setTinhThanh(response.data.data);
             } catch (error) {
                 console.error('Error fetching tinhThanh:', error);
@@ -79,7 +79,7 @@ const AddAddress = () => {
                         token: '5937fcfb-839a-11ee-96dc-de6f804954c9',
                     },
                 });
-                console.log('Quận/Huyện: ', response.data);
+                // console.log('Quận/Huyện: ', response.data);
                 setQuanHuyen(response.data.data);
             } catch (error) {
                 console.error('Error fetching quanHuyen:', error);
@@ -140,7 +140,7 @@ const AddAddress = () => {
                     },
                 });
                 const totalShip = response.data?.data?.total || 0;
-                console.log('getSevice: ', response);
+                // console.log('getSevice: ', response);
                 getTienShip(totalShip);
             } catch (error) {
                 console.error('Error get service:', error);
@@ -149,7 +149,7 @@ const AddAddress = () => {
 
         useEffect(() => {
             if (selectedQuanHuyen) {
-                console.log('selectedTinhThanh: ', selectedQuanHuyen);
+                // console.log('selectedTinhThanh: ', selectedQuanHuyen);
                 callApiWard();
                 getSevice();
             }
@@ -268,7 +268,7 @@ const AddAddress = () => {
                     tienShip,
                     trangThai
                 );
-                console.log("Check res: ", res);
+                // console.log("Check res: ", res);
             } catch (error) {
                 if (error.response && error.response.data) {
                     // console.log('check tên', selectedTinhThanhName);
@@ -314,7 +314,7 @@ const AddAddress = () => {
         return (
             <>
                 <Helmet>
-                    <title> Adress || 5F Store </title>
+                    <title> Địa Chỉ || 5F Store </title>
                 </Helmet>
                 <Container>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>

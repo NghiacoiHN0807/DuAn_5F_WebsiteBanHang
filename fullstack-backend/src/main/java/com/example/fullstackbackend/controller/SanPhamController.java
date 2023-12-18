@@ -70,7 +70,8 @@ public class SanPhamController {
             String imageUrl = (String) row[10];
             sp.setGiaSmall((BigDecimal) row[11]);
             sp.setGiaBig((BigDecimal) row[12]);
-            dtoList.add(new SanPhamWithMinImageDTO(sp, imageUrl));
+            Integer trangThai = (Integer) row[13];
+            dtoList.add(new SanPhamWithMinImageDTO(sp, imageUrl, trangThai));
         }
 
         return ResponseEntity.ok(dtoList);
