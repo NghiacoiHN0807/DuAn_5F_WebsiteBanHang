@@ -338,13 +338,13 @@ export default function UpdateSanPham() {
       const res = await putUpdateSanPham(
         idSpHttp,
         maSp,
-        tenSp,
+        tenSp.trim(),
         getObjChatLieu,
         getObjLoaiSP,
         getObjXuatXu,
         getObjCoAo,
         getObjTayAo,
-        moTa,
+        moTa.trim(),
         trangThaiValue
       );
 
@@ -543,9 +543,9 @@ export default function UpdateSanPham() {
         return postAddXuatXu;
       case 'Loại sản phẩm':
         return postAddLoaiSP;
-      case 'Loại cổ áo':
+      case 'Loại cổ áo / Loại ống quần':
         return postAddLoaiCoAo;
-      case 'Ống tay áo':
+      case 'Ống tay áo / Ống quần':
         return postAddOngTayAo;
       case 'Màu sắc':
         return postAddMauSac;
@@ -564,9 +564,9 @@ export default function UpdateSanPham() {
         return putUpdateXuatXu;
       case 'Loại sản phẩm':
         return putUpdateLoaiSP;
-      case 'Loại cổ áo':
+      case 'Loại cổ áo / Loại ống quần':
         return putUpdateLoaiCoAo;
-      case 'Ống tay áo':
+      case 'Ống tay áo / Ống quần':
         return putUpdateOngTayAo;
       case 'Màu sắc':
         return putUpdateMauSac;
@@ -585,9 +585,9 @@ export default function UpdateSanPham() {
         return detailXX;
       case 'Loại sản phẩm':
         return detailLSP;
-      case 'Loại cổ áo':
+      case 'Loại cổ áo / Loại ống quần':
         return detailCoAo;
-      case 'Ống tay áo':
+      case 'Ống tay áo / Ống quần':
         return detailTayAo;
       case 'Màu sắc':
         return detailMS;
@@ -617,10 +617,10 @@ export default function UpdateSanPham() {
     if (phanTu.att === 'Xuất xứ') {
       setListAtt(listXX);
     }
-    if (phanTu.att === 'Loại cổ áo') {
+    if (phanTu.att === 'Loại cổ áo / Loại ống quần') {
       setListAtt(listCoAo);
     }
-    if (phanTu.att === 'Ống tay áo') {
+    if (phanTu.att === 'Ống tay áo / Ống quần') {
       setListAtt(listTayAo);
     }
     if (phanTu.att === 'Màu sắc') {
@@ -866,11 +866,11 @@ export default function UpdateSanPham() {
             <Grid item xs={5}>
               {listCoAo.length > 0 && (
                 <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Loại cổ áo</InputLabel>
+                  <InputLabel id="demo-simple-select-label">Loại cổ áo / Loại ống quần</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    label="Loại cổ áo"
+                    label="Loại cổ áo / Loại ống quần"
                     value={coAo}
                     onChange={(event) => setCoAo(event.target.value)}
                   >
@@ -889,7 +889,7 @@ export default function UpdateSanPham() {
               <Button
                 variant="outlined"
                 size="large"
-                onClick={() => handleOpenQuickAtt('Loại cổ áo', 'idCoAo', 'maCoAo', 'loaiCoAo')}
+                onClick={() => handleOpenQuickAtt('Loại cổ áo / Loại ống quần', 'idCoAo', 'maCoAo', 'loaiCoAo')}
               >
                 <MoreHorizIcon />
               </Button>
@@ -899,11 +899,11 @@ export default function UpdateSanPham() {
                 <Grid item xs={10}>
                   {listTayAo.length > 0 && (
                     <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">Ống tay áo</InputLabel>
+                      <InputLabel id="demo-simple-select-label">Ống tay áo / Ống quần</InputLabel>
                       <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        label="Ống tay áo"
+                        label="Ống tay áo / Ống quần"
                         value={tayAo}
                         onChange={(event) => setTayAo(event.target.value)}
                       >
@@ -922,7 +922,7 @@ export default function UpdateSanPham() {
                   <Button
                     variant="outlined"
                     size="large"
-                    onClick={() => handleOpenQuickAtt('Ống tay áo', 'idTayAo', 'maTayAo', 'loaiTayAo')}
+                    onClick={() => handleOpenQuickAtt('Ống tay áo / Ống quần', 'idTayAo', 'maTayAo', 'loaiTayAo')}
                   >
                     <MoreHorizIcon />
                   </Button>
