@@ -59,7 +59,7 @@ const OrderClientTimeline = ({ classes }) => {
   const [listData, setListData] = useState([]);
   const [listHTTT, setListHTTT] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [idTaiKhoan,setIdTaiKhoan] = useState('');
+  const [idTaiKhoan, setIdTaiKhoan] = useState('');
 
 
   //   Select bill
@@ -447,7 +447,7 @@ const OrderClientTimeline = ({ classes }) => {
                           {item.hinhThuc}
                         </TableCell>
                         <TableCell align="right">{formatCurrency(item.soTien)}</TableCell>
-                        <TableCell align="right">{item.idHd.ngayThanhToan}</TableCell>
+                        <TableCell align="right">{formatDateTime(item.idHd.ngayThanhToan)}</TableCell>
                       </TableRow>
                     ))
                   ) : (

@@ -110,7 +110,7 @@ export default function CartNoAccount() {
   };
 
   useEffect(() => {
-    const updateProductOnCart = async () => {};
+    const updateProductOnCart = async () => { };
     updateProductOnCart();
   }, [quantity]);
 
@@ -199,6 +199,11 @@ export default function CartNoAccount() {
       setAlertContent({
         type: 'error',
         message: 'Vui Lòng Chọn Sản Phẩm',
+      });
+    } else if (totalPayment >= 10000000) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Hóa Đơn Của Bạn Đã Vượt Quá 10TR. Hãy Liên Hệ Với Chúng Tôi Để Mua Sỉ',
       });
     } else {
       console.log('authorities: ', authorities);
