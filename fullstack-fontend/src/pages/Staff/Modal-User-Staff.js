@@ -87,7 +87,7 @@ export default function UserStaff() {
   const getListData = async (page, query) => {
     try {
       const res = await taiKhoan(page, query);
-      console.log('Check res: ', res);
+      // console.log('Check res: ', res);
       // Cập nhật giá trị của listData sau khi tìm kiếm
       setListData(res);
     } catch (error) {
@@ -369,8 +369,6 @@ export default function UserStaff() {
                   </TextField>
                   <CSVLink data={selectedExports} filename={'DSNV.csv'} onClick={handleExportData}>
                     <Button
-                      aria-label="download"
-                      Button
                       variant="outlined"
                       startIcon={<GetAppIcon />}
                       size="large"

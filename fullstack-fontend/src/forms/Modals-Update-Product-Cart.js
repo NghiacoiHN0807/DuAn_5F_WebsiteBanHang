@@ -161,7 +161,8 @@ const ModalUpdateProductOnCart = (props) => {
   // Create the price range string
   const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
   const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
-  const priceRange = minPrice === maxPrice ? formattedMinPrice : `${formattedMinPrice} - ${formattedMaxPrice}`;
+  const priceRange =
+    minPrice === maxPrice ? formatCurrency(minPrice) : `${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}`;
   const getFirstImage = (item) => {
     if (item && item.trim() !== '') {
       const imagesArray = item.split(',');
