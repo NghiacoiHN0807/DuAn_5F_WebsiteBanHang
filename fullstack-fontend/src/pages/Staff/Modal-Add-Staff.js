@@ -139,7 +139,7 @@ const AddTKNV = () => {
   const getAllChucVu = async () => {
     const rs = await chucVu(0);
     setMyChucVu(rs);
-    console.log(rs);
+    // console.log(rs);
   };
 
   useEffect(() => {
