@@ -50,7 +50,7 @@ import Scrollbar from '../../components/scrollbar';
 import { UserListHeadNoCheckBox, UserListToolbar } from '../../sections/@dashboard/user';
 import Iconify from '../../components/iconify';
 import { putUpdateSanPham, detailSP } from '../../service/SanPhamService';
-import { fetchListAtt, addColorAndSize, updateNumber, detailCTSP } from '../../service/ChiTietSPService';
+import { fetchListAtt, addColorAndSize, updateNumber, detailCTSP, checkAttExist } from '../../service/ChiTietSPService';
 import { deleteAnh, fetchAnh } from '../../service/AnhService';
 import { postAddCloud, deleteCloud } from '../../service/CloudinaryService';
 
@@ -443,20 +443,22 @@ export default function UpdateSanPham() {
       checkEmptyCBB();
       handleAlertClick('Hãy chọn màu sắc và size', 'warning');
     } else {
-      const res = await addColorAndSize(idSpHttp, mauSac, size);
-      console.log('Check res: ', res);
-      if (res && res.idCtsp) {
-        if (res.trangThai === 1) {
+      const check = await checkAttExist(idSpHttp, mauSac, size);
+      if (check && check.idCtsp) {
+        handleOpenDulicateUpdate();
+        setIdCtsp(check);
+      } else {
+        const res = await addColorAndSize(idSpHttp, mauSac, size);
+        if (res && res.idCtsp) {
           handleAlertClick('Thêm thành công!', 'success');
           handleClickEditAtt(res.idCtsp);
           handleCloseColorAndSize();
+          setMauSac('');
+          setSize('');
         } else {
-          handleOpenDulicateUpdate();
-          setIdCtsp(res.idCtsp);
+          handleAlertClick('Thêm thất bại!', 'danger');
+          handleCloseColorAndSize();
         }
-      } else {
-        handleAlertClick('Thêm thất bại!', 'danger');
-        handleCloseColorAndSize();
       }
     }
   };
