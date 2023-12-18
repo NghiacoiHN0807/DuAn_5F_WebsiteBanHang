@@ -35,21 +35,25 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
     List<Object[]> getSanPhamWithMinImageUrl();
 
     @Query(value = "SELECT  \n" +
-            "                sp.*,  \n" +
-            "                MIN(img.images), \n" +
-            "                MIN(ctsp.gia_ban) AS gia_ban_nho_nhat, \n" +
-            "                MAX(ctsp.gia_ban) AS gia_ban_lon_nhat \n" +
-            "            FROM  \n" +
-            "                san_pham sp \n" +
-            "            LEFT JOIN  \n" +
-            "                Images img ON sp.id_sp = img.id_sp \n" +
-            "            LEFT JOIN  \n" +
-            "                chi_tiet_san_pham ctsp ON sp.id_sp = ctsp.id_sp \n" +
-            "            WHERE  \n" +
-            "                sp.id_sp =:idSp\n" +
-            "            GROUP BY  \n" +
-            "                sp.id_sp, sp.ten_sp", nativeQuery = true)
-    List<Object[]> getSanPhamWithMinImageUrlByIdSp(@Param("idSp") Integer idSp);
+            "                            sp.*,  \n" +
+            "                            MIN(img.images), \n" +
+            "                            MIN(ctsp.gia_ban) AS gia_ban_nho_nhat, \n" +
+            "                            MAX(ctsp.gia_ban) AS gia_ban_lon_nhat \n" +
+            "                        FROM  \n" +
+            "                            san_pham sp \n" +
+            "                        LEFT JOIN  \n" +
+            "                            Images img ON sp.id_sp = img.id_sp \n" +
+            "                        LEFT JOIN  \n" +
+            "                            chi_tiet_san_pham ctsp ON sp.id_sp = ctsp.id_sp \n" +
+            "\t\t\t\t\t\tLEFT JOIN\n" +
+            "\t\t\t\t\t\t\tgiam_gia_chi_tiet ggct ON sp.id_sp = ggct.id_sp\n" +
+            "\t\t\t\t\t\tLEFT JOIN\n" +
+            "\t\t\t\t\t\t\tgiam_gia gg ON ggct.id_giam_gia = gg.id_giam_gia\n" +
+            "                        WHERE  \n" +
+            "                            gg.id_giam_gia =:idGg AND ggct.trang_thai = 0\n" +
+            "                        GROUP BY  \n" +
+            "                            sp.id_sp, sp.ten_sp", nativeQuery = true)
+    List<Object[]> getSanPhamWithMinImageUrlByIdGiamGia(@Param("idGg") Integer idGg);
 
     @Query(value =
             "SELECT \n" +

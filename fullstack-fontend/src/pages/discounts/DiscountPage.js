@@ -41,6 +41,7 @@ import ModalDeleteDiscount from './Modal-Delete-Discount';
 // import { useEffect } from 'react';
 import { getSanPhamDetails } from '../../service/giamGiaService';
 import UserListToolbarDiscounts from './UserListToolbarDiscounts';
+import ModelUpdateGiamGia from './ModalsUpdateGiamGia';
 
 // ----------------------------------------------------------------------
 
@@ -306,8 +307,8 @@ export default function DiscountPage() {
 
   // Handle edit
   const handleEdit = () => {
-    console.log("abc");
-    navigate(`/dashboard/discount/update/${object.idGgct}`);
+    console.log("object", object);
+    navigate(`/dashboard/discount/update/${object.idGiamGia}`);
   };
 
   function formatCurrency(price) {

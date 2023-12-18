@@ -148,4 +148,9 @@ public class GiamGiaChiTietController {
     ResponseEntity<?> testApi(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(giamGiaChiTietService.mucGiam(id));
     }
+
+    @GetMapping("get-ggct-idgg/{idGg}")
+    List<?> findGiamctByIdgg(@PathVariable("idGg") Integer idGg) {
+        return giamGiaChiTietService.findByIdGiamGia(idGg);
+    }
 }

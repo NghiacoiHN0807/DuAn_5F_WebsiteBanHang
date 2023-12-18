@@ -177,28 +177,23 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
     @Override
     @Transactional
     public GiamGia updateDto(GiamGiaDTO giamGiaDTO, Integer id) {
-        GiamGiaChiTiet giamGiaChiTiet = giamGiaChiTietRepository.findById(id).orElseThrow();
-        giamGiaDTO.getGiamGia().setIdGiamGia(giamGiaChiTiet.getIdGiamGia().getIdGiamGia());
+        giamGiaDTO.getGiamGia().setIdGiamGia(id);
         GiamGia giamGia1 = (GiamGia) giamGiaService.add(giamGiaDTO.getGiamGia());
         List<Integer> idSp = giamGiaDTO.getIdSp();
+        List<GiamGiaChiTiet> giamGiaChiTiets = giamGiaChiTietRepository.findAllByIdGiamGia_IdGiamGia(id);
+        for (GiamGiaChiTiet g: giamGiaChiTiets) {
+            remove(g.getIdGgct());
+        }
         for (Integer i : idSp) {
+            System.out.println("id: "+ i);
             Integer exists = giamGiaChiTietRepository.existsByIdSp_IdSp(i);
-            System.out.println("exists: " + exists);
             if (exists >= 1) {
-                GiamGiaChiTiet giamGiaChiTiet1 = new GiamGiaChiTiet();
-                giamGiaChiTiet1.setIdGgct(id);
-                SanPham sanPham = sanPhamService.detail(i).orElseThrow();
-                sanPham.setTrangThai(1);
-                giamGiaChiTiet1.setIdGiamGia(giamGia1);
-                giamGiaChiTiet1.setIdSp(sanPham);
-                sanPhamService.add(sanPham);
-                giamGiaChiTietRepository.save(giamGiaChiTiet1);
-                updateGiaThuc(i);
-            } else {
                 GiamGiaChiTiet giamGiaChiTiet2 = new GiamGiaChiTiet();
                 SanPham sanPham = sanPhamService.detail(i).orElseThrow();
+                sanPham.setTrangThai(1);
                 giamGiaChiTiet2.setIdGiamGia(giamGia1);
                 giamGiaChiTiet2.setIdSp(sanPham);
+                sanPhamService.add(sanPham);
                 giamGiaChiTietRepository.save(giamGiaChiTiet2);
                 updateGiaThuc(i);
             }
@@ -235,6 +230,11 @@ public class GiamGiaChiTietServiceImpl implements GiamGiaChiTietService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public List<GiamGiaChiTiet> findByIdGiamGia(Integer idGg) {
+        return giamGiaChiTietRepository.findByIdGiamGia(idGg);
     }
 
     private void updateSanPhamAndGiamGiaChiTiet(GiamGiaChiTiet giamGiaChiTiets) {
