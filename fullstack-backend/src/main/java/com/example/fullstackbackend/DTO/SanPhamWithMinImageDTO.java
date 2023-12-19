@@ -12,4 +12,5 @@ import lombok.Setter;
 public class SanPhamWithMinImageDTO {
     private SanPhamIgDTO sanPham;
     private String url_image;
+    private Integer trangThai;
 }

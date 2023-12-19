@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,16 +29,23 @@ public class CouponsServiceImpl implements CouponsService {
 
     @Override
     public Coupons add(Coupons coupons) {
+        Date now = new Date();
         coupons.setSoLuongHienTai(coupons.getSoLuong());
-        System.out.println("coupons.getThoiGianKetThuc(): " + coupons.getThoiGianKetThuc());
+        if(coupons.getThoiGianTao().after(now)) {
+            coupons.setTrangThai(1);
+        }
         Coupons coupons1 = couponsRepository.save(coupons);
         return coupons1;
     }
 
     @Override
     public Coupons update(Coupons coupons, Integer id) {
+        Date now = new Date();
         Coupons coupons1 = detail(id).orElseThrow();
         coupons.setIdCoupon(id);
+        if(coupons.getThoiGianTao().after(now)) {
+            coupons.setTrangThai(1);
+        }
         Integer soLuong = coupons1.getSoLuong() + coupons.getSoLuongHienTai();
         coupons.setSoLuong(soLuong);
         return couponsRepository.save(coupons);

@@ -212,6 +212,23 @@ const ModelAddNewGiamGia = () => {
     setSelected(e.target.value);
   };
 
+  const getMinPrice = () => {
+    if (chiTietList.length === 0) {
+      return 0; // Hoặc giá trị mặc định khác tùy ý nếu danh sách trống
+    }
+
+    // Sử dụng reduce để tìm giá thấp nhất
+    const minPrice = chiTietList.reduce((min, item) => {
+      const itemPrice = item.sanPham.giaSmall; // Giả sử giá của sản phẩm nằm ở trường giaSmall
+      return itemPrice < min ? itemPrice : min;
+    }, chiTietList[0].sanPham.giaSmall); // Giả sử giá của sản phẩm đầu tiên là giá thấp nhất ban đầu
+
+    return minPrice;
+  };
+
+  // Gọi hàm để lấy giá thấp nhất
+  const minPrice = getMinPrice();
+
   const handleSave = async () => {
     if (!maGiamGia.trim() || !tenChuongTrinh.trim() || !ngayBatDau || !ngayKetThuc) {
       setAlertContent({
@@ -248,6 +265,23 @@ const ModelAddNewGiamGia = () => {
       return;
     }
 
+    if (minPrice <= mucGiamTienMat) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Vui lòng nhập mức giảm tiền nhỏ hơn số tiền của sản phẩm!',
+      });
+      return;
+    }
+
+    const adjustedMucGiamTienMat = minPrice - mucGiamTienMat;
+    if (adjustedMucGiamTienMat < 10000) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Mức giảm tiền phải ít nhất là 10000 VND sau khi trừ đi giá sản phẩm!',
+      });
+      return;
+    }
+
     if (chiTietList.length === 0) {
       setAlertContent({
         type: 'warning',
@@ -258,10 +292,20 @@ const ModelAddNewGiamGia = () => {
 
     const checkDateValidity = () => ngayKetThuc.isAfter(ngayBatDau);
 
+    const checkDateValidityNow = () => ngayBatDau.isAfter(dayjs());
+
+    if (!checkDateValidityNow()) {
+      setAlertContent({
+        type: 'warning',
+        message: 'Chương trình phải giảm giá sau ít nhất 5 phút!',
+      });
+      return;
+    }
+
     if (!checkDateValidity()) {
       setAlertContent({
         type: 'warning',
-        message: 'Ngày kết thúc phải sau ngày bắt đầu!',
+        message: 'Thời gian kết thúc phải sau thời gian bắt đầu!',
       });
       return;
     }
@@ -304,20 +348,21 @@ const ModelAddNewGiamGia = () => {
       const response = await add(giamGiaChiTietOk);
 
       if (response.status === 'Ok!') {
-        navigate('/dashboard/discounts');
-        setAlertContent({
+        const successMessage = {
           type: 'success',
-          message: 'Thêm thành công!',
-        });
+          message: 'Thêm chương trình giảm giá thành công!',
+        };
+        localStorage.setItem('successMessage', JSON.stringify(successMessage));
+        navigate('/dashboard/discounts');
       } else {
         setAlertContent({
-          type: 'success',
+          type: 'error',
           message: 'Thêm không thành công!',
         });
       }
     } catch (error) {
       setAlertContent({
-        type: 'success',
+        type: 'error',
         message: 'Đã xảy ra lỗi khi thêm giảm giá!',
       });
     }
@@ -325,10 +370,13 @@ const ModelAddNewGiamGia = () => {
   // if (!giamGiaData) {
   //   return <div>Loading...</div>;
   // }
-  const todayAtNoon = dayjs().set('hour', 12).startOf('hour');
-  const todayAt9AM = dayjs().set('hour', 9).startOf('hour');
-  const [ngayBatDau, setNgayBatDau] = useState(dayjs().set('hour', 12).startOf('hour'));
-  const [ngayKetThuc, setNgayKetThuc] = useState(dayjs().set('hour', 12).startOf('hour'));
+  const todayAtNoon = dayjs();
+  const todayAt9AM = dayjs();
+  const [ngayBatDau, setNgayBatDau] = useState(dayjs());
+  const [ngayKetThuc, setNgayKetThuc] = useState(dayjs());
+
+  const filteredArray = left.filter((value) => value.sanPham.trangThai === 0 && value.trangThai === null);
+  const filteredArrayLength = filteredArray.length;
   return (
     <>
       <Modal.Header>
@@ -431,7 +479,7 @@ const ModelAddNewGiamGia = () => {
                 </div>
 
                 <div className="mb-3">
-                  <p className="form-label">Ngày bắt đầu</p>
+                  <p className="form-label">Thời gian bắt đầu</p>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateTimePicker']}>
                       <DemoItem>
@@ -448,7 +496,7 @@ const ModelAddNewGiamGia = () => {
                 </div>
 
                 <div className="mb-3">
-                  <p className="form-label">Ngày kết thúc</p>
+                  <p className="form-label">Thời gian kết thúc</p>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DemoContainer components={['DateTimePicker']}>
                       <DemoItem>
@@ -512,7 +560,7 @@ const ModelAddNewGiamGia = () => {
                     </TableHead>
                     <TableBody>
                       {left
-                        .filter((value) => value.sanPham.trangThai === 0)
+                        .filter((value) => value.sanPham.trangThai === 0 && value.trangThai === null)
                         .slice(leftPage * leftRowsPerPage, leftPage * leftRowsPerPage + leftRowsPerPage)
                         .map((value, index) => (
                           <TableRow key={`left_${value.sanPham.idSp}`} onClick={handleToggle(value, true)}>
@@ -525,6 +573,8 @@ const ModelAddNewGiamGia = () => {
                             <TableCell>
                               {value.sanPham.trangThai === 0 ? (
                                 <Chip label="Hoạt động" className="bg-success text-light" />
+                              ) : value.sanPham.trangThai === 1 ? (
+                                <Chip label="Chờ giảm giá" className="bg-warning text-light" />
                               ) : (
                                 <Chip label="Ngưng hoạt động" className="bg-danger text-light" />
                               )}
@@ -537,7 +587,7 @@ const ModelAddNewGiamGia = () => {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25]}
                   component="div"
-                  count={left.length}
+                  count={filteredArrayLength}
                   rowsPerPage={leftRowsPerPage}
                   page={leftPage}
                   onPageChange={handleLeftPageChange}
@@ -614,12 +664,15 @@ const ModelAddNewGiamGia = () => {
                                 : `${formatCurrency(value.sanPham.giaSmall)} - ${formatCurrency(value.sanPham.giaBig)}`}
                             </TableCell>
                             <TableCell>
-                              {value.sanPham.trangThai === 0 ? (
+                              {value.trangThai === null || value.trangThai === 0 ? (
                                 <Chip label="Hoạt động" className="bg-success text-light" />
+                              ) : value.trangThai === 1 ? (
+                                <Chip label="Chờ giảm giá" className="bg-warning text-light" />
                               ) : (
                                 <Chip label="Ngưng hoạt động" className="bg-danger text-light" />
                               )}
                             </TableCell>
+
                           </TableRow>
                         ))}
                     </TableBody>

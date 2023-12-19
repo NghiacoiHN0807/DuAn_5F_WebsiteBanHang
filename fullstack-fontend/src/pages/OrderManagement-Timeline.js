@@ -58,12 +58,14 @@ const OrderManagementTimeline = ({ classes }) => {
   const [listData, setListData] = useState([]);
   const [listHTTT, setListHTTT] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [idTaiKhoan,setIdTaiKhoan] = useState('');
+  const [idTaiKhoan, setIdTaiKhoan] = useState('');
   //   Select bill
   const getListData = useCallback(async () => {
     try {
       const res = await getDetailOneHD(idHdParam);
       const res1 = await viewAllHTTT(idHdParam);
+      console.log('listData: ', res);
+
       setListData(res);
       setListHTTT(res1);
       setActiveIndex(res[0].idHd.trangThai);
@@ -403,10 +405,20 @@ const OrderManagementTimeline = ({ classes }) => {
               <Grid item xs={12} sm={6} md={6}>
                 {listData[0].idHd.tenKh ? (
                   <>
-                    <h6>Tên Khách Hàng: {listData[0].idHd.tenKh}</h6>
-                    <h6>Số Điện Thoại: {listData[0].idHd.sdtKh}</h6>
-                    <h6>Địa Chỉ: {listData[0].idHd.diaChi}</h6>
+                    {listData[0].idHd.tenKh && <h6>Tên Khách Hàng: {listData[0].idHd.tenKh}</h6>}
+                    {listData[0].idHd.sdtKh && <h6>Số Điện Thoại: {listData[0].idHd.sdtKh}</h6>}
+                    {listData[0].idHd.diaChi && <h6>Địa Chỉ: {listData[0].idHd.diaChi}</h6>}
                     {listData[0].idHd.email && <h6>Email: {listData[0].idHd.email}</h6>}
+                  </>
+                ) : listData[0].idHd.tenKh === '' && listData[0].idHd.idKH ? (
+                  <>
+                    {listData[0].idHd.idKH.ho && listData[0].idHd.idKH.ten && (
+                      <h6>
+                        Tên Khách Hàng: {listData[0].idHd.idKH.ho} &nbsp;{listData[0].idHd.idKH.ten}
+                      </h6>
+                    )}
+                    {listData[0].idHd.idKH.sdt && <h6>Số Điện Thoại: {listData[0].idHd.idKH.sdt}</h6>}
+                    {listData[0].idHd.idKH.email && <h6>Email: {listData[0].idHd.idKH.email}</h6>}
                   </>
                 ) : (
                   <>

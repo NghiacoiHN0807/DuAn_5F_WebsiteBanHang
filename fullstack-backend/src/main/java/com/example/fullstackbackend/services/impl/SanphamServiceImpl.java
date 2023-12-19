@@ -6,7 +6,9 @@ import com.example.fullstackbackend.DTO.SanPhamDTO;
 import com.example.fullstackbackend.DTO.SanPhamIgDTO;
 import com.example.fullstackbackend.DTO.SanPhamWithMinImageDTO;
 import com.example.fullstackbackend.entity.SanPham;
+import com.example.fullstackbackend.repository.GiamGiaChiTietRepository;
 import com.example.fullstackbackend.repository.SanphamRepository;
+import com.example.fullstackbackend.services.GiamGiaChiTietService;
 import com.example.fullstackbackend.services.SanPhamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -156,7 +158,8 @@ public class SanphamServiceImpl implements SanPhamService {
             String imageUrl = (String) row[10];
             sp.setGiaSmall((BigDecimal) row[11]);
             sp.setGiaBig((BigDecimal) row[12]);
-            dto.add(new SanPhamWithMinImageDTO(sp, imageUrl));
+            Integer trangThai = (Integer) row[13];
+            dto.add(new SanPhamWithMinImageDTO(sp, imageUrl, trangThai));
         }
 
         return dto;
