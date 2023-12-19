@@ -241,7 +241,8 @@ public class HoaDonController {
                 for (ChiTietSanPham y :
                         chiTietSanPhams) {
 
-                    System.out.println("Số Lượng Còn Lại:" + y.getSoLuongTon());
+                    System.out.println("Số Lượng Còn Lại y:" + y.getSoLuongTon());
+                    System.out.println("Số Lượng Còn Lại xx :" + x.getSoLuong());
                     y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
                     if(y.getSoLuongTon() <= 0){
                         y.setTrangThai(10);
