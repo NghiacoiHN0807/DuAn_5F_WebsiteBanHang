@@ -92,7 +92,7 @@ export default function ModalQuickAtt({
     }
 
     if (!emptyAdd && !duplicateAdd) {
-      const res = await addFunc(null, tenAdd, 0);
+      const res = await addFunc(null, tenAdd.trim(), 0);
       getAllList();
       if (res && res[phanTu.ma]) {
         handleAlertClick('Thêm thành công!', 'success');
@@ -109,7 +109,7 @@ export default function ModalQuickAtt({
     if (tenUpdate.trim() === '') {
       setEmptyAdd(true);
     } else {
-      const res = await updateFunc(idAtt, maAtt, tenUpdate, trangThaiAtt);
+      const res = await updateFunc(idAtt, maAtt, tenUpdate.trim(), trangThaiAtt);
       getAllList();
       if (res && res[phanTu.id]) {
         handleAlertClick('Cập nhật thành công!', 'success');

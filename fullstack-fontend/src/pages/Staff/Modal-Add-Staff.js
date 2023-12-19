@@ -174,7 +174,7 @@ const AddTKNV = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  
+
   const handleError = (err) => {
     console.error(err);
   };
@@ -207,7 +207,7 @@ const AddTKNV = () => {
         className="title"
         style={{ textAlign: "center", margin: "20px 0", color: "black" }}
       >
-        <h4 style={{fontSize: "34px"}}>Thêm Tài Khoản</h4>
+        <h4 style={{ fontSize: "34px" }}>Thêm Tài Khoản</h4>
       </div>
 
       <div>
@@ -218,8 +218,8 @@ const AddTKNV = () => {
               <Button size="medium" variant="contained" color="primary" onClick={handleStopScan} style={{ marginTop: '10px' }}>
                 Stop Scanning
               </Button>
-              <p>Scanned Tên: {ten}</p>
-              <p>Scanned Số Căn Cước: {soCanCuoc}</p>
+              <p> Tên:{ho} {ten} </p>
+              <p> Số Căn Cước: {soCanCuoc}</p>
             </>
           ) : (
             <Button size="medium" variant="contained" color="primary" onClick={handleStartScan} style={{ marginTop: '10px' }}>
@@ -255,11 +255,11 @@ const AddTKNV = () => {
           </Select>
         </FormControl>
 
-        <TextField error={!!validation.ho} helperText={validation.ho} fullWidth margin="dense" label="Họ" onChange={(event) => setHo(event.target.value)} />
-        <TextField error={!!validation.ten} helperText={validation.ten} fullWidth margin="dense" label="Tên" onChange={(event) => setTen(event.target.value)} />
+        <TextField error={!!validation.ho} helperText={validation.ho} fullWidth margin="dense" label="Họ" value={ho} onChange={(event) => setHo(event.target.value)} />
+        <TextField error={!!validation.ten} helperText={validation.ten} fullWidth margin="dense" label="Tên" value={ten} onChange={(event) => setTen(event.target.value)} />
         <TextField error={!!validation.email} helperText={validation.email} fullWidth margin="dense" label="Email" onChange={(event) => setEmail(event.target.value)} />
         <TextField error={!!validation.sdt} helperText={validation.sdt} fullWidth margin="dense" type='number' label="Số Điện Thoại" onChange={(event) => setSdt(event.target.value)} />
-        <TextField error={!!validation.soCanCuoc} helperText={validation.soCanCuoc} fullWidth type='number' margin="dense" label="Số Căn Cước" onChange={(event) => setSoCanCuoc(event.target.value)} />
+        <TextField error={!!validation.soCanCuoc} helperText={validation.soCanCuoc} fullWidth type='number' margin="dense" label="Số Căn Cước" value={soCanCuoc} onChange={(event) => setSoCanCuoc(event.target.value)} />
 
         <Button size="large" variant="contained" color="success" onClick={() => handleClickOpen()} style={{ marginTop: '20px' }}>
           Thêm Tài Khoản Nhân Viên
