@@ -69,8 +69,8 @@ public class MySecurityConfiguration {
 
                 req ->
                         req.requestMatchers("/", "/forgetPassword","/signUp", "/google-login", "/anh/**", "/gio-hang-chi-tiet/**", "/add", "/api/**", "/san-pham/**", "chi-tiet-san-pham/**", "/hoa-don/**", "/hoa-don-chi-tiet/**", "/tai-khoan-khach-hang/**", "/chat-lieu/**", "/loai-sp/**", "/xuat-xu/**", "/loai-co-ao/**", "/ong-tay-ao/**", "/mau-sac/**", "/size/**", "/coupons/**").permitAll()
-                                .requestMatchers("/tai-khoan/**").hasRole("ADMIN")
-                                .requestMatchers("/giam-gia/**", "/giam-gia-chi-tiet/**", "/tai-khoan/detail/**").hasAnyRole("ADMIN", "STAFF")
+//                                .requestMatchers("/tai-khoan/**").hasRole("ADMIN")
+                                .requestMatchers("/giam-gia/**", "/giam-gia-chi-tiet/**", "/tai-khoan/**").hasAnyRole("ADMIN", "STAFF")
                                 .requestMatchers("/tai-khoan-khach-hang/**", "/hoa-don/**", "/hoa-don-chi-tiet/**", "/gio-hang-chi-tiet/**", "/gio-hang/**", "/payment-online/**", "/hinh-thuc-thanh-toan/**", "/lich-su-hoa-don/**", "/dia-chi/**").hasAnyRole("ADMIN", "STAFF", "CUSTOMER")
                                 .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)

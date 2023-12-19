@@ -83,6 +83,7 @@ const ModalPaymentComfirm = (props) => {
             });
           } else {
             console.log('Check listHD: ', listHD);
+            await updatePayment(idHdParam, tenKhTT, sdtKHTT, formattedDate, thanhTien, cashGiven, change, 9);
             const paymentOn = await paymentOnline(changeAmount, listHD.idHd);
             console.log('Check paymentOn: ', paymentOn);
             // Mở tab mới với đường dẫn URL

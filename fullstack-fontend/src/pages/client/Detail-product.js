@@ -145,7 +145,16 @@ const DetailProduct = () => {
       const getProduct = await listProductOnCart(authorities.idTaiKhoan);
 
       existsProduct = getProduct.filter((product) => product.idCtsp.idCtsp === selectSoLuongTon[0].idCtsp);
+    } else if (!getLocalStore && selectSoLuongTon.length > 0) {
+      const currentCart = JSON.parse(localStorage.getItem('cartProduct'));
+      const cartArray = Object.values(currentCart);
+      if (cartArray) {
+        // Now you can use the filter method on cartArray
+        existsProduct = cartArray.filter((product) => product.idCtsp.idCtsp === selectSoLuongTon[0].idCtsp);
+      }
+
     }
+    console.log("existsProduct kk: ", existsProduct)
     if (selectedMauSacIsNull || selectSoLuongTon.length === 0) {
       setAlertContent({
         type: 'warning',
@@ -342,40 +351,40 @@ const DetailProduct = () => {
                 <div>
                   {availableColors.length > 0
                     ? // Hiển thị danh sách màu sắc từ availableColors
-                      availableColors.map((mauSac, msIndex) => (
-                        <Button
-                          style={{
-                            marginRight: '4px',
-                            marginBottom: '4px',
-                            marginLeft: '10px',
-                            height: '25px',
-                          }}
-                          key={`size-button-${msIndex}`}
-                          onClick={() => handleShowMS(mauSac)}
-                          variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
-                          size="small"
-                          className=""
-                        >
-                          {mauSac}
-                        </Button>
-                      ))
+                    availableColors.map((mauSac, msIndex) => (
+                      <Button
+                        style={{
+                          marginRight: '4px',
+                          marginBottom: '4px',
+                          marginLeft: '10px',
+                          height: '25px',
+                        }}
+                        key={`size-button-${msIndex}`}
+                        onClick={() => handleShowMS(mauSac)}
+                        variant={selectedMauSac === mauSac ? 'contained' : 'outlined'}
+                        size="small"
+                        className=""
+                      >
+                        {mauSac}
+                      </Button>
+                    ))
                     : // Hiển thị dữ liệu từ dataDetail
-                      uniqueMS.map((item, index) => (
-                        <Button
-                          style={{
-                            marginLeft: '10px',
-                            height: '25px',
-                            marginRight: '4px',
-                            marginBottom: '4px',
-                          }}
-                          key={`size-button-${index}`}
-                          onClick={() => handleShowMS(item)}
-                          variant={selectedMauSac === item ? 'contained' : 'outlined'}
-                          size="small"
-                        >
-                          {item}
-                        </Button>
-                      ))}
+                    uniqueMS.map((item, index) => (
+                      <Button
+                        style={{
+                          marginLeft: '10px',
+                          height: '25px',
+                          marginRight: '4px',
+                          marginBottom: '4px',
+                        }}
+                        key={`size-button-${index}`}
+                        onClick={() => handleShowMS(item)}
+                        variant={selectedMauSac === item ? 'contained' : 'outlined'}
+                        size="small"
+                      >
+                        {item}
+                      </Button>
+                    ))}
                 </div>
               </Box>
             </div>
