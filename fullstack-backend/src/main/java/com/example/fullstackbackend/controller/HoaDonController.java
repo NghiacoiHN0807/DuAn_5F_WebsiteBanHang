@@ -70,10 +70,8 @@ public class HoaDonController {
 
     @Autowired
     private GioHangChiTietSevice gioHangChiTietSevice;
-    // get datetimenow
-    java.util.Date currentDate = new java.util.Date();
-    // Chuyển đổi thành Timestamp
-    Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+
+    Timestamp currentTimestamp ;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -120,6 +118,11 @@ public class HoaDonController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.ok("Đã Lỗi");
         } else {
+            // get datetimenow
+            java.util.Date currentDate = new java.util.Date();
+            // Chuyển đổi thành Timestamp
+            currentTimestamp = new Timestamp(currentDate.getTime());
+
             System.out.println("add123: " + newHD.getTrangThai());
             HoaDon hoaDon = hoadonSevice.add(newHD);
             // Add to history bill
@@ -174,6 +177,11 @@ public class HoaDonController {
     @PutMapping("update-status/{id}")
     public HoaDon updateStatus(@RequestBody HoaDon newHD, @PathVariable("id") Integer id,
                                @RequestParam String moTa) {
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        currentTimestamp = new Timestamp(currentDate.getTime());
+
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTrangThai(newHD.getTrangThai());
             if(hoaDon.getEmail() != null && !hoaDon.getEmail().isEmpty()){
@@ -282,6 +290,11 @@ public class HoaDonController {
 
     @PutMapping("update-payment/{id}")
     public HoaDon updateThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        currentTimestamp = new Timestamp(currentDate.getTime());
+
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTenKh(newHD.getTenKh());
             hoaDon.setSdtKh(newHD.getSdtKh());
@@ -335,6 +348,11 @@ public class HoaDonController {
 
     @PutMapping("update-client-payment/{id}")
     public HoaDon updateClientThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        currentTimestamp = new Timestamp(currentDate.getTime());
+
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTenKh(newHD.getTenKh());
             hoaDon.setSdtKh(newHD.getSdtKh());
@@ -359,6 +377,11 @@ public class HoaDonController {
 
     @PutMapping("update-client-payment1/{id}")
     public HoaDon updateClientThanhToan1(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        currentTimestamp = new Timestamp(currentDate.getTime());
+
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTenKh(newHD.getTenKh());
             hoaDon.setSdtKh(newHD.getSdtKh());
@@ -383,6 +406,10 @@ public class HoaDonController {
 
     @PutMapping("update-ship-online/{id}")
     public HoaDon updateShipOnline(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        currentTimestamp = new Timestamp(currentDate.getTime());
 
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTenKh(newHD.getTenKh());
@@ -453,6 +480,11 @@ public class HoaDonController {
 
     @PutMapping("update-khach-hang2/{id}")
     public HoaDon updateKhachHang2(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        currentTimestamp = new Timestamp(currentDate.getTime());
+
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTenKh(newHD.getTenKh());
             hoaDon.setSdtKh(newHD.getSdtKh());
@@ -495,6 +527,10 @@ public class HoaDonController {
         Integer idHd = Integer.valueOf(orderInfo);
         //Detail HD by IdHd
         Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        currentTimestamp = new Timestamp(currentDate.getTime());
 
         if (paymentStatus == 1) {
 
@@ -579,6 +615,11 @@ public class HoaDonController {
         BigDecimal realPrice = new BigDecimal(totalPrice).divide(new BigDecimal(100));
         Integer idHd = Integer.valueOf(orderInfo);
 
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        currentTimestamp = new Timestamp(currentDate.getTime());
+
         if (paymentStatus == 1) {
             //Detail HD by IdHd
             HoaDon getOne = hoadonSevice.detail(idHd).orElseThrow();
@@ -659,6 +700,11 @@ public class HoaDonController {
         if (!hoadonSevice.checkExists(id)) {
             throw new xuatXuNotFoundException(id);
         } else {
+            // get datetimenow
+            java.util.Date currentDate = new java.util.Date();
+            // Chuyển đổi thành Timestamp
+            currentTimestamp = new Timestamp(currentDate.getTime());
+            
             HoaDon hoaDon = hoadonSevice.detail(id).orElseThrow();
             //Add to history bill
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();

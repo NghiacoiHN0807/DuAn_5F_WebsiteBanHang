@@ -29,10 +29,7 @@ public class HoadonServiceImpl implements HoadonSevice {
 
     @Autowired
     private LichSuHoaDonRepository lichSuHoaDonRepo;
-
-    // Get datetime now
-    java.util.Date currentDate = new java.util.Date();
-    Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+    Timestamp currentTimestamp ;
 
 
     @Override
@@ -69,6 +66,9 @@ public class HoadonServiceImpl implements HoadonSevice {
     @Override
     public HoaDon add(HoaDon add) {
         List<HoaDon> allHoaDon = getAll();
+        // Get datetime now
+        java.util.Date currentDate = new java.util.Date();
+        currentTimestamp = new Timestamp(currentDate.getTime());
 
         if (!allHoaDon.isEmpty()) {
 
