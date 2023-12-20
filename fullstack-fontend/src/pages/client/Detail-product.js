@@ -51,9 +51,6 @@ const DetailProduct = () => {
       const minPrice = Math.min(...giaThucTe);
       const maxPrice = Math.max(...giaThucTe);
 
-      // Create the price range string
-      const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
-      const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
       const priceRange =
         minPrice === maxPrice ? formatCurrency(minPrice) : `${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}`;
       setPrice(priceRange);
