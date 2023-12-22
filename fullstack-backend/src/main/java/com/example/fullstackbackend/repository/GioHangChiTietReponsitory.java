@@ -20,6 +20,6 @@ public interface GioHangChiTietReponsitory extends JpaRepository<GioHangChiTiet,
     @Query(value = "SELECT c FROM GioHangChiTiet c WHERE c.idCtsp.idCtsp =?1 AND c.idGh.idGioHang=?2")
     Optional<GioHangChiTiet> findByIdCtsp_IdCtsp(Integer idCTSP, Integer idGH);
 
-    @Query(value = "SELECT c FROM GioHangChiTiet c WHERE c.idCtsp.idCtsp =?1")
-    Optional<GioHangChiTiet> findByIdCtsp_IdCtsp2(Integer idCTSP);
+//    @Query(value = "SELECT c FROM GioHangChiTiet c WHERE c.idCtsp.idCtsp =?1")
+//    Optional<GioHangChiTiet> findByIdCtsp_IdCtsp2(Integer idCTSP);
 }

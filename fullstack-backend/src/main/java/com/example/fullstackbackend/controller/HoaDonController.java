@@ -3,7 +3,6 @@ package com.example.fullstackbackend.controller;
 import com.example.fullstackbackend.config.payment.VNPayService;
 import com.example.fullstackbackend.config.payment.VNPayServiceClient;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
-import com.example.fullstackbackend.entity.GioHangChiTiet;
 import com.example.fullstackbackend.entity.HinhThucThanhToan;
 import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
@@ -22,6 +21,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -40,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -246,7 +247,7 @@ public class HoaDonController {
 
         List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(newHD1.getIdHd());
 
-        if (newHD.getTrangThai() == 1) {
+        if (newHD.getTrangThai() == 10) {
             for (HoaDonChiTiet x :
                     hoaDonChiTiets) {
                 List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
@@ -255,7 +256,7 @@ public class HoaDonController {
 
                     System.out.println("Số Lượng Còn Lại y:" + y.getSoLuongTon());
                     System.out.println("Số Lượng Còn Lại xx :" + x.getSoLuong());
-                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                    y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
                     if (y.getSoLuongTon() <= 0) {
                         y.setTrangThai(10);
                     }
@@ -272,6 +273,8 @@ public class HoaDonController {
                     y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
                     if (y.getSoLuongTon() <= 0) {
                         y.setTrangThai(10);
+                    } else {
+                        y.setTrangThai(0);
                     }
                     chitietsanphamSer.update(y);
                 }
@@ -351,49 +354,119 @@ public class HoaDonController {
     }
 
     @PutMapping("update-client-payment/{id}")
-    public HoaDon updateClientThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
-        // get datetimenow
-        java.util.Date currentDate = new java.util.Date();
-        // Chuyển đổi thành Timestamp
-        currentTimestamp = new Timestamp(currentDate.getTime());
+    public ResponseEntity<?> updateClientThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
 
-        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
-            hoaDon.setTenKh(newHD.getTenKh());
-            hoaDon.setSdtKh(newHD.getSdtKh());
-            hoaDon.setEmail(newHD.getEmail());
-            hoaDon.setDiaChi(newHD.getDiaChi());
-            hoaDon.setNgayTao(currentTimestamp);
-            hoaDon.setTrangThai(0);
-            return hoadonSevice.update(hoaDon);
-        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+        boolean hasError = false;
+//        Check quantity in product
+        List<HoaDonChiTiet> hoaDonChiTiet = hoadonchitietSer.findAllByIDHD(id);
+        for (HoaDonChiTiet x :
+                hoaDonChiTiet) {
+            ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
+            if (x.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+                hasError = true;
+                break;
+            }
+        }
 
-        //Add to history bill
-        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-        lichSuHoaDon.setIdHd(newHD1);
-        lichSuHoaDon.setIdTk(newHD1.getIdTK());
-        lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
-        lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
-        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
-        lichSuHoaDonService.add(lichSuHoaDon);
+        //Done hasError
+        if (hasError) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "Số Lượng Tồn Của Sản Phẩm Không Đủ"));
+        } else {
+            // get datetimenow
+            java.util.Date currentDate = new java.util.Date();
+            // Chuyển đổi thành Timestamp
+            currentTimestamp = new Timestamp(currentDate.getTime());
 
-        return newHD1;
+            HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+                hoaDon.setTenKh(newHD.getTenKh());
+                hoaDon.setSdtKh(newHD.getSdtKh());
+                hoaDon.setEmail(newHD.getEmail());
+                hoaDon.setDiaChi(newHD.getDiaChi());
+                hoaDon.setNgayTao(currentTimestamp);
+                hoaDon.setTrangThai(0);
+                return hoadonSevice.update(hoaDon);
+            }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+            // Update quantity in product
+            for (HoaDonChiTiet x :
+                    hoaDonChiTiet) {
+                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                for (ChiTietSanPham y :
+                        chiTietSanPhams) {
+                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                    if (y.getSoLuongTon() <= 0) {
+                        y.setTrangThai(10);
+                    }
+                    chitietsanphamSer.update(y);
+                }
+            }
+
+            //Add to history bill
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setIdHd(newHD1);
+            lichSuHoaDon.setIdTk(newHD1.getIdTK());
+            lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+            lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
+            lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+            lichSuHoaDonService.add(lichSuHoaDon);
+
+            return ResponseEntity.ok(newHD1);
+        }
+
     }
 
     @PutMapping("update-client-payment1/{id}")
-    public HoaDon updateClientThanhToan1(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
-        // get datetimenow
-        java.util.Date currentDate = new java.util.Date();
-        // Chuyển đổi thành Timestamp
-        currentTimestamp = new Timestamp(currentDate.getTime());
+    public ResponseEntity<?> updateClientThanhToan1(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        boolean hasError = false;
+//        Check quantity in product
+        List<HoaDonChiTiet> hoaDonChiTiet = hoadonchitietSer.findAllByIDHD(id);
+        for (HoaDonChiTiet x :
+                hoaDonChiTiet) {
+            ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
+            if (x.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+                hasError = true;
+                break;
+            }
+        }
 
-        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
-            hoaDon.setTenKh(newHD.getTenKh());
-            hoaDon.setSdtKh(newHD.getSdtKh());
-            hoaDon.setEmail(newHD.getEmail());
-            hoaDon.setDiaChi(newHD.getDiaChi());
-            hoaDon.setNgayTao(currentTimestamp);
-            return hoadonSevice.update(hoaDon);
-        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+        //Done hasError
+        if (hasError) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "Số Lượng Tồn Của Sản Phẩm Không Đủ"));
+        } else {
+            // get datetimenow
+            java.util.Date currentDate = new java.util.Date();
+            // Chuyển đổi thành Timestamp
+            currentTimestamp = new Timestamp(currentDate.getTime());
+
+            HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+                hoaDon.setTenKh(newHD.getTenKh());
+                hoaDon.setSdtKh(newHD.getSdtKh());
+                hoaDon.setEmail(newHD.getEmail());
+                hoaDon.setDiaChi(newHD.getDiaChi());
+                hoaDon.setNgayTao(currentTimestamp);
+                return hoadonSevice.update(hoaDon);
+            }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+            // Update quantity in product
+            for (HoaDonChiTiet x :
+                    hoaDonChiTiet) {
+                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                for (ChiTietSanPham y :
+                        chiTietSanPhams) {
+                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                    if (y.getSoLuongTon() <= 0) {
+                        y.setTrangThai(10);
+                    }
+                    chitietsanphamSer.update(y);
+                }
+            }
+            return ResponseEntity.ok(newHD1);
+        }
+
 
         //Add to history bill
 //        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
@@ -404,7 +477,7 @@ public class HoaDonController {
 //        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
 //        lichSuHoaDonService.add(lichSuHoaDon);
 
-        return newHD1;
+//        return newHD1;
     }
 
 
@@ -627,7 +700,6 @@ public class HoaDonController {
         if (paymentStatus == 1) {
             //Detail HD by IdHd
             HoaDon getOne = hoadonSevice.detail(idHd).orElseThrow();
-            BigDecimal getTongTien = getOne.getTongTien();
 
             //Add to updatePaymentOnline
             HoaDon hoaDonDTO1 = new HoaDon();
@@ -647,7 +719,7 @@ public class HoaDonController {
             hinhThucThanhToan1.setIdHd(hoaDon);
             hinhThucThanhToan1.setHinhThuc("Thanh Toán Online");
             hinhThucThanhToan1.setSoTien(realPrice);
-            hinhThucThanhToan1.setMoTa("Thanh Toán Online");
+            hinhThucThanhToan1.setMoTa("Thanh Toán Bằng Thẻ Qua VNPay");
             hinhThucThanhToan1.setTrangThai(0);
             hinhThucThanhToanSevice.add(hinhThucThanhToan1);
 
@@ -660,13 +732,27 @@ public class HoaDonController {
             lichSuHoaDon.setNgayThayDoi(currentTimestamp);
             lichSuHoaDonService.add(lichSuHoaDon);
 
-            // Delete product on detail cart
-            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(idHd);
+            // Update quantity in product
+            List<HoaDonChiTiet> hoaDonChiTiet = hoadonchitietSer.findAllByIDHD(idHd);
             for (HoaDonChiTiet x :
-                    hoaDonChiTiets) {
-                GioHangChiTiet gioHangChiTiet = gioHangChiTietSevice.finByIDCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
-                gioHangChiTietSevice.deleteGHCT(gioHangChiTiet.getIdGhct());
+                    hoaDonChiTiet) {
+                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                for (ChiTietSanPham y :
+                        chiTietSanPhams) {
+                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                    if (y.getSoLuongTon() <= 0) {
+                        y.setTrangThai(10);
+                    }
+                    chitietsanphamSer.update(y);
+                }
             }
+            // Delete product on detail cart
+//            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(idHd);
+//            for (HoaDonChiTiet x :
+//                    hoaDonChiTiets) {
+//                GioHangChiTiet gioHangChiTiet = gioHangChiTietSevice.finByIDCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
+//                gioHangChiTietSevice.deleteGHCT(gioHangChiTiet.getIdGhct());
+//            }
 
             // Update HD to ship
             getOne.setTrangThai(0);
@@ -706,6 +792,24 @@ public class HoaDonController {
             lichSuHoaDon.setNgayThayDoi(currentTimestamp);
             lichSuHoaDonService.add(lichSuHoaDon);
 
+            // Update Qantity Product
+            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(id);
+
+            for (HoaDonChiTiet x :
+                    hoaDonChiTiets) {
+                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                for (ChiTietSanPham y :
+                        chiTietSanPhams) {
+                    y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
+                    if (y.getSoLuongTon() <= 0) {
+                        y.setTrangThai(10);
+                    } else {
+                        y.setTrangThai(0);
+                    }
+                    chitietsanphamSer.update(y);
+                }
+            }
+            //Delete
             hoadonSevice.delete(id);
             return ResponseEntity.ok("Đã Xóa Thành Công!!!");
         }
