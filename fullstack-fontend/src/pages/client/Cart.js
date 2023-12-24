@@ -98,7 +98,7 @@ export default function Cart() {
     const updateProductOnCart = async () => {
       if (currentItemId !== null) {
         try {
-          await upadteProductOnCart(currentItemId, quantity);
+          await upadteProductOnCart(currentItemId, productOnCart[0].idGh.idGioHang, quantity);
           setCurrentItemId(null);
           getDetail();
         } catch (error) {
@@ -109,7 +109,7 @@ export default function Cart() {
     updateProductOnCart();
     setSelectAll(null);
     setTotalPayment(0);
-  }, [quantity, currentItemId, getDetail]);
+  }, [quantity, currentItemId, getDetail, productOnCart]);
 
   const [alertContent, setAlertContent] = useState(null);
 
