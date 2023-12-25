@@ -3,7 +3,8 @@ import custom from '../custom-axios';
 const listProductOnCart = (idKH) => custom.get(`/gio-hang-chi-tiet/view-all/${idKH}`);
 // const addProductOnCart = (idSp, { addGHCT }) => custom.post(`/gio-hang-chi-tiet/add/${idSp}`, { addGHCT });
 const addProductOnCart = (idKH, idCtsp, soLuong) => custom.post(`/gio-hang-chi-tiet/add/${idKH}`, { idCtsp, soLuong });
-const upadteProductOnCart = (idSp, soLuong) => custom.put(`/gio-hang-chi-tiet/update/${idSp}`, { soLuong });
+const upadteProductOnCart = (idSp, idGh, soLuong) =>
+  custom.put(`/gio-hang-chi-tiet/update/${idSp}/${idGh}`, { soLuong });
 const deleteProductOnCart = (idGHCT) => custom.delete(`/gio-hang-chi-tiet/delete/${idGHCT}`);
 // Add Bill
 const postAddBillAddBill = (idKH, tongTien, kieuHoaDon, trangThai) =>

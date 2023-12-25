@@ -103,7 +103,7 @@ export default function ModalPaymentPage(props) {
             </Typography>
           ) : (
             coupons
-              .filter((coupon) => coupon.trangThai === 0)
+              .filter((coupon) => coupon.trangThai === 0 && hoaDon[9] <= coupon.tienToiThieu)
               .map((coupon, index) => (
                 <Card
                   key={coupon.code}
