@@ -358,22 +358,22 @@ const OrderManagementTimeline = ({ classes }) => {
             {activeIndex === 0
               ? 'Xác Nhận Hóa Đơn'
               : activeIndex === 1
-                ? 'Xác Nhận Thông Tin'
-                : activeIndex === 2
-                  ? 'Chuyển Cho Đơn Vị'
-                  : activeIndex === 3 && listHTTT.length <= 0
-                    ? 'Xác Nhận Thanh Toán'
-                    : activeIndex === 3 && listHTTT.length >= 0
-                      ? 'Giao Thành Công'
-                      : activeIndex === 4
-                        ? 'Giao Thành Công'
-                        : activeIndex === 5
-                          ? 'Đã Giao Thành Công'
-                          : activeIndex === 9
-                            ? 'Đơn Đã Hoàn Thành'
-                            : activeIndex === 10
-                              ? 'Đơn Hàng Đã Bị Hủy'
-                              : 'Đơn Đã Hoàn Thành1'}
+              ? 'Xác Nhận Thông Tin'
+              : activeIndex === 2
+              ? 'Chuyển Cho Đơn Vị'
+              : activeIndex === 3 && listHTTT.length <= 0
+              ? 'Xác Nhận Thanh Toán'
+              : activeIndex === 3 && listHTTT.length >= 0
+              ? 'Giao Thành Công'
+              : activeIndex === 4
+              ? 'Giao Thành Công'
+              : activeIndex === 5
+              ? 'Đã Giao Thành Công'
+              : activeIndex === 9
+              ? 'Đơn Đã Hoàn Thành'
+              : activeIndex === 10
+              ? 'Đơn Hàng Đã Bị Hủy'
+              : 'Đơn Đã Hoàn Thành1'}
           </Button>{' '}
           <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 1}>
             Hủy Đơn Hàng
@@ -410,7 +410,8 @@ const OrderManagementTimeline = ({ classes }) => {
                     {listData[0].idHd.diaChi && <h6>Địa Chỉ: {listData[0].idHd.diaChi}</h6>}
                     {listData[0].idHd.email && <h6>Email: {listData[0].idHd.email}</h6>}
                   </>
-                ) : listData[0].idHd.tenKh === '' || listData[0].idHd.tenKh === null && listData[0].idHd.idKH ? (
+                ) : (listData[0].idHd.tenKh === '' && listData[0].idHd.idKH) ||
+                  (listData[0].idHd.tenKh === null && listData[0].idHd.idKH) ? (
                   <>
                     {listData[0].idHd.idKH.ho && listData[0].idHd.idKH.ten && (
                       <h6>

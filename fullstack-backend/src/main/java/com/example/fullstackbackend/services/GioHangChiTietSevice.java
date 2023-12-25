@@ -15,11 +15,11 @@ public interface GioHangChiTietSevice {
 
     void addGHCT(Integer idKH, GioHangChiTiet gioHangChiTiet);
 
-    void updateGHCT(Integer id, GioHangChiTiet gioHangChiTiet);
+    void updateGHCT(Integer id, Integer idGH,GioHangChiTiet gioHangChiTiet);
 
     void deleteGHCT(Integer idGHCT);
 
-    Optional<GioHangChiTiet> finByIDCTSP(Integer idCtsp);
+    Optional<GioHangChiTiet> finByIDCTSP(Integer idCtsp, Integer idGH);
 
     void transferHDCT(Integer idHd, ChiTietSanPham chiTietSanPham);
 

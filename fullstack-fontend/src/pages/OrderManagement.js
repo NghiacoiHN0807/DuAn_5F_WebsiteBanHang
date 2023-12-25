@@ -443,7 +443,6 @@ const OrderManagement = () => {
                   <MenuItem value="3">Đã Chuyển Cho Đơn Vị</MenuItem>
                   <MenuItem value="4">Đã Xác Nhận Thanh Toán</MenuItem>
                   <MenuItem value="5">Đã Giao Thành Công</MenuItem>
-                  <MenuItem value="8">Đơn Hàng Bán Tại Quầy</MenuItem>
                   <MenuItem value="9">Đã Thanh Toán Tại Quầy</MenuItem>
                   <MenuItem value="10">Đã Bị Hủy</MenuItem>
                 </TextField>
