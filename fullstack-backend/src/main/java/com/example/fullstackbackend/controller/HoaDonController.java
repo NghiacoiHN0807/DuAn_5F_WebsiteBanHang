@@ -253,17 +253,12 @@ public class HoaDonController {
                 List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
                 for (ChiTietSanPham y :
                         chiTietSanPhams) {
-<<<<<<< HEAD
-                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                    if(y.getSoLuongTon() <= 0){
-=======
-
-                    System.out.println("Số Lượng Còn Lại y:" + y.getSoLuongTon());
-                    System.out.println("Số Lượng Còn Lại xx :" + x.getSoLuong());
+                    System.out.println("Số Lượng Còn Lại:" + y.getSoLuongTon());
                     y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
                     if (y.getSoLuongTon() <= 0) {
->>>>>>> origin/nghiant0807
                         y.setTrangThai(10);
+                    } else {
+                        y.setTrangThai(0);
                     }
                     chitietsanphamSer.update(y);
                 }
