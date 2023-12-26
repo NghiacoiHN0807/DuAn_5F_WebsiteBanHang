@@ -123,15 +123,15 @@ public class GioHangChiTietController {
             hoadonchitietSevice.add1(hoaDonChiTiet);
 
             // Update quantity in product
-//            List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(newHDCT.getIdCtsp().getIdCtsp());
-//            for (ChiTietSanPham y :
-//                    chiTietSanPhams) {
-//                y.setSoLuongTon(y.getSoLuongTon() - newHDCT.getSoLuong());
-//                if (y.getSoLuongTon() <= 0) {
-//                    y.setTrangThai(10);
-//                }
-//                chitietsanphamSer.update(y);
-//            }
+////            List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(newHDCT.getIdCtsp().getIdCtsp());
+////            for (ChiTietSanPham y :
+////                    chiTietSanPhams) {
+////                y.setSoLuongTon(y.getSoLuongTon() - newHDCT.getSoLuong());
+////                if (y.getSoLuongTon() <= 0) {
+////                    y.setTrangThai(10);
+////                }
+////                chitietsanphamSer.update(y);
+////            }
 
             return ResponseEntity.ok("Tạo Hóa Đơn Thành Công!!!");
         }
