@@ -4,10 +4,8 @@ fullstack-fontend/node_modules/
 .pnp.js
 *.pack
 .cache
-fullstack-fontend/node_modules/.cache
-fullstack-fontend/node_modules/@fortawesome
-fullstack-backend/.idea
-fullstack-backend/target
+fullstack-backend/.idea/
+fullstack-backend/target/
 .idea
 # testing
 /coverage
@@ -27,3 +25,7 @@ yarn-debug.log*
 yarn-error.log*
 fullstack-fontend/.idea
 fullstack-fontend/.vscode
+/fullstack-fontend/node_modules/
+/fullstack-fontend/node_modules/.cache/
+/fullstack-fontend/node_modules/.cache/default-development/
+/fullstack-fontend/node_modules/@fortawesome/
