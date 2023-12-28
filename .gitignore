@@ -1,11 +1,8 @@
 # dependencies
-fullstack-fontend/node_modules/
 /.pnp
 .pnp.js
 *.pack
-.cache
-fullstack-backend/.idea/
-fullstack-backend/target/
+
 # testing
 /coverage
 
@@ -22,10 +19,10 @@ fullstack-backend/target/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.cache
+fullstack-backend/.idea/
+fullstack-backend/target/
 fullstack-fontend/.idea/
 fullstack-fontend/.vscode/
-/fullstack-fontend/node_modules/
-/fullstack-fontend/node_modules/.cache/
-/fullstack-fontend/node_modules/.cache/default-development/
-/fullstack-fontend/node_modules/@fortawesome/
-/.idea/
+fullstack-fontend/node_modules/
+.idea/
