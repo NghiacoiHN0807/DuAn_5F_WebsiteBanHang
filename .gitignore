@@ -6,7 +6,9 @@ fullstack-fontend/node_modules
 .cache
 fullstack-fontend/node_modules/.cache
 fullstack-fontend/node_modules/@fortawesome
-
+fullstack-backend/.idea
+fullstack-backend/target
+.idea
 # testing
 /coverage
 
@@ -23,4 +25,5 @@ fullstack-fontend/node_modules/@fortawesome
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-fullstack-fontend/.idea/workspace.xml
+fullstack-fontend/.idea
+fullstack-fontend/.vscode
