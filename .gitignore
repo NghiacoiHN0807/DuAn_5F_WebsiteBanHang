@@ -1,5 +1,5 @@
 # dependencies
-fullstack-fontend/node_modules
+fullstack-fontend/node_modules/
 /.pnp
 .pnp.js
 *.pack
