@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import '../../scss/OrderManagement-Timeline.scss';
 import { Button, Chip, Container, Grid, IconButton, Stack, Typography } from '@mui/material';
@@ -27,6 +27,7 @@ import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
 import { pink } from '@mui/material/colors';
+import { Helmet } from 'react-helmet-async';
 import Timeline from '../../MappingTimeLine/Timeline';
 import TimelineEvent from '../../MappingTimeLine/TimelineEvent';
 import { viewAllHTTT } from '../../service/OrderManagementTimeLine';
@@ -333,6 +334,9 @@ const OrderClientTimeline = ({ classes }) => {
   };
   return (
     <>
+      <Helmet>
+        <title> 5FStore || Thông Tin Đơn Hàng </title>
+      </Helmet>
       <Container sx={{ marginTop: 5 }}>
         <Grid item xs={12} md={6} lg={12} sx={{ marginTop: 10, backgroundColor: 'white' }}>
           <div className="row-order-management-timeline">

@@ -1,5 +1,5 @@
 // react
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { sample } from 'lodash';
 import { Box, Card, CardActionArea, Link, Stack, Typography } from '@mui/material';
 import { Container } from '@mui/system';
@@ -10,6 +10,7 @@ import SearchOffIcon from '@mui/icons-material/SearchOff';
 import { useNavigate } from 'react-router-dom';
 // import { fCurrency } from '../../utils/formatNumber';
 // import
+import { Helmet } from 'react-helmet-async';
 import anh1 from '../../assets/slider_2.jpg';
 import anh2 from '../../assets/banner-thoi-trang-nam.jpg';
 import anh3 from '../../assets/banner-thoi-trang-the-thao-cho-nam_113858272.jpg';
@@ -221,6 +222,9 @@ const Home = () => {
   }
   return (
     <>
+      <Helmet>
+        <title> 5FStore || Trang Chủ </title>
+      </Helmet>
       <section className="gray-background-home">
         <div >
           <h6 className="hello" style={{fontSize: "37px", paddingTop: "50px"}}>XIN CHÀO CÁC BẠN</h6>

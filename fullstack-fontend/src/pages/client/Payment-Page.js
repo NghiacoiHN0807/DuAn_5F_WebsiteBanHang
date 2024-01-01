@@ -23,11 +23,12 @@ import {
   Typography,
 } from '@mui/material';
 import axios from 'axios';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
+import { Helmet } from 'react-helmet-async';
 import ModalConfirmPayment from '../../forms/client/Modal-Confirm-Payment-Page';
 // Service
 import { detailBill, finByProductOnCart } from '../../service/BillSevice';
@@ -414,6 +415,9 @@ export default function PaymentPage() {
 
   return (
     <>
+      <Helmet>
+        <title> 5FStore || Thanh Toán  </title>
+      </Helmet>
       <Container>
         {listHD.trangThai === 11 ? (
           <>
