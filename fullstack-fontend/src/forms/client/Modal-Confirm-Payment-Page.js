@@ -45,38 +45,40 @@ export default function ModalConfirmPayment(props) {
   // Handle Delete
   const handleConfirm = async () => {
     if (isDeliveryChecked && isDeliveryChecked === true) {
-      setAlertContent({
-        type: 'success',
-        message: 'Hãy Thanh Toán Cảm Ơn!!!',
-      });
-      await updateClientPayment1(idHdParam, tenKH, sdtKH, emailKH, diaChi);
-      const paymentOn = await paymentOnlineClient(thanhTien, idHdParam);
-      console.log('Check paymentOn: ', paymentOn);
-      window.location.href = paymentOn;
+      const payment = await updateClientPayment1(idHdParam, tenKH, sdtKH, emailKH, diaChi);
+      if (payment.status === 400) {
+        setAlertContent({
+          type: 'warning',
+          message: payment.data.error,
+        });
+      } else {
+        setAlertContent({
+          type: 'success',
+          message: 'Hãy Thanh Toán Trước. Cảm Ơn!!!',
+        });
+        const paymentOn = await paymentOnlineClient(thanhTien, idHdParam);
+        window.location.href = paymentOn;
+      }
     } else {
-      setAlertContent({
-        type: 'success',
-        message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
-      });
-      await updateClientPayment(idHdParam, tenKH, sdtKH, emailKH, diaChi);
-
-      navigate(`/`);
+      try {
+        const payment = await updateClientPayment(idHdParam, tenKH, sdtKH, emailKH, diaChi);
+        if (payment.status === 400) {
+          setAlertContent({
+            type: 'warning',
+            message: payment.data.error,
+          });
+        } else {
+          console.log('payment', payment);
+          setAlertContent({
+            type: 'success',
+            message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
+          });
+          navigate(`/`);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
-    // console.log('DataCart: ', DataCart);
-    // if (DataCart.length <= 1) {
-    //   setAlertContent({
-    //     type: 'warning',
-    //     message: 'Sản Phẩm Trong Hóa Đơn Không Thể Trống',
-    //   });
-    // } else {
-    //   await deleteProductOnCart(itemDelete[1]);
-    //   selectDataCart();
-    //   setAlertContent({
-    //     type: 'success',
-    //     message: 'Xóa Sản Phẩm Thành Công',
-    //   });
-    //   handleClose();
-    // }
   };
 
   return (
