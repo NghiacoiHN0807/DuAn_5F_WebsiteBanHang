@@ -69,8 +69,8 @@ public class HoaDonController {
     @Autowired
     private ChitietsanphamService chitietsanphamSer;
 
-    @Autowired
-    private GioHangChiTietSevice gioHangChiTietSevice;
+//    @Autowired
+//    private GioHangChiTietSevice gioHangChiTietSevice;
 
     Timestamp currentTimestamp;
 

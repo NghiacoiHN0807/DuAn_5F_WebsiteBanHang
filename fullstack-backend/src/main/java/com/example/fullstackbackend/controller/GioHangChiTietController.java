@@ -103,12 +103,30 @@ public class GioHangChiTietController {
     @PostMapping("add-to-hdct/{id}")
     public ResponseEntity<?> addToHDCT(@PathVariable("id") Integer idHD,
                                        @RequestBody GioHangChiTiet newHDCT) {
-        System.out.println("newHDCT.getIdCtsp().getSoLuongTon(): " + newHDCT.getIdCtsp().getSoLuongTon());
-        System.out.println("newHDCT.getSoLuong(): " + newHDCT.getSoLuong());
-        if (newHDCT.getIdCtsp().getSoLuongTon() < newHDCT.getSoLuong()) {
+
+        boolean hasError = false;
+        String nameProduct = "";
+//        Check quantity in product
+        List<HoaDon> hoaDonList = hoadonSevice.findAllByTrangThai(11);
+        for (HoaDon x :
+                hoaDonList) {
+            List<HoaDonChiTiet> hoaDonChiTiet = hoadonchitietSevice.findAllByIDHD(x.getIdHd());
+            for (HoaDonChiTiet y :
+                    hoaDonChiTiet) {
+                ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(y.getIdCtsp().getIdCtsp()).orElseThrow();
+                if (newHDCT.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+                    nameProduct = chiTietSanPham.getIdSp().getTenSp();
+                    hasError = true;
+                    break;
+                }
+            }
+        }
+
+
+        if (hasError) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(Collections.singletonMap("error", "Số Lượng Tồn Của Sản Phẩm Không Đủ"));
+                    .body(Collections.singletonMap("error", "Số Lượng Tồn Của Sản Phẩm " + nameProduct + " Không Đủ"));
         } else {
             // Detail HoaDon
             HoaDon hoaDon = hoadonSevice.findById(idHD).orElseThrow();
