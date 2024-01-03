@@ -205,18 +205,26 @@ export default function Cart() {
       });
     } else {
       const res = await postAddBillAddBill(authorities, totalPayment, 2, 11);
-      for (let i = 0; i < selectedItems.length; i += 1) {
-        (async () => {
-          await postAddDirectClient(res.idHd, selectedItems[i]);
-        })();
+      // // for (let i = 0; i < selectedItems.length; i += 1) {
+      // //   (async () => {
+      const changtoHDCT = await postAddDirectClient(res.idHd, selectedItems);
+      //   })();
+      // }
+      if (changtoHDCT.status === 400) {
+        setAlertContent({
+          type: 'warning',
+          message: changtoHDCT.data.error,
+        });
+      } else {
+        console.log('selectedItems', selectedItems);
+        setAlertContent({
+          type: 'success',
+          message: 'Tạo thành công hóa đơn',
+        });
+        setTimeout(() => {
+          navigate(`/client/payment/${res.idHd}`);
+        }, 200);
       }
-      setAlertContent({
-        type: 'success',
-        message: 'Tạo thành công hóa đơn',
-      });
-      setTimeout(() => {
-        navigate(`/client/payment/${res.idHd}`);
-      }, 200);
     }
   };
 

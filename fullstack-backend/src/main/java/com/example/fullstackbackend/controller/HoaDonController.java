@@ -357,12 +357,15 @@ public class HoaDonController {
     public ResponseEntity<?> updateClientThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
 
         boolean hasError = false;
+        String nameProduct = "";
+
 //        Check quantity in product
         List<HoaDonChiTiet> hoaDonChiTiet = hoadonchitietSer.findAllByIDHD(id);
         for (HoaDonChiTiet x :
                 hoaDonChiTiet) {
             ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
             if (x.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+                nameProduct = chiTietSanPham.getIdSp().getTenSp();
                 hasError = true;
                 break;
             }
@@ -372,7 +375,7 @@ public class HoaDonController {
         if (hasError) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(Collections.singletonMap("error", "Số Lượng Tồn Của Sản Phẩm Không Đủ"));
+                    .body(Collections.singletonMap("error", "Số Lượng Tồn Của Sản Phẩm " + nameProduct + " Không Đủ"));
         } else {
             // get datetimenow
             java.util.Date currentDate = new java.util.Date();
@@ -420,12 +423,16 @@ public class HoaDonController {
     @PutMapping("update-client-payment1/{id}")
     public ResponseEntity<?> updateClientThanhToan1(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
         boolean hasError = false;
+        String nameProduct = "";
+
 //        Check quantity in product
         List<HoaDonChiTiet> hoaDonChiTiet = hoadonchitietSer.findAllByIDHD(id);
         for (HoaDonChiTiet x :
                 hoaDonChiTiet) {
             ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
             if (x.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+                nameProduct = chiTietSanPham.getIdSp().getTenSp();
+
                 hasError = true;
                 break;
             }
@@ -435,7 +442,7 @@ public class HoaDonController {
         if (hasError) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(Collections.singletonMap("error", "Số Lượng Tồn Của Sản Phẩm Không Đủ"));
+                    .body(Collections.singletonMap("error", "Số Lượng Tồn Của Sản Phẩm " + nameProduct + " Không Đủ"));
         } else {
             // get datetimenow
             java.util.Date currentDate = new java.util.Date();

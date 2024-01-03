@@ -20,7 +20,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 // Service
 import { detailBill, finByProductOnCart2 } from '../../service/BillSevice';
@@ -127,7 +127,7 @@ export default function PaymentPage1() {
   }, [idHdParam]);
   useEffect(() => {
     selectDataCart();
-  }, []);
+  }, [selectDataCart]);
 
   const handleClose = () => {
     setOpenCoupon(false);
@@ -321,6 +321,18 @@ export default function PaymentPage1() {
     }
     return () => {};
   }, [idHdParam, listHD.trangThai, navigate]);
+
+  useEffect(() => {
+    const handleUnload = async () => {
+      await deleteOverTime(idHdParam);
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+    };
+  }, [idHdParam]);
 
   return (
     <>

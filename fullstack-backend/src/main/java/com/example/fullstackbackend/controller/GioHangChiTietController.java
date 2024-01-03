@@ -102,7 +102,7 @@ public class GioHangChiTietController {
 
     @PostMapping("add-to-hdct/{id}")
     public ResponseEntity<?> addToHDCT(@PathVariable("id") Integer idHD,
-                                       @RequestBody GioHangChiTiet newHDCT) {
+                                       @RequestBody List<GioHangChiTiet> newHDCT) {
 
         boolean hasError = false;
         String nameProduct = "";
@@ -114,15 +114,19 @@ public class GioHangChiTietController {
             for (HoaDonChiTiet y :
                     hoaDonChiTiet) {
                 ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(y.getIdCtsp().getIdCtsp()).orElseThrow();
-                if (newHDCT.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
-                    nameProduct = chiTietSanPham.getIdSp().getTenSp();
-                    hasError = true;
-                    break;
+                for (GioHangChiTiet z :
+                        newHDCT) {
+                    if (z.getSoLuong() + y.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+                        nameProduct = chiTietSanPham.getIdSp().getTenSp();
+                        hasError = true;
+                        break;
+                    }
                 }
+
             }
         }
 
-
+        // Done
         if (hasError) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -132,28 +136,18 @@ public class GioHangChiTietController {
             HoaDon hoaDon = hoadonSevice.findById(idHD).orElseThrow();
 
             // Set HDCT
-            HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
-            hoaDonChiTiet.setIdHd(hoaDon);
-            hoaDonChiTiet.setIdCtsp(newHDCT.getIdCtsp());
-            hoaDonChiTiet.setSoLuong(newHDCT.getSoLuong());
-            hoaDonChiTiet.setDonGia(newHDCT.getDonGia());
-            hoaDonChiTiet.setTrangThai(0);
-            hoadonchitietSevice.add1(hoaDonChiTiet);
-
-            // Update quantity in product
-////            List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(newHDCT.getIdCtsp().getIdCtsp());
-////            for (ChiTietSanPham y :
-////                    chiTietSanPhams) {
-////                y.setSoLuongTon(y.getSoLuongTon() - newHDCT.getSoLuong());
-////                if (y.getSoLuongTon() <= 0) {
-////                    y.setTrangThai(10);
-////                }
-////                chitietsanphamSer.update(y);
-////            }
-
+            for (GioHangChiTiet x :
+                    newHDCT) {
+                HoaDonChiTiet hoaDonChiTiet = new HoaDonChiTiet();
+                hoaDonChiTiet.setIdHd(hoaDon);
+                hoaDonChiTiet.setIdCtsp(x.getIdCtsp());
+                hoaDonChiTiet.setSoLuong(x.getSoLuong());
+                hoaDonChiTiet.setDonGia(x.getDonGia());
+                hoaDonChiTiet.setTrangThai(0);
+                hoadonchitietSevice.add1(hoaDonChiTiet);
+            }
             return ResponseEntity.ok("Tạo Hóa Đơn Thành Công!!!");
         }
-
     }
 
     @DeleteMapping("delete-product/{id}")
