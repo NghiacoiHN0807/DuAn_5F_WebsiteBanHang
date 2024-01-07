@@ -425,14 +425,13 @@ public class HoaDonController {
         boolean hasError = false;
         String nameProduct = "";
 
-//        Check quantity in product
+        // Check quantity in product
         List<HoaDonChiTiet> hoaDonChiTiet = hoadonchitietSer.findAllByIDHD(id);
         for (HoaDonChiTiet x :
                 hoaDonChiTiet) {
             ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
             if (x.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
                 nameProduct = chiTietSanPham.getIdSp().getTenSp();
-
                 hasError = true;
                 break;
             }
@@ -473,18 +472,6 @@ public class HoaDonController {
             }
             return ResponseEntity.ok(newHD1);
         }
-
-
-        //Add to history bill
-//        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-//        lichSuHoaDon.setIdHd(newHD1);
-//        lichSuHoaDon.setIdTk(newHD1.getIdTK());
-//        lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
-//        lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
-//        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
-//        lichSuHoaDonService.add(lichSuHoaDon);
-
-//        return newHD1;
     }
 
 

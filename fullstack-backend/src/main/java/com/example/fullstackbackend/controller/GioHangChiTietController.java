@@ -103,10 +103,10 @@ public class GioHangChiTietController {
     @PostMapping("add-to-hdct/{id}")
     public ResponseEntity<?> addToHDCT(@PathVariable("id") Integer idHD,
                                        @RequestBody List<GioHangChiTiet> newHDCT) {
-
         boolean hasError = false;
         String nameProduct = "";
-//        Check quantity in product
+
+        // Check quantity in product
         List<HoaDon> hoaDonList = hoadonSevice.findAllByTrangThai(11);
         for (HoaDon x :
                 hoaDonList) {

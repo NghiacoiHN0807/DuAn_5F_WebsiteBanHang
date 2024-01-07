@@ -41,6 +41,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import JsPdf from 'jspdf';
+
 import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 import ModalCreateBillOnline from '../forms/Modal-Create-Online';
 import { updateTienShip } from '../service/OrderManagementTimeLine';
@@ -576,6 +579,49 @@ const CartBillADM = () => {
     getDetailHD();
     setShowModalAddress(false);
   };
+
+  const generatePDF = async () => {
+    const pdfDoc = new JsPdf();
+
+    // Bước 1: Tạo canvas tạm
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Vẽ nội dung tiếng Việt
+    ctx.font = '16px Arial';
+    const lineHeight = 25;
+
+    // Vị trí x bắt đầu vẽ text
+    let x = 20;
+    let y = 50;
+
+    // Căn giữa theo chiều dọc
+    ctx.textBaseline = 'middle';
+
+    // Vẽ từng dòng
+    ctx.fillText('Hóa đơn số: #543', x, y);
+
+    // Tính toán tọa độ y mới
+    y += lineHeight;
+
+    ctx.fillText('Hóa đơn số: #534', x, y);
+
+    // Căn giữa theo chiều ngang
+    x = (canvas.width - ctx.measureText('Hóa đơn số: #545343').width) / 2;
+
+    ctx.fillText('Hóa đơn số: #545343', x, y + lineHeight);
+
+    // Bước 2: Lấy dữ liệu canvas ra data URL
+    const imgData = canvas.toDataURL('image/png');
+
+    // Thêm nội dung tiếng Việt
+    pdfDoc.addImage(imgData, 'PNG', 10, 10);
+
+    // pdfDoc.text('Hóa đơn số: #123', 10, 10);
+
+    pdfDoc.save('invoice.pdf');
+  };
+
   return (
     <>
       <Box sx={{ width: '100%' }}>
@@ -584,6 +630,15 @@ const CartBillADM = () => {
             <Box sx={{ p: 3 }}>
               <Button variant="contained" onClick={handleAddTab}>
                 Thêm Hóa Đơn Chờ
+              </Button>
+              <Button
+                aria-label="download"
+                onClick={generatePDF}
+                variant="contained"
+                startIcon={<GetAppIcon />}
+                color="success"
+              >
+                Xuất Hóa Đơn
               </Button>
             </Box>
             <AntTabs value={value} onChange={handleChange} aria-label="ant example">

@@ -26,7 +26,7 @@ import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 import ModalConfirmPayment from '../../forms/client/Modal-Confirm-Payment-Page';
 // Service
@@ -407,17 +407,14 @@ export default function PaymentPage() {
     return () => {};
   }, [idHdParam, listHD.trangThai, navigate]);
 
-  useEffect(() => {
-    const handleUnload = async () => {
-      await deleteOverTime(idHdParam);
-    };
+  // const location = useLocation();
 
-    window.addEventListener('beforeunload', handleUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleUnload);
-    };
-  }, [idHdParam]);
+  // useEffect(() => () => {
+  //     if (location.pathname !== '/client/payment/427') {
+  //       // Thực hiện xóa khi chuyển trang ra khỏi đường dẫn cụ thể
+  //       deleteOverTime(idHdParam);
+  //     }
+  //   }, [idHdParam, location.pathname]);
 
   const [openConfirm, setOpenConfirm] = useState(false);
 

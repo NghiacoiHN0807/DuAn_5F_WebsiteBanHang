@@ -47,17 +47,13 @@ export default function Cart() {
         getOneSP = await listProductOnCart(authorities.idTaiKhoan);
       } else {
         const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {}; // Nếu chưa có giá trị, tạo một đối tượng rỗng
-        console.log('idCtspListđá: ', currentCart);
         getOneSP = Object.values(currentCart);
-        // getOneSP = currentCart;
       }
       setProductOnCart(getOneSP);
-      console.log('getOneSP: ', getOneSP);
       const productId = getOneSP.map((item) => item.idCtsp.idSp.idSp);
       const imgDataArray = await Promise.all(productId.map((productId) => listImg(productId)));
 
       setImages(imgDataArray);
-      console.log('imgData: ', imgDataArray);
     } catch (e) {
       console.error(e);
     }

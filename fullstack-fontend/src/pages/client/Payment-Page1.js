@@ -255,24 +255,10 @@ export default function PaymentPage1() {
       });
     } else if (isDeliveryChecked === false) {
       setOpenConfirm(true);
-      // setAlertContent({
-      //   type: 'success',
-      //   message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
-      // });
-      // await deleteProductOnCartPayment(idHdParam);
-      // await updateClientPayment(idHdParam, tenKH, sdtKH, emailKH, diaChi);
-      // navigate(`/client/client-timeline/${idHdParam}`);
+
     } else if (isDeliveryChecked === true) {
-      // if (listHTTT.length > 0) {
       setOpenConfirm(true);
 
-      // await updateClientPayment1(idHdParam, tenKH, sdtKH, emailKH, diaChi);
-      // setAlertContent({
-      //   type: 'success',
-      //   message: 'Hãy Thanh Toán Trước. Cảm Ơn!!!',
-      // });
-      // const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
-      // window.location.href = paymentOn;
     }
   };
   const handleCloseConfirm = () => {
@@ -322,17 +308,14 @@ export default function PaymentPage1() {
     return () => {};
   }, [idHdParam, listHD.trangThai, navigate]);
 
-  useEffect(() => {
-    const handleUnload = async () => {
-      await deleteOverTime(idHdParam);
-    };
+  // const location = useLocation();
 
-    window.addEventListener('beforeunload', handleUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleUnload);
-    };
-  }, [idHdParam]);
+  // useEffect(() => () => {
+  //     if (location.pathname !== '/client/payment/427') {
+  //       // Thực hiện xóa khi chuyển trang ra khỏi đường dẫn cụ thể
+  //       deleteOverTime(idHdParam);
+  //     }
+  //   }, [idHdParam, location.pathname]);
 
   return (
     <>
