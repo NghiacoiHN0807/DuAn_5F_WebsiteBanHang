@@ -10,7 +10,6 @@ import com.example.fullstackbackend.entity.LichSuHoaDon;
 import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.ChitietsanphamService;
-import com.example.fullstackbackend.services.GioHangChiTietSevice;
 import com.example.fullstackbackend.services.HinhThucThanhToanSevice;
 import com.example.fullstackbackend.services.HoadonSevice;
 import com.example.fullstackbackend.services.HoadonchitietSevice;
@@ -247,7 +246,7 @@ public class HoaDonController {
 
         List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(newHD1.getIdHd());
 
-        if (newHD.getTrangThai() == 10) {
+        if (newHD.getTrangThai() == 10 || newHD.getTrangThai() == 15) {
             for (HoaDonChiTiet x :
                     hoaDonChiTiets) {
                 List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());

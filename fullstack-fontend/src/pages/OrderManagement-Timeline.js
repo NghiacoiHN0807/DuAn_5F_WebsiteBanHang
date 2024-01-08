@@ -41,6 +41,7 @@ import ModalUpdateProductOnCart from '../forms/Modals-Update-Product-Cart';
 import ModalChangeAddress from '../forms/Modals-Change-Address';
 import { selectDiaChiByTK } from '../service/client/Payment';
 import ModalChangeAddressNoAcc from '../forms/Modals-Change-AddressNoAcc';
+import ModalUpdateStatusUnsuccess from '../forms/Modal-Update-Status-Unsuccess';
 
 const styles = {
   container: {
@@ -64,7 +65,6 @@ const OrderManagementTimeline = ({ classes }) => {
     try {
       const res = await getDetailOneHD(idHdParam);
       const res1 = await viewAllHTTT(idHdParam);
-      console.log('listData: ', res);
 
       setListData(res);
       setListHTTT(res1);
@@ -96,9 +96,9 @@ const OrderManagementTimeline = ({ classes }) => {
   // Handle delete
 
   const [openDelete, setOpenDelete] = useState(false);
-  const [information, setInformation] = useState();
+  // const [information, setInformation] = useState();
   const handleNextClick = () => {
-    setInformation(listData[0].idHd);
+    // setInformation(listData[0].idHd);
     setOpenDelete(true);
   };
   const handleClose1 = () => {
@@ -107,7 +107,7 @@ const OrderManagementTimeline = ({ classes }) => {
   };
 
   function getColorForTrangThai(trangThai) {
-    if (trangThai === 10) return '#ff0000';
+    if (trangThai === 10 || trangThai === 15) return '#ff0000';
     if (trangThai === 6) return '#ffff00';
     if (trangThai === 7 || trangThai === 12) return '#ffA500';
     if (trangThai >= 0) return '#64a338';
@@ -127,6 +127,8 @@ const OrderManagementTimeline = ({ classes }) => {
     if (trangThai === 10) return 'Đơn Hàng Đã Bị Hủy';
     if (trangThai === 11) return 'Tạo Hóa Đơn Treo Thành Công';
     if (trangThai === 12) return 'Chỉnh Sửa Địa Chỉ';
+    if (trangThai === 15) return 'Đơn Hàng Không Hoàn Thành';
+
     return 'Trạng Thái Trống';
   }
 
@@ -139,7 +141,7 @@ const OrderManagementTimeline = ({ classes }) => {
     if (trangThai === 5) return FcHome;
     if (trangThai === 6) return FcProcess;
     if (trangThai === 7 || trangThai === 12) return FcTodoList;
-    if (trangThai === 10) return FcDeleteDatabase;
+    if (trangThai === 10 || trangThai === 15) return FcDeleteDatabase;
     return FcCancel;
   }
 
@@ -226,7 +228,11 @@ const OrderManagementTimeline = ({ classes }) => {
         break;
       case 10:
         badgeVariant = 'error';
-        statusText = 'Đơn hàng đã hủy';
+        statusText = 'Đơn Hàng Đã Hủy';
+        break;
+      case 15:
+        badgeVariant = 'error';
+        statusText = 'Đơn Hàng Không Hoàn Thành';
         break;
       default:
         badgeVariant = 'default';
@@ -373,11 +379,23 @@ const OrderManagementTimeline = ({ classes }) => {
               ? 'Đơn Đã Hoàn Thành'
               : activeIndex === 10
               ? 'Đơn Hàng Đã Bị Hủy'
+              : activeIndex === 15
+              ? 'Đơn Hàng Không Hoàn Thành'
               : 'Đơn Đã Hoàn Thành1'}
           </Button>{' '}
-          <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 1}>
-            Hủy Đơn Hàng
-          </Button>{' '}
+          {activeIndex < 1 ? (
+            <>
+              <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 1}>
+                Hủy Đơn Hàng
+              </Button>{' '}
+            </>
+          ) : (
+            <>
+              <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 5}>
+                Không Hoàn Thành
+              </Button>{' '}
+            </>
+          )}
           <Button variant="outlined" color="error" onClick={handleSelect}>
             Chi Tiết
           </Button>
@@ -633,8 +651,15 @@ const OrderManagementTimeline = ({ classes }) => {
             getListData={getListData}
             listHTTT={listHTTT}
           />
+          <ModalUpdateStatusUnsuccess
+            show={openDelete}
+            handleClose={handleClose1}
+            activeIndex={activeIndex}
+            getListData={getListData}
+            listHTTT={listHTTT}
+          />
           {/* Dialog xác nhận xóa */}
-          <ModalDeleteDirectSale open={openDelete} handleClose={handleClose1} information={information} />
+          {/* <ModalDeleteDirectSale open={openDelete} handleClose={handleClose1} information={information} /> */}
         </div>
       </div>
       <SelectHistoryBill open={showModalsDT} handleClose={handleCloseAddDT} listData={listData} />

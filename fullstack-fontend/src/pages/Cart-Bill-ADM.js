@@ -213,6 +213,7 @@ const CartBillADM = () => {
       const res = await finByProductOnCart(idHdParam);
       if (res) {
         setDataCart(res);
+        console.log('Sản Phẩm Trong Giỏ Hàng: ', res);
       }
     } catch (error) {
       console.error(error);
@@ -583,41 +584,58 @@ const CartBillADM = () => {
   const generatePDF = async () => {
     const pdfDoc = new JsPdf();
 
-    // Bước 1: Tạo canvas tạm
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
+    canvas.width = 595;
+    canvas.height = 842;
 
-    // Vẽ nội dung tiếng Việt
     ctx.font = '16px Arial';
     const lineHeight = 25;
 
-    // Vị trí x bắt đầu vẽ text
-    let x = 20;
-    let y = 50;
+    const x = 20;
+    const y = 50;
 
-    // Căn giữa theo chiều dọc
     ctx.textBaseline = 'middle';
 
-    // Vẽ từng dòng
-    ctx.fillText('Hóa đơn số: #543', x, y);
+    ctx.fillText(`Mã Hóa Đơn: ${listHD.maHd}`, x, y);
+    ctx.fillText(`Tên Khách Hàng: ${listHD.tenKh}`, x, y + lineHeight);
+    ctx.fillText(`SDT: ${listHD.sdtKh}`, x, y + 2 * lineHeight);
 
-    // Tính toán tọa độ y mới
-    y += lineHeight;
+    const tableColumn = ['STT', 'Tên SP', 'Thuộc Tính', 'Giá', 'Số Lượng', 'Thành Tiền'];
+    const dataCartRows = DataCart.map((item, index) => [
+      index + 1,
+      item[5],
+      item[6] + item[11],
+      item[7],
+      item[8],
+      item[9],
+    ]);
 
-    ctx.fillText('Hóa đơn số: #534', x, y);
+    const cellWidth = 30;
+    const cellHeight = 10;
 
-    // Căn giữa theo chiều ngang
-    x = (canvas.width - ctx.measureText('Hóa đơn số: #545343').width) / 2;
+    const tableWidth = cellWidth * tableColumn.length;
+    const tableHeight = (dataCartRows.length + 1) * cellHeight;
 
-    ctx.fillText('Hóa đơn số: #545343', x, y + lineHeight);
+    // Căn giữa bảng trên canvas
+    const tableStartX = (canvas.width - tableWidth) / 2;
+    const tableStartY = (canvas.height - tableHeight) / 2;
 
-    // Bước 2: Lấy dữ liệu canvas ra data URL
+    ctx.lineWidth = 1;
+    ctx.strokeRect(tableStartX, tableStartY, tableWidth, tableHeight);
+
+    ctx.font = 'bold 16px Arial';
+
+    ctx.font = '16px Arial';
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    ctx.fillStyle = '#000';
+
     const imgData = canvas.toDataURL('image/png');
 
-    // Thêm nội dung tiếng Việt
     pdfDoc.addImage(imgData, 'PNG', 10, 10);
-
-    // pdfDoc.text('Hóa đơn số: #123', 10, 10);
 
     pdfDoc.save('invoice.pdf');
   };

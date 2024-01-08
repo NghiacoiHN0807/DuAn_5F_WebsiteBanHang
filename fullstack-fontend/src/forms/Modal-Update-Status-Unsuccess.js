@@ -13,9 +13,9 @@ import { updateStatusBill } from '../service/OrderManagementTimeLine';
 
 const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
-const ModalUpdateStatus = (props) => {
+const ModalUpdateStatusUnsuccess = (props) => {
   // Get Props
-  ModalUpdateStatus.propTypes = {
+  ModalUpdateStatusUnsuccess.propTypes = {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     getListData: PropTypes.func.isRequired,
@@ -38,14 +38,13 @@ const ModalUpdateStatus = (props) => {
           message: 'Hãy Nhập Thêm Mô Tả',
         });
       } else {
-        if (listHTTT.length > 0) {
-          const newActiveIndex = activeIndex === 3 ? 5 : activeIndex + 1;
+        if (activeIndex < 1) {
           handleOpenBD();
-          await updateStatusBill(idHdParam, moTa, newActiveIndex);
+          await updateStatusBill(idHdParam, moTa, 10);
           handleCloseBD();
         } else {
           handleOpenBD();
-          await updateStatusBill(idHdParam, moTa, activeIndex + 1);
+          await updateStatusBill(idHdParam, moTa, 15);
           handleCloseBD();
         }
         setAlertContent({
@@ -86,7 +85,7 @@ const ModalUpdateStatus = (props) => {
           // fullWidth
           aria-describedby="alert-dialog-slide-description"
         >
-          <DialogTitle>{'Cập Nhập Lịch Sử Hóa Đơn Thành Công'}</DialogTitle>
+          <DialogTitle>{'Cập Nhập Lịch Sử Hóa Đơn Không Thành Công'}</DialogTitle>
           <DialogContent>
             {/* <DialogContentText id="alert-dialog-slide-description"> */}
             <div>
@@ -128,4 +127,4 @@ const ModalUpdateStatus = (props) => {
     </>
   );
 };
-export default ModalUpdateStatus;
+export default ModalUpdateStatusUnsuccess;
