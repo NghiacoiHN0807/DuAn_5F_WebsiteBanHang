@@ -623,9 +623,9 @@ public class HoaDonController {
             // Add to payments
             HinhThucThanhToan hinhThucThanhToan1 = new HinhThucThanhToan();
             hinhThucThanhToan1.setIdHd(hoaDon);
-            hinhThucThanhToan1.setHinhThuc("Thanh Toán Online");
+            hinhThucThanhToan1.setHinhThuc("Thanh Toán VNPAY");
             hinhThucThanhToan1.setSoTien(realPrice);
-            hinhThucThanhToan1.setMoTa("Thanh Toán Online");
+            hinhThucThanhToan1.setMoTa("Thanh Toán VNPAY");
             hinhThucThanhToan1.setTrangThai(0);
 
             HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
@@ -654,14 +654,14 @@ public class HoaDonController {
             // Switch tab
             response.sendRedirect("http://localhost:3000/dashboard/bills/time-line/" + idHd);
 
-            return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
+            return ResponseEntity.ok("Thanh Toán VNPAY Thành Công!!!");
         } else {
             if (getOne.get().getTrangThai() <= 6) {
                 response.sendRedirect("http://localhost:3000/dashboard/bills/time-line/" + idHd);
-                return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
+                return ResponseEntity.ok("Thanh Toán VNPAY Không Thành Công!!!");
             } else {
                 response.sendRedirect("http://localhost:3000/dashboard/sales/card-bill/" + idHd);
-                return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
+                return ResponseEntity.ok("Thanh Toán VNPAY Không Thành Công!!!");
             }
         }
 
@@ -710,7 +710,7 @@ public class HoaDonController {
             // Add to payments
             HinhThucThanhToan hinhThucThanhToan1 = new HinhThucThanhToan();
             hinhThucThanhToan1.setIdHd(hoaDon);
-            hinhThucThanhToan1.setHinhThuc("Thanh Toán Online");
+            hinhThucThanhToan1.setHinhThuc("Thanh Toán VNPAY");
             hinhThucThanhToan1.setSoTien(realPrice);
             hinhThucThanhToan1.setMoTa("Thanh Toán Bằng Thẻ Qua VNPay");
             hinhThucThanhToan1.setTrangThai(0);
@@ -749,17 +749,17 @@ public class HoaDonController {
 
             // Update HD to ship
             getOne.setTrangThai(0);
-            updateStatus(getOne, getOne.getIdHd(), "Thanh Toán Online");
+            updateStatus(getOne, getOne.getIdHd(), "Thanh Toán VNPAY");
             if (getOne.getIdKH() != null) {
                 response.sendRedirect("http://localhost:3000/client/client-timeline/" + idHd);
             } else {
                 response.sendRedirect("http://localhost:3000");
             }
 
-            return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
+            return ResponseEntity.ok("Thanh Toán VNPAY Thành Công!!!");
         } else {
             response.sendRedirect("http://localhost:3000/client/payment/" + idHd);
-            return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
+            return ResponseEntity.ok("Thanh Toán VNPAY Không Thành Công!!!");
 
         }
 

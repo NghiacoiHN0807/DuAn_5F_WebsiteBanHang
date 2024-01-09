@@ -16,6 +16,7 @@ import {
 import ModalUpdateProductOnCartClient from '../../forms/client/Modals-Update-Product-Cart-Client';
 import { findById } from '../../service/BillSevice';
 import ModalDeleteProductClient from '../../forms/client/Modals-Delete-ProductOnCart';
+import { deleteOverTime } from '../../service/client/Payment';
 
 const StyledProductImg = styled('img')({
   top: 0,
@@ -211,6 +212,7 @@ export default function Cart() {
           type: 'warning',
           message: changtoHDCT.data.error,
         });
+        await deleteOverTime(res.idHd);
       } else {
         console.log('selectedItems', selectedItems);
         setAlertContent({

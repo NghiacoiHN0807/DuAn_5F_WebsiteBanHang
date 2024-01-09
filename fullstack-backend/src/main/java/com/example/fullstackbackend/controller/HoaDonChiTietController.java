@@ -71,6 +71,11 @@ public class HoaDonChiTietController {
         return hoadonchitietSevice.getListProductOncart2(idHd);
     }
 
+    @GetMapping("view-all-prduct3/{idHd}")
+    public List<Object[]> getSanPhamsWithSizes3(@PathVariable("idHd") Integer idHd) {
+        return hoadonchitietSevice.getListProductOncart3(idHd);
+    }
+
     @GetMapping("detail-get-one/{id}")
     public List<HoaDonChiTiet> detailCTSP(@PathVariable("id") Integer id) {
         return hoadonchitietSevice.getOne(id);
@@ -89,12 +94,11 @@ public class HoaDonChiTietController {
 
     @PutMapping("return-item")
     public HoaDonChiTiet returnItem(@Valid @RequestBody HoaDonChiTiet updateHD,
-                                    BindingResult bindingResult) {
-        System.out.println("updateHD: " + updateHD.getIdHdct());
+                                    BindingResult bindingResult,@RequestBody Integer status) {
         if (bindingResult.hasErrors()) {
             return null;
         } else {
-            return hoadonchitietSevice.returnItem(updateHD);
+            return hoadonchitietSevice.returnItem(updateHD, status);
         }
     }
 

@@ -90,7 +90,7 @@ const ModalDetailItemReturn = (props) => {
         lyDoHuy: reasonReturn,
         trangThai: 6,
       };
-      await returnItem(updateHDCT);
+      await returnItem(updateHDCT, 1);
 
       setAlertContent({
         type: 'success',

@@ -18,6 +18,7 @@ public interface HoadonchitietSevice {
     List<Object[]> getListProductOncart(Integer idHd);
 
     List<Object[]> getListProductOncart2(Integer idHd);
+    List<Object[]> getListProductOncart3(Integer idHd);
 
     Page<HoaDonChiTiet> getListProductByIDKH(Integer idKH, Integer pageNo, Integer size);
 
@@ -31,7 +32,7 @@ public interface HoadonchitietSevice {
 
     ResponseEntity<?> update(HoaDonChiTiet update);
 
-    HoaDonChiTiet returnItem(HoaDonChiTiet update);
+    HoaDonChiTiet returnItem(HoaDonChiTiet update, Integer status);
 
     LichSuHoaDon addLS(HoaDonChiTiet addLS, int status);
 

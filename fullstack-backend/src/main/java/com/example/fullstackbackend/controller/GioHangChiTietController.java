@@ -104,7 +104,7 @@ public class GioHangChiTietController {
     public ResponseEntity<?> addToHDCT(@PathVariable("id") Integer idHD,
                                        @RequestBody List<GioHangChiTiet> newHDCT) {
         boolean hasError = false;
-        String nameProduct = "";
+        String nameError = "";
 
         // Check quantity in product
         List<HoaDon> hoaDonList = hoadonSevice.findAllByTrangThai(11);
@@ -116,21 +116,27 @@ public class GioHangChiTietController {
                 ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(y.getIdCtsp().getIdCtsp()).orElseThrow();
                 for (GioHangChiTiet z :
                         newHDCT) {
-                    if (z.getSoLuong() + y.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
-                        nameProduct = chiTietSanPham.getIdSp().getTenSp();
-                        hasError = true;
-                        break;
+                    if (z.getIdCtsp().getIdCtsp().equals(chiTietSanPham.getIdCtsp())  && y.getIdCtsp().getIdCtsp().equals(chiTietSanPham.getIdCtsp())) {
+                        if (z.getSoLuong() + y.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+                            nameError = "Số Lượng Tồn Của Sản Phẩm "+ chiTietSanPham.getIdSp().getTenSp()+ " Không Đủ";
+                            hasError = true;
+                            break;
+                        } else if (y.getIdCtsp().getTrangThai() == 10) {
+                            nameError = "Sản Phẩm "+ chiTietSanPham.getIdSp().getTenSp()+ " Đã Ngừng Kinh Doanh";
+                            hasError = true;
+                            break;
+                        }
                     }
+
                 }
 
             }
         }
-
         // Done
         if (hasError) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(Collections.singletonMap("error", "Số Lượng Tồn Của Sản Phẩm " + nameProduct + " Không Đủ"));
+                    .body(Collections.singletonMap("error", nameError));
         } else {
             // Detail HoaDon
             HoaDon hoaDon = hoadonSevice.findById(idHD).orElseThrow();
