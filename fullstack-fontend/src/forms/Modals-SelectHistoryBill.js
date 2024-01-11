@@ -148,16 +148,18 @@ const SelectHistoryBill = (props) => {
   function getTextForTrangThai(trangThai) {
     if (trangThai === 0) return 'Tạo Đơn Hàng Ship';
     if (trangThai === 8) return 'Đã Xác Nhận Đơn Tại Quầy';
-    if (trangThai === 1) return 'Đã Xác Nhận Đơn ';
+    if (trangThai === 1) return 'Đã Xác Nhận Đơn';
     if (trangThai === 2) return 'Đã Xác Nhận Người Mua';
     if (trangThai === 3) return 'Đã Chuyển Cho Đơn Vị';
-    if (trangThai === 4 || trangThai === 9) return 'Đã Xác Nhận Thanh Toán';
+    if (trangThai === 4) return 'Đã Xác Nhận Thanh Toán';
+    if (trangThai === 9) return 'Đã Thanh Toán Tại Quầy';
     if (trangThai === 5) return 'Nhận Hàng Thành Công';
     if (trangThai === 6) return 'Đổi/Trả Hàng';
     if (trangThai === 7) return 'Chỉnh Sửa Đơn Hàng';
     if (trangThai === 10) return 'Đơn Hàng Đã Bị Hủy';
     if (trangThai === 11) return 'Tạo Hóa Đơn Treo Thành Công';
     if (trangThai === 12) return 'Chỉnh Sửa Địa Chỉ';
+    if (trangThai === 15) return 'Đơn Hàng Không Hoàn Thành';
 
     return 'Trạng Thái Trống';
   }

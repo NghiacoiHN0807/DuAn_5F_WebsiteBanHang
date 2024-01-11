@@ -106,7 +106,7 @@ const ModalPaymentComfirm = (props) => {
             message: 'Tiền Khách Đưa Chưa Đủ',
           });
         } else {
-          const changtoHDCT = await updatePayment(idHdParam, tenKhTT, sdtKHTT, thanhTien, cashGiven, change, 9);
+          const changtoHDCT = await updatePayment(idHdParam, tenKhTT, sdtKHTT, cashGiven, change, 9);
           if (changtoHDCT.status === 400) {
             setAlertContent({
               type: 'warning',
