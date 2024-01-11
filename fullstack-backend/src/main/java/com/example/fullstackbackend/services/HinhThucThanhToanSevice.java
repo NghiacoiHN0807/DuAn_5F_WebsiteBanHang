@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package com.example.fullstackbackend.services;
 
 import com.example.fullstackbackend.entity.HinhThucThanhToan;
@@ -20,3 +21,23 @@ public interface HinhThucThanhToanSevice {
     List<HinhThucThanhToan> detail(Integer id);
 
 }
+=======
+package com.example.fullstackbackend.services;
+
+import com.example.fullstackbackend.entity.HinhThucThanhToan;
+
+import java.util.List;
+
+public interface HinhThucThanhToanSevice {
+    List<HinhThucThanhToan> getAll();
+
+    HinhThucThanhToan add(HinhThucThanhToan add);
+
+    void delete(Integer id);
+
+    HinhThucThanhToan update(HinhThucThanhToan update);
+
+    List<HinhThucThanhToan> detail(Integer id);
+
+}
+>>>>>>> origin/nghiant0807
