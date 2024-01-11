@@ -360,7 +360,6 @@ public class HoaDonController {
 
             List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(newHD1.getIdHd());
             //Update Inventory number
-
             if (newHD.getTrangThai() == 9) {
                 for (HoaDonChiTiet x :
                         hoaDonChiTiets) {
@@ -374,6 +373,20 @@ public class HoaDonController {
                         chitietsanphamSer.update(y);
                     }
                 }
+            } else if (newHD.getTrangThai() == 0) {
+                for (HoaDonChiTiet x :
+                        hoaDonChiTiets) {
+                    List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                    for (ChiTietSanPham y :
+                            chiTietSanPhams) {
+                        y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                        if (y.getSoLuongTon() <= 0) {
+                            y.setTrangThai(10);
+                        }
+                        chitietsanphamSer.update(y);
+                    }
+                }
+
             }
 
             //Add to payments
