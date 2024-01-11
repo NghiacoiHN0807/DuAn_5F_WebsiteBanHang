@@ -2,7 +2,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import '../scss/Car-Bill-ADM.scss';
 import { Alert, Dialog, FormControlLabel, Snackbar, Switch, TextField } from '@mui/material';
 import { useState, forwardRef } from 'react';
-import { format } from 'date-fns';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -55,7 +54,7 @@ const ModalPaymentComfirm = (props) => {
 
   const handlePaymentOnCash = async () => {
     try {
-      if (cashGiven === 0 || cashGiven === null) {
+      if (cashGiven === 0 || cashGiven === null || cashGiven.trim() === '') {
         setAlertContent({
           type: 'warning',
           message: 'Số Tiền Gửi Không Được Để Trống Và Phải Là Số Lớn Hơn Thành Tiền',
@@ -141,7 +140,7 @@ const ModalPaymentComfirm = (props) => {
         change = cashGivenValue - thanhTien;
       }
     }
-    if (cashGiven === 0 || cashGiven === null) {
+    if (cashGiven === 0 || cashGiven === null || cashGiven.trim() === '') {
       setAlertContent({
         type: 'warning',
         message: 'Số Tiền Gửi Không Được Để Trống Và Phải Là Số Lớn Hơn Thành Tiền',

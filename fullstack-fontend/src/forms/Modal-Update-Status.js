@@ -38,9 +38,10 @@ const ModalUpdateStatus = (props) => {
           message: 'Hãy Nhập Thêm Mô Tả',
         });
       } else {
+        handleOpenBD();
+
         if (listHTTT.length > 0) {
           const newActiveIndex = activeIndex === 3 ? 5 : activeIndex + 1;
-          handleOpenBD();
           const changtoHDCT = await updateStatusBill(idHdParam, moTa, newActiveIndex);
           if (changtoHDCT.status === 400) {
             setAlertContent({
