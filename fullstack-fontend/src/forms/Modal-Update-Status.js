@@ -47,15 +47,10 @@ const ModalUpdateStatus = (props) => {
               type: 'warning',
               message: changtoHDCT.data.error,
             });
-          } else if (changtoHDCT.status === 200) {
+          } else {
             setAlertContent({
               type: 'success',
               message: 'Đã Cập Nhập Trạng Thái Hóa Đơn!!!',
-            });
-          } else {
-            setAlertContent({
-              type: 'warning',
-              message: 'Không Thành Công',
             });
           }
           handleCloseBD();
@@ -66,15 +61,10 @@ const ModalUpdateStatus = (props) => {
               type: 'warning',
               message: changtoHDCT.data.error,
             });
-          } else if (changtoHDCT.status === 200) {
+          } else {
             setAlertContent({
               type: 'success',
               message: 'Đã Cập Nhập Trạng Thái Hóa Đơn!!!',
-            });
-          } else {
-            setAlertContent({
-              type: 'warning',
-              message: 'Không Thành Công',
             });
           }
           handleCloseBD();
