@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 @Entity
 @AllArgsConstructor
@@ -32,6 +33,9 @@ public class HinhThucThanhToan {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_hd", referencedColumnName = "id_hd")
     private HoaDon idHd;
+
+    @Column(name = "ngay_thanh_toan")
+    private Timestamp ngayThanhToan;
 
     @Column(name = "hinh_thuc")
     private String hinhThuc;

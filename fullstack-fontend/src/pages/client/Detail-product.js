@@ -51,9 +51,6 @@ const DetailProduct = () => {
       const minPrice = Math.min(...giaThucTe);
       const maxPrice = Math.max(...giaThucTe);
 
-      // Create the price range string
-      const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
-      const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
       const priceRange =
         minPrice === maxPrice ? formatCurrency(minPrice) : `${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}`;
       setPrice(priceRange);
@@ -145,7 +142,14 @@ const DetailProduct = () => {
       const getProduct = await listProductOnCart(authorities.idTaiKhoan);
 
       existsProduct = getProduct.filter((product) => product.idCtsp.idCtsp === selectSoLuongTon[0].idCtsp);
+    } else if (!getLocalStore && selectSoLuongTon.length > 0) {
+      const currentCart = JSON.parse(localStorage.getItem('cartProduct'));
+      if (currentCart && Object.keys(currentCart).length > 0) {
+        const cartArray = Object.values(currentCart);
+        existsProduct = cartArray.filter((product) => product.idCtsp.idCtsp === selectSoLuongTon[0].idCtsp);
+      }
     }
+
     if (selectedMauSacIsNull || selectSoLuongTon.length === 0) {
       setAlertContent({
         type: 'warning',

@@ -217,7 +217,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
 
   return (
     <>
-      <Button disableRipple color="inherit" endIcon={<Iconify icon=" ic:round-filter-list" />} onClick={onOpenFilter}>
+      <Button disableRipple color="inherit" onClick={onOpenFilter}>
         <FilterListIcon />
       </Button>
 
@@ -251,7 +251,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
                   <RadioGroup aria-labelledby="demo-radio-buttons-group-label" name="radio-buttons-group">
                     <FormControlLabel
                       value={'all'}
-                      control={<Radio defaultChecked />}
+                      control={<Radio />}
                       label="Tất cả"
                       checked={locLsp === 'all'}
                       onChange={() => setLocLsp('all')}
@@ -315,7 +315,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
 
             <div>
               <Typography variant="subtitle1" gutterBottom>
-                Tay áo
+                Ống tay áo / Ống quần
               </Typography>
 
               {listTayAo.length > 0 && (
@@ -336,7 +336,7 @@ export default function ShopFilterSidebar({ openFilter, onOpenFilter, onCloseFil
 
             <div>
               <Typography variant="subtitle1" gutterBottom>
-                Cổ áo
+                Loại cổ áo / Loại ống quần
               </Typography>
 
               {listCoAo.length > 0 && (

@@ -158,6 +158,11 @@ export default function CouponsPage() {
     // const [currentPage, setCurrentPage] = useState(0);
     useEffect(() => {
         getListData();
+        const storedMessage = localStorage.getItem('successMessage');
+        if (storedMessage) {
+            setAlertContent(JSON.parse(storedMessage));
+            localStorage.removeItem('successMessage');
+        }
     }, [startDateFilter, endDateFilter, statusFilter, minAmountFilter, maxAmountFilter]);
 
 
@@ -232,6 +237,11 @@ export default function CouponsPage() {
             color="primary"
             variant="outlined"
             style={{ color: 'white', backgroundColor: 'green', border: 'none' }}
+        /> : trangThai === 1 ? <Chip
+            label="Chờ Giảm Giá"
+            color="secondary"
+            variant="outlined"
+            style={{ color: 'black', backgroundColor: 'yellow', border: 'none' }}
         /> : trangThai === 10 ? <Chip
             label="Dừng hoạt động"
             color="secondary"
@@ -406,6 +416,7 @@ export default function CouponsPage() {
                         >
                             <MenuItem value="">Tất Cả</MenuItem>
                             <MenuItem value="0">Hoạt Động</MenuItem>
+                            <MenuItem value="1">Chờ Giảm Giá</MenuItem>
                             <MenuItem value="10">Dừng Hoạt Động</MenuItem>
                         </TextField>
                         <TextField

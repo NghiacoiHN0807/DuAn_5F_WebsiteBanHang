@@ -119,16 +119,16 @@ const Header = () => {
             <Container>
               <Nav className="justify-content-end" activeKey="/home">
                 <Nav.Item>
-                  <Nav.Link href="/home" className="nav-links">
-                    Help
+                  <Nav.Link href="/" className="nav-links">
+                    Trang Chủ
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                   <span className="nav-separator">|</span>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="link-1" className="nav-links">
-                    Join Us
+                  <Nav.Link href="/client/contact" eventKey="link-1" className="nav-links">
+                    Về Chúng Tôi
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
@@ -209,7 +209,7 @@ const Header = () => {
                     </>
                   ) : (
                     <Nav.Link href="/login" eventKey="link-2" className="nav-links">
-                      Login
+                      Đăng Nhập
                     </Nav.Link>
                   )}
                 </Nav.Item>

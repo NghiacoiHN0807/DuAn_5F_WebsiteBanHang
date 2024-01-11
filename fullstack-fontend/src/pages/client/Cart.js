@@ -16,6 +16,7 @@ import {
 import ModalUpdateProductOnCartClient from '../../forms/client/Modals-Update-Product-Cart-Client';
 import { findById } from '../../service/BillSevice';
 import ModalDeleteProductClient from '../../forms/client/Modals-Delete-ProductOnCart';
+import { deleteOverTime } from '../../service/client/Payment';
 
 const StyledProductImg = styled('img')({
   top: 0,
@@ -47,17 +48,13 @@ export default function Cart() {
         getOneSP = await listProductOnCart(authorities.idTaiKhoan);
       } else {
         const currentCart = JSON.parse(localStorage.getItem('cartProduct')) || {}; // Nếu chưa có giá trị, tạo một đối tượng rỗng
-        console.log('idCtspListđá: ', currentCart);
         getOneSP = Object.values(currentCart);
-        // getOneSP = currentCart;
       }
       setProductOnCart(getOneSP);
-      console.log('getOneSP: ', getOneSP);
       const productId = getOneSP.map((item) => item.idCtsp.idSp.idSp);
       const imgDataArray = await Promise.all(productId.map((productId) => listImg(productId)));
 
       setImages(imgDataArray);
-      console.log('imgData: ', imgDataArray);
     } catch (e) {
       console.error(e);
     }
@@ -98,7 +95,7 @@ export default function Cart() {
     const updateProductOnCart = async () => {
       if (currentItemId !== null) {
         try {
-          await upadteProductOnCart(currentItemId, quantity);
+          await upadteProductOnCart(currentItemId, productOnCart[0].idGh.idGioHang, quantity);
           setCurrentItemId(null);
           getDetail();
         } catch (error) {
@@ -109,7 +106,7 @@ export default function Cart() {
     updateProductOnCart();
     setSelectAll(null);
     setTotalPayment(0);
-  }, [quantity, currentItemId, getDetail]);
+  }, [quantity, currentItemId, getDetail, productOnCart]);
 
   const [alertContent, setAlertContent] = useState(null);
 
@@ -205,18 +202,27 @@ export default function Cart() {
       });
     } else {
       const res = await postAddBillAddBill(authorities, totalPayment, 2, 11);
-      for (let i = 0; i < selectedItems.length; i += 1) {
-        (async () => {
-          await postAddDirectClient(res.idHd, selectedItems[i]);
-        })();
+      // // for (let i = 0; i < selectedItems.length; i += 1) {
+      // //   (async () => {
+      const changtoHDCT = await postAddDirectClient(res.idHd, selectedItems);
+      //   })();
+      // }
+      if (changtoHDCT.status === 400) {
+        setAlertContent({
+          type: 'warning',
+          message: changtoHDCT.data.error,
+        });
+        await deleteOverTime(res.idHd);
+      } else {
+        console.log('selectedItems', selectedItems);
+        setAlertContent({
+          type: 'success',
+          message: 'Tạo thành công hóa đơn',
+        });
+        setTimeout(() => {
+          navigate(`/client/payment/${res.idHd}`);
+        }, 200);
       }
-      setAlertContent({
-        type: 'success',
-        message: 'Tạo thành công hóa đơn',
-      });
-      setTimeout(() => {
-        navigate(`/client/payment/${res.idHd}`);
-      }, 200);
     }
   };
 

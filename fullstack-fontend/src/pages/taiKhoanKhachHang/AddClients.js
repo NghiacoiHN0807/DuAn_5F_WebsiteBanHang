@@ -77,6 +77,7 @@ const AddClients = () => {
     }, [email]);
 
     const handleSave = async () => {
+        handleClose();
         if (!validateFields()) {
             return;
         }

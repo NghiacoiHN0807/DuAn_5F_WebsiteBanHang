@@ -73,7 +73,7 @@ const UpdateAddress = () => {
 
         function findProvinceIDByName(data, provinceName) {
             const lowerCaseProvinceName = provinceName.toLowerCase();
-            console.log("data", data)
+            // console.log("data", data)
             for (let i = 0; i < data.length; i += 1) {
                 const province = data[i];
 
@@ -110,7 +110,7 @@ const UpdateAddress = () => {
 
                 setQuanHuyen(response.data.data);
             } catch (error) {
-                console.error('Error fetching quanHuyen:', error);
+                // console.error('Error fetching quanHuyen:', error);
             }
         }, [selectedTinhThanh]);
 
@@ -124,7 +124,7 @@ const UpdateAddress = () => {
         function findDistrictIDByName(data, districtName) {
 
             const lowerCaseDistrictName = districtName.toLowerCase();
-            console.log("data quan huyen ", quanHuyen)
+            // console.log("data quan huyen ", quanHuyen)
             for (let i = 0; i < data.length; i += 1) {
                 const district = data[i];
 
@@ -164,7 +164,7 @@ const UpdateAddress = () => {
         function findWardCodeByName(data, WardName) {
 
             const lowerCaseWardName = WardName.toLowerCase();
-            console.log("data phuong xa ", phuongXa)
+            // console.log("data phuong xa ", phuongXa)
             for (let i = 0; i < data.length; i += 1) {
                 const ward = data[i];
 
@@ -213,7 +213,7 @@ const UpdateAddress = () => {
                     },
                 });
                 const totalShip = response.data?.data?.total || 0;
-                console.log('getSevice: ', response);
+                // console.log('getSevice: ', response);
                 getTienShip(totalShip);
             } catch (error) {
                 console.error('Error get service:', error);
@@ -380,7 +380,7 @@ const UpdateAddress = () => {
                     tienShip,
                     trangThai
                 );
-                console.log("Check res: ", res);
+                // console.log("Check res: ", res);
             } catch (error) {
                 if (error.response && error.response.data) {
                     handleCloseBD();
@@ -422,7 +422,7 @@ const UpdateAddress = () => {
         return (
             <>
                 <Helmet>
-                    <title> Adress || 5F Store </title>
+                    <title> Địa Chỉ || 5F Store </title>
                 </Helmet>
                 <Container>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>

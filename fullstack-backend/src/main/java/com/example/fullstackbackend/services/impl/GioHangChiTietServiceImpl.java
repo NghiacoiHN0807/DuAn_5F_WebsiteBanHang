@@ -42,7 +42,7 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietSevice {
     public GioHangChiTiet update(GioHangChiTiet update) {
 //        GioHangChiTiet detailGH = gioHangChiTietReponsitory.findById(update.getIdGhct()).orElseThrow();
 //        if (detailGH != null) {
-        Optional<GioHangChiTiet> gioHangChiTietOptional = gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(update.getIdCtsp().getIdCtsp());
+        Optional<GioHangChiTiet> gioHangChiTietOptional = gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(update.getIdCtsp().getIdCtsp(), update.getIdGh().getIdGioHang());
         if (gioHangChiTietOptional.isPresent()) {
             ChiTietSanPham getCTSP = chitietsanphamRepository.findById(gioHangChiTietOptional.get().getIdCtsp().getIdCtsp()).orElseThrow();
 
@@ -75,10 +75,10 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietSevice {
         GioHangChiTiet gioHangChiTiet1 = new GioHangChiTiet();
 
         if (detailGH.isPresent()) {
-            Optional<GioHangChiTiet> checkExist = gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(gioHangChiTiet.getIdCtsp().getIdCtsp());
+            Optional<GioHangChiTiet> checkExist = gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(gioHangChiTiet.getIdCtsp().getIdCtsp(), detailGH.get().getIdGioHang());
             System.out.println("checkExist: " + checkExist);
             if (checkExist.isPresent()) {
-                GioHangChiTiet gioHangChiTietOptional = gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(getCTSP.get().getIdCtsp()).orElseThrow();
+                GioHangChiTiet gioHangChiTietOptional = gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(getCTSP.get().getIdCtsp(), detailGH.get().getIdGioHang()).orElseThrow();
                 gioHangChiTietOptional.setIdGh(detailGH.get());
                 gioHangChiTietOptional.setIdCtsp(gioHangChiTiet.getIdCtsp());
                 // Set quantity
@@ -104,10 +104,10 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietSevice {
     }
 
     @Override
-    public void updateGHCT(Integer id, GioHangChiTiet gioHangChiTiet) {
-        Optional<GioHangChiTiet> detailGHCT = gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(id);
+    public void updateGHCT(Integer id, Integer idGH, GioHangChiTiet gioHangChiTiet) {
+        Optional<GioHangChiTiet> detailGHCT = gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(id, idGH);
         if (detailGHCT.isPresent()) {
-            GioHangChiTiet detailGHCT1 = gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(id).orElseThrow();
+            GioHangChiTiet detailGHCT1 = gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(id, idGH).orElseThrow();
             // Set quantity and price
             detailGHCT1.setSoLuong(gioHangChiTiet.getSoLuong());
             BigDecimal price = detailGHCT.get().getIdCtsp().getGiaThucTe().multiply(new BigDecimal(gioHangChiTiet.getSoLuong()));
@@ -125,8 +125,9 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietSevice {
     }
 
     @Override
-    public Optional<GioHangChiTiet> finByIDCTSP(Integer idCtsp) {
-        return gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(idCtsp);
+    public Optional<GioHangChiTiet> finByIDCTSP(Integer idCtsp, Integer idGH) {
+
+        return gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(idCtsp, idGH);
     }
 
     @Override
