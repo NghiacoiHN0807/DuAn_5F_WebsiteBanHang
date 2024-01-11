@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface GioHangReponsitory extends JpaRepository<GioHang, Integer> {
 
     Optional<GioHang> findByIdKh_IdTaiKhoan(Integer idTK);
+
+
 }

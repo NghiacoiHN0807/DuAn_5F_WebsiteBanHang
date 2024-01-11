@@ -26,21 +26,25 @@ import PropTypes from 'prop-types';
 import withStyles from '@material-ui/core/styles/withStyles';
 import DeleteSweepOutlinedIcon from '@mui/icons-material/DeleteSweepOutlined';
 import { pink } from '@mui/material/colors';
+import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Timeline from '../MappingTimeLine/Timeline';
 import TimelineEvent from '../MappingTimeLine/TimelineEvent';
 import { viewAllHTTT } from '../service/OrderManagementTimeLine';
-import { finByProductOnCart2, findById } from '../service/BillSevice';
+import { finByIDHDCT, finByProductOnCart2, finByProductOnCart3, findById } from '../service/BillSevice';
 import ModalUpdateStatus from '../forms/Modal-Update-Status';
 import ModalPaymentComfirmTimeline from '../forms/Modal-Payment-Confirm-TimeLine';
 import { getDetailOneHD } from '../service/OderManagementSevice';
 import SelectHistoryBill from '../forms/Modals-SelectHistoryBill';
-import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
+// import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 import ModalAddProduct from '../forms/Modals-AddProduct';
 import ModalDeleteProductOnCart from '../forms/Modal-Delete-Product';
 import ModalUpdateProductOnCart from '../forms/Modals-Update-Product-Cart';
 import ModalChangeAddress from '../forms/Modals-Change-Address';
 import { selectDiaChiByTK } from '../service/client/Payment';
 import ModalChangeAddressNoAcc from '../forms/Modals-Change-AddressNoAcc';
+import ModalUpdateStatusUnsuccess from '../forms/Modal-Update-Status-Unsuccess';
+import { returnItem } from '../service/client/ReturnItem';
 
 const styles = {
   container: {
@@ -57,6 +61,7 @@ const OrderManagementTimeline = ({ classes }) => {
   const idHdParam = param.id;
   const [listData, setListData] = useState([]);
   const [listHTTT, setListHTTT] = useState([]);
+  const [soTienConLai, setSoTienConLai] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [idTaiKhoan, setIdTaiKhoan] = useState('');
   //   Select bill
@@ -64,10 +69,16 @@ const OrderManagementTimeline = ({ classes }) => {
     try {
       const res = await getDetailOneHD(idHdParam);
       const res1 = await viewAllHTTT(idHdParam);
-      console.log('listData: ', res);
 
       setListData(res);
       setListHTTT(res1);
+      console.log('res1', res1);
+      const totalSoTien = res1.reduce((acc, obj) => acc + obj.soTien, 0);
+      console.log('res[0].idHd.thanhTien', res[0].idHd.thanhTien);
+      console.log('totalSoTien', totalSoTien);
+
+      setSoTienConLai(res[0].idHd.thanhTien - totalSoTien);
+
       setActiveIndex(res[0].idHd.trangThai);
       setIdTaiKhoan(res[0].idHd.idKH.idTaiKhoan);
     } catch (error) {
@@ -79,12 +90,16 @@ const OrderManagementTimeline = ({ classes }) => {
   }, [getListData]);
 
   const [DataCart, setDataCart] = useState([]);
+  const [DataCart1, setDataCart1] = useState([]);
 
   const selectDataCart = useCallback(async () => {
     try {
       const res = await finByProductOnCart2(idHdParam);
+      const res1 = await finByProductOnCart3(idHdParam);
+
       if (res) {
         setDataCart(res);
+        setDataCart1(res1);
       }
     } catch (error) {
       console.error(error);
@@ -96,9 +111,9 @@ const OrderManagementTimeline = ({ classes }) => {
   // Handle delete
 
   const [openDelete, setOpenDelete] = useState(false);
-  const [information, setInformation] = useState();
+  // const [information, setInformation] = useState();
   const handleNextClick = () => {
-    setInformation(listData[0].idHd);
+    // setInformation(listData[0].idHd);
     setOpenDelete(true);
   };
   const handleClose1 = () => {
@@ -107,7 +122,7 @@ const OrderManagementTimeline = ({ classes }) => {
   };
 
   function getColorForTrangThai(trangThai) {
-    if (trangThai === 10) return '#ff0000';
+    if (trangThai === 10 || trangThai === 15) return '#ff0000';
     if (trangThai === 6) return '#ffff00';
     if (trangThai === 7 || trangThai === 12) return '#ffA500';
     if (trangThai >= 0) return '#64a338';
@@ -127,6 +142,8 @@ const OrderManagementTimeline = ({ classes }) => {
     if (trangThai === 10) return 'Đơn Hàng Đã Bị Hủy';
     if (trangThai === 11) return 'Tạo Hóa Đơn Treo Thành Công';
     if (trangThai === 12) return 'Chỉnh Sửa Địa Chỉ';
+    if (trangThai === 15) return 'Đơn Hàng Không Hoàn Thành';
+
     return 'Trạng Thái Trống';
   }
 
@@ -139,7 +156,7 @@ const OrderManagementTimeline = ({ classes }) => {
     if (trangThai === 5) return FcHome;
     if (trangThai === 6) return FcProcess;
     if (trangThai === 7 || trangThai === 12) return FcTodoList;
-    if (trangThai === 10) return FcDeleteDatabase;
+    if (trangThai === 10 || trangThai === 15) return FcDeleteDatabase;
     return FcCancel;
   }
 
@@ -226,7 +243,11 @@ const OrderManagementTimeline = ({ classes }) => {
         break;
       case 10:
         badgeVariant = 'error';
-        statusText = 'Đơn hàng đã hủy';
+        statusText = 'Đơn Hàng Đã Hủy';
+        break;
+      case 15:
+        badgeVariant = 'error';
+        statusText = 'Đơn Hàng Không Hoàn Thành';
         break;
       default:
         badgeVariant = 'default';
@@ -329,6 +350,34 @@ const OrderManagementTimeline = ({ classes }) => {
   };
   // Format thanhTien
   const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+  const handleCancelClick = async (item) => {
+    const updateHDCT = await finByIDHDCT(item[1]);
+    console.log(updateHDCT);
+    const changtoHDCT = await returnItem(updateHDCT, 3);
+
+    if (changtoHDCT.status === 400) {
+      console.log('Cancel button clicked');
+    } else {
+      selectDataCart();
+      getListData();
+      console.log('Cancel button clicked1');
+    }
+    // Xử lý khi nút X được nhấn
+  };
+
+  const handleCheckClick = async (item) => {
+    const updateHDCT = await finByIDHDCT(item[1]);
+
+    const changtoHDCT = await returnItem(updateHDCT, 2);
+    if (changtoHDCT.status === 400) {
+      console.log('Check button clicked');
+    } else {
+      selectDataCart();
+      getListData();
+      console.log('Check button clicked1');
+    }
+    // Xử lý khi nút V được nhấn
+  };
   return (
     <>
       <div className="row-order-management-timeline">
@@ -358,26 +407,38 @@ const OrderManagementTimeline = ({ classes }) => {
             {activeIndex === 0
               ? 'Xác Nhận Hóa Đơn'
               : activeIndex === 1
-                ? 'Xác Nhận Thông Tin'
-                : activeIndex === 2
-                  ? 'Chuyển Cho Đơn Vị'
-                  : activeIndex === 3 && listHTTT.length <= 0
-                    ? 'Xác Nhận Thanh Toán'
-                    : activeIndex === 3 && listHTTT.length >= 0
-                      ? 'Giao Thành Công'
-                      : activeIndex === 4
-                        ? 'Giao Thành Công'
-                        : activeIndex === 5
-                          ? 'Đã Giao Thành Công'
-                          : activeIndex === 9
-                            ? 'Đơn Đã Hoàn Thành'
-                            : activeIndex === 10
-                              ? 'Đơn Hàng Đã Bị Hủy'
-                              : 'Đơn Đã Hoàn Thành1'}
+              ? 'Xác Nhận Thông Tin'
+              : activeIndex === 2
+              ? 'Chuyển Cho Đơn Vị'
+              : activeIndex === 3 && listHTTT.length <= 0
+              ? 'Xác Nhận Thanh Toán'
+              : activeIndex === 3 && listHTTT.length >= 0
+              ? 'Giao Thành Công'
+              : activeIndex === 4
+              ? 'Giao Thành Công'
+              : activeIndex === 5
+              ? 'Đã Giao Thành Công'
+              : activeIndex === 9
+              ? 'Đơn Đã Hoàn Thành'
+              : activeIndex === 10
+              ? 'Đơn Hàng Đã Bị Hủy'
+              : activeIndex === 15
+              ? 'Đơn Hàng Không Hoàn Thành'
+              : 'Đơn Đã Hoàn Thành1'}
           </Button>{' '}
-          <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 1}>
-            Hủy Đơn Hàng
-          </Button>{' '}
+          {activeIndex < 1 ? (
+            <>
+              <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 1}>
+                Hủy Đơn Hàng
+              </Button>{' '}
+            </>
+          ) : (
+            <>
+              <Button variant="outlined" color="error" onClick={handleNextClick} disabled={activeIndex >= 5}>
+                Không Hoàn Thành
+              </Button>{' '}
+            </>
+          )}
           <Button variant="outlined" color="error" onClick={handleSelect}>
             Chi Tiết
           </Button>
@@ -410,7 +471,8 @@ const OrderManagementTimeline = ({ classes }) => {
                     {listData[0].idHd.diaChi && <h6>Địa Chỉ: {listData[0].idHd.diaChi}</h6>}
                     {listData[0].idHd.email && <h6>Email: {listData[0].idHd.email}</h6>}
                   </>
-                ) : listData[0].idHd.tenKh === '' || listData[0].idHd.tenKh === null && listData[0].idHd.idKH ? (
+                ) : (listData[0].idHd.tenKh === '' && listData[0].idHd.idKH) ||
+                  (listData[0].idHd.tenKh === null && listData[0].idHd.idKH) ? (
                   <>
                     {listData[0].idHd.idKH.ho && listData[0].idHd.idKH.ten && (
                       <h6>
@@ -442,7 +504,8 @@ const OrderManagementTimeline = ({ classes }) => {
               onClick={() => handlePayment()}
               size="small"
               variant="outlined"
-              disabled={activeIndex < 3 || activeIndex > 3 || listHTTT.length > 0}
+              // activeIndex > 3 ||
+              disabled={activeIndex < 3 || soTienConLai <= 0}
             >
               Xác nhận thanh toán
             </Button>
@@ -470,7 +533,7 @@ const OrderManagementTimeline = ({ classes }) => {
                         {item.hinhThuc}
                       </TableCell>
                       <TableCell align="right">{formatCurrency(item.soTien)}</TableCell>
-                      <TableCell align="right">{formatDateTime(item.idHd.ngayThanhToan)}</TableCell>
+                      <TableCell align="right">{formatDateTime(item.ngayThanhToan)}</TableCell>
                     </TableRow>
                   ))
                 ) : (
@@ -570,12 +633,16 @@ const OrderManagementTimeline = ({ classes }) => {
             </Table>{' '}
             {listData.length > 0 && (
               <>
-                {listData[0].idHd.tienShip && (
+                {listData[0].idHd.soTienGiamGia !== null && listData[0].idHd.soTienGiamGia > 0 && (
+                  <Typography sx={{ textAlign: 'right' }} variant="subtitle2" gutterBottom>
+                    Tiền Giảm Giá: -{formatCurrency(listData[0].idHd.soTienGiamGia)}
+                  </Typography>
+                )}
+                {listData[0].idHd.tienShip !== null && listData[0].idHd.tienShip > 0 && (
                   <Typography sx={{ textAlign: 'right' }} variant="subtitle2" gutterBottom>
                     Tiền Ship: {formatCurrency(listData[0].idHd.tienShip)}
                   </Typography>
                 )}
-
                 <Typography sx={{ textAlign: 'right' }} variant="h6" gutterBottom>
                   Thành Tiền: {formatCurrency(listData[0].idHd.thanhTien)}
                 </Typography>
@@ -590,7 +657,7 @@ const OrderManagementTimeline = ({ classes }) => {
                 showModalsAdd={showModalsAdd}
                 handleClose={handleClose}
                 listData={listData}
-                thanhTien={listData[0].idHd.thanhTien}
+                thanhTien={soTienConLai}
                 listHD={listData[0].idHd}
                 tenKhTT={listData[0].idHd.tenKh}
                 sdtKHTT={listData[0].idHd.sdtKh}
@@ -632,8 +699,95 @@ const OrderManagementTimeline = ({ classes }) => {
             getListData={getListData}
             listHTTT={listHTTT}
           />
+          <ModalUpdateStatusUnsuccess
+            show={openDelete}
+            handleClose={handleClose1}
+            activeIndex={activeIndex}
+            getListData={getListData}
+            listHTTT={listHTTT}
+          />
           {/* Dialog xác nhận xóa */}
-          <ModalDeleteDirectSale open={openDelete} handleClose={handleClose1} information={information} />
+          {/* <ModalDeleteDirectSale open={openDelete} handleClose={handleClose1} information={information} /> */}
+        </div>
+      </div>
+      <div className="row-order-management-timeline">
+        <div className="row row-top">
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+            <Typography variant="h6" gutterBottom>
+              Sản Phẩm Đổi Trả{' '}
+            </Typography>
+            <Button
+              size="small"
+              onClick={() => handleAddProduct()}
+              variant="outlined"
+              disabled={activeIndex >= 1 || listHTTT.length > 0}
+            >
+              Xác Nhận Đổi Trả
+            </Button>
+          </Stack>
+        </div>
+        <div className="row row-botton">
+          <TableContainer sx={{ marginTop: 2, marginBottom: 2 }} component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Ảnh</TableCell>
+                  <TableCell>Mã Sản Phẩm</TableCell>
+                  <TableCell align="right">Sản Phẩm</TableCell>
+                  <TableCell align="right">Thuộc tính</TableCell>
+                  <TableCell align="right">Giá</TableCell>
+                  <TableCell align="right">Số Lượng</TableCell>
+                  <TableCell align="right">Tổng</TableCell>
+                  <TableCell align="right">Lý Do Hoàn Trả</TableCell>
+                  <TableCell align="right">Xác Nhận</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {DataCart1 &&
+                  DataCart1.length > 0 &&
+                  DataCart1.map((item, index) => {
+                    const imagesArray = item[2].split(','); // Tách chuỗi thành mảng
+                    const firstImage = imagesArray[0];
+                    return (
+                      <TableRow
+                        key={index}
+                        sx={{
+                          '&:last-child td, &:last-child th': { border: 0 },
+                        }}
+                      >
+                        <TableCell>
+                          <Image rounded style={{ width: '150px', height: 'auto' }} src={firstImage} />
+                        </TableCell>
+                        <TableCell>{item[4]}</TableCell>
+                        <TableCell align="right">{item[5]}</TableCell>
+                        <TableCell align="right">
+                          Size: {item[6]}
+                          <br />
+                          Màu: {item[11]}
+                        </TableCell>
+                        <TableCell align="right">{formatCurrency(item[7])}</TableCell>
+                        <TableCell align="right">{item[8]}</TableCell>
+                        <TableCell align="right">{formatCurrency(item[9])}</TableCell>
+                        <TableCell align="right">{item[12]}</TableCell>
+                        <TableCell align="right">
+                          {item[13] < 11 && (
+                            <IconButton disabled={item[13] === 11} onClick={() => handleCancelClick(item)}>
+                              <CancelIcon />
+                            </IconButton>
+                          )}
+                          <IconButton disabled={item[13] === 11} onClick={() => handleCheckClick(item)}>
+                            <CheckCircleIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                <TableRow>
+                  <TableCell rowSpan={3} />
+                </TableRow>
+              </TableBody>
+            </Table>{' '}
+          </TableContainer>
         </div>
       </div>
       <SelectHistoryBill open={showModalsDT} handleClose={handleCloseAddDT} listData={listData} />

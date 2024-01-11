@@ -3,7 +3,6 @@ package com.example.fullstackbackend.controller;
 import com.example.fullstackbackend.config.payment.VNPayService;
 import com.example.fullstackbackend.config.payment.VNPayServiceClient;
 import com.example.fullstackbackend.entity.ChiTietSanPham;
-import com.example.fullstackbackend.entity.GioHangChiTiet;
 import com.example.fullstackbackend.entity.HinhThucThanhToan;
 import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
@@ -11,7 +10,6 @@ import com.example.fullstackbackend.entity.LichSuHoaDon;
 import com.example.fullstackbackend.entity.TaiKhoan;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.ChitietsanphamService;
-import com.example.fullstackbackend.services.GioHangChiTietSevice;
 import com.example.fullstackbackend.services.HinhThucThanhToanSevice;
 import com.example.fullstackbackend.services.HoadonSevice;
 import com.example.fullstackbackend.services.HoadonchitietSevice;
@@ -22,6 +20,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -40,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,12 +68,10 @@ public class HoaDonController {
     @Autowired
     private ChitietsanphamService chitietsanphamSer;
 
-    @Autowired
-    private GioHangChiTietSevice gioHangChiTietSevice;
-    // get datetimenow
-    java.util.Date currentDate = new java.util.Date();
-    // Chuyển đổi thành Timestamp
-    Timestamp currentTimestamp = new Timestamp(currentDate.getTime());
+//    @Autowired
+//    private GioHangChiTietSevice gioHangChiTietSevice;
+
+    Timestamp currentTimestamp;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -83,7 +81,7 @@ public class HoaDonController {
 
     public String buildEmailContent(String maHd, String ngayThayDoi, String trangThai) {
 
-        String content = "Bạn đã đặt đơn hàng trên 5F Store" ;
+        String content = "Bạn đã đặt đơn hàng trên 5F Store";
         content += "\nMã hóa đơn: " + maHd;
         content += "\nNgày thay đổi: " + ngayThayDoi;
         content += "\nTrạng thái: " + trangThai;
@@ -116,10 +114,14 @@ public class HoaDonController {
 
     @PostMapping("add")
     public ResponseEntity<?> add(@Valid @RequestBody HoaDon newHD, BindingResult bindingResult) {
-        System.out.println("add123: " + newHD.getTrangThai());
         if (bindingResult.hasErrors()) {
             return ResponseEntity.ok("Đã Lỗi");
         } else {
+            // get datetimenow
+            java.util.Date currentDate = new java.util.Date();
+            // Chuyển đổi thành Timestamp
+            currentTimestamp = new Timestamp(currentDate.getTime());
+
             System.out.println("add123: " + newHD.getTrangThai());
             HoaDon hoaDon = hoadonSevice.add(newHD);
             // Add to history bill
@@ -172,151 +174,245 @@ public class HoaDonController {
     }
 
     @PutMapping("update-status/{id}")
-    public HoaDon updateStatus(@RequestBody HoaDon newHD, @PathVariable("id") Integer id,
-                               @RequestParam String moTa) {
-        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
-            hoaDon.setTrangThai(newHD.getTrangThai());
-            if(hoaDon.getEmail() != null && !hoaDon.getEmail().isEmpty()){
-                if (hoaDon.getTrangThai() == 1){
-                    String trangThai = "Hóa đơn đã được xác nhận";
-                    SimpleMailMessage message = new SimpleMailMessage();
-                    message.setFrom(formMail);
-                    message.setTo(hoaDon.getEmail());
-                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
-                    mailSender.send(message);
-                }  if (hoaDon.getTrangThai() == 3){
-                    String trangThai = "Đơn hàng đã chuyển cho đơn vị vận chuyển";
-                    SimpleMailMessage message = new SimpleMailMessage();
-                    message.setFrom(formMail);
-                    message.setTo(hoaDon.getEmail());
-                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
-                    mailSender.send(message);
-                } if (hoaDon.getTrangThai() == 4){
-                    String trangThai = "Đơn hàng đã được xác nhận thanh toán";
-                    SimpleMailMessage message = new SimpleMailMessage();
-                    message.setFrom(formMail);
-                    message.setTo(hoaDon.getEmail());
-                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
-                    mailSender.send(message);
-                }
-                if (hoaDon.getTrangThai() == 5){
-                    String trangThai = "Đơn hàng đã được nhận thành công";
-                    SimpleMailMessage message = new SimpleMailMessage();
-                    message.setFrom(formMail);
-                    message.setTo(hoaDon.getEmail());
-                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
-                    mailSender.send(message);
-                } if (hoaDon.getTrangThai() == 6){
-                    String trangThai = "Đơn hàng đã được xác nhận đổi trả";
-                    SimpleMailMessage message = new SimpleMailMessage();
-                    message.setFrom(formMail);
-                    message.setTo(hoaDon.getEmail());
-                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
-                    mailSender.send(message);
-                }   if (hoaDon.getTrangThai() == 10){
-                    String trangThai = "Đơn hàng đã bị hủy";
-                    SimpleMailMessage message = new SimpleMailMessage();
-                    message.setFrom(formMail);
-                    message.setTo(hoaDon.getEmail());
-                    message.setSubject(  "Thông Báo Cập Nhật Hóa Đơn 5F Store");
-                    message.setText( buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp),trangThai));
-                    mailSender.send(message);
-                }
-            }
-
-            return hoadonSevice.update(hoaDon);
-        }).orElseThrow(() -> new xuatXuNotFoundException(id));
-
-        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(newHD1.getIdHd());
-
-        if (newHD.getTrangThai() == 1) {
-            for (HoaDonChiTiet x :
-                    hoaDonChiTiets) {
-                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
-                for (ChiTietSanPham y :
-                        chiTietSanPhams) {
-
-                    System.out.println("Số Lượng Còn Lại y:" + y.getSoLuongTon());
-                    System.out.println("Số Lượng Còn Lại xx :" + x.getSoLuong());
-                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                    if(y.getSoLuongTon() <= 0){
-                        y.setTrangThai(10);
-                    }
-                    chitietsanphamSer.update(y);
-                }
-            }
-        } else if (newHD1.getTrangThai() == 6) {
-            for (HoaDonChiTiet x :
-                    hoaDonChiTiets) {
-                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
-                for (ChiTietSanPham y :
-                        chiTietSanPhams) {
-                    System.out.println("Số Lượng Còn Lại:" + y.getSoLuongTon());
-                    y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
-                    if(y.getSoLuongTon() <= 0){
-                        y.setTrangThai(10);
-                    }
-                    chitietsanphamSer.update(y);
-                }
-            }
+    public ResponseEntity<?> updateStatus(@RequestBody HoaDon newHD, @PathVariable("id") Integer id,
+                                          @RequestParam String moTa) {
+        boolean hasError = false;
+        String nameError = "";
+        // Check money
+        HoaDon hoaDonCheck = hoadonSevice.detail(id).orElseThrow();
+        List<HinhThucThanhToan> hinhThucThanhToans = hinhThucThanhToanSevice.detail(id);
+        BigDecimal money = BigDecimal.ZERO;
+        for (HinhThucThanhToan x :
+                hinhThucThanhToans) {
+            money = money.add(x.getSoTien());
+        }
+        if (newHD.getTrangThai() == 5 && hoaDonCheck.getThanhTien().compareTo(money) > 0) {
+            nameError = "Số Tiền Thanh Toán Chưa Đủ";
+            hasError = true;
         }
 
-        //Add to history bill
+        //Done hasError
+        if (hasError) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", nameError));
+        } else {
+            // get datetimenow
+            java.util.Date currentDate = new java.util.Date();
+            // Chuyển đổi thành Timestamp
+            currentTimestamp = new Timestamp(currentDate.getTime());
 
-        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-        lichSuHoaDon.setIdHd(newHD1);
-        lichSuHoaDon.setIdTk(newHD1.getIdTK());
-        lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
-        lichSuHoaDon.setMoTa(moTa);
-        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
-        lichSuHoaDonService.add(lichSuHoaDon);
+            HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+                hoaDon.setTrangThai(newHD.getTrangThai());
+                if (hoaDon.getEmail() != null && !hoaDon.getEmail().isEmpty()) {
+                    if (hoaDon.getTrangThai() == 1) {
+                        String trangThai = "Hóa đơn đã được xác nhận";
+                        SimpleMailMessage message = new SimpleMailMessage();
+                        message.setFrom(formMail);
+                        message.setTo(hoaDon.getEmail());
+                        message.setSubject("Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                        message.setText(buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp), trangThai));
+                        mailSender.send(message);
+                    }
+                    if (hoaDon.getTrangThai() == 3) {
+                        String trangThai = "Đơn hàng đã chuyển cho đơn vị vận chuyển";
+                        SimpleMailMessage message = new SimpleMailMessage();
+                        message.setFrom(formMail);
+                        message.setTo(hoaDon.getEmail());
+                        message.setSubject("Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                        message.setText(buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp), trangThai));
+                        mailSender.send(message);
+                    }
+                    if (hoaDon.getTrangThai() == 4) {
+                        String trangThai = "Đơn hàng đã được xác nhận thanh toán";
+                        SimpleMailMessage message = new SimpleMailMessage();
+                        message.setFrom(formMail);
+                        message.setTo(hoaDon.getEmail());
+                        message.setSubject("Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                        message.setText(buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp), trangThai));
+                        mailSender.send(message);
+                    }
+                    if (hoaDon.getTrangThai() == 5) {
+                        String trangThai = "Đơn hàng đã được nhận thành công";
+                        SimpleMailMessage message = new SimpleMailMessage();
+                        message.setFrom(formMail);
+                        message.setTo(hoaDon.getEmail());
+                        message.setSubject("Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                        message.setText(buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp), trangThai));
+                        mailSender.send(message);
+                    }
+                    if (hoaDon.getTrangThai() == 6) {
+                        String trangThai = "Đơn hàng đã được xác nhận đổi trả";
+                        SimpleMailMessage message = new SimpleMailMessage();
+                        message.setFrom(formMail);
+                        message.setTo(hoaDon.getEmail());
+                        message.setSubject("Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                        message.setText(buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp), trangThai));
+                        mailSender.send(message);
+                    }
+                    if (hoaDon.getTrangThai() == 10) {
+                        String trangThai = "Đơn hàng đã bị hủy";
+                        SimpleMailMessage message = new SimpleMailMessage();
+                        message.setFrom(formMail);
+                        message.setTo(hoaDon.getEmail());
+                        message.setSubject("Thông Báo Cập Nhật Hóa Đơn 5F Store");
+                        message.setText(buildEmailContent(hoaDon.getMaHd(), String.valueOf(currentTimestamp), trangThai));
+                        mailSender.send(message);
+                    }
+                }
 
+                return hoadonSevice.update(hoaDon);
+            }).orElseThrow(() -> new xuatXuNotFoundException(id));
 
-        return newHD1;
+            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(newHD1.getIdHd());
+
+            if (newHD.getTrangThai() == 10 || newHD.getTrangThai() == 15) {
+                for (HoaDonChiTiet x :
+                        hoaDonChiTiets) {
+                    List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                    for (ChiTietSanPham y :
+                            chiTietSanPhams) {
+                        y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
+                        if (y.getSoLuongTon() <= 0) {
+                            y.setTrangThai(10);
+                        }
+                        chitietsanphamSer.update(y);
+                    }
+                }
+            } else if (newHD1.getTrangThai() == 6) {
+                for (HoaDonChiTiet x :
+                        hoaDonChiTiets) {
+                    List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                    for (ChiTietSanPham y :
+                            chiTietSanPhams) {
+                        y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
+                        if (y.getSoLuongTon() <= 0) {
+                            y.setTrangThai(10);
+                        } else {
+                            y.setTrangThai(0);
+                        }
+                        chitietsanphamSer.update(y);
+                    }
+                }
+            }
+
+            //Add to history bill
+
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setIdHd(newHD1);
+            lichSuHoaDon.setIdTk(newHD1.getIdTK());
+            lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+            lichSuHoaDon.setMoTa(moTa);
+            lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+            lichSuHoaDonService.add(lichSuHoaDon);
+
+            return ResponseEntity.ok("Cập Nhập Trạng Thái Thành Công");
+        }
+
     }
 
     @PutMapping("update-payment/{id}")
-    public HoaDon updateThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
-        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
-            hoaDon.setTenKh(newHD.getTenKh());
-            hoaDon.setSdtKh(newHD.getSdtKh());
-            hoaDon.setNgayThanhToan(newHD.getNgayThanhToan());
-            hoaDon.setThanhTien(newHD.getThanhTien());
-            hoaDon.setTienDua(newHD.getTienDua());
-            hoaDon.setTienThua(newHD.getTienThua());
-            hoaDon.setKieuHoaDon(hoaDon.getKieuHoaDon());
-            hoaDon.setTrangThai(newHD.getTrangThai());
-            return hoadonSevice.update(hoaDon);
-        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+    public ResponseEntity<?> updateThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
 
-        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(newHD1.getIdHd());
-        //Update Inventory number
+        boolean hasError = false;
+        String nameError = "";
 
-        if (newHD.getTrangThai() == 9) {
-            for (HoaDonChiTiet x :
-                    hoaDonChiTiets) {
-                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
-                for (ChiTietSanPham y :
-                        chiTietSanPhams) {
-                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                    if(y.getSoLuongTon() <= 0){
-                        y.setTrangThai(10);
-                    }
-                    chitietsanphamSer.update(y);
-                }
+        // Check quantity in product
+        List<HoaDonChiTiet> hoaDonChiTiet = hoadonchitietSer.findAllByIDHD(id);
+        for (HoaDonChiTiet x :
+                hoaDonChiTiet) {
+            ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
+            if (x.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+                nameError = "Số Lượng Tồn Của Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Không Đủ";
+                hasError = true;
+                break;
+            } else if (chiTietSanPham.getTrangThai() == 10) {
+                nameError = "Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Đã Ngừng Kinh Doanh";
+                hasError = true;
+                break;
             }
         }
 
+        //Done hasError
+        if (hasError) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", nameError));
+        } else {
+            // get datetimenow
+            java.util.Date currentDate = new java.util.Date();
+            // Chuyển đổi thành Timestamp
+            currentTimestamp = new Timestamp(currentDate.getTime());
+
+            HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+                BigDecimal thanhTien = hoaDon.getTongTien().add(hoaDon.getTienShip());
+
+                hoaDon.setTenKh(newHD.getTenKh());
+                hoaDon.setSdtKh(newHD.getSdtKh());
+                hoaDon.setNgayThanhToan(currentTimestamp);
+                hoaDon.setThanhTien(thanhTien);
+                hoaDon.setTienDua(newHD.getTienDua());
+                hoaDon.setTienThua(newHD.getTienThua());
+                hoaDon.setKieuHoaDon(hoaDon.getKieuHoaDon());
+                hoaDon.setTrangThai(newHD.getTrangThai());
+                return hoadonSevice.update(hoaDon);
+            }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(newHD1.getIdHd());
+            //Update Inventory number
+
+            if (newHD.getTrangThai() == 9) {
+                for (HoaDonChiTiet x :
+                        hoaDonChiTiets) {
+                    List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                    for (ChiTietSanPham y :
+                            chiTietSanPhams) {
+                        y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                        if (y.getSoLuongTon() <= 0) {
+                            y.setTrangThai(10);
+                        }
+                        chitietsanphamSer.update(y);
+                    }
+                }
+            }
+
+            //Add to payments
+            HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
+            hinhThucThanhToan2.setIdHd(newHD1);
+            hinhThucThanhToan2.setNgayThanhToan(currentTimestamp);
+            hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
+            hinhThucThanhToan2.setSoTien(newHD1.getThanhTien());
+            hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
+            hinhThucThanhToan2.setTrangThai(0);
+            hinhThucThanhToanSevice.add(hinhThucThanhToan2);
+
+            //Add to history bill
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setIdHd(newHD1);
+            lichSuHoaDon.setIdTk(newHD1.getIdTK());
+            lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+            lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
+            lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+            lichSuHoaDonService.add(lichSuHoaDon);
+
+            return ResponseEntity.ok("Thanh Toán Thành Công");
+        }
+    }
+
+    @PutMapping("update-payment1/{id}")
+    public ResponseEntity<?> updateThanhToan1(@PathVariable("id") Integer id, @RequestParam("soTienTra") BigDecimal soTienTra) {
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        currentTimestamp = new Timestamp(currentDate.getTime());
+
+        HoaDon newHD1 = hoadonSevice.detail(id).orElseThrow();
         //Add to payments
         HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
         hinhThucThanhToan2.setIdHd(newHD1);
         hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
-        hinhThucThanhToan2.setSoTien(newHD1.getThanhTien());
+        hinhThucThanhToan2.setSoTien(soTienTra);
+        hinhThucThanhToan2.setNgayThanhToan(currentTimestamp);
         hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
         hinhThucThanhToan2.setTrangThai(0);
         hinhThucThanhToanSevice.add(hinhThucThanhToan2);
@@ -325,86 +421,201 @@ public class HoaDonController {
         LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
         lichSuHoaDon.setIdHd(newHD1);
         lichSuHoaDon.setIdTk(newHD1.getIdTK());
-        lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+        lichSuHoaDon.setTrangThai(4);
         lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
         lichSuHoaDon.setNgayThayDoi(currentTimestamp);
         lichSuHoaDonService.add(lichSuHoaDon);
 
-        return newHD1;
+        return ResponseEntity.ok("Thanh Toán Thành Công");
+
     }
 
     @PutMapping("update-client-payment/{id}")
-    public HoaDon updateClientThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
-        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
-            hoaDon.setTenKh(newHD.getTenKh());
-            hoaDon.setSdtKh(newHD.getSdtKh());
-            hoaDon.setEmail(newHD.getEmail());
-            hoaDon.setDiaChi(newHD.getDiaChi());
-            hoaDon.setNgayTao(currentTimestamp);
-            hoaDon.setTrangThai(0);
-            return hoadonSevice.update(hoaDon);
-        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+    public ResponseEntity<?> updateClientThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
 
-        //Add to history bill
-        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-        lichSuHoaDon.setIdHd(newHD1);
-        lichSuHoaDon.setIdTk(newHD1.getIdTK());
-        lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
-        lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
-        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
-        lichSuHoaDonService.add(lichSuHoaDon);
+        boolean hasError = false;
+        String nameError = "";
 
-        return newHD1;
+//        Check quantity in product
+        List<HoaDonChiTiet> hoaDonChiTiet = hoadonchitietSer.findAllByIDHD(id);
+        for (HoaDonChiTiet x :
+                hoaDonChiTiet) {
+            ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
+            if (x.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+                nameError = "Số Lượng Tồn Của Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Không Đủ";
+                hasError = true;
+                break;
+            } else if (chiTietSanPham.getTrangThai() == 10) {
+                nameError = "Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Đã Ngừng Kinh Doanh";
+                hasError = true;
+                break;
+            }
+        }
+
+        //Done hasError
+        if (hasError) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", nameError));
+        } else {
+            // get datetimenow
+            java.util.Date currentDate = new java.util.Date();
+            // Chuyển đổi thành Timestamp
+            currentTimestamp = new Timestamp(currentDate.getTime());
+
+            HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+                hoaDon.setTenKh(newHD.getTenKh());
+                hoaDon.setSdtKh(newHD.getSdtKh());
+                hoaDon.setEmail(newHD.getEmail());
+                hoaDon.setDiaChi(newHD.getDiaChi());
+                hoaDon.setNgayTao(currentTimestamp);
+                hoaDon.setTrangThai(0);
+                return hoadonSevice.update(hoaDon);
+            }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+            // Update quantity in product
+            for (HoaDonChiTiet x :
+                    hoaDonChiTiet) {
+                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                for (ChiTietSanPham y :
+                        chiTietSanPhams) {
+                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                    if (y.getSoLuongTon() <= 0) {
+                        y.setTrangThai(10);
+                    }
+                    chitietsanphamSer.update(y);
+                }
+            }
+
+            //Add to history bill
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setIdHd(newHD1);
+            lichSuHoaDon.setIdTk(newHD1.getIdTK());
+            lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+            lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
+            lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+            lichSuHoaDonService.add(lichSuHoaDon);
+
+            return ResponseEntity.ok("Thanh Toán Thành Công");
+        }
+
     }
 
     @PutMapping("update-client-payment1/{id}")
-    public HoaDon updateClientThanhToan1(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
-        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
-            hoaDon.setTenKh(newHD.getTenKh());
-            hoaDon.setSdtKh(newHD.getSdtKh());
-            hoaDon.setEmail(newHD.getEmail());
-            hoaDon.setDiaChi(newHD.getDiaChi());
-            hoaDon.setNgayTao(currentTimestamp);
-            return hoadonSevice.update(hoaDon);
-        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+    public ResponseEntity<?> updateClientThanhToan1(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        boolean hasError = false;
+        String nameError = "";
 
-        //Add to history bill
-//        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-//        lichSuHoaDon.setIdHd(newHD1);
-//        lichSuHoaDon.setIdTk(newHD1.getIdTK());
-//        lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
-//        lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
-//        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
-//        lichSuHoaDonService.add(lichSuHoaDon);
+        // Check quantity in product
+        List<HoaDonChiTiet> hoaDonChiTiet = hoadonchitietSer.findAllByIDHD(id);
+        for (HoaDonChiTiet x :
+                hoaDonChiTiet) {
+            ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
+            if (x.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+                nameError = "Số Lượng Tồn Của Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Không Đủ";
+                hasError = true;
+                break;
+            } else if (chiTietSanPham.getTrangThai() == 10) {
+                nameError = "Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Đã Ngừng Kinh Doanh";
+                hasError = true;
+                break;
+            }
+        }
 
-        return newHD1;
+        //Done hasError
+        if (hasError) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", nameError));
+        } else {
+            // get datetimenow
+            java.util.Date currentDate = new java.util.Date();
+            // Chuyển đổi thành Timestamp
+            currentTimestamp = new Timestamp(currentDate.getTime());
+
+            HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+                hoaDon.setTenKh(newHD.getTenKh());
+                hoaDon.setSdtKh(newHD.getSdtKh());
+                hoaDon.setEmail(newHD.getEmail());
+                hoaDon.setDiaChi(newHD.getDiaChi());
+                hoaDon.setNgayTao(currentTimestamp);
+                return hoadonSevice.update(hoaDon);
+            }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+            // Update quantity in product
+            for (HoaDonChiTiet x :
+                    hoaDonChiTiet) {
+                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                for (ChiTietSanPham y :
+                        chiTietSanPhams) {
+                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                    if (y.getSoLuongTon() <= 0) {
+                        y.setTrangThai(10);
+                    }
+                    chitietsanphamSer.update(y);
+                }
+            }
+            return ResponseEntity.ok(newHD1);
+        }
     }
-    
+
 
     @PutMapping("update-ship-online/{id}")
-    public HoaDon updateShipOnline(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+    public ResponseEntity<?> updateShipOnline(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
 
-        HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
-            hoaDon.setTenKh(newHD.getTenKh());
-            hoaDon.setSdtKh(newHD.getSdtKh());
-            hoaDon.setEmail(newHD.getEmail());
-            hoaDon.setNgayThanhToan(currentTimestamp);
-            hoaDon.setDiaChi(newHD.getDiaChi());
-            hoaDon.setThanhTien(newHD.getThanhTien());
-            hoaDon.setKieuHoaDon(newHD.getKieuHoaDon());
-            hoaDon.setTrangThai(newHD.getTrangThai());
-            return hoadonSevice.update(hoaDon);
-        }).orElseThrow(() -> new xuatXuNotFoundException(id));
+        boolean hasError = false;
+        String nameError = "";
 
-        //Add to history bill
-        LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-        lichSuHoaDon.setIdHd(newHD1);
-        lichSuHoaDon.setIdTk(newHD1.getIdTK());
-        lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
-        lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
-        lichSuHoaDon.setNgayThayDoi(currentTimestamp);
-        lichSuHoaDonService.add(lichSuHoaDon);
-        return newHD1;
+        // Check quantity in product
+        List<HoaDonChiTiet> hoaDonChiTiet = hoadonchitietSer.findAllByIDHD(id);
+        for (HoaDonChiTiet x :
+                hoaDonChiTiet) {
+            ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
+            if (x.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+                nameError = "Số Lượng Tồn Của Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Không Đủ";
+                hasError = true;
+                break;
+            } else if (chiTietSanPham.getTrangThai() == 10) {
+                nameError = "Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Đã Ngừng Kinh Doanh";
+                hasError = true;
+                break;
+            }
+        }
+
+        //Done hasError
+        if (hasError) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", nameError));
+        } else {// get datetimenow
+            java.util.Date currentDate = new java.util.Date();
+            // Chuyển đổi thành Timestamp
+            currentTimestamp = new Timestamp(currentDate.getTime());
+
+            HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
+                hoaDon.setTenKh(newHD.getTenKh());
+                hoaDon.setSdtKh(newHD.getSdtKh());
+                hoaDon.setEmail(newHD.getEmail());
+                hoaDon.setNgayThanhToan(currentTimestamp);
+                hoaDon.setDiaChi(newHD.getDiaChi());
+                hoaDon.setThanhTien(newHD.getThanhTien());
+                hoaDon.setKieuHoaDon(newHD.getKieuHoaDon());
+                hoaDon.setTrangThai(newHD.getTrangThai());
+                return hoadonSevice.update(hoaDon);
+            }).orElseThrow(() -> new xuatXuNotFoundException(id));
+
+            //Add to history bill
+            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+            lichSuHoaDon.setIdHd(newHD1);
+            lichSuHoaDon.setIdTk(newHD1.getIdTK());
+            lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+            lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
+            lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+            lichSuHoaDonService.add(lichSuHoaDon);
+            return ResponseEntity.ok("Tạo Đơn Ship Thành Công ");
+
+        }
+
     }
 
     @PutMapping("update-tong-tien/{id}")
@@ -453,6 +664,11 @@ public class HoaDonController {
 
     @PutMapping("update-khach-hang2/{id}")
     public HoaDon updateKhachHang2(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        currentTimestamp = new Timestamp(currentDate.getTime());
+
         HoaDon newHD1 = hoadonSevice.detail(id).map(hoaDon -> {
             hoaDon.setTenKh(newHD.getTenKh());
             hoaDon.setSdtKh(newHD.getSdtKh());
@@ -495,6 +711,10 @@ public class HoaDonController {
         Integer idHd = Integer.valueOf(orderInfo);
         //Detail HD by IdHd
         Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        currentTimestamp = new Timestamp(currentDate.getTime());
 
         if (paymentStatus == 1) {
 
@@ -517,12 +737,16 @@ public class HoaDonController {
             // Add to payments
             HinhThucThanhToan hinhThucThanhToan1 = new HinhThucThanhToan();
             hinhThucThanhToan1.setIdHd(hoaDon);
-            hinhThucThanhToan1.setHinhThuc("Thanh Toán Online");
+            hinhThucThanhToan1.setNgayThanhToan(currentTimestamp);
+
+            hinhThucThanhToan1.setHinhThuc("Thanh Toán VNPAY");
             hinhThucThanhToan1.setSoTien(realPrice);
-            hinhThucThanhToan1.setMoTa("Thanh Toán Online");
+            hinhThucThanhToan1.setMoTa("Thanh Toán VNPAY");
             hinhThucThanhToan1.setTrangThai(0);
 
             HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
+            hinhThucThanhToan2.setNgayThanhToan(currentTimestamp);
+
             hinhThucThanhToan2.setIdHd(hoaDon);
             hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
             hinhThucThanhToan2.setSoTien(tienMat);
@@ -548,14 +772,14 @@ public class HoaDonController {
             // Switch tab
             response.sendRedirect("http://localhost:3000/dashboard/bills/time-line/" + idHd);
 
-            return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
+            return ResponseEntity.ok("Thanh Toán VNPAY Thành Công!!!");
         } else {
             if (getOne.get().getTrangThai() <= 6) {
                 response.sendRedirect("http://localhost:3000/dashboard/bills/time-line/" + idHd);
-                return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
+                return ResponseEntity.ok("Thanh Toán VNPAY Không Thành Công!!!");
             } else {
                 response.sendRedirect("http://localhost:3000/dashboard/sales/card-bill/" + idHd);
-                return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
+                return ResponseEntity.ok("Thanh Toán VNPAY Không Thành Công!!!");
             }
         }
 
@@ -579,12 +803,15 @@ public class HoaDonController {
         BigDecimal realPrice = new BigDecimal(totalPrice).divide(new BigDecimal(100));
         Integer idHd = Integer.valueOf(orderInfo);
 
+        // get datetimenow
+        java.util.Date currentDate = new java.util.Date();
+        // Chuyển đổi thành Timestamp
+        currentTimestamp = new Timestamp(currentDate.getTime());
+
         if (paymentStatus == 1) {
             //Detail HD by IdHd
             HoaDon getOne = hoadonSevice.detail(idHd).orElseThrow();
-            BigDecimal getTongTien = getOne.getTongTien();
 
-            BigDecimal tienMat = getTongTien.subtract(realPrice);
             //Add to updatePaymentOnline
             HoaDon hoaDonDTO1 = new HoaDon();
             hoaDonDTO1.setNgayThanhToan(currentTimestamp);
@@ -601,24 +828,12 @@ public class HoaDonController {
             // Add to payments
             HinhThucThanhToan hinhThucThanhToan1 = new HinhThucThanhToan();
             hinhThucThanhToan1.setIdHd(hoaDon);
-            hinhThucThanhToan1.setHinhThuc("Thanh Toán Online");
+            hinhThucThanhToan1.setNgayThanhToan(currentTimestamp);
+            hinhThucThanhToan1.setHinhThuc("Thanh Toán VNPAY");
             hinhThucThanhToan1.setSoTien(realPrice);
-            hinhThucThanhToan1.setMoTa("Thanh Toán Online");
+            hinhThucThanhToan1.setMoTa("Thanh Toán Bằng Thẻ Qua VNPay");
             hinhThucThanhToan1.setTrangThai(0);
-
-            HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
-            hinhThucThanhToan2.setIdHd(hoaDon);
-            hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
-            hinhThucThanhToan2.setSoTien(tienMat);
-            hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
-            hinhThucThanhToan2.setTrangThai(0);
-
-            if (tienMat.compareTo(BigDecimal.ZERO) <= 0) {
-                hinhThucThanhToanSevice.add(hinhThucThanhToan1);
-            } else {
-                hinhThucThanhToanSevice.add(hinhThucThanhToan1);
-                hinhThucThanhToanSevice.add(hinhThucThanhToan2);
-            }
+            hinhThucThanhToanSevice.add(hinhThucThanhToan1);
 
             //Add to history bill
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
@@ -629,26 +844,41 @@ public class HoaDonController {
             lichSuHoaDon.setNgayThayDoi(currentTimestamp);
             lichSuHoaDonService.add(lichSuHoaDon);
 
-            // Delete product on detail cart
-            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(idHd);
+            // Update quantity in product
+            List<HoaDonChiTiet> hoaDonChiTiet = hoadonchitietSer.findAllByIDHD(idHd);
             for (HoaDonChiTiet x :
-                    hoaDonChiTiets) {
-                GioHangChiTiet gioHangChiTiet = gioHangChiTietSevice.finByIDCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
-                gioHangChiTietSevice.deleteGHCT(gioHangChiTiet.getIdGhct());
+                    hoaDonChiTiet) {
+                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                for (ChiTietSanPham y :
+                        chiTietSanPhams) {
+                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                    if (y.getSoLuongTon() <= 0) {
+                        y.setTrangThai(10);
+                    }
+                    chitietsanphamSer.update(y);
+                }
             }
+            // Delete product on detail cart
+//            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(idHd);
+//            for (HoaDonChiTiet x :
+//                    hoaDonChiTiets) {
+//                GioHangChiTiet gioHangChiTiet = gioHangChiTietSevice.finByIDCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
+//                gioHangChiTietSevice.deleteGHCT(gioHangChiTiet.getIdGhct());
+//            }
 
             // Update HD to ship
             getOne.setTrangThai(0);
-            updateStatus(getOne, getOne.getIdHd(), "Thanh Toán Online");
+            updateStatus(getOne, getOne.getIdHd(), "Thanh Toán VNPAY");
+            if (getOne.getIdKH() != null) {
+                response.sendRedirect("http://localhost:3000/client/client-timeline/" + idHd);
+            } else {
+                response.sendRedirect("http://localhost:3000");
+            }
 
-            // Switch tab
-//            response.sendRedirect("http://localhost:3000/client/client-timeline/" + idHd);
-            response.sendRedirect("http://localhost:3000");
-
-            return ResponseEntity.ok("Thanh Toán Online Thành Công!!!");
+            return ResponseEntity.ok("Thanh Toán VNPAY Thành Công!!!");
         } else {
             response.sendRedirect("http://localhost:3000/client/payment/" + idHd);
-            return ResponseEntity.ok("Thanh Toán Online Không Thành Công!!!");
+            return ResponseEntity.ok("Thanh Toán VNPAY Không Thành Công!!!");
 
         }
 
@@ -659,6 +889,11 @@ public class HoaDonController {
         if (!hoadonSevice.checkExists(id)) {
             throw new xuatXuNotFoundException(id);
         } else {
+            // get datetimenow
+            java.util.Date currentDate = new java.util.Date();
+            // Chuyển đổi thành Timestamp
+            currentTimestamp = new Timestamp(currentDate.getTime());
+
             HoaDon hoaDon = hoadonSevice.detail(id).orElseThrow();
             //Add to history bill
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
@@ -669,6 +904,24 @@ public class HoaDonController {
             lichSuHoaDon.setNgayThayDoi(currentTimestamp);
             lichSuHoaDonService.add(lichSuHoaDon);
 
+            // Update Qantity Product
+            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(id);
+
+            for (HoaDonChiTiet x :
+                    hoaDonChiTiets) {
+                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                for (ChiTietSanPham y :
+                        chiTietSanPhams) {
+                    y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
+                    if (y.getSoLuongTon() <= 0) {
+                        y.setTrangThai(10);
+                    } else {
+                        y.setTrangThai(0);
+                    }
+                    chitietsanphamSer.update(y);
+                }
+            }
+            //Delete
             hoadonSevice.delete(id);
             return ResponseEntity.ok("Đã Xóa Thành Công!!!");
         }

@@ -72,7 +72,7 @@ const ModalDetailItemReturn = (props) => {
         type: 'error',
         message: 'Không Được Vượt Quá Số Lượng Gốc',
       });
-    } else if (reasonReturn.trim() === '') {
+    } else if (!reasonReturn || typeof reasonReturn !== 'string' || reasonReturn.trim() === '') {
       setAlertContent({
         type: 'error',
         message: 'Không Được Để Trống Lý Do',
@@ -90,7 +90,7 @@ const ModalDetailItemReturn = (props) => {
         lyDoHuy: reasonReturn,
         trangThai: 6,
       };
-      await returnItem(updateHDCT);
+      await returnItem(updateHDCT, 1);
 
       setAlertContent({
         type: 'success',

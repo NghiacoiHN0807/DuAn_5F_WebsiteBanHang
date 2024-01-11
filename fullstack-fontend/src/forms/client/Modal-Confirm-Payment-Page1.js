@@ -50,21 +50,40 @@ export default function ModalConfirmPayment1(props) {
   // Handle Delete
   const handleConfirm = async () => {
     if (isDeliveryChecked && isDeliveryChecked === true) {
-      await updateClientPayment1(idHdParam, tenKH, sdtKH, emailKH, diaChi);
-      setAlertContent({
-        type: 'success',
-        message: 'Hãy Thanh Toán Trước. Cảm Ơn!!!',
-      });
-      const paymentOn = await paymentOnlineClient(thanhTien, idHdParam);
-      window.location.href = paymentOn;
+      const payment = await updateClientPayment1(idHdParam, tenKH, sdtKH, emailKH, diaChi);
+      if (payment.status === 400) {
+        setAlertContent({
+          type: 'warning',
+          message: payment.data.error,
+        });
+      } else {
+        setAlertContent({
+          type: 'success',
+          message: 'Hãy Thanh Toán Trước. Cảm Ơn!!!',
+        });
+        const paymentOn = await paymentOnlineClient(thanhTien, idHdParam);
+        window.location.href = paymentOn;
+      }
     } else {
-      setAlertContent({
-        type: 'success',
-        message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
-      });
-      await deleteProductOnCartPayment(idHdParam);
-      await updateClientPayment(idHdParam, tenKH, sdtKH, emailKH, diaChi);
-      navigate(`/client/client-timeline/${idHdParam}`);
+      try {
+        const payment = await updateClientPayment(idHdParam, tenKH, sdtKH, emailKH, diaChi);
+        if (payment.status === 400) {
+          setAlertContent({
+            type: 'warning',
+            message: payment.data.error,
+          });
+        } else {
+          console.log('payment', payment);
+          setAlertContent({
+            type: 'success',
+            message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
+          });
+          await deleteProductOnCartPayment(idHdParam);
+          navigate(`/client/client-timeline/${idHdParam}`);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     }
     // console.log('DataCart: ', DataCart);
     // if (DataCart.length <= 1) {

@@ -1,5 +1,5 @@
 // react
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { sample } from 'lodash';
 import { Box, Card, CardActionArea, Link, Stack, Typography } from '@mui/material';
 import { Container } from '@mui/system';
@@ -14,7 +14,7 @@ import anh1 from '../../assets/slider_2.jpg';
 import anh2 from '../../assets/banner-thoi-trang-nam.jpg';
 import anh3 from '../../assets/banner-thoi-trang-the-thao-cho-nam_113858272.jpg';
 import '../../scss/Home.scss';
-import { fetchAllCTSPBySize } from '../../service/BillSevice';
+// import { fetchAllCTSPBySize } from '../../service/BillSevice';
 
 // @mui
 import Label from '../../components/label';
@@ -33,12 +33,11 @@ const StyledProductImg = styled('img')({
 const Home = () => {
   const [listSPBanChay, setListSPBanChay] = useState([]);
   const [listSpGiamGia, setListSpGiamGia] = useState([]);
-  const [listData, setListData] = useState([]);
+  // const [listData, setListData] = useState([]);
 
   const getListSPBanChay = async () => {
     try {
       const res = await getTopSpBanChayForClient();
-      console.log('getListSPBanChay ', res);
       setListSPBanChay(res);
     } catch (error) {
       console.error('Error in list bill: ', error);
@@ -48,39 +47,38 @@ const Home = () => {
   const getListSpGiamGia = async () => {
     try {
       const res = await getSpGiamGiaForClient();
-      console.log('Check res: ', res);
       setListSpGiamGia(res);
     } catch (error) {
       console.error('Error in list bill: ', error);
     }
   };
 
-  const getAllData = useCallback(async () => {
-    try {
-      const getData = await fetchAllCTSPBySize();
-      console.log('getData: ', getData);
-      if (getData) {
-        setListData(getData);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  // const getAllData = useCallback(async () => {
+  //   try {
+  //     const getData = await fetchAllCTSPBySize();
+  //     console.log('getData: ', getData);
+  //     if (getData) {
+  //       setListData(getData);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }, []);
 
   useEffect(() => {
     getListSPBanChay();
-    getAllData();
+    // getAllData();
     getListSpGiamGia();
-  }, [getAllData]);
+  }, []);
 
   const navigate = useNavigate();
   // Format thanhTien
   function formatCurrency(price) {
-    if (!price) return "0";
+    if (!price) return '0';
 
-    const formatter = new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
       minimumFractionDigits: 0,
     });
 
@@ -88,11 +86,11 @@ const Home = () => {
   }
 
   function formatCurrencyNull(price) {
-    if (!price) return "";
+    if (!price) return '';
 
-    const formatter = new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
       minimumFractionDigits: 0,
     });
 
@@ -139,7 +137,7 @@ const Home = () => {
     const end = (i + 1) * itemsPerSlide;
 
     const slideProducts = PRODUCTS.slice(start, end);
-    console.log("slideProducts: ", slideProducts)
+    console.log('slideProducts: ', slideProducts);
     const slide = (
       <Carousel.Item key={i}>
         <Container>
@@ -178,7 +176,6 @@ const Home = () => {
                       <Stack direction="row" alignItems="center" justifyContent="space-between">
                         <ColorPreview colors={product.colors} />
                         <Typography variant="subtitle2">
-
                           {product.price === product.priceSale ? (
                             formatCurrency(product.price)
                           ) : (
@@ -222,9 +219,11 @@ const Home = () => {
   return (
     <>
       <section className="gray-background-home">
-        <div >
-          <h6 className="hello" style={{fontSize: "37px", paddingTop: "50px"}}>XIN CHÀO CÁC BẠN</h6>
-          <p style={{fontSize: "32px"}}>Chào Mừng Đến Với Cửa Hàng 5F Store</p>
+        <div>
+          <h6 className="hello" style={{ fontSize: '16px', paddingTop: '10px' }}>
+            XIN CHÀO CÁC BẠN
+          </h6>
+          <p style={{ fontSize: '16px' }}>Chào Mừng Đến Với Cửa Hàng 5F Store</p>
         </div>
 
         <div>
