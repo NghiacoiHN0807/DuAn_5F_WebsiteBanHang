@@ -186,10 +186,6 @@ public class HoaDonController {
                 hinhThucThanhToans) {
             money = money.add(x.getSoTien());
         }
-        System.out.println("money: " + money);
-        System.out.println("hoaDonCheck.getThanhTien(): " + hoaDonCheck.getThanhTien());
-        System.out.println("hoaDonCheck.getThanhTien().compareTo(money): " + hoaDonCheck.getThanhTien().compareTo(money));
-        System.out.println("newHD.getTrangThai(): " + newHD.getTrangThai());
         if (newHD.getTrangThai() == 5 && hoaDonCheck.getThanhTien().compareTo(money) > 0) {
             nameError = "Số Tiền Thanh Toán Chưa Đủ";
             hasError = true;

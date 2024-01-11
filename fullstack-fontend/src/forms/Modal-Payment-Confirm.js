@@ -87,15 +87,10 @@ const ModalPaymentComfirm = (props) => {
                 type: 'warning',
                 message: changtoHDCT.data.error,
               });
-            } else if (changtoHDCT.status === 200) {
+            } else {
               const paymentOn = await paymentOnline(changeAmount, listHD.idHd);
               // Mở tab mới với đường dẫn URL
               window.location.href = paymentOn;
-            } else {
-              setAlertContent({
-                type: 'warning',
-                message: 'Không Thành Công',
-              });
             }
           }
         } else {
@@ -117,17 +112,12 @@ const ModalPaymentComfirm = (props) => {
               type: 'warning',
               message: changtoHDCT.data.error,
             });
-          } else if (changtoHDCT.status === 200) {
+          } else {
             setAlertContent({
               type: 'success',
               message: 'Thanh Toán Tại Quầy Thành Công!!!',
             });
             navigate(`/dashboard/bills/time-line/${idHdParam}`);
-          } else {
-            setAlertContent({
-              type: 'warning',
-              message: 'Không Thành Công',
-            });
           }
         }
       }
