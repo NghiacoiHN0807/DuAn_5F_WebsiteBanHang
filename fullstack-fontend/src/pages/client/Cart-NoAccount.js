@@ -6,6 +6,7 @@ import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 
 // Service
+import { Helmet } from 'react-helmet-async';
 import { listImg } from '../../service/client/Detail-Product';
 import {
   listProductOnCart,
@@ -244,6 +245,9 @@ export default function CartNoAccount() {
   };
   return (
     <>
+      <Helmet>
+        <title> 5FStore || Giỏ Hàng  </title>
+      </Helmet>
       <div>
         {/* cart + summary */}
         <section className="bg-light my-5">
@@ -326,18 +330,6 @@ export default function CartNoAccount() {
                                     className="ms-size"
                                   >
                                     {item.idCtsp.idMs.tenMs},
-                                    {/* </Button>
-                                  ,
-                                  <Button
-                                    style={{
-                                      fontSize: '12px',
-                                    }}
-                                    key={`size-button-${index}`}
-                                    // onClick={() => handleShowMS(item.idCtsp.idSize)}
-                                    // variant={selectedMauSac === item.idCtsp.idSize ? 'contained' : 'outlined'}
-                                    size="small"
-                                    className="ms-size"
-                                  > */}
                                     {item.idCtsp.idSize.tenSize}
                                   </Button>
                                 </span>
@@ -396,15 +388,6 @@ export default function CartNoAccount() {
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="border-top pt-4 mx-4 mb-4">
-              <p>
-                <i className="fas fa-truck text-muted fa-lg" /> Free Delivery within 1-2 weeks
-              </p>
-              <p className="text-muted">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-              </p>
             </div>
           </div>
         </section>

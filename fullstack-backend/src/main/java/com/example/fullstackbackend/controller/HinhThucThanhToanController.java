@@ -20,7 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/hinh-thuc-thanh-toan/")
-@CrossOrigin("http://localhost:3000/")
+//@CrossOrigin("http://localhost:3000/")
 public class HinhThucThanhToanController {
     @Autowired
     private HinhThucThanhToanSevice HinhThucThanhToanSevice;

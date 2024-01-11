@@ -29,7 +29,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/hoa-don-chi-tiet/")
-@CrossOrigin("http://localhost:3000/")
+//@CrossOrigin("http://localhost:3000/")
 public class HoaDonChiTietController {
     @Autowired
     private HoadonchitietSevice hoadonchitietSevice;
