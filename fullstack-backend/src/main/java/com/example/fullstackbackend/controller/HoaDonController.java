@@ -373,21 +373,22 @@ public class HoaDonController {
                         chitietsanphamSer.update(y);
                     }
                 }
-            } else if (newHD.getTrangThai() == 0) {
-                for (HoaDonChiTiet x :
-                        hoaDonChiTiets) {
-                    List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
-                    for (ChiTietSanPham y :
-                            chiTietSanPhams) {
-                        y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                        if (y.getSoLuongTon() <= 0) {
-                            y.setTrangThai(10);
-                        }
-                        chitietsanphamSer.update(y);
-                    }
-                }
-
             }
+//            else if (newHD.getTrangThai() == 0) {
+//                for (HoaDonChiTiet x :
+//                        hoaDonChiTiets) {
+//                    List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+//                    for (ChiTietSanPham y :
+//                            chiTietSanPhams) {
+//                        y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+//                        if (y.getSoLuongTon() <= 0) {
+//                            y.setTrangThai(10);
+//                        }
+//                        chitietsanphamSer.update(y);
+//                    }
+//                }
+//
+//            }
 
             //Add to payments
             HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
@@ -625,6 +626,24 @@ public class HoaDonController {
             lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
             lichSuHoaDon.setNgayThayDoi(currentTimestamp);
             lichSuHoaDonService.add(lichSuHoaDon);
+
+            // Update quantity's product
+
+            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(newHD.getIdHd());
+            if (newHD.getTrangThai() == 0) {
+                for (HoaDonChiTiet x :
+                        hoaDonChiTiets) {
+                    List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                    for (ChiTietSanPham y :
+                            chiTietSanPhams) {
+                        y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                        if (y.getSoLuongTon() <= 0) {
+                            y.setTrangThai(10);
+                        }
+                        chitietsanphamSer.update(y);
+                    }
+                }
+            }
             return ResponseEntity.ok("Tạo Đơn Ship Thành Công ");
 
         }
