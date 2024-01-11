@@ -32,7 +32,7 @@ public interface HoadonchitietSevice {
 
     ResponseEntity<?> update(HoaDonChiTiet update);
 
-    HoaDonChiTiet returnItem(HoaDonChiTiet update, Integer status);
+    ResponseEntity<?> returnItem(HoaDonChiTiet update, Integer status);
 
     LichSuHoaDon addLS(HoaDonChiTiet addLS, int status);
 

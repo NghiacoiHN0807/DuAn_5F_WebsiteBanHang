@@ -31,8 +31,6 @@ const ModalPaymentComfirm = (props) => {
   const param = useParams();
   const idHdParam = param.id;
   const [moTa, setMoTa] = useState('');
-  const currentDate = new Date();
-  const formattedDate = format(currentDate, 'yyyy-MM-dd');
 
   const navigate = useNavigate();
 
@@ -83,11 +81,22 @@ const ModalPaymentComfirm = (props) => {
             });
           } else {
             console.log('Check listHD: ', listHD);
-            await updatePayment(idHdParam, tenKhTT, sdtKHTT, formattedDate, thanhTien, cashGiven, change, 9);
-            const paymentOn = await paymentOnline(changeAmount, listHD.idHd);
-            console.log('Check paymentOn: ', paymentOn);
-            // Mở tab mới với đường dẫn URL
-            window.location.href = paymentOn;
+            const changtoHDCT = await updatePayment(idHdParam, tenKhTT, sdtKHTT, cashGiven, change, 9);
+            if (changtoHDCT.status === 400) {
+              setAlertContent({
+                type: 'warning',
+                message: changtoHDCT.data.error,
+              });
+            } else if (changtoHDCT.status === 200) {
+              const paymentOn = await paymentOnline(changeAmount, listHD.idHd);
+              // Mở tab mới với đường dẫn URL
+              window.location.href = paymentOn;
+            } else {
+              setAlertContent({
+                type: 'warning',
+                message: 'Không Thành Công',
+              });
+            }
           }
         } else {
           setChangeAmount(0);
@@ -102,12 +111,24 @@ const ModalPaymentComfirm = (props) => {
             message: 'Tiền Khách Đưa Chưa Đủ',
           });
         } else {
-          await updatePayment(idHdParam, tenKhTT, sdtKHTT, formattedDate, thanhTien, cashGiven, change, 9);
-          setAlertContent({
-            type: 'success',
-            message: 'Thanh Toán Tại Quầy Thành Công!!!',
-          });
-          navigate(`/dashboard/bills/time-line/${idHdParam}`);
+          const changtoHDCT = await updatePayment(idHdParam, tenKhTT, sdtKHTT, thanhTien, cashGiven, change, 9);
+          if (changtoHDCT.status === 400) {
+            setAlertContent({
+              type: 'warning',
+              message: changtoHDCT.data.error,
+            });
+          } else if (changtoHDCT.status === 200) {
+            setAlertContent({
+              type: 'success',
+              message: 'Thanh Toán Tại Quầy Thành Công!!!',
+            });
+            navigate(`/dashboard/bills/time-line/${idHdParam}`);
+          } else {
+            setAlertContent({
+              type: 'warning',
+              message: 'Không Thành Công',
+            });
+          }
         }
       }
     } catch (e) {
@@ -159,7 +180,6 @@ const ModalPaymentComfirm = (props) => {
           TransitionComponent={Transition}
           keepMounted
           onClose={handleClose}
-          maxWidth="xl"
           aria-describedby="alert-dialog-slide-description"
         >
           <DialogTitle>{'THANH TOÁN HÓA ĐƠN'}</DialogTitle>

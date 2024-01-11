@@ -2,7 +2,6 @@ import { useParams } from 'react-router-dom';
 import '../scss/Car-Bill-ADM.scss';
 import { Alert, Dialog, FormControlLabel, Snackbar, Switch, TextField } from '@mui/material';
 import { useState, forwardRef } from 'react';
-import { format } from 'date-fns';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -11,7 +10,7 @@ import Slide from '@mui/material/Slide';
 import SendIcon from '@mui/icons-material/Send';
 import PropTypes from 'prop-types';
 import { paymentOnline } from '../service/BillSevice';
-import { updatePayment } from '../service/OrderManagementTimeLine';
+import { updatePayment1 } from '../service/OrderManagementTimeLine';
 
 const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
@@ -32,8 +31,6 @@ const ModalPaymentComfirmTimeline = (props) => {
   const param = useParams();
   const idHdParam = param.id;
   const [moTa, setMoTa] = useState('');
-  const currentDate = new Date();
-  const formattedDate = format(currentDate, 'yyyy-MM-dd');
 
   // const navigate = useNavigate();
 
@@ -90,13 +87,21 @@ const ModalPaymentComfirmTimeline = (props) => {
             message: 'Tiền Khách Đưa Chưa Đủ',
           });
         } else {
-          await updatePayment(idHdParam, tenKhTT, sdtKHTT, formattedDate, thanhTien, cashGiven, change, 4);
-          setAlertContent({
-            type: 'success',
-            message: 'Thanh Toán Tại Quầy Thành Công!!!',
-          });
-          getListData();
-          handleClose();
+          const changtoHDCT = await updatePayment1(idHdParam, thanhTien);
+          console.log(changtoHDCT);
+          if (changtoHDCT.status === 400) {
+            setAlertContent({
+              type: 'warning',
+              message: changtoHDCT.data.error,
+            });
+          } else {
+            setAlertContent({
+              type: 'success',
+              message: 'Thanh Toán Tại Quầy Thành Công!!!',
+            });
+            getListData();
+            handleClose();
+          }
         }
       }
     } catch (e) {
@@ -139,7 +144,6 @@ const ModalPaymentComfirmTimeline = (props) => {
           TransitionComponent={Transition}
           keepMounted
           onClose={handleClose}
-          maxWidth="xl"
           aria-describedby="alert-dialog-slide-description"
         >
           <DialogTitle>{'THANH TOÁN HÓA ĐƠN'}</DialogTitle>

@@ -31,7 +31,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Timeline from '../MappingTimeLine/Timeline';
 import TimelineEvent from '../MappingTimeLine/TimelineEvent';
 import { viewAllHTTT } from '../service/OrderManagementTimeLine';
-import { finByProductOnCart2, finByProductOnCart3, findById } from '../service/BillSevice';
+import { finByIDHDCT, finByProductOnCart2, finByProductOnCart3, findById } from '../service/BillSevice';
 import ModalUpdateStatus from '../forms/Modal-Update-Status';
 import ModalPaymentComfirmTimeline from '../forms/Modal-Payment-Confirm-TimeLine';
 import { getDetailOneHD } from '../service/OderManagementSevice';
@@ -44,6 +44,7 @@ import ModalChangeAddress from '../forms/Modals-Change-Address';
 import { selectDiaChiByTK } from '../service/client/Payment';
 import ModalChangeAddressNoAcc from '../forms/Modals-Change-AddressNoAcc';
 import ModalUpdateStatusUnsuccess from '../forms/Modal-Update-Status-Unsuccess';
+import { returnItem } from '../service/client/ReturnItem';
 
 const styles = {
   container: {
@@ -60,6 +61,7 @@ const OrderManagementTimeline = ({ classes }) => {
   const idHdParam = param.id;
   const [listData, setListData] = useState([]);
   const [listHTTT, setListHTTT] = useState([]);
+  const [soTienConLai, setSoTienConLai] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [idTaiKhoan, setIdTaiKhoan] = useState('');
   //   Select bill
@@ -70,6 +72,13 @@ const OrderManagementTimeline = ({ classes }) => {
 
       setListData(res);
       setListHTTT(res1);
+      console.log('res1', res1);
+      const totalSoTien = res1.reduce((acc, obj) => acc + obj.soTien, 0);
+      console.log('res[0].idHd.thanhTien', res[0].idHd.thanhTien);
+      console.log('totalSoTien', totalSoTien);
+
+      setSoTienConLai(res[0].idHd.thanhTien - totalSoTien);
+
       setActiveIndex(res[0].idHd.trangThai);
       setIdTaiKhoan(res[0].idHd.idKH.idTaiKhoan);
     } catch (error) {
@@ -341,14 +350,33 @@ const OrderManagementTimeline = ({ classes }) => {
   };
   // Format thanhTien
   const formatCurrency = (amount) => amount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-  const handleCancelClick = () => {
+  const handleCancelClick = async (item) => {
+    const updateHDCT = await finByIDHDCT(item[1]);
+    console.log(updateHDCT);
+    const changtoHDCT = await returnItem(updateHDCT, 3);
+
+    if (changtoHDCT.status === 400) {
+      console.log('Cancel button clicked');
+    } else {
+      selectDataCart();
+      getListData();
+      console.log('Cancel button clicked1');
+    }
     // Xử lý khi nút X được nhấn
-    console.log('Cancel button clicked');
   };
 
-  const handleCheckClick = () => {
+  const handleCheckClick = async (item) => {
+    const updateHDCT = await finByIDHDCT(item[1]);
+
+    const changtoHDCT = await returnItem(updateHDCT, 2);
+    if (changtoHDCT.status === 400) {
+      console.log('Check button clicked');
+    } else {
+      selectDataCart();
+      getListData();
+      console.log('Check button clicked1');
+    }
     // Xử lý khi nút V được nhấn
-    console.log('Check button clicked');
   };
   return (
     <>
@@ -476,7 +504,8 @@ const OrderManagementTimeline = ({ classes }) => {
               onClick={() => handlePayment()}
               size="small"
               variant="outlined"
-              disabled={activeIndex < 3 || activeIndex > 3 || listHTTT.length > 0}
+              // activeIndex > 3 ||
+              disabled={activeIndex < 3 || soTienConLai <= 0}
             >
               Xác nhận thanh toán
             </Button>
@@ -504,7 +533,7 @@ const OrderManagementTimeline = ({ classes }) => {
                         {item.hinhThuc}
                       </TableCell>
                       <TableCell align="right">{formatCurrency(item.soTien)}</TableCell>
-                      <TableCell align="right">{formatDateTime(item.idHd.ngayThanhToan)}</TableCell>
+                      <TableCell align="right">{formatDateTime(item.ngayThanhToan)}</TableCell>
                     </TableRow>
                   ))
                 ) : (
@@ -628,7 +657,7 @@ const OrderManagementTimeline = ({ classes }) => {
                 showModalsAdd={showModalsAdd}
                 handleClose={handleClose}
                 listData={listData}
-                thanhTien={listData[0].idHd.thanhTien}
+                thanhTien={soTienConLai}
                 listHD={listData[0].idHd}
                 tenKhTT={listData[0].idHd.tenKh}
                 sdtKHTT={listData[0].idHd.sdtKh}
@@ -741,10 +770,12 @@ const OrderManagementTimeline = ({ classes }) => {
                         <TableCell align="right">{formatCurrency(item[9])}</TableCell>
                         <TableCell align="right">{item[12]}</TableCell>
                         <TableCell align="right">
-                          <IconButton onClick={handleCancelClick}>
-                            <CancelIcon />
-                          </IconButton>
-                          <IconButton onClick={handleCheckClick}>
+                          {item[13] < 11 && (
+                            <IconButton disabled={item[13] === 11} onClick={() => handleCancelClick(item)}>
+                              <CancelIcon />
+                            </IconButton>
+                          )}
+                          <IconButton disabled={item[13] === 11} onClick={() => handleCheckClick(item)}>
                             <CheckCircleIcon />
                           </IconButton>
                         </TableCell>

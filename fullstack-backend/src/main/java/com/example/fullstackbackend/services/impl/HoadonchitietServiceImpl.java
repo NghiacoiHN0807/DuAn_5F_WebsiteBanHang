@@ -104,6 +104,8 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 //            ChiTietSanPham ctsp = chitietsanphamRepo.findById(add);
             BigDecimal newPrice = updateExist.getIdCtsp().getGiaThucTe().multiply(new BigDecimal(newQuantity));
             updateExist.setDonGia(newPrice);
+            updateExist.setTrangThai(0);
+            updateExist.setLyDoHuy(null);
             hoadonchitietRepository.save(updateExist);
 
             // Update price in hd
@@ -274,13 +276,13 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     @Override
-    public HoaDonChiTiet returnItem(HoaDonChiTiet update, Integer status) {
+    public ResponseEntity<?> returnItem(HoaDonChiTiet update, Integer status) {
         // Save history time-line
         addLS(update, status == 1 ? 4 : (status == 2 ? 5 : 6));
 
         // Update old hdct
         HoaDonChiTiet updateOLDHDCT = hoadonchitietRepository.findById(update.getIdHdct()).orElseThrow();
-        int quantity = updateOLDHDCT.getSoLuong() - update.getSoLuong();
+        int quantity = (status == 1 || status == 2) ? (updateOLDHDCT.getSoLuong() - update.getSoLuong()) : (updateOLDHDCT.getSoLuong() + update.getSoLuong());
         updateOLDHDCT.setSoLuong(quantity);
 
         BigDecimal tongTien = updateOLDHDCT.getIdCtsp().getGiaThucTe().multiply(BigDecimal.valueOf(quantity));
@@ -313,16 +315,11 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
             newHdcteturn.setDonGia(donGia);
             newHdcteturn.setLyDoHuy(update.getLyDoHuy());
             newHdcteturn.setTrangThai(status == 1 ? 10 : 11);
-            return hoadonchitietRepository.save(newHdcteturn);
+            return  ResponseEntity.ok( hoadonchitietRepository.save(newHdcteturn));
         } else {
-            update.setIdHd(update.getIdHd());
-            update.setIdCtsp(update.getIdCtsp());
-            update.setSoLuong(update.getSoLuong());
-            BigDecimal donGia = updateOLDHDCT.getIdCtsp().getGiaThucTe().multiply(BigDecimal.valueOf(update.getSoLuong()));
-            update.setDonGia(donGia);
-            update.setLyDoHuy(update.getLyDoHuy());
-            update.setTrangThai(0);
-            return hoadonchitietRepository.save(update);
+            updateHoaDonChiTiet(update);
+            hoadonchitietRepository.deleteById(update.getIdHdct());
+            return ResponseEntity.ok("Không Chấp Nhận Trả Hàng" );
         }
     }
 
