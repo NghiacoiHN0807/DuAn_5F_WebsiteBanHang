@@ -47,17 +47,12 @@ export default function ModalCreateBillOnline(props) {
         type: 'warning',
         message: changtoHDCT.data.error,
       });
-    } else if (changtoHDCT.status === 200) {
+    } else {
       setAlertContent({
         type: 'success',
         message: 'Đặt Hàng Online Thành Công!!!',
       });
       navigate(`/dashboard/bills/time-line/${idHdParam}`);
-    } else {
-      setAlertContent({
-        type: 'warning',
-        message: 'Không Thành Công',
-      });
     }
   };
 
