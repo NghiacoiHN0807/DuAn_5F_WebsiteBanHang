@@ -55,6 +55,10 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     public List<Object[]> getListProductOncart2(Integer idHd) {
         return hoadonchitietRepository.getListProductOncart2(idHd);
     }
+    @Override
+    public List<Object[]> getListProductOncart3(Integer idHd) {
+        return hoadonchitietRepository.getListProductOncart3(idHd);
+    }
 
     @Override
     public Page<HoaDonChiTiet> getListProductByIDKH(Integer idKH, Integer pageNo, Integer size) {
@@ -100,6 +104,8 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 //            ChiTietSanPham ctsp = chitietsanphamRepo.findById(add);
             BigDecimal newPrice = updateExist.getIdCtsp().getGiaThucTe().multiply(new BigDecimal(newQuantity));
             updateExist.setDonGia(newPrice);
+            updateExist.setTrangThai(0);
+            updateExist.setLyDoHuy(null);
             hoadonchitietRepository.save(updateExist);
 
             // Update price in hd
@@ -270,55 +276,37 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     @Override
-    public HoaDonChiTiet returnItem(HoaDonChiTiet update) {
+    public ResponseEntity<?> returnItem(HoaDonChiTiet update, Integer status) {
         // Save history time-line
-        addLS(update, 4);
+        addLS(update, status == 1 ? 4 : (status == 2 ? 5 : 6));
 
         // Update old hdct
         HoaDonChiTiet updateOLDHDCT = hoadonchitietRepository.findById(update.getIdHdct()).orElseThrow();
-        // Get quantity
-        int quantity = updateOLDHDCT.getSoLuong() - update.getSoLuong();
+        int quantity = (status == 1 || status == 2) ? (updateOLDHDCT.getSoLuong() - update.getSoLuong()) : (updateOLDHDCT.getSoLuong() + update.getSoLuong());
         updateOLDHDCT.setSoLuong(quantity);
 
-        //Update TongTien
         BigDecimal tongTien = updateOLDHDCT.getIdCtsp().getGiaThucTe().multiply(BigDecimal.valueOf(quantity));
         updateOLDHDCT.setDonGia(tongTien);
         hoadonchitietRepository.save(updateOLDHDCT);
 
-        // Delete product if quantity = 0
         if (quantity <= 0) {
             hoadonchitietRepository.deleteById(update.getIdHdct());
         }
-        // Update tongTien and thanhTien
+
         // Find hd
         HoaDon hoaDon = hoadonRepo.findById(update.getIdHd().getIdHd()).orElseThrow();
         List<HoaDonChiTiet> donChiTiets = hoadonchitietRepository.findAllByIdHd_IdHdAndTrangThai(update.getIdHd().getIdHd(), 0);
-        // Prepare the bill
-        if (hoaDon.getSoTienGiamGia() == null) {
-            hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
-        }
-        if (hoaDon.getTienShip() == null) {
-            hoaDon.setTienShip(BigDecimal.ZERO);
-        }
-        BigDecimal tongGiaTien = donChiTiets.stream()
-                .map(HoaDonChiTiet::getDonGia)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal tienShip = hoaDon.getTienShip() != null ? hoaDon.getTienShip() : BigDecimal.ZERO;
+
         BigDecimal tienGiam = hoaDon.getSoTienGiamGia() != null ? hoaDon.getSoTienGiamGia() : BigDecimal.ZERO;
+        BigDecimal tienShip = hoaDon.getTienShip() != null ? hoaDon.getTienShip() : BigDecimal.ZERO;
+        BigDecimal tongGiaTien = donChiTiets.stream().map(HoaDonChiTiet::getDonGia).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal thanhTien = tongGiaTien.add(tienShip).subtract(tienGiam);
         hoaDon.setTongTien(tongGiaTien);
         hoaDon.setThanhTien(thanhTien);
         hoadonRepo.save(hoaDon);
 
-        // Add return item
-        HoaDonChiTiet donChiTietss = hoadonchitietRepository.findByIdHd_IdHdAndTrangThai(update.getIdHd().getIdHd(), 10);
-        if (donChiTietss != null) {
-            int quantityExist = donChiTietss.getSoLuong() + update.getSoLuong();
-            donChiTietss.setSoLuong(quantityExist);
-            donChiTietss.setLyDoHuy(update.getLyDoHuy());
-            return hoadonchitietRepository.save(donChiTietss);
-        } else {
+        if (status == 1 || status == 2) {
             HoaDonChiTiet newHdcteturn = new HoaDonChiTiet();
             newHdcteturn.setIdHd(update.getIdHd());
             newHdcteturn.setIdCtsp(update.getIdCtsp());
@@ -326,11 +314,15 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
             BigDecimal donGia = updateOLDHDCT.getIdCtsp().getGiaThucTe().multiply(BigDecimal.valueOf(update.getSoLuong()));
             newHdcteturn.setDonGia(donGia);
             newHdcteturn.setLyDoHuy(update.getLyDoHuy());
-            newHdcteturn.setTrangThai(10);
-            return hoadonchitietRepository.save(newHdcteturn);
-
+            newHdcteturn.setTrangThai(status == 1 ? 10 : 11);
+            return  ResponseEntity.ok( hoadonchitietRepository.save(newHdcteturn));
+        } else {
+            updateHoaDonChiTiet(update);
+            hoadonchitietRepository.deleteById(update.getIdHdct());
+            return ResponseEntity.ok("Không Chấp Nhận Trả Hàng" );
         }
     }
+
 
     @Override
     public LichSuHoaDon addLS(HoaDonChiTiet addLS, int status) {
@@ -361,14 +353,33 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
         } else if (status == 4) {
             ls.setIdHd(addLS.getIdHd());
             ls.setTrangThai(6);
-            ls.setMoTa("Trả Sản Phẩm: " + addLS.getIdCtsp().getIdSp().getTenSp() + " Với số lượng: " + addLS.getSoLuong() + "Lý Do Hủy Đơn: " + addLS.getLyDoHuy());
+            ls.setMoTa("Trả Sản Phẩm: " + addLS.getIdCtsp().getIdSp().getTenSp() + " Với số lượng: " + addLS.getSoLuong() + " Lý Do Hủy Đơn: " + addLS.getLyDoHuy());
             ls.setNgayThayDoi(currentTimestamp);
             // Update Inventory number
             ChiTietSanPham chiTietSanPhams = chitietsanphamRepo.findById(addLS.getIdCtsp().getIdCtsp()).orElseThrow();
-
-            System.out.println("Số Lượng Còn Lại:" + (chiTietSanPhams.getSoLuongTon() + addLS.getSoLuong()));
             chiTietSanPhams.setSoLuongTon(chiTietSanPhams.getSoLuongTon() + addLS.getSoLuong());
-            System.out.println("GetIDCTSP:" + chiTietSanPhams.getIdCtsp());
+            chitietsanphamRepo.save(chiTietSanPhams);
+
+            return lichSuHoaDonRepository.save(ls);
+        }else if (status == 5) {
+            ls.setIdHd(addLS.getIdHd());
+            ls.setTrangThai(6);
+            ls.setMoTa("Đồng Ý Trả Sản Phẩm: " + addLS.getIdCtsp().getIdSp().getTenSp() + " Với số lượng: " + addLS.getSoLuong() + " Lý Do Hủy Đơn: " + addLS.getLyDoHuy());
+            ls.setNgayThayDoi(currentTimestamp);
+            // Update Inventory number
+            ChiTietSanPham chiTietSanPhams = chitietsanphamRepo.findById(addLS.getIdCtsp().getIdCtsp()).orElseThrow();
+            chiTietSanPhams.setSoLuongTon(chiTietSanPhams.getSoLuongTon() + addLS.getSoLuong());
+            chitietsanphamRepo.save(chiTietSanPhams);
+
+            return lichSuHoaDonRepository.save(ls);
+        }else if (status == 6) {
+            ls.setIdHd(addLS.getIdHd());
+            ls.setTrangThai(6);
+            ls.setMoTa("Không Đồng Ý Trả Sản Phẩm: " + addLS.getIdCtsp().getIdSp().getTenSp() + " Với số lượng: " + addLS.getSoLuong() + " Lý Do Hủy Đơn: " + addLS.getLyDoHuy());
+            ls.setNgayThayDoi(currentTimestamp);
+            // Update Inventory number
+            ChiTietSanPham chiTietSanPhams = chitietsanphamRepo.findById(addLS.getIdCtsp().getIdCtsp()).orElseThrow();
+            chiTietSanPhams.setSoLuongTon(chiTietSanPhams.getSoLuongTon() + addLS.getSoLuong());
             chitietsanphamRepo.save(chiTietSanPhams);
 
             return lichSuHoaDonRepository.save(ls);

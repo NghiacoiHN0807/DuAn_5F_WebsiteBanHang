@@ -20,7 +20,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 // Service
 import { detailBill, finByProductOnCart2 } from '../../service/BillSevice';
@@ -127,7 +127,7 @@ export default function PaymentPage1() {
   }, [idHdParam]);
   useEffect(() => {
     selectDataCart();
-  }, []);
+  }, [selectDataCart]);
 
   const handleClose = () => {
     setOpenCoupon(false);
@@ -255,24 +255,10 @@ export default function PaymentPage1() {
       });
     } else if (isDeliveryChecked === false) {
       setOpenConfirm(true);
-      // setAlertContent({
-      //   type: 'success',
-      //   message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
-      // });
-      // await deleteProductOnCartPayment(idHdParam);
-      // await updateClientPayment(idHdParam, tenKH, sdtKH, emailKH, diaChi);
-      // navigate(`/client/client-timeline/${idHdParam}`);
+
     } else if (isDeliveryChecked === true) {
-      // if (listHTTT.length > 0) {
       setOpenConfirm(true);
 
-      // await updateClientPayment1(idHdParam, tenKH, sdtKH, emailKH, diaChi);
-      // setAlertContent({
-      //   type: 'success',
-      //   message: 'Hãy Thanh Toán Trước. Cảm Ơn!!!',
-      // });
-      // const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
-      // window.location.href = paymentOn;
     }
   };
   const handleCloseConfirm = () => {
@@ -321,6 +307,15 @@ export default function PaymentPage1() {
     }
     return () => {};
   }, [idHdParam, listHD.trangThai, navigate]);
+
+  // const location = useLocation();
+
+  // useEffect(() => () => {
+  //     if (location.pathname !== '/client/payment/427') {
+  //       // Thực hiện xóa khi chuyển trang ra khỏi đường dẫn cụ thể
+  //       deleteOverTime(idHdParam);
+  //     }
+  //   }, [idHdParam, location.pathname]);
 
   return (
     <>

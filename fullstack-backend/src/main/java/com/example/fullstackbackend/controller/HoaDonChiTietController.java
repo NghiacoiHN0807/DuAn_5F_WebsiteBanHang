@@ -71,6 +71,11 @@ public class HoaDonChiTietController {
         return hoadonchitietSevice.getListProductOncart2(idHd);
     }
 
+    @GetMapping("view-all-prduct3/{idHd}")
+    public List<Object[]> getSanPhamsWithSizes3(@PathVariable("idHd") Integer idHd) {
+        return hoadonchitietSevice.getListProductOncart3(idHd);
+    }
+
     @GetMapping("detail-get-one/{id}")
     public List<HoaDonChiTiet> detailCTSP(@PathVariable("id") Integer id) {
         return hoadonchitietSevice.getOne(id);
@@ -88,14 +93,22 @@ public class HoaDonChiTietController {
     }
 
     @PutMapping("return-item")
-    public HoaDonChiTiet returnItem(@Valid @RequestBody HoaDonChiTiet updateHD,
-                                    BindingResult bindingResult) {
-        System.out.println("updateHD: " + updateHD.getIdHdct());
+    public ResponseEntity<?> returnItem(@Valid @RequestBody HoaDonChiTiet updateHD,@RequestParam Integer status,
+                                    BindingResult bindingResult ) {
         if (bindingResult.hasErrors()) {
-            return null;
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "Bạn Đã Nhập Thiếu Trường"));
         } else {
-            return hoadonchitietSevice.returnItem(updateHD);
+            return ResponseEntity.ok(hoadonchitietSevice.returnItem(updateHD, status)) ;
         }
+    }
+
+    @GetMapping("find-by-idHDCT/{id}")
+    public ResponseEntity<?> finByIDHDCT(
+            @PathVariable("id") Integer id) {
+        return ResponseEntity.ok(hoadonchitietSevice.detail(id).orElseThrow());
+
     }
 
     @PutMapping("update/{id}")

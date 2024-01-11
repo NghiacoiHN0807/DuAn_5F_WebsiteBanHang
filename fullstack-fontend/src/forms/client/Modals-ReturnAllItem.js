@@ -41,9 +41,9 @@ const ModalAllItemReturn = (props) => {
   const param = useParams();
   const idHdParam = param.id;
   const handleReturnAll = async () => {
-    if (reasonReturn === '') {
+    if (reasonReturn.trim() === '') {
       setAlertContent({
-        type: 'error',
+        type: 'warning',
         message: 'Không Được Để Trống Lý Do',
       });
     } else {
@@ -60,14 +60,15 @@ const ModalAllItemReturn = (props) => {
   return (
     <>
       <Container>
-        <Dialog open={show} onClose={handleClose} maxWidth="xl" fullWidth>
+        <Dialog open={show} onClose={handleClose} maxWidth="xl">
           <DialogTitle>
-            <Typography variant="h4" sx={{ mb: 5 }}>
-              Lý Do Muốn Trả Hóa Đơn
+            <Typography variant="h5" sx={{ mb: 5 }}>
+              Lý Do Muốn Trả Sản Phẩm
             </Typography>
           </DialogTitle>
           <DialogContent>
             <TextField
+              sx={{ marginTop: 2 }}
               onChange={(e) => setReasonReturn(e.target.value)}
               id="outlined-multiline-static"
               label="Lý Do Hủy"
@@ -80,19 +81,19 @@ const ModalAllItemReturn = (props) => {
             <Button onClick={handleReturnAll}>Hoàn Trả Tất Cả</Button>
           </DialogActions>
         </Dialog>
+        {alertContent && (
+          <Snackbar
+            open
+            autoHideDuration={3000}
+            onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+              {alertContent.message}
+            </Alert>
+          </Snackbar>
+        )}
       </Container>
-      {alertContent && (
-        <Snackbar
-          open
-          autoHideDuration={3000}
-          onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
-            {alertContent.message}
-          </Alert>
-        </Snackbar>
-      )}
     </>
   );
 };

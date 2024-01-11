@@ -40,12 +40,25 @@ export default function ModalCreateBillOnline(props) {
   };
 
   const handleChoose = async () => {
-    setAlertContent({
-      type: 'success',
-      message: 'Đặt Hàng Online Thành Công!!!',
-    });
-    await updatePaymentShip(idHdParam, tenKhShip, sdtKHShip, emailKHShip, result, thanhTien, 2, 0);
-    navigate(`/dashboard/bills/time-line/${idHdParam}`);
+    const changtoHDCT = await updatePaymentShip(idHdParam, tenKhShip, sdtKHShip, emailKHShip, result, thanhTien, 2, 0);
+
+    if (changtoHDCT.status === 400) {
+      setAlertContent({
+        type: 'warning',
+        message: changtoHDCT.data.error,
+      });
+    } else if (changtoHDCT.status === 200) {
+      setAlertContent({
+        type: 'success',
+        message: 'Đặt Hàng Online Thành Công!!!',
+      });
+      navigate(`/dashboard/bills/time-line/${idHdParam}`);
+    } else {
+      setAlertContent({
+        type: 'warning',
+        message: 'Không Thành Công',
+      });
+    }
   };
 
   return (

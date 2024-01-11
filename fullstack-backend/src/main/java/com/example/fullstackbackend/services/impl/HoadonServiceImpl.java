@@ -29,7 +29,7 @@ public class HoadonServiceImpl implements HoadonSevice {
 
     @Autowired
     private LichSuHoaDonRepository lichSuHoaDonRepo;
-    Timestamp currentTimestamp ;
+    Timestamp currentTimestamp;
 
 
     @Override

@@ -13,9 +13,9 @@ import { updateStatusBill } from '../service/OrderManagementTimeLine';
 
 const Transition = forwardRef((props, ref) => <Slide direction="up" ref={ref} {...props} />);
 
-const ModalUpdateStatus = (props) => {
+const ModalUpdateStatusUnsuccess = (props) => {
   // Get Props
-  ModalUpdateStatus.propTypes = {
+  ModalUpdateStatusUnsuccess.propTypes = {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
     getListData: PropTypes.func.isRequired,
@@ -38,47 +38,19 @@ const ModalUpdateStatus = (props) => {
           message: 'Hãy Nhập Thêm Mô Tả',
         });
       } else {
-        if (listHTTT.length > 0) {
-          const newActiveIndex = activeIndex === 3 ? 5 : activeIndex + 1;
+        if (activeIndex < 1) {
           handleOpenBD();
-          const changtoHDCT = await updateStatusBill(idHdParam, moTa, newActiveIndex);
-          if (changtoHDCT.status === 400) {
-            setAlertContent({
-              type: 'warning',
-              message: changtoHDCT.data.error,
-            });
-          } else if (changtoHDCT.status === 200) {
-            setAlertContent({
-              type: 'success',
-              message: 'Đã Cập Nhập Trạng Thái Hóa Đơn!!!',
-            });
-          } else {
-            setAlertContent({
-              type: 'warning',
-              message: 'Không Thành Công',
-            });
-          }
+          await updateStatusBill(idHdParam, moTa, 10);
           handleCloseBD();
         } else {
-          const changtoHDCT = await updateStatusBill(idHdParam, moTa, activeIndex + 1);
-          if (changtoHDCT.status === 400) {
-            setAlertContent({
-              type: 'warning',
-              message: changtoHDCT.data.error,
-            });
-          } else if (changtoHDCT.status === 200) {
-            setAlertContent({
-              type: 'success',
-              message: 'Đã Cập Nhập Trạng Thái Hóa Đơn!!!',
-            });
-          } else {
-            setAlertContent({
-              type: 'warning',
-              message: 'Không Thành Công',
-            });
-          }
+          handleOpenBD();
+          await updateStatusBill(idHdParam, moTa, 15);
           handleCloseBD();
         }
+        setAlertContent({
+          type: 'success',
+          message: 'Đã Cập Nhập Trạng Thái Hóa Đơn!!!',
+        });
         getListData();
         handleClose();
       }
@@ -113,7 +85,7 @@ const ModalUpdateStatus = (props) => {
           // fullWidth
           aria-describedby="alert-dialog-slide-description"
         >
-          <DialogTitle>{'Cập Nhập Lịch Sử Hóa Đơn Thành Công'}</DialogTitle>
+          <DialogTitle>{'Cập Nhập Lịch Sử Hóa Đơn Không Thành Công'}</DialogTitle>
           <DialogContent>
             {/* <DialogContentText id="alert-dialog-slide-description"> */}
             <div>
@@ -135,25 +107,24 @@ const ModalUpdateStatus = (props) => {
             <Button onClick={handleClose}>Hủy</Button>
             <Button onClick={handleUpdate}>Đồng Ý</Button>
           </DialogActions>
-        </Dialog>{' '}
-        {alertContent && (
-          <Snackbar
-            open
-            autoHideDuration={3000}
-            onClose={handleSnackbarClose}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-          >
-            <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
-              {alertContent.message}
-            </Alert>
-          </Snackbar>
-        )}
+        </Dialog>
       </div>
-
+      {alertContent && (
+        <Snackbar
+          open
+          autoHideDuration={3000}
+          onClose={handleSnackbarClose}
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        >
+          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+            {alertContent.message}
+          </Alert>
+        </Snackbar>
+      )}
       <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={openBD}>
         <CircularProgress color="inherit" />
       </Backdrop>
     </>
   );
 };
-export default ModalUpdateStatus;
+export default ModalUpdateStatusUnsuccess;
