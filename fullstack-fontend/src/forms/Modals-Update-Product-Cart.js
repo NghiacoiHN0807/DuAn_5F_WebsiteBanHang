@@ -50,6 +50,10 @@ const ModalUpdateProductOnCart = (props) => {
       setIsMSSelected(false);
       setSelectSoLuongTon([]);
     } else {
+      setSelectSoLuongTon([]);
+      setAvailableColors([]);
+      setSelectedMauSac(null);
+      setIsMSSelected(false);
       setSelectedSize(size);
       setIsSizeSelected(true);
       setAvailableColors(checkSize);
@@ -72,7 +76,6 @@ const ModalUpdateProductOnCart = (props) => {
             ),
           ]
         : [];
-      console.log('checkSoLuong:', checkSoLuong);
 
       if (isMSSelected && selectedMauSac === mauSac.idMs.tenMs) {
         setSelectedMauSac(null);
@@ -127,17 +130,21 @@ const ModalUpdateProductOnCart = (props) => {
 
       //   Insert to the cart
 
-      await updateCart(getIdHdCt, getOneCTSP, quantity, donGia);
+      const changtoHDCT = await updateCart(getIdHdCt, getOneCTSP, quantity, donGia);
       //   Close the modal
-      // setSelectedSize(null);
+      if (changtoHDCT.status === 400) {
+        setAlertContent({
+          type: 'warning',
+          message: changtoHDCT.data.error,
+        });
+      } else {
+        setAlertContent({
+          type: 'success',
+          message: 'Cập Nhập Sản Phẩm Thành Công',
+        });
+      }
       handleCloseDetai();
-      // setQuantity(1);
-      //   Load new data on cart
       selectDataCart();
-      setAlertContent({
-        type: 'success',
-        message: 'Cập nhập sản phẩm thành công',
-      });
     }
   };
   // Set select one MS and Size
@@ -159,8 +166,6 @@ const ModalUpdateProductOnCart = (props) => {
   const maxPrice = Math.max(...giaThucTe);
 
   // Create the price range string
-  const formattedMinPrice = minPrice.toLocaleString('en-US').replace(/,/g, '.');
-  const formattedMaxPrice = maxPrice.toLocaleString('en-US').replace(/,/g, '.');
   const priceRange =
     minPrice === maxPrice ? formatCurrency(minPrice) : `${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}`;
   const getFirstImage = (item) => {

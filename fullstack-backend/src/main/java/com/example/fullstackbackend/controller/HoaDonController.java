@@ -122,7 +122,6 @@ public class HoaDonController {
             // Chuyển đổi thành Timestamp
             currentTimestamp = new Timestamp(currentDate.getTime());
 
-            System.out.println("add123: " + newHD.getTrangThai());
             HoaDon hoaDon = hoadonSevice.add(newHD);
             // Add to history bill
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();

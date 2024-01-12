@@ -72,7 +72,6 @@ const ModalUpdateProductOnCartClient = (props) => {
             ),
           ]
         : [];
-      console.log('checkSoLuong:', checkSoLuong);
 
       if (isMSSelected && selectedMauSac === mauSac.idMs.tenMs) {
         setSelectedMauSac(null);
@@ -132,20 +131,27 @@ const ModalUpdateProductOnCartClient = (props) => {
       const getIdHdCt = itemUpdate.idGhct;
 
       const getOneCTSP = await findByProductNameAndSize(selectedSp, selectedSize, selectedMauSac);
-      console.log('getOneCTSP: ', getOneCTSP);
       //   Insert to the cart
 
-      await updateCartClient(getIdHdCt, getOneCTSP, quantity);
+      const changtoHDCT = await updateCartClient(getIdHdCt, getOneCTSP, quantity);
+      //   Close the modal
+      if (changtoHDCT.status === 400) {
+        setAlertContent({
+          type: 'warning',
+          message: changtoHDCT.data.error,
+        });
+      } else {
+        setAlertContent({
+          type: 'success',
+          message: 'Cập Nhập Sản Phẩm Thành Công',
+        });
+      }
       //   Close the modal
       setSelectedSize(null);
       handleCloseDetai();
       setQuantity(1);
       //   Load new data on cart
       selectDataCart();
-      setAlertContent({
-        type: 'success',
-        message: 'Cập nhập sản phẩm thành công',
-      });
     }
   };
   // Set select one MS and Size

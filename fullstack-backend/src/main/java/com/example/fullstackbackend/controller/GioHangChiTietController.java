@@ -83,9 +83,27 @@ public class GioHangChiTietController {
         } else {
             return ResponseEntity.ok(gioHangChiTietSevice.detail(id).map(
                     gioHangChiTiet -> {
-                        gioHangChiTiet.setIdCtsp(updateGHCT.getIdCtsp());
-                        gioHangChiTiet.setSoLuong(updateGHCT.getSoLuong());
-                        return gioHangChiTietSevice.update(gioHangChiTiet);
+                        boolean hasError = false;
+                        String nameError = "";
+                        // Check quantity in product
+                        ChiTietSanPham chiTietSanPham1 = chitietsanphamSer.findByIdCTSP(gioHangChiTiet.getIdCtsp().getIdCtsp()).orElseThrow();
+                        if (gioHangChiTiet.getSoLuong() > chiTietSanPham1.getSoLuongTon()) {
+                            nameError = "Số Lượng Tồn Của Sản Phẩm " + chiTietSanPham1.getIdSp().getTenSp() + " Không Đủ";
+                            hasError = true;
+                        } else if (chiTietSanPham1.getTrangThai() == 10) {
+                            nameError = "Sản Phẩm " + chiTietSanPham1.getIdSp().getTenSp() + " Đã Ngừng Kinh Doanh";
+                            hasError = true;
+                        }
+
+                        if (hasError) {
+                            return ResponseEntity
+                                    .status(HttpStatus.BAD_REQUEST)
+                                    .body(Collections.singletonMap("error", nameError));
+                        } else {
+                            gioHangChiTiet.setIdCtsp(updateGHCT.getIdCtsp());
+                            gioHangChiTiet.setSoLuong(updateGHCT.getSoLuong());
+                            return gioHangChiTietSevice.update(gioHangChiTiet);
+                        }
                     }).orElseThrow(() -> new xuatXuNotFoundException(id)));
         }
     }
@@ -116,13 +134,13 @@ public class GioHangChiTietController {
                 ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(y.getIdCtsp().getIdCtsp()).orElseThrow();
                 for (GioHangChiTiet z :
                         newHDCT) {
-                    if (z.getIdCtsp().getIdCtsp().equals(chiTietSanPham.getIdCtsp())  && y.getIdCtsp().getIdCtsp().equals(chiTietSanPham.getIdCtsp())) {
+                    if (z.getIdCtsp().getIdCtsp().equals(chiTietSanPham.getIdCtsp()) && y.getIdCtsp().getIdCtsp().equals(chiTietSanPham.getIdCtsp())) {
                         if (z.getSoLuong() + y.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
-                            nameError = "Số Lượng Tồn Của Sản Phẩm "+ chiTietSanPham.getIdSp().getTenSp()+ " Không Đủ";
+                            nameError = "Số Lượng Tồn Của Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Không Đủ";
                             hasError = true;
                             break;
                         } else if (y.getIdCtsp().getTrangThai() == 10) {
-                            nameError = "Sản Phẩm "+ chiTietSanPham.getIdSp().getTenSp()+ " Đã Ngừng Kinh Doanh";
+                            nameError = "Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Đã Ngừng Kinh Doanh";
                             hasError = true;
                             break;
                         }
