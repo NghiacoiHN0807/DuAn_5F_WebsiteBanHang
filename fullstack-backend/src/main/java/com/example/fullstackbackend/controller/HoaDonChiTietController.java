@@ -1,9 +1,11 @@
 package com.example.fullstackbackend.controller;
 
 import com.example.fullstackbackend.entity.ChiTietSanPham;
+import com.example.fullstackbackend.entity.HoaDon;
 import com.example.fullstackbackend.entity.HoaDonChiTiet;
 import com.example.fullstackbackend.exception.xuatXuNotFoundException;
 import com.example.fullstackbackend.services.ChitietsanphamService;
+import com.example.fullstackbackend.services.HoadonSevice;
 import com.example.fullstackbackend.services.HoadonchitietSevice;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ import java.util.Optional;
 @CrossOrigin("http://localhost:3000/")
 public class HoaDonChiTietController {
     @Autowired
+    private HoadonSevice hoadonSevice;
+
+    @Autowired
     private HoadonchitietSevice hoadonchitietSevice;
 
     @Autowired
@@ -52,12 +57,29 @@ public class HoaDonChiTietController {
     @PostMapping("add")
     public ResponseEntity<?> add(@Valid @RequestBody HoaDonChiTiet newHD,
                                  BindingResult bindingResult) {
+        boolean hasError = false;
+        String nameError = "";
+
+        // Check quantity in product
+        ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(newHD.getIdCtsp().getIdCtsp()).orElseThrow();
+        if (newHD.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+            nameError = "Số Lượng Tồn Của Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Không Đủ";
+            hasError = true;
+        } else if (chiTietSanPham.getTrangThai() == 10) {
+            nameError = "Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Đã Ngừng Kinh Doanh";
+            hasError = true;
+        }
+
         if (bindingResult.hasErrors()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(Collections.singletonMap("error", "Nhập Thiếu Trường"));
+        } else if (hasError) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", nameError));
         } else {
-            return hoadonchitietSevice.add(newHD);
+            return ResponseEntity.ok(hoadonchitietSevice.add(newHD));
         }
     }
 
@@ -85,22 +107,41 @@ public class HoaDonChiTietController {
     @PutMapping("update-hdct/{id}")
     public ResponseEntity<?> updateHDCT(@Valid @RequestBody HoaDonChiTiet updateHD, @PathVariable("id") Integer id,
                                         BindingResult bindingResult) {
+        boolean hasError = false;
+        String nameError = "";
+
+        // Check quantity in product
+        ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(updateHD.getIdCtsp().getIdCtsp()).orElseThrow();
+        if (updateHD.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+            nameError = "Số Lượng Tồn Của Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Không Đủ";
+            hasError = true;
+        } else if (chiTietSanPham.getTrangThai() == 10) {
+            nameError = "Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Đã Ngừng Kinh Doanh";
+            hasError = true;
+        }
+
         if (bindingResult.hasErrors()) {
-            return null;
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", "Nhập Thiếu Trường"));
+        } else if (hasError) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("error", nameError));
         } else {
             return hoadonchitietSevice.update(updateHD);
         }
     }
 
     @PutMapping("return-item")
-    public ResponseEntity<?> returnItem(@Valid @RequestBody HoaDonChiTiet updateHD,@RequestParam Integer status,
-                                    BindingResult bindingResult ) {
+    public ResponseEntity<?> returnItem(@Valid @RequestBody HoaDonChiTiet updateHD, @RequestParam Integer status,
+                                        BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(Collections.singletonMap("error", "Bạn Đã Nhập Thiếu Trường"));
         } else {
-            return ResponseEntity.ok(hoadonchitietSevice.returnItem(updateHD, status)) ;
+            return ResponseEntity.ok(hoadonchitietSevice.returnItem(updateHD, status));
         }
     }
 
@@ -116,12 +157,52 @@ public class HoaDonChiTietController {
                                     @PathVariable("id") Integer id) {
         return hoadonchitietSevice.detail(id).map(
                 hoaDonChiTiet -> {
-                    ChiTietSanPham ctsp = chitietsanphamSer.findByIdCTSP(newHDCT.getIdCtsp().getIdCtsp()).orElseThrow();
-                    BigDecimal newDonGia = ctsp.getGiaThucTe().multiply(new BigDecimal(newHDCT.getSoLuong()));
-                    hoaDonChiTiet.setIdCtsp(newHDCT.getIdCtsp());
-                    hoaDonChiTiet.setSoLuong(newHDCT.getSoLuong());
-                    hoaDonChiTiet.setDonGia(newDonGia);
-                    return hoadonchitietSevice.update(hoaDonChiTiet);
+                    boolean hasError = false;
+                    String nameError = "";
+
+                    // Check quantity in product
+                    ChiTietSanPham chiTietSanPham1 = chitietsanphamSer.findByIdCTSP(newHDCT.getIdCtsp().getIdCtsp()).orElseThrow();
+                    if (newHDCT.getSoLuong() > chiTietSanPham1.getSoLuongTon()) {
+                        nameError = "Số Lượng Tồn Của Sản Phẩm " + chiTietSanPham1.getIdSp().getTenSp() + " Không Đủ";
+                        hasError = true;
+                    } else if (chiTietSanPham1.getTrangThai() == 10) {
+                        nameError = "Sản Phẩm " + chiTietSanPham1.getIdSp().getTenSp() + " Đã Ngừng Kinh Doanh";
+                        hasError = true;
+                    }
+
+                    if (hasError) {
+                        return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(Collections.singletonMap("error", nameError));
+                    } else {
+                        // Detail HD
+                        HoaDon hoaDon = hoadonSevice.detail(hoaDonChiTiet.getIdHd().getIdHd()).orElseThrow();
+                        if (hoaDon.getTrangThai() < 8) {
+                            // Plus old's product
+                            ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(hoaDonChiTiet.getIdCtsp().getIdCtsp()).orElseThrow();
+                            int newQuantity = hoaDonChiTiet.getSoLuong() + chiTietSanPham.getSoLuongTon();
+                            chiTietSanPham.setSoLuongTon(newQuantity);
+                            if (newQuantity > 0) {
+                                chiTietSanPham.setTrangThai(0);
+                            }
+                            chitietsanphamSer.update(chiTietSanPham);
+                            // Apart new's product
+                            int newQuantity1 = chiTietSanPham.getSoLuongTon() - newHDCT.getSoLuong();
+                            chiTietSanPham1.setSoLuongTon(newQuantity1);
+                            if (newQuantity1 <= 0) {
+                                chiTietSanPham1.setTrangThai(10);
+                            }
+                            chitietsanphamSer.update(chiTietSanPham1);
+
+                        }
+                        ChiTietSanPham ctsp = chitietsanphamSer.findByIdCTSP(newHDCT.getIdCtsp().getIdCtsp()).orElseThrow();
+                        BigDecimal newDonGia = ctsp.getGiaThucTe().multiply(new BigDecimal(newHDCT.getSoLuong()));
+                        hoaDonChiTiet.setIdCtsp(newHDCT.getIdCtsp());
+                        hoaDonChiTiet.setSoLuong(newHDCT.getSoLuong());
+                        hoaDonChiTiet.setDonGia(newDonGia);
+                        return hoadonchitietSevice.update(hoaDonChiTiet);
+                    }
+
                 }).orElseThrow(() -> new xuatXuNotFoundException(id));
 
     }
