@@ -273,19 +273,19 @@ const ModalPaymentComfirm = (props) => {
             <Button onClick={handlePaymentOnCash}>Đồng Ý</Button>
           </DialogActions>
         </Dialog>
+        {alertContent && (
+          <Snackbar
+            open
+            autoHideDuration={3000}
+            onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+              {alertContent.message}
+            </Alert>
+          </Snackbar>
+        )}
       </div>
-      {alertContent && (
-        <Snackbar
-          open
-          autoHideDuration={3000}
-          onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
-            {alertContent.message}
-          </Alert>
-        </Snackbar>
-      )}
     </>
   );
 };
