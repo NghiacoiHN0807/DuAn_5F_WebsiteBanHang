@@ -217,7 +217,7 @@ export default function Cart() {
         console.log('selectedItems', selectedItems);
         setAlertContent({
           type: 'success',
-          message: 'Tạo thành công hóa đơn',
+          message: 'Tạo Thành Công Hóa Đơn',
         });
         setTimeout(() => {
           navigate(`/client/payment/${res.idHd}`);

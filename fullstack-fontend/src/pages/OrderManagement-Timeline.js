@@ -503,7 +503,7 @@ const OrderManagementTimeline = ({ classes }) => {
               onClick={() => handlePayment()}
               size="small"
               variant="outlined"
-              disabled={activeIndex > 3 || activeIndex < 3 || soTienConLai <= 0}
+              disabled={activeIndex < 3 || (activeIndex > 3 && soTienConLai <= 0)}
             >
               Xác nhận thanh toán
             </Button>
