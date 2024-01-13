@@ -143,6 +143,10 @@ public class GioHangChiTietController {
                             nameError = "Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Đã Ngừng Kinh Doanh";
                             hasError = true;
                             break;
+                        } else if (z.getSoLuong() > chiTietSanPham.getSoLuongTon()) {
+                            nameError = "Số Lượng Tồn Của Sản Phẩm " + chiTietSanPham.getIdSp().getTenSp() + " Không Đủ";
+                            hasError = true;
+                            break;
                         }
                     }
 
