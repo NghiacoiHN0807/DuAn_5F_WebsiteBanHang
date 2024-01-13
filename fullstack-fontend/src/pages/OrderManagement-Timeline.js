@@ -36,7 +36,6 @@ import ModalUpdateStatus from '../forms/Modal-Update-Status';
 import ModalPaymentComfirmTimeline from '../forms/Modal-Payment-Confirm-TimeLine';
 import { getDetailOneHD } from '../service/OderManagementSevice';
 import SelectHistoryBill from '../forms/Modals-SelectHistoryBill';
-// import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 import ModalAddProduct from '../forms/Modals-AddProduct';
 import ModalDeleteProductOnCart from '../forms/Modal-Delete-Product';
 import ModalUpdateProductOnCart from '../forms/Modals-Update-Product-Cart';
@@ -336,8 +335,12 @@ const OrderManagementTimeline = ({ classes }) => {
     }
   };
   const handleChangeAddress = async () => {
-    await loadAddress();
-    setShowModalAddress(true);
+    if (listData[0].idHd.idKH) {
+      await loadAddress();
+      setShowModalAddress(true);
+    } else {
+      setShowModalAddress1(true);
+    }
   };
   const handleCloseAddress = () => {
     // getDetailHD();
@@ -503,7 +506,7 @@ const OrderManagementTimeline = ({ classes }) => {
               onClick={() => handlePayment()}
               size="small"
               variant="outlined"
-              disabled={activeIndex > 3 || activeIndex < 3 || soTienConLai <= 0}
+              disabled={activeIndex < 3 || (activeIndex > 3 && soTienConLai <= 0)}
             >
               Xác nhận thanh toán
             </Button>
