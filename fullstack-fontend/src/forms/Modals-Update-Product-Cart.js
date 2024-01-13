@@ -51,7 +51,6 @@ const ModalUpdateProductOnCart = (props) => {
       setSelectSoLuongTon([]);
     } else {
       setSelectSoLuongTon([]);
-      setAvailableColors([]);
       setSelectedMauSac(null);
       setIsMSSelected(false);
       setSelectedSize(size);

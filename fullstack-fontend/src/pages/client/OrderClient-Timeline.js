@@ -31,17 +31,15 @@ import Timeline from '../../MappingTimeLine/Timeline';
 import TimelineEvent from '../../MappingTimeLine/TimelineEvent';
 import { viewAllHTTT } from '../../service/OrderManagementTimeLine';
 import { finByProductOnCart2, finByProductOnCart3, findById } from '../../service/BillSevice';
-// import ModalUpdateStatus from '../../forms/Modal-Update-Status';
-// import ModalPaymentComfirm from '../../forms/Modal-Payment-Confirm';
 import { getDetailOneHD } from '../../service/OderManagementSevice';
 import SelectHistoryBill from '../../forms/Modals-SelectHistoryBill';
-import ModalDeleteDirectSale from '../../forms/Modal-Delete-DirectSale';
 import ModalReturnItem from '../../forms/client/Modals-ReturnItem';
 import { selectDiaChiByTK } from '../../service/client/Payment';
 import ModalChangeAddress from '../../forms/Modals-Change-Address';
 import ModalDeleteProductOnCartClinet from '../../forms/client/Modal-Delete-Product-Client';
 import ModalAddProductClinet from '../../forms/client/Modals-AddProduct-Client';
 import ModalUpdateProductTimeline from '../../forms/client/Modals-Update-Product-TimeLine';
+import ModalUpdateStatusUnsuccess from '../../forms/Modal-Update-Status-Unsuccess';
 
 const styles = {
   container: {
@@ -69,7 +67,6 @@ const OrderClientTimeline = ({ classes }) => {
       const res1 = await viewAllHTTT(idHdParam);
 
       setListData(res);
-      console.log('res: ', res);
 
       setListHTTT(res1);
       setActiveIndex(res[0].idHd.trangThai);
@@ -103,9 +100,9 @@ const OrderClientTimeline = ({ classes }) => {
   // Handle delete
 
   const [openDelete, setOpenDelete] = useState(false);
-  const [information, setInformation] = useState();
+  // const [information, setInformation] = useState();
   const handleNextClick = () => {
-    setInformation(listData[0].idHd);
+    // setInformation(listData[0].idHd);
     setOpenDelete(true);
   };
   const handleClose1 = () => {
@@ -114,7 +111,7 @@ const OrderClientTimeline = ({ classes }) => {
   };
 
   function getColorForTrangThai(trangThai) {
-    if (trangThai === 10) return '#ff0000';
+    if (trangThai === 10 || trangThai === 15) return '#ff0000';
     if (trangThai === 6) return '#ffff00';
     if (trangThai === 7 || trangThai === 12) return '#ffA500';
     if (trangThai >= 0) return '#64a338';
@@ -149,7 +146,7 @@ const OrderClientTimeline = ({ classes }) => {
     if (trangThai === 5) return FcHome;
     if (trangThai === 6) return FcProcess;
     if (trangThai === 7 || trangThai === 12) return FcTodoList;
-    if (trangThai === 10) return FcDeleteDatabase;
+    if (trangThai === 10 || trangThai === 15) return FcDeleteDatabase;
     return FcCancel;
   }
 
@@ -241,6 +238,10 @@ const OrderClientTimeline = ({ classes }) => {
       case 10:
         badgeVariant = 'error';
         statusText = 'Đơn hàng đã hủy';
+        break;
+      case 15:
+        badgeVariant = 'error';
+        statusText = 'Đơn Hàng Không Hoàn Thành';
         break;
       default:
         badgeVariant = 'default';
@@ -403,9 +404,11 @@ const OrderClientTimeline = ({ classes }) => {
                 <Grid item xs={12} sm={6} md={6}>
                   {listData[0].idHd.tenKh ? (
                     <>
-                      <h6>Tên Khách Hàng: {listData[0].idHd.tenKh}</h6>
-                      <h6>Số Điện Thoại: {listData[0].idHd.sdtKh}</h6>
-                      <h6>Địa Chỉ: {listData[0].idHd.diaChi}</h6>
+                      {listData[0].idHd.idKH.maTaiKhoan && <h6>Tài Khoản Đặt Hàng: {listData[0].idKH.maTaiKhoan}</h6>}
+                      {listData[0].idHd.tenKh && <h6>Tên Khách Hàng: {listData[0].idHd.tenKh}</h6>}
+                      {listData[0].idHd.sdtKh && <h6>Số Điện Thoại: {listData[0].idHd.sdtKh}</h6>}
+                      {listData[0].idHd.diaChi && <h6>Địa Chỉ: {listData[0].idHd.diaChi}</h6>}
+                      {listData[0].idHd.email && <h6>Email: {listData[0].idHd.email}</h6>}
                     </>
                   ) : (
                     <>
@@ -620,6 +623,13 @@ const OrderClientTimeline = ({ classes }) => {
               handleClose={handleClose2}
               DataCart={DataCart}
             />
+            <ModalUpdateStatusUnsuccess
+              show={openDelete}
+              handleClose={handleClose1}
+              activeIndex={activeIndex}
+              getListData={getListData}
+              listHTTT={listHTTT}
+            />
             {/* Modal update status */}
             {/* <ModalUpdateStatus
               show={showModalUpdate}
@@ -629,7 +639,7 @@ const OrderClientTimeline = ({ classes }) => {
               listHTTT={listHTTT}
             /> */}
             {/* Dialog xác nhận xóa */}
-            <ModalDeleteDirectSale open={openDelete} handleClose={handleClose1} information={information} />
+            {/* <ModalDeleteDirectSale open={openDelete} handleClose={handleClose1} information={information} /> */}
             {listAddess && (
               <>
                 <ModalChangeAddress
