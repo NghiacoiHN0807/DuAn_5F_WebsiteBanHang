@@ -72,10 +72,7 @@ const OrderManagementTimeline = ({ classes }) => {
 
       setListData(res);
       setListHTTT(res1);
-      console.log('res1', res1);
       const totalSoTien = res1.reduce((acc, obj) => acc + obj.soTien, 0);
-      console.log('res[0].idHd.thanhTien', res[0].idHd.thanhTien);
-      console.log('totalSoTien', totalSoTien);
 
       setSoTienConLai(res[0].idHd.thanhTien - totalSoTien);
 
@@ -467,6 +464,7 @@ const OrderManagementTimeline = ({ classes }) => {
               <Grid item xs={12} sm={6} md={6}>
                 {listData[0].idHd.tenKh ? (
                   <>
+                    {listData[0].idHd.idKH.maTaiKhoan && <h6>Tài Khoản Đặt Hàng: {listData[0].idKH.maTaiKhoan}</h6>}
                     {listData[0].idHd.tenKh && <h6>Tên Khách Hàng: {listData[0].idHd.tenKh}</h6>}
                     {listData[0].idHd.sdtKh && <h6>Số Điện Thoại: {listData[0].idHd.sdtKh}</h6>}
                     {listData[0].idHd.diaChi && <h6>Địa Chỉ: {listData[0].idHd.diaChi}</h6>}

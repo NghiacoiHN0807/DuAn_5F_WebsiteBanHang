@@ -50,6 +50,9 @@ const ModalUpdateProductOnCartClient = (props) => {
       setIsMSSelected(false);
       setSelectSoLuongTon([]);
     } else {
+      setSelectSoLuongTon([]);
+      setSelectedMauSac(null);
+      setIsMSSelected(false);
       setSelectedSize(size);
       setIsSizeSelected(true);
       setAvailableColors(checkSize);
