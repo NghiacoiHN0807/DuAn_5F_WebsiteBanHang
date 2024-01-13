@@ -15,6 +15,7 @@ import {
 } from '../../service/client/Detail-Cart';
 import ModalUpdateProductOnCartClientNoAccount from '../../forms/client/Modals-Update-Product-Cart-Client-NoAccount';
 import { findById } from '../../service/BillSevice';
+import { deleteOverTime } from '../../service/client/Payment';
 
 const StyledProductImg = styled('img')({
   top: 0,
@@ -110,7 +111,7 @@ export default function CartNoAccount() {
   };
 
   useEffect(() => {
-    const updateProductOnCart = async () => { };
+    const updateProductOnCart = async () => {};
     updateProductOnCart();
   }, [quantity]);
 
@@ -206,20 +207,24 @@ export default function CartNoAccount() {
         message: 'Hóa Đơn Của Bạn Đã Vượt Quá 10TR. Hãy Liên Hệ Với Chúng Tôi Để Mua Sỉ',
       });
     } else {
-      console.log('authorities: ', authorities);
       const res = await postAddBillNoAccount(totalPayment, 2, 11);
-      for (let i = 0; i < selectedItems.length; i += 1) {
-        (async () => {
-          await postAddDirectClient(res.idHd, selectedItems[i]);
-        })();
+      const changtoHDCT = await postAddDirectClient(res.idHd, selectedItems);
+      if (changtoHDCT.status === 400) {
+        setAlertContent({
+          type: 'warning',
+          message: changtoHDCT.data.error,
+        });
+        await deleteOverTime(res.idHd);
+      } else {
+        console.log('selectedItems', selectedItems);
+        setAlertContent({
+          type: 'success',
+          message: 'Tạo Thành Công Hóa Đơn',
+        });
+        setTimeout(() => {
+          navigate(`/client/payment-noaccount/${res.idHd}`);
+        }, 200);
       }
-      setAlertContent({
-        type: 'success',
-        message: 'Tạo thành công hóa đơn',
-      });
-      setTimeout(() => {
-        navigate(`/client/payment-noaccount/${res.idHd}`);
-      }, 200);
     }
   };
 

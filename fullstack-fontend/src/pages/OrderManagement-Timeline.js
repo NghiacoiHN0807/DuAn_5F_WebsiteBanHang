@@ -36,7 +36,6 @@ import ModalUpdateStatus from '../forms/Modal-Update-Status';
 import ModalPaymentComfirmTimeline from '../forms/Modal-Payment-Confirm-TimeLine';
 import { getDetailOneHD } from '../service/OderManagementSevice';
 import SelectHistoryBill from '../forms/Modals-SelectHistoryBill';
-// import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 import ModalAddProduct from '../forms/Modals-AddProduct';
 import ModalDeleteProductOnCart from '../forms/Modal-Delete-Product';
 import ModalUpdateProductOnCart from '../forms/Modals-Update-Product-Cart';
@@ -72,10 +71,7 @@ const OrderManagementTimeline = ({ classes }) => {
 
       setListData(res);
       setListHTTT(res1);
-      console.log('res1', res1);
       const totalSoTien = res1.reduce((acc, obj) => acc + obj.soTien, 0);
-      console.log('res[0].idHd.thanhTien', res[0].idHd.thanhTien);
-      console.log('totalSoTien', totalSoTien);
 
       setSoTienConLai(res[0].idHd.thanhTien - totalSoTien);
 
@@ -339,8 +335,12 @@ const OrderManagementTimeline = ({ classes }) => {
     }
   };
   const handleChangeAddress = async () => {
-    await loadAddress();
-    setShowModalAddress(true);
+    if (listData[0].idHd.idKH) {
+      await loadAddress();
+      setShowModalAddress(true);
+    } else {
+      setShowModalAddress1(true);
+    }
   };
   const handleCloseAddress = () => {
     // getDetailHD();
@@ -467,6 +467,7 @@ const OrderManagementTimeline = ({ classes }) => {
               <Grid item xs={12} sm={6} md={6}>
                 {listData[0].idHd.tenKh ? (
                   <>
+                    {listData[0].idHd.idKH && <h6>Tài Khoản Đặt Hàng: {listData[0].idHd.idKH.maTaiKhoan}</h6>}
                     {listData[0].idHd.tenKh && <h6>Tên Khách Hàng: {listData[0].idHd.tenKh}</h6>}
                     {listData[0].idHd.sdtKh && <h6>Số Điện Thoại: {listData[0].idHd.sdtKh}</h6>}
                     {listData[0].idHd.diaChi && <h6>Địa Chỉ: {listData[0].idHd.diaChi}</h6>}
@@ -505,8 +506,7 @@ const OrderManagementTimeline = ({ classes }) => {
               onClick={() => handlePayment()}
               size="small"
               variant="outlined"
-              // activeIndex > 3 ||
-              disabled={activeIndex < 3 || soTienConLai <= 0}
+              disabled={activeIndex < 3 || (activeIndex > 3 && soTienConLai <= 0)}
             >
               Xác nhận thanh toán
             </Button>
@@ -711,86 +711,82 @@ const OrderManagementTimeline = ({ classes }) => {
           {/* <ModalDeleteDirectSale open={openDelete} handleClose={handleClose1} information={information} /> */}
         </div>
       </div>
-      <div className="row-order-management-timeline">
-        <div className="row row-top">
-          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-            <Typography variant="h6" gutterBottom>
-              Sản Phẩm Đổi Trả{' '}
-            </Typography>
-            <Button
-              size="small"
-              onClick={() => handleAddProduct()}
-              variant="outlined"
-              disabled={activeIndex >= 1 || listHTTT.length > 0}
-            >
-              Xác Nhận Đổi Trả
-            </Button>
-          </Stack>
-        </div>
-        <div className="row row-botton">
-          <TableContainer sx={{ marginTop: 2, marginBottom: 2 }} component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Ảnh</TableCell>
-                  <TableCell>Mã Sản Phẩm</TableCell>
-                  <TableCell align="right">Sản Phẩm</TableCell>
-                  <TableCell align="right">Thuộc tính</TableCell>
-                  <TableCell align="right">Giá</TableCell>
-                  <TableCell align="right">Số Lượng</TableCell>
-                  <TableCell align="right">Tổng</TableCell>
-                  <TableCell align="right">Lý Do Hoàn Trả</TableCell>
-                  <TableCell align="right">Xác Nhận</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {DataCart1 &&
-                  DataCart1.length > 0 &&
-                  DataCart1.map((item, index) => {
-                    const imagesArray = item[2].split(','); // Tách chuỗi thành mảng
-                    const firstImage = imagesArray[0];
-                    return (
-                      <TableRow
-                        key={index}
-                        sx={{
-                          '&:last-child td, &:last-child th': { border: 0 },
-                        }}
-                      >
-                        <TableCell>
-                          <Image rounded style={{ width: '150px', height: 'auto' }} src={firstImage} />
-                        </TableCell>
-                        <TableCell>{item[4]}</TableCell>
-                        <TableCell align="right">{item[5]}</TableCell>
-                        <TableCell align="right">
-                          Size: {item[6]}
-                          <br />
-                          Màu: {item[11]}
-                        </TableCell>
-                        <TableCell align="right">{formatCurrency(item[7])}</TableCell>
-                        <TableCell align="right">{item[8]}</TableCell>
-                        <TableCell align="right">{formatCurrency(item[9])}</TableCell>
-                        <TableCell align="right">{item[12]}</TableCell>
-                        <TableCell align="right">
-                          {item[13] < 11 && (
-                            <IconButton disabled={item[13] === 11} onClick={() => handleCancelClick(item)}>
-                              <CancelIcon />
+      {DataCart1 && DataCart1.length > 0 && (
+        <div className="row-order-management-timeline">
+          <div className="row row-top">
+            <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+              <Typography variant="h6" gutterBottom>
+                Sản Phẩm Đổi Trả{' '}
+              </Typography>
+            </Stack>
+          </div>
+
+          <div className="row row-botton">
+            <TableContainer sx={{ marginTop: 2, marginBottom: 2 }} component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Ảnh</TableCell>
+                    <TableCell>Mã Sản Phẩm</TableCell>
+                    <TableCell align="right">Sản Phẩm</TableCell>
+                    <TableCell align="right">Thuộc tính</TableCell>
+                    <TableCell align="right">Giá</TableCell>
+                    <TableCell align="right">Số Lượng</TableCell>
+                    <TableCell align="right">Tổng</TableCell>
+                    <TableCell align="right">Lý Do Hoàn Trả</TableCell>
+                    <TableCell align="right">Xác Nhận</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {DataCart1 &&
+                    DataCart1.length > 0 &&
+                    DataCart1.map((item, index) => {
+                      const imagesArray = item[2].split(','); // Tách chuỗi thành mảng
+                      const firstImage = imagesArray[0];
+                      return (
+                        <TableRow
+                          key={index}
+                          sx={{
+                            '&:last-child td, &:last-child th': { border: 0 },
+                          }}
+                        >
+                          <TableCell>
+                            <Image rounded style={{ width: '150px', height: 'auto' }} src={firstImage} />
+                          </TableCell>
+                          <TableCell>{item[4]}</TableCell>
+                          <TableCell align="right">{item[5]}</TableCell>
+                          <TableCell align="right">
+                            Size: {item[6]}
+                            <br />
+                            Màu: {item[11]}
+                          </TableCell>
+                          <TableCell align="right">{formatCurrency(item[7])}</TableCell>
+                          <TableCell align="right">{item[8]}</TableCell>
+                          <TableCell align="right">{formatCurrency(item[9])}</TableCell>
+                          <TableCell align="right">{item[12]}</TableCell>
+                          <TableCell align="right">
+                            {item[13] < 11 && (
+                              <IconButton disabled={item[13] === 11} onClick={() => handleCancelClick(item)}>
+                                <CancelIcon />
+                              </IconButton>
+                            )}
+                            <IconButton disabled={item[13] === 11} onClick={() => handleCheckClick(item)}>
+                              <CheckCircleIcon />
                             </IconButton>
-                          )}
-                          <IconButton disabled={item[13] === 11} onClick={() => handleCheckClick(item)}>
-                            <CheckCircleIcon />
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                <TableRow>
-                  <TableCell rowSpan={3} />
-                </TableRow>
-              </TableBody>
-            </Table>{' '}
-          </TableContainer>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  <TableRow>
+                    <TableCell rowSpan={3} />
+                  </TableRow>
+                </TableBody>
+              </Table>{' '}
+            </TableContainer>
+          </div>
         </div>
-      </div>
+      )}
+
       <SelectHistoryBill open={showModalsDT} handleClose={handleCloseAddDT} listData={listData} />
       {listAddess && (
         <>

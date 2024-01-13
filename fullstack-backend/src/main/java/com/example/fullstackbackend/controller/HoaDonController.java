@@ -122,7 +122,6 @@ public class HoaDonController {
             // Chuyển đổi thành Timestamp
             currentTimestamp = new Timestamp(currentDate.getTime());
 
-            System.out.println("add123: " + newHD.getTrangThai());
             HoaDon hoaDon = hoadonSevice.add(newHD);
             // Add to history bill
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
@@ -628,14 +627,16 @@ public class HoaDonController {
             lichSuHoaDonService.add(lichSuHoaDon);
 
             // Update quantity's product
-
-            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(newHD.getIdHd());
             if (newHD.getTrangThai() == 0) {
+
                 for (HoaDonChiTiet x :
-                        hoaDonChiTiets) {
+                        hoaDonChiTiet) {
                     List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
                     for (ChiTietSanPham y :
                             chiTietSanPhams) {
+                        System.out.println("y: " + x.getSoLuong());
+                        System.out.println("y: " + y.getSoLuongTon());
+
                         y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
                         if (y.getSoLuongTon() <= 0) {
                             y.setTrangThai(10);
@@ -742,7 +743,7 @@ public class HoaDonController {
         BigDecimal realPrice = new BigDecimal(totalPrice).divide(new BigDecimal(100));
         Integer idHd = Integer.valueOf(orderInfo);
         //Detail HD by IdHd
-        Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
+        HoaDon getOne = hoadonSevice.detail(idHd).orElseThrow();
         // get datetimenow
         java.util.Date currentDate = new java.util.Date();
         // Chuyển đổi thành Timestamp
@@ -750,7 +751,7 @@ public class HoaDonController {
 
         if (paymentStatus == 1) {
 
-            BigDecimal getTongTien = getOne.get().getTongTien();
+            BigDecimal getTongTien = getOne.getTongTien();
 
             BigDecimal tienMat = getTongTien.subtract(realPrice);
             //Add to updatePaymentOnline
@@ -758,7 +759,7 @@ public class HoaDonController {
             hoaDonDTO1.setNgayThanhToan(currentTimestamp);
             hoaDonDTO1.setTienDua(realPrice);
             int setTrangThai;
-            if (getOne.get().getTrangThai() == 3) {
+            if (getOne.getTrangThai() == 3) {
                 setTrangThai = 4;
             } else {
                 setTrangThai = 9;
@@ -806,7 +807,7 @@ public class HoaDonController {
 
             return ResponseEntity.ok("Thanh Toán VNPAY Thành Công!!!");
         } else {
-            if (getOne.get().getTrangThai() <= 6) {
+            if (getOne.getTrangThai() <= 6) {
                 response.sendRedirect("http://localhost:3000/dashboard/bills/time-line/" + idHd);
                 return ResponseEntity.ok("Thanh Toán VNPAY Không Thành Công!!!");
             } else {
@@ -890,14 +891,6 @@ public class HoaDonController {
                     chitietsanphamSer.update(y);
                 }
             }
-            // Delete product on detail cart
-//            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(idHd);
-//            for (HoaDonChiTiet x :
-//                    hoaDonChiTiets) {
-//                GioHangChiTiet gioHangChiTiet = gioHangChiTietSevice.finByIDCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
-//                gioHangChiTietSevice.deleteGHCT(gioHangChiTiet.getIdGhct());
-//            }
-
             // Update HD to ship
             getOne.setTrangThai(0);
             updateStatus(getOne, getOne.getIdHd(), "Thanh Toán VNPAY");
