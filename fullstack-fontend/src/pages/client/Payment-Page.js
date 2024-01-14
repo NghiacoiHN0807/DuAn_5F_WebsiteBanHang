@@ -26,18 +26,13 @@ import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 import ModalConfirmPayment from '../../forms/client/Modal-Confirm-Payment-Page';
 // Service
 import { detailBill, finByProductOnCart } from '../../service/BillSevice';
 import { updateTienShip } from '../../service/OrderManagementTimeLine';
-import {
-  deleteOverTime,
-  // paymentOnlineClient,
-  // updateClientPayment,
-  // updateClientPayment1,
-} from '../../service/client/Payment';
+import { deleteOverTime } from '../../service/client/Payment';
 
 const ImageButton = styled(ButtonBase)(({ theme }) => ({
   position: 'relative',
@@ -358,37 +353,8 @@ export default function PaymentPage() {
       });
     } else if (isDeliveryChecked === true) {
       setOpenConfirm(true);
-
-      // setAlertContent({
-      //   type: 'success',
-      //   message: 'Hãy Thanh Toán Cảm Ơn!!!',
-      // });
-      // await updateClientPayment1(
-      //   idHdParam,
-      //   selectedFirstName + selectedLastName,
-      //   selectedNumberPhone,
-      //   selectedEmail,
-      //   result
-      // );
-      // const paymentOn = await paymentOnlineClient(listHD.thanhTien, idHdParam);
-      // console.log('Check paymentOn: ', paymentOn);
-      // window.location.href = paymentOn;
     } else {
       setOpenConfirm(true);
-
-      // setAlertContent({
-      //   type: 'success',
-      //   message: 'Đã Đặt Hàng Thành Công. Xin Cảm Ơn!!!',
-      // });
-      // await updateClientPayment(
-      //   idHdParam,
-      //   selectedFirstName + selectedLastName,
-      //   selectedNumberPhone,
-      //   selectedEmail,
-      //   result
-      // );
-
-      // navigate(`/`);
     }
   };
 

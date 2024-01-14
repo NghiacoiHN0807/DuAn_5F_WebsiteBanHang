@@ -545,19 +545,19 @@ public class HoaDonController {
                 return hoadonSevice.update(hoaDon);
             }).orElseThrow(() -> new xuatXuNotFoundException(id));
 
-            // Update quantity in product
-            for (HoaDonChiTiet x :
-                    hoaDonChiTiet) {
-                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
-                for (ChiTietSanPham y :
-                        chiTietSanPhams) {
-                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                    if (y.getSoLuongTon() <= 0) {
-                        y.setTrangThai(10);
-                    }
-                    chitietsanphamSer.update(y);
-                }
-            }
+//            // Update quantity in product
+//            for (HoaDonChiTiet x :
+//                    hoaDonChiTiet) {
+//                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+//                for (ChiTietSanPham y :
+//                        chiTietSanPhams) {
+//                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+//                    if (y.getSoLuongTon() <= 0) {
+//                        y.setTrangThai(10);
+//                    }
+//                    chitietsanphamSer.update(y);
+//                }
+//            }
             return ResponseEntity.ok(newHD1);
         }
     }
