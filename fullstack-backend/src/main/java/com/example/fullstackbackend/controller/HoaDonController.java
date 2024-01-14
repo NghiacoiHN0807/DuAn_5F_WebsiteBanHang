@@ -311,7 +311,9 @@ public class HoaDonController {
     }
 
     @PutMapping("update-payment/{id}")
-    public ResponseEntity<?> updateThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+    public ResponseEntity<?> updateThanhToan(@RequestBody HoaDon newHD,
+                                             @PathVariable("id") Integer id,
+                                             @RequestParam Integer status) {
 
         boolean hasError = false;
         String nameError = "";
@@ -373,25 +375,28 @@ public class HoaDonController {
                     }
                 }
             }
+            System.out.println("status: "+ status);
+            if (status == 2) {
+                //Add to payments
+                HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
+                hinhThucThanhToan2.setIdHd(newHD1);
+                hinhThucThanhToan2.setNgayThanhToan(currentTimestamp);
+                hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
+                hinhThucThanhToan2.setSoTien(newHD1.getThanhTien());
+                hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
+                hinhThucThanhToan2.setTrangThai(0);
+                hinhThucThanhToanSevice.add(hinhThucThanhToan2);
 
-            //Add to payments
-            HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
-            hinhThucThanhToan2.setIdHd(newHD1);
-            hinhThucThanhToan2.setNgayThanhToan(currentTimestamp);
-            hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
-            hinhThucThanhToan2.setSoTien(newHD1.getThanhTien());
-            hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
-            hinhThucThanhToan2.setTrangThai(0);
-            hinhThucThanhToanSevice.add(hinhThucThanhToan2);
+                //Add to history bill
+                LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+                lichSuHoaDon.setIdHd(newHD1);
+                lichSuHoaDon.setIdTk(newHD1.getIdTK());
+                lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+                lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
+                lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+                lichSuHoaDonService.add(lichSuHoaDon);
+            }
 
-            //Add to history bill
-            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-            lichSuHoaDon.setIdHd(newHD1);
-            lichSuHoaDon.setIdTk(newHD1.getIdTK());
-            lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
-            lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
-            lichSuHoaDon.setNgayThayDoi(currentTimestamp);
-            lichSuHoaDonService.add(lichSuHoaDon);
 
             return ResponseEntity.ok("Thanh Toán Thành Công");
         }
