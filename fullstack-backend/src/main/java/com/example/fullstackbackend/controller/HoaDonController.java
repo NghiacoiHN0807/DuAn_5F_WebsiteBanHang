@@ -373,21 +373,6 @@ public class HoaDonController {
                     }
                 }
             }
-//            else if (newHD.getTrangThai() == 0) {
-//                for (HoaDonChiTiet x :
-//                        hoaDonChiTiets) {
-//                    List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
-//                    for (ChiTietSanPham y :
-//                            chiTietSanPhams) {
-//                        y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-//                        if (y.getSoLuongTon() <= 0) {
-//                            y.setTrangThai(10);
-//                        }
-//                        chitietsanphamSer.update(y);
-//                    }
-//                }
-//
-//            }
 
             //Add to payments
             HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();

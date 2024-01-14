@@ -79,17 +79,17 @@ const ModalPaymentComfirm = (props) => {
               message: 'Tiền Chuyển Khoản Phải Trên 10000',
             });
           } else {
-            const changtoHDCT = await updatePayment(idHdParam, tenKhTT, sdtKHTT, cashGiven, change, 9);
-            if (changtoHDCT.status === 400) {
-              setAlertContent({
-                type: 'warning',
-                message: changtoHDCT.data.error,
-              });
-            } else {
-              const paymentOn = await paymentOnline(changeAmount, listHD.idHd);
-              // Mở tab mới với đường dẫn URL
-              window.location.href = paymentOn;
-            }
+            // const changtoHDCT = await updatePayment(idHdParam, tenKhTT, sdtKHTT, cashGiven, change, 9);
+            // if (changtoHDCT.status === 400) {
+            //   setAlertContent({
+            //     type: 'warning',
+            //     message: changtoHDCT.data.error,
+            //   });
+            // } else {
+            const paymentOn = await paymentOnline(changeAmount, listHD.idHd);
+            // Mở tab mới với đường dẫn URL
+            window.location.href = paymentOn;
+            // }
           }
         } else {
           setChangeAmount(0);
