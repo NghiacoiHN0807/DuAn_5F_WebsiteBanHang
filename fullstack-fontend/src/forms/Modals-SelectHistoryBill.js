@@ -173,12 +173,12 @@ const SelectHistoryBill = (props) => {
     if (trangThai === 5) return FcHome;
     if (trangThai === 6) return FcProcess;
     if (trangThai === 7 || trangThai === 12) return FcTodoList;
-    if (trangThai === 10) return FcDeleteDatabase;
+    if (trangThai === 10 || trangThai === 15) return FcDeleteDatabase;
     return FcCancel;
   }
 
   function getColorForTrangThai(trangThai) {
-    if (trangThai === 10) return '#ff0000';
+    if (trangThai === 10 || trangThai === 15) return '#ff0000';
     if (trangThai === 6) return '#ffff00';
     if (trangThai === 7 || trangThai === 12) return '#ffA500';
     if (trangThai >= 0) return '#64a338';

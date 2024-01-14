@@ -79,7 +79,6 @@ const ModalPaymentComfirm = (props) => {
               message: 'Tiền Chuyển Khoản Phải Trên 10000',
             });
           } else {
-            console.log('Check listHD: ', listHD);
             const changtoHDCT = await updatePayment(idHdParam, tenKhTT, sdtKHTT, cashGiven, change, 9);
             if (changtoHDCT.status === 400) {
               setAlertContent({
@@ -273,19 +272,19 @@ const ModalPaymentComfirm = (props) => {
             <Button onClick={handlePaymentOnCash}>Đồng Ý</Button>
           </DialogActions>
         </Dialog>
+        {alertContent && (
+          <Snackbar
+            open
+            autoHideDuration={3000}
+            onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+              {alertContent.message}
+            </Alert>
+          </Snackbar>
+        )}
       </div>
-      {alertContent && (
-        <Snackbar
-          open
-          autoHideDuration={3000}
-          onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
-            {alertContent.message}
-          </Alert>
-        </Snackbar>
-      )}
     </>
   );
 };

@@ -165,13 +165,6 @@ const OrderClientTimeline = ({ classes }) => {
   const handleReturnItem = () => {
     setShowModalsReturnItem(true);
   };
-  // //   Edit show modals update timeline
-  // const [showModalUpdate, setShowModalUpdate] = useState(false);
-
-  // const handleCloseUpdate = () => {
-  //   setShowModalUpdate(false);
-  //   getListData();
-  // };
 
   // Modal show detail timeline bill
   const [showModalsDT, setShowModalDT] = useState(false);
