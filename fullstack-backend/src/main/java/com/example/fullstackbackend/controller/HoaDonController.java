@@ -634,8 +634,6 @@ public class HoaDonController {
                     List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
                     for (ChiTietSanPham y :
                             chiTietSanPhams) {
-                        System.out.println("y: " + x.getSoLuong());
-                        System.out.println("y: " + y.getSoLuongTon());
 
                         y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
                         if (y.getSoLuongTon() <= 0) {
@@ -750,16 +748,29 @@ public class HoaDonController {
         currentTimestamp = new Timestamp(currentDate.getTime());
 
         if (paymentStatus == 1) {
+            BigDecimal tienMat;
+            BigDecimal getTongTien = getOne.getThanhTien();
+            if (getOne.getTrangThai() >= 3) {
+                List<HinhThucThanhToan> hinhThucThanhToans = hinhThucThanhToanSevice.detail(getOne.getIdHd());
 
-            BigDecimal getTongTien = getOne.getTongTien();
+                BigDecimal money = BigDecimal.ZERO;
+                for (HinhThucThanhToan x :
+                        hinhThucThanhToans) {
+                    money = money.add(x.getSoTien());
+                }
+                System.out.println("realPrice: " + realPrice);
+                tienMat = getTongTien.subtract(money).subtract(realPrice);
+            } else {
+                tienMat = getTongTien.subtract(realPrice);
 
-            BigDecimal tienMat = getTongTien.subtract(realPrice);
+            }
+            System.out.println("tienMat: " + tienMat);
             //Add to updatePaymentOnline
             HoaDon hoaDonDTO1 = new HoaDon();
             hoaDonDTO1.setNgayThanhToan(currentTimestamp);
             hoaDonDTO1.setTienDua(realPrice);
             int setTrangThai;
-            if (getOne.getTrangThai() == 3) {
+            if (getOne.getTrangThai() >= 3 && getOne.getTrangThai() <= 6) {
                 setTrangThai = 4;
             } else {
                 setTrangThai = 9;
@@ -804,7 +815,6 @@ public class HoaDonController {
 
             // Switch tab
             response.sendRedirect("http://localhost:3000/dashboard/bills/time-line/" + idHd);
-
             return ResponseEntity.ok("Thanh Toán VNPAY Thành Công!!!");
         } else {
             if (getOne.getTrangThai() <= 6) {

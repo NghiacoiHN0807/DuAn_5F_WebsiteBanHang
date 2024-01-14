@@ -282,7 +282,11 @@ const OrderManagement = () => {
         break;
       case 10:
         badgeVariant = 'error';
-        statusText = 'Đơn hàng đã hủy';
+        statusText = 'Đơn Hàng Đã Hủy';
+        break;
+      case 15:
+        badgeVariant = 'error';
+        statusText = 'Đơn Hàng Không Hoàn Thành';
         break;
       default:
         badgeVariant = 'default';

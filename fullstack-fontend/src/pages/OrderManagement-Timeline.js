@@ -44,6 +44,7 @@ import { selectDiaChiByTK } from '../service/client/Payment';
 import ModalChangeAddressNoAcc from '../forms/Modals-Change-AddressNoAcc';
 import ModalUpdateStatusUnsuccess from '../forms/Modal-Update-Status-Unsuccess';
 import { returnItem } from '../service/client/ReturnItem';
+import ModalReturnItem from '../forms/client/Modals-ReturnItem';
 
 const styles = {
   container: {
@@ -379,6 +380,15 @@ const OrderManagementTimeline = ({ classes }) => {
     }
     // Xử lý khi nút V được nhấn
   };
+  // Return product
+  const [showModalsReturnItem, setShowModalsReturnItem] = useState(false);
+
+  const handleCloseReutrn = () => {
+    setShowModalsReturnItem(false);
+  };
+  const handleReturnItem = () => {
+    setShowModalsReturnItem(true);
+  };
   return (
     <>
       <div className="row-order-management-timeline">
@@ -440,6 +450,14 @@ const OrderManagementTimeline = ({ classes }) => {
               </Button>{' '}
             </>
           )}
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={handleReturnItem}
+            disabled={activeIndex <= 3 || activeIndex >= 5}
+          >
+            Đổi/Trả Hàng
+          </Button>{' '}
           <Button variant="outlined" color="error" onClick={handleSelect}>
             Chi Tiết
           </Button>
@@ -506,7 +524,7 @@ const OrderManagementTimeline = ({ classes }) => {
               onClick={() => handlePayment()}
               size="small"
               variant="outlined"
-              disabled={activeIndex < 3 || (activeIndex > 3 && soTienConLai <= 0)}
+              disabled={activeIndex < 3 || soTienConLai <= 0}
             >
               Xác nhận thanh toán
             </Button>
@@ -651,6 +669,18 @@ const OrderManagementTimeline = ({ classes }) => {
             )}
           </TableContainer>
           {/* Modal Payment */}
+          {DataCart.length > 0 && (
+            <>
+              <ModalReturnItem
+                show={showModalsReturnItem}
+                // showModalsReturnItem={showModalsReturnItem}
+                selectDataCart={selectDataCart}
+                handleClose={handleCloseReutrn}
+                DataCart={DataCart}
+                getListData={getListData}
+              />
+            </>
+          )}
           {listData.length > 0 && (
             <>
               <ModalPaymentComfirmTimeline
@@ -766,11 +796,17 @@ const OrderManagementTimeline = ({ classes }) => {
                           <TableCell align="right">{item[12]}</TableCell>
                           <TableCell align="right">
                             {item[13] < 11 && (
-                              <IconButton disabled={item[13] === 11} onClick={() => handleCancelClick(item)}>
+                              <IconButton
+                                disabled={item[13] === 11 || activeIndex >= 5}
+                                onClick={() => handleCancelClick(item)}
+                              >
                                 <CancelIcon />
                               </IconButton>
                             )}
-                            <IconButton disabled={item[13] === 11} onClick={() => handleCheckClick(item)}>
+                            <IconButton
+                              disabled={item[13] === 11 || activeIndex >= 5}
+                              onClick={() => handleCheckClick(item)}
+                            >
                               <CheckCircleIcon />
                             </IconButton>
                           </TableCell>

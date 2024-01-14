@@ -79,7 +79,6 @@ const ModalPaymentComfirm = (props) => {
               message: 'Tiền Chuyển Khoản Phải Trên 10000',
             });
           } else {
-            console.log('Check listHD: ', listHD);
             const changtoHDCT = await updatePayment(idHdParam, tenKhTT, sdtKHTT, cashGiven, change, 9);
             if (changtoHDCT.status === 400) {
               setAlertContent({
