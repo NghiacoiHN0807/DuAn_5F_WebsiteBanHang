@@ -79,9 +79,7 @@ const ModalPaymentComfirmTimeline = (props) => {
               message: 'Tiền Chuyển Khoản Phải Trên 10000',
             });
           } else {
-            console.log('Check listHD: ', listHD);
             const paymentOn = await paymentOnline(changeAmount, listHD.idHd);
-            console.log('Check paymentOn: ', paymentOn);
             // Mở tab mới với đường dẫn URL
             window.location.href = paymentOn;
           }
