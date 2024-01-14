@@ -2,7 +2,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import '../scss/Car-Bill-ADM.scss';
 import { Alert, Dialog, FormControlLabel, Snackbar, Switch, TextField } from '@mui/material';
 import { useState, forwardRef } from 'react';
-import { format } from 'date-fns';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
@@ -55,7 +54,7 @@ const ModalPaymentComfirm = (props) => {
 
   const handlePaymentOnCash = async () => {
     try {
-      if (cashGiven === 0 || cashGiven === null) {
+      if (cashGiven === 0 || cashGiven === null || cashGiven.trim() === '') {
         setAlertContent({
           type: 'warning',
           message: 'Số Tiền Gửi Không Được Để Trống Và Phải Là Số Lớn Hơn Thành Tiền',
@@ -80,8 +79,7 @@ const ModalPaymentComfirm = (props) => {
               message: 'Tiền Chuyển Khoản Phải Trên 10000',
             });
           } else {
-            console.log('Check listHD: ', listHD);
-            const changtoHDCT = await updatePayment(idHdParam, tenKhTT, sdtKHTT, cashGiven, change, 9);
+            const changtoHDCT = await updatePayment(idHdParam, tenKhTT, sdtKHTT, cashGiven, change, 9, 1);
             if (changtoHDCT.status === 400) {
               setAlertContent({
                 type: 'warning',
@@ -106,7 +104,7 @@ const ModalPaymentComfirm = (props) => {
             message: 'Tiền Khách Đưa Chưa Đủ',
           });
         } else {
-          const changtoHDCT = await updatePayment(idHdParam, tenKhTT, sdtKHTT, cashGiven, change, 9);
+          const changtoHDCT = await updatePayment(idHdParam, tenKhTT, sdtKHTT, cashGiven, change, 9, 2);
           if (changtoHDCT.status === 400) {
             setAlertContent({
               type: 'warning',
@@ -141,7 +139,7 @@ const ModalPaymentComfirm = (props) => {
         change = cashGivenValue - thanhTien;
       }
     }
-    if (cashGiven === 0 || cashGiven === null) {
+    if (cashGiven === 0 || cashGiven === null || cashGiven.trim() === '') {
       setAlertContent({
         type: 'warning',
         message: 'Số Tiền Gửi Không Được Để Trống Và Phải Là Số Lớn Hơn Thành Tiền',
@@ -274,19 +272,19 @@ const ModalPaymentComfirm = (props) => {
             <Button onClick={handlePaymentOnCash}>Đồng Ý</Button>
           </DialogActions>
         </Dialog>
+        {alertContent && (
+          <Snackbar
+            open
+            autoHideDuration={3000}
+            onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+              {alertContent.message}
+            </Alert>
+          </Snackbar>
+        )}
       </div>
-      {alertContent && (
-        <Snackbar
-          open
-          autoHideDuration={3000}
-          onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
-            {alertContent.message}
-          </Alert>
-        </Snackbar>
-      )}
     </>
   );
 };

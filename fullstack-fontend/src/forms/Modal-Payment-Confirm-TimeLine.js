@@ -50,10 +50,21 @@ const ModalPaymentComfirmTimeline = (props) => {
     }
     setAlertContent(null);
   };
+  const containsNumber = (text) => /\d/.test(text);
 
   const handlePaymentOnCash = async () => {
     try {
-      if (isDeliveryChecked === true) {
+      if (cashGiven === 0 || cashGiven === null || cashGiven.trim() === '') {
+        setAlertContent({
+          type: 'warning',
+          message: 'Số Tiền Gửi Không Được Để Trống Và Phải Là Số Lớn Hơn Thành Tiền',
+        });
+      } else if (!containsNumber(cashGiven)) {
+        setAlertContent({
+          type: 'warning',
+          message: 'Số Tiền Gửi Không Được Để Là Chữ',
+        });
+      } else if (isDeliveryChecked === true) {
         const cashGivenValue = parseFloat(cashGiven);
         if (!Number.isNaN(cashGivenValue)) {
           const change = thanhTien - cashGivenValue;
@@ -68,9 +79,7 @@ const ModalPaymentComfirmTimeline = (props) => {
               message: 'Tiền Chuyển Khoản Phải Trên 10000',
             });
           } else {
-            console.log('Check listHD: ', listHD);
             const paymentOn = await paymentOnline(changeAmount, listHD.idHd);
-            console.log('Check paymentOn: ', paymentOn);
             // Mở tab mới với đường dẫn URL
             window.location.href = paymentOn;
           }
@@ -248,19 +257,19 @@ const ModalPaymentComfirmTimeline = (props) => {
             <Button onClick={handlePaymentOnCash}>Đồng Ý</Button>
           </DialogActions>
         </Dialog>
+        {alertContent && (
+          <Snackbar
+            open
+            autoHideDuration={3000}
+            onClose={handleSnackbarClose}
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
+              {alertContent.message}
+            </Alert>
+          </Snackbar>
+        )}
       </div>
-      {alertContent && (
-        <Snackbar
-          open
-          autoHideDuration={3000}
-          onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        >
-          <Alert onClose={handleSnackbarClose} severity={alertContent.type} sx={{ width: '100%' }}>
-            {alertContent.message}
-          </Alert>
-        </Snackbar>
-      )}
     </>
   );
 };

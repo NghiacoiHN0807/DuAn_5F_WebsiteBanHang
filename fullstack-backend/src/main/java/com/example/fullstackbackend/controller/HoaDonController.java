@@ -122,7 +122,6 @@ public class HoaDonController {
             // Chuyển đổi thành Timestamp
             currentTimestamp = new Timestamp(currentDate.getTime());
 
-            System.out.println("add123: " + newHD.getTrangThai());
             HoaDon hoaDon = hoadonSevice.add(newHD);
             // Add to history bill
             LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
@@ -312,7 +311,9 @@ public class HoaDonController {
     }
 
     @PutMapping("update-payment/{id}")
-    public ResponseEntity<?> updateThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+    public ResponseEntity<?> updateThanhToan(@RequestBody HoaDon newHD,
+                                             @PathVariable("id") Integer id,
+                                             @RequestParam Integer status) {
 
         boolean hasError = false;
         String nameError = "";
@@ -360,7 +361,6 @@ public class HoaDonController {
 
             List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(newHD1.getIdHd());
             //Update Inventory number
-
             if (newHD.getTrangThai() == 9) {
                 for (HoaDonChiTiet x :
                         hoaDonChiTiets) {
@@ -375,25 +375,28 @@ public class HoaDonController {
                     }
                 }
             }
+            System.out.println("status: "+ status);
+            if (status == 2) {
+                //Add to payments
+                HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
+                hinhThucThanhToan2.setIdHd(newHD1);
+                hinhThucThanhToan2.setNgayThanhToan(currentTimestamp);
+                hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
+                hinhThucThanhToan2.setSoTien(newHD1.getThanhTien());
+                hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
+                hinhThucThanhToan2.setTrangThai(0);
+                hinhThucThanhToanSevice.add(hinhThucThanhToan2);
 
-            //Add to payments
-            HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
-            hinhThucThanhToan2.setIdHd(newHD1);
-            hinhThucThanhToan2.setNgayThanhToan(currentTimestamp);
-            hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
-            hinhThucThanhToan2.setSoTien(newHD1.getThanhTien());
-            hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
-            hinhThucThanhToan2.setTrangThai(0);
-            hinhThucThanhToanSevice.add(hinhThucThanhToan2);
+                //Add to history bill
+                LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+                lichSuHoaDon.setIdHd(newHD1);
+                lichSuHoaDon.setIdTk(newHD1.getIdTK());
+                lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+                lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
+                lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+                lichSuHoaDonService.add(lichSuHoaDon);
+            }
 
-            //Add to history bill
-            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-            lichSuHoaDon.setIdHd(newHD1);
-            lichSuHoaDon.setIdTk(newHD1.getIdTK());
-            lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
-            lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
-            lichSuHoaDon.setNgayThayDoi(currentTimestamp);
-            lichSuHoaDonService.add(lichSuHoaDon);
 
             return ResponseEntity.ok("Thanh Toán Thành Công");
         }
@@ -542,19 +545,19 @@ public class HoaDonController {
                 return hoadonSevice.update(hoaDon);
             }).orElseThrow(() -> new xuatXuNotFoundException(id));
 
-            // Update quantity in product
-            for (HoaDonChiTiet x :
-                    hoaDonChiTiet) {
-                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
-                for (ChiTietSanPham y :
-                        chiTietSanPhams) {
-                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                    if (y.getSoLuongTon() <= 0) {
-                        y.setTrangThai(10);
-                    }
-                    chitietsanphamSer.update(y);
-                }
-            }
+//            // Update quantity in product
+//            for (HoaDonChiTiet x :
+//                    hoaDonChiTiet) {
+//                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+//                for (ChiTietSanPham y :
+//                        chiTietSanPhams) {
+//                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+//                    if (y.getSoLuongTon() <= 0) {
+//                        y.setTrangThai(10);
+//                    }
+//                    chitietsanphamSer.update(y);
+//                }
+//            }
             return ResponseEntity.ok(newHD1);
         }
     }
@@ -612,6 +615,24 @@ public class HoaDonController {
             lichSuHoaDon.setMoTa("Tạo Đơn Hàng Ship Thành Công");
             lichSuHoaDon.setNgayThayDoi(currentTimestamp);
             lichSuHoaDonService.add(lichSuHoaDon);
+
+            // Update quantity's product
+            if (newHD.getTrangThai() == 0) {
+
+                for (HoaDonChiTiet x :
+                        hoaDonChiTiet) {
+                    List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+                    for (ChiTietSanPham y :
+                            chiTietSanPhams) {
+
+                        y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+                        if (y.getSoLuongTon() <= 0) {
+                            y.setTrangThai(10);
+                        }
+                        chitietsanphamSer.update(y);
+                    }
+                }
+            }
             return ResponseEntity.ok("Tạo Đơn Ship Thành Công ");
 
         }
@@ -710,23 +731,36 @@ public class HoaDonController {
         BigDecimal realPrice = new BigDecimal(totalPrice).divide(new BigDecimal(100));
         Integer idHd = Integer.valueOf(orderInfo);
         //Detail HD by IdHd
-        Optional<HoaDon> getOne = hoadonSevice.detail(idHd);
+        HoaDon getOne = hoadonSevice.detail(idHd).orElseThrow();
         // get datetimenow
         java.util.Date currentDate = new java.util.Date();
         // Chuyển đổi thành Timestamp
         currentTimestamp = new Timestamp(currentDate.getTime());
 
         if (paymentStatus == 1) {
+            BigDecimal tienMat;
+            BigDecimal getTongTien = getOne.getThanhTien();
+            if (getOne.getTrangThai() >= 3) {
+                List<HinhThucThanhToan> hinhThucThanhToans = hinhThucThanhToanSevice.detail(getOne.getIdHd());
 
-            BigDecimal getTongTien = getOne.get().getTongTien();
+                BigDecimal money = BigDecimal.ZERO;
+                for (HinhThucThanhToan x :
+                        hinhThucThanhToans) {
+                    money = money.add(x.getSoTien());
+                }
+                System.out.println("realPrice: " + realPrice);
+                tienMat = getTongTien.subtract(money).subtract(realPrice);
+            } else {
+                tienMat = getTongTien.subtract(realPrice);
 
-            BigDecimal tienMat = getTongTien.subtract(realPrice);
+            }
+            System.out.println("tienMat: " + tienMat);
             //Add to updatePaymentOnline
             HoaDon hoaDonDTO1 = new HoaDon();
             hoaDonDTO1.setNgayThanhToan(currentTimestamp);
             hoaDonDTO1.setTienDua(realPrice);
             int setTrangThai;
-            if (getOne.get().getTrangThai() == 3) {
+            if (getOne.getTrangThai() >= 3 && getOne.getTrangThai() <= 6) {
                 setTrangThai = 4;
             } else {
                 setTrangThai = 9;
@@ -771,10 +805,9 @@ public class HoaDonController {
 
             // Switch tab
             response.sendRedirect("http://localhost:3000/dashboard/bills/time-line/" + idHd);
-
             return ResponseEntity.ok("Thanh Toán VNPAY Thành Công!!!");
         } else {
-            if (getOne.get().getTrangThai() <= 6) {
+            if (getOne.getTrangThai() <= 6) {
                 response.sendRedirect("http://localhost:3000/dashboard/bills/time-line/" + idHd);
                 return ResponseEntity.ok("Thanh Toán VNPAY Không Thành Công!!!");
             } else {
@@ -858,14 +891,6 @@ public class HoaDonController {
                     chitietsanphamSer.update(y);
                 }
             }
-            // Delete product on detail cart
-//            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSer.findAllByIDHD(idHd);
-//            for (HoaDonChiTiet x :
-//                    hoaDonChiTiets) {
-//                GioHangChiTiet gioHangChiTiet = gioHangChiTietSevice.finByIDCTSP(x.getIdCtsp().getIdCtsp()).orElseThrow();
-//                gioHangChiTietSevice.deleteGHCT(gioHangChiTiet.getIdGhct());
-//            }
-
             // Update HD to ship
             getOne.setTrangThai(0);
             updateStatus(getOne, getOne.getIdHd(), "Thanh Toán VNPAY");

@@ -82,7 +82,6 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
             }
 
             hoaDon.setTongTien(tongTien);
-            System.out.println("tongTien: " + tongTien);
 
             if (hoaDon.getSoTienGiamGia() == null) {
                 hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
@@ -116,11 +115,9 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
             for (HoaDonChiTiet x : hoaDonChiTiets2) {
                 // UPdate price in hd
                 tongTien = tongTien.add(x.getDonGia());
-                System.out.println("tongTien: " + tongTien);
             }
             HoaDon hoaDon = hoadonRepo.findById(add.getIdHd().getIdHd()).orElseThrow();
             hoaDon.setTongTien(tongTien);
-            System.out.println("tongTien: " + tongTien);
 
             if (hoaDon.getSoTienGiamGia() == null) {
                 hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
@@ -166,7 +163,6 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
         }
 
         hoaDon.setTongTien(tongTien);
-        System.out.println("tongTien: " + tongTien);
 
         if (hoaDon.getSoTienGiamGia() == null) {
             hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
@@ -219,7 +215,6 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
             }
 
             hoaDon.setTongTien(tongTien);
-            System.out.println("tongTien: " + tongTien);
 
             if (hoaDon.getSoTienGiamGia() == null) {
                 hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
@@ -238,7 +233,6 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
             for (HoaDonChiTiet x : hoaDonChiTiets2) {
                 // UPdate price in hd
                 tongTien = tongTien.add(x.getDonGia());
-                System.out.println("tongTien: " + tongTien);
             }
             hoaDon.setTongTien(tongTien);
 
@@ -257,11 +251,9 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
 
     @Override
     public ResponseEntity<?> update(HoaDonChiTiet update) {
-//        List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdCtspExsit(update.getIdHd().getIdHd(), update.getIdCtsp().getIdCtsp());
 //
         HoaDon hoaDon = hoadonRepo.findById(update.getIdHd().getIdHd()).orElseThrow();
         if (hoaDon.getTrangThai() < 8) {
-//            hoadonchitietRepository.save(update);
             updatePriceAndUpate(update);
             addLS(update, 3);
             return ResponseEntity.ok("Chỉnh Sửa Hóa Đơn Chi Tiết và Lưu Vào Lịch Sử");

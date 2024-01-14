@@ -6,8 +6,8 @@ const updateStatusBill = (idHd, moTa, trangThai) =>
     trangThai,
   });
 
-const updatePayment = (idHd, tenKh, sdtKh, tienDua, tienThua, trangThai) =>
-  custom.put(`/hoa-don/update-payment/${idHd}`, {
+const updatePayment = (idHd, tenKh, sdtKh, tienDua, tienThua, trangThai, status) =>
+  custom.put(`/hoa-don/update-payment/${idHd}?status=${status}`, {
     tenKh,
     sdtKh,
     tienDua,
