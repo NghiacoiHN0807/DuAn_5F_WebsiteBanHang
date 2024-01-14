@@ -457,7 +457,7 @@ const OrderManagementTimeline = ({ classes }) => {
             disabled={activeIndex <= 3 || activeIndex >= 5}
           >
             Đổi/Trả Hàng
-          </Button>
+          </Button>{' '}
           <Button variant="outlined" color="error" onClick={handleSelect}>
             Chi Tiết
           </Button>
@@ -796,11 +796,17 @@ const OrderManagementTimeline = ({ classes }) => {
                           <TableCell align="right">{item[12]}</TableCell>
                           <TableCell align="right">
                             {item[13] < 11 && (
-                              <IconButton disabled={item[13] === 11} onClick={() => handleCancelClick(item)}>
+                              <IconButton
+                                disabled={item[13] === 11 || activeIndex >= 5}
+                                onClick={() => handleCancelClick(item)}
+                              >
                                 <CancelIcon />
                               </IconButton>
                             )}
-                            <IconButton disabled={item[13] === 11} onClick={() => handleCheckClick(item)}>
+                            <IconButton
+                              disabled={item[13] === 11 || activeIndex >= 5}
+                              onClick={() => handleCheckClick(item)}
+                            >
                               <CheckCircleIcon />
                             </IconButton>
                           </TableCell>

@@ -634,8 +634,6 @@ public class HoaDonController {
                     List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
                     for (ChiTietSanPham y :
                             chiTietSanPhams) {
-                        System.out.println("y: " + x.getSoLuong());
-                        System.out.println("y: " + y.getSoLuongTon());
 
                         y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
                         if (y.getSoLuongTon() <= 0) {
@@ -760,8 +758,6 @@ public class HoaDonController {
                         hinhThucThanhToans) {
                     money = money.add(x.getSoTien());
                 }
-                System.out.println("getTongTien: " + getTongTien);
-                System.out.println("money: " + money);
                 System.out.println("realPrice: " + realPrice);
                 tienMat = getTongTien.subtract(money).subtract(realPrice);
             } else {
