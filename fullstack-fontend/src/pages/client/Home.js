@@ -10,6 +10,7 @@ import SearchOffIcon from '@mui/icons-material/SearchOff';
 import { useNavigate } from 'react-router-dom';
 // import { fCurrency } from '../../utils/formatNumber';
 // import
+import { Helmet } from 'react-helmet-async';
 import anh1 from '../../assets/slider_2.jpg';
 import anh2 from '../../assets/banner-thoi-trang-nam.jpg';
 import anh3 from '../../assets/banner-thoi-trang-the-thao-cho-nam_113858272.jpg';
@@ -218,6 +219,9 @@ const Home = () => {
   }
   return (
     <>
+      <Helmet>
+        <title> 5F Store || Trang Chủ </title>
+      </Helmet>
       <section className="gray-background-home">
         <div>
           <h6 className="hello" style={{ fontSize: '16px', paddingTop: '10px' }}>
