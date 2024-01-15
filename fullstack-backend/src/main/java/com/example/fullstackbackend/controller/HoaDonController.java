@@ -189,6 +189,9 @@ public class HoaDonController {
             nameError = "Số Tiền Thanh Toán Chưa Đủ";
             hasError = true;
         } else if (hoaDonCheck.getTrangThai() == 6) {
+            nameError = "Hóa Đơn Đã Bị Hoàn Trả";
+            hasError = true;
+        }else if (hoaDonCheck.getTrangThai() == 10) {
             nameError = "Hóa Đơn Đã Bị Hủy";
             hasError = true;
         } else if (hoaDonCheck.getTrangThai() == 15) {
@@ -280,6 +283,8 @@ public class HoaDonController {
                         y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
                         if (y.getSoLuongTon() + x.getSoLuong() <= 0) {
                             y.setTrangThai(10);
+                        }else {
+                            y.setTrangThai(0);
                         }
                         chitietsanphamSer.update(y);
                     }
