@@ -188,6 +188,15 @@ public class HoaDonController {
         if (newHD.getTrangThai() == 5 && hoaDonCheck.getThanhTien().compareTo(money) > 0) {
             nameError = "Số Tiền Thanh Toán Chưa Đủ";
             hasError = true;
+        } else if (hoaDonCheck.getTrangThai() == 6) {
+            nameError = "Hóa Đơn Đã Bị Hoàn Trả";
+            hasError = true;
+        }else if (hoaDonCheck.getTrangThai() == 10) {
+            nameError = "Hóa Đơn Đã Bị Hủy";
+            hasError = true;
+        } else if (hoaDonCheck.getTrangThai() == 15) {
+            nameError = "Hóa Đơn Đã Hủy Do Giao Không Thành Công";
+            hasError = true;
         }
 
         //Done hasError
@@ -272,8 +281,10 @@ public class HoaDonController {
                     for (ChiTietSanPham y :
                             chiTietSanPhams) {
                         y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
-                        if (y.getSoLuongTon() <= 0) {
+                        if (y.getSoLuongTon() + x.getSoLuong() <= 0) {
                             y.setTrangThai(10);
+                        }else {
+                            y.setTrangThai(0);
                         }
                         chitietsanphamSer.update(y);
                     }
@@ -285,7 +296,7 @@ public class HoaDonController {
                     for (ChiTietSanPham y :
                             chiTietSanPhams) {
                         y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
-                        if (y.getSoLuongTon() <= 0) {
+                        if (y.getSoLuongTon() + x.getSoLuong() <= 0) {
                             y.setTrangThai(10);
                         } else {
                             y.setTrangThai(0);
@@ -311,7 +322,9 @@ public class HoaDonController {
     }
 
     @PutMapping("update-payment/{id}")
-    public ResponseEntity<?> updateThanhToan(@RequestBody HoaDon newHD, @PathVariable("id") Integer id) {
+    public ResponseEntity<?> updateThanhToan(@RequestBody HoaDon newHD,
+                                             @PathVariable("id") Integer id,
+                                             @RequestParam Integer status) {
 
         boolean hasError = false;
         String nameError = "";
@@ -366,47 +379,35 @@ public class HoaDonController {
                     for (ChiTietSanPham y :
                             chiTietSanPhams) {
                         y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                        if (y.getSoLuongTon() <= 0) {
+                        if (y.getSoLuongTon() - x.getSoLuong() <= 0) {
                             y.setTrangThai(10);
                         }
                         chitietsanphamSer.update(y);
                     }
                 }
             }
-//            else if (newHD.getTrangThai() == 0) {
-//                for (HoaDonChiTiet x :
-//                        hoaDonChiTiets) {
-//                    List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
-//                    for (ChiTietSanPham y :
-//                            chiTietSanPhams) {
-//                        y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-//                        if (y.getSoLuongTon() <= 0) {
-//                            y.setTrangThai(10);
-//                        }
-//                        chitietsanphamSer.update(y);
-//                    }
-//                }
-//
-//            }
+            System.out.println("status: " + status);
+            if (status == 2) {
+                //Add to payments
+                HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
+                hinhThucThanhToan2.setIdHd(newHD1);
+                hinhThucThanhToan2.setNgayThanhToan(currentTimestamp);
+                hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
+                hinhThucThanhToan2.setSoTien(newHD1.getThanhTien());
+                hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
+                hinhThucThanhToan2.setTrangThai(0);
+                hinhThucThanhToanSevice.add(hinhThucThanhToan2);
 
-            //Add to payments
-            HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
-            hinhThucThanhToan2.setIdHd(newHD1);
-            hinhThucThanhToan2.setNgayThanhToan(currentTimestamp);
-            hinhThucThanhToan2.setHinhThuc("Thanh Toán Tiền Mặt");
-            hinhThucThanhToan2.setSoTien(newHD1.getThanhTien());
-            hinhThucThanhToan2.setMoTa("Thanh Toán Tiền Mặt");
-            hinhThucThanhToan2.setTrangThai(0);
-            hinhThucThanhToanSevice.add(hinhThucThanhToan2);
+                //Add to history bill
+                LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
+                lichSuHoaDon.setIdHd(newHD1);
+                lichSuHoaDon.setIdTk(newHD1.getIdTK());
+                lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
+                lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
+                lichSuHoaDon.setNgayThayDoi(currentTimestamp);
+                lichSuHoaDonService.add(lichSuHoaDon);
+            }
 
-            //Add to history bill
-            LichSuHoaDon lichSuHoaDon = new LichSuHoaDon();
-            lichSuHoaDon.setIdHd(newHD1);
-            lichSuHoaDon.setIdTk(newHD1.getIdTK());
-            lichSuHoaDon.setTrangThai(newHD1.getTrangThai());
-            lichSuHoaDon.setMoTa("Thanh Toán Thành Công");
-            lichSuHoaDon.setNgayThayDoi(currentTimestamp);
-            lichSuHoaDonService.add(lichSuHoaDon);
 
             return ResponseEntity.ok("Thanh Toán Thành Công");
         }
@@ -493,7 +494,7 @@ public class HoaDonController {
                 for (ChiTietSanPham y :
                         chiTietSanPhams) {
                     y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                    if (y.getSoLuongTon() <= 0) {
+                    if (y.getSoLuongTon() - x.getSoLuong() <= 0) {
                         y.setTrangThai(10);
                     }
                     chitietsanphamSer.update(y);
@@ -555,19 +556,19 @@ public class HoaDonController {
                 return hoadonSevice.update(hoaDon);
             }).orElseThrow(() -> new xuatXuNotFoundException(id));
 
-            // Update quantity in product
-            for (HoaDonChiTiet x :
-                    hoaDonChiTiet) {
-                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
-                for (ChiTietSanPham y :
-                        chiTietSanPhams) {
-                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                    if (y.getSoLuongTon() <= 0) {
-                        y.setTrangThai(10);
-                    }
-                    chitietsanphamSer.update(y);
-                }
-            }
+//            // Update quantity in product
+//            for (HoaDonChiTiet x :
+//                    hoaDonChiTiet) {
+//                List<ChiTietSanPham> chiTietSanPhams = chitietsanphamSer.finAllByIDCTSP(x.getIdCtsp().getIdCtsp());
+//                for (ChiTietSanPham y :
+//                        chiTietSanPhams) {
+//                    y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
+//                    if (y.getSoLuongTon() <= 0) {
+//                        y.setTrangThai(10);
+//                    }
+//                    chitietsanphamSer.update(y);
+//                }
+//            }
             return ResponseEntity.ok(newHD1);
         }
     }
@@ -636,7 +637,7 @@ public class HoaDonController {
                             chiTietSanPhams) {
 
                         y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                        if (y.getSoLuongTon() <= 0) {
+                        if (y.getSoLuongTon() - x.getSoLuong() <= 0) {
                             y.setTrangThai(10);
                         }
                         chitietsanphamSer.update(y);
@@ -895,7 +896,7 @@ public class HoaDonController {
                 for (ChiTietSanPham y :
                         chiTietSanPhams) {
                     y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                    if (y.getSoLuongTon() <= 0) {
+                    if (y.getSoLuongTon() - x.getSoLuong() <= 0) {
                         y.setTrangThai(10);
                     }
                     chitietsanphamSer.update(y);
@@ -948,7 +949,7 @@ public class HoaDonController {
                 for (ChiTietSanPham y :
                         chiTietSanPhams) {
                     y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
-                    if (y.getSoLuongTon() <= 0) {
+                    if (y.getSoLuongTon() + x.getSoLuong() <= 0) {
                         y.setTrangThai(10);
                     } else {
                         y.setTrangThai(0);
