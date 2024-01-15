@@ -150,7 +150,7 @@ const ChangePassClient = () => {
     return (
         <>
             <Helmet>
-                <title> 5FStore || ChangePassword </title>
+                <title> 5FStore || Đổi Mật Khẩu </title>
             </Helmet>
             <Container  sx={ { margin: '240px '}}>
                 <div>

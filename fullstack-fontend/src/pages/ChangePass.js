@@ -142,7 +142,7 @@ const ChangePass = () => {
     return (
         <>
             <Helmet>
-                <title> 5FStore || ChangePassword </title>
+                <title> Đổi mật khẩu | 5FStore</title>
             </Helmet>
             <Container>
                 <div>
