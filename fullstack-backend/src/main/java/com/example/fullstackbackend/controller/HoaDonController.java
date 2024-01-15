@@ -278,7 +278,7 @@ public class HoaDonController {
                     for (ChiTietSanPham y :
                             chiTietSanPhams) {
                         y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
-                        if (y.getSoLuongTon() <= 0) {
+                        if (y.getSoLuongTon() + x.getSoLuong() <= 0) {
                             y.setTrangThai(10);
                         }
                         chitietsanphamSer.update(y);
@@ -291,7 +291,7 @@ public class HoaDonController {
                     for (ChiTietSanPham y :
                             chiTietSanPhams) {
                         y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
-                        if (y.getSoLuongTon() <= 0) {
+                        if (y.getSoLuongTon() + x.getSoLuong() <= 0) {
                             y.setTrangThai(10);
                         } else {
                             y.setTrangThai(0);
@@ -374,7 +374,7 @@ public class HoaDonController {
                     for (ChiTietSanPham y :
                             chiTietSanPhams) {
                         y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                        if (y.getSoLuongTon() <= 0) {
+                        if (y.getSoLuongTon() - x.getSoLuong() <= 0) {
                             y.setTrangThai(10);
                         }
                         chitietsanphamSer.update(y);
@@ -489,7 +489,7 @@ public class HoaDonController {
                 for (ChiTietSanPham y :
                         chiTietSanPhams) {
                     y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                    if (y.getSoLuongTon() <= 0) {
+                    if (y.getSoLuongTon() - x.getSoLuong() <= 0) {
                         y.setTrangThai(10);
                     }
                     chitietsanphamSer.update(y);
@@ -632,7 +632,7 @@ public class HoaDonController {
                             chiTietSanPhams) {
 
                         y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                        if (y.getSoLuongTon() <= 0) {
+                        if (y.getSoLuongTon() - x.getSoLuong() <= 0) {
                             y.setTrangThai(10);
                         }
                         chitietsanphamSer.update(y);
@@ -891,7 +891,7 @@ public class HoaDonController {
                 for (ChiTietSanPham y :
                         chiTietSanPhams) {
                     y.setSoLuongTon(y.getSoLuongTon() - x.getSoLuong());
-                    if (y.getSoLuongTon() <= 0) {
+                    if (y.getSoLuongTon() - x.getSoLuong() <= 0) {
                         y.setTrangThai(10);
                     }
                     chitietsanphamSer.update(y);
@@ -944,7 +944,7 @@ public class HoaDonController {
                 for (ChiTietSanPham y :
                         chiTietSanPhams) {
                     y.setSoLuongTon(y.getSoLuongTon() + x.getSoLuong());
-                    if (y.getSoLuongTon() <= 0) {
+                    if (y.getSoLuongTon() + x.getSoLuong() <= 0) {
                         y.setTrangThai(10);
                     } else {
                         y.setTrangThai(0);
