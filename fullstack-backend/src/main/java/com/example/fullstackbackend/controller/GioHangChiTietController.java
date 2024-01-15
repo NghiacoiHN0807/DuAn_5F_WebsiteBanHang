@@ -108,6 +108,7 @@ public class GioHangChiTietController {
         }
     }
 
+    // Delete
     @DeleteMapping("delete/{id}")
     public ResponseEntity<?> deleteGHCT(@PathVariable("id") Integer id) {
         if (id == null) {
