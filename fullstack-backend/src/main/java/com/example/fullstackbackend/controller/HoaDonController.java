@@ -188,6 +188,12 @@ public class HoaDonController {
         if (newHD.getTrangThai() == 5 && hoaDonCheck.getThanhTien().compareTo(money) > 0) {
             nameError = "Số Tiền Thanh Toán Chưa Đủ";
             hasError = true;
+        } else if (hoaDonCheck.getTrangThai() == 6) {
+            nameError = "Hóa Đơn Đã Bị Hủy";
+            hasError = true;
+        } else if (hoaDonCheck.getTrangThai() == 15) {
+            nameError = "Hóa Đơn Đã Hủy Do Giao Không Thành Công";
+            hasError = true;
         }
 
         //Done hasError
@@ -375,7 +381,7 @@ public class HoaDonController {
                     }
                 }
             }
-            System.out.println("status: "+ status);
+            System.out.println("status: " + status);
             if (status == 2) {
                 //Add to payments
                 HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
