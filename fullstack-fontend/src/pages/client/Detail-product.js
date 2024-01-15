@@ -8,6 +8,7 @@ import { Alert, Box, Button, Container, Grid, Snackbar, Typography } from '@mui/
 // utils
 // Service
 
+import { Helmet } from 'react-helmet-async';
 import { listImg } from '../../service/client/Detail-Product';
 import { findById } from '../../service/BillSevice';
 import { addProductOnCart, listProductOnCart } from '../../service/client/Detail-Cart';
@@ -264,6 +265,11 @@ const DetailProduct = () => {
   }
 
   return (
+    <>
+      <Helmet>
+        <title> 5FStore || Thông Tin Sản Phẩm  </title>
+      </Helmet>
+
     <div id="main">
       <div id="header">{/* ... (header content) ... */}</div>
 
@@ -479,6 +485,7 @@ const DetailProduct = () => {
         </Snackbar>
       )}
     </div>
+    </>
   );
 };
 

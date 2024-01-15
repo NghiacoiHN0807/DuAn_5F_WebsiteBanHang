@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  database:
+    build: ./database
+    container_name: database
+    ports:
+      - "3307:3306"
+    restart: always
+    networks:
+      - spring_net
+    environment:
+      DATABASE_HOST: docker-mysql
+      DATABASE_PORT: 3306
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: duan_5f
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: 123456
+
+  backend:
+    build: ./fullstack-backend
+    container_name: backend
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/duan_5f?autoReconnect=true&allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: 123456
+    networks:
+      - spring_net
+      - frontend_net
+    depends_on:
+      - database
+
+  frontend:
+    build: ./fullstack-fontend
+    container_name: fontend
+    ports:
+      - "3000:3000"
+    networks:
+      - frontend_net
+
+networks:
+  spring_net:
+  frontend_net:

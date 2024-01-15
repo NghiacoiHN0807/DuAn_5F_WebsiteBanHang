@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin("http://localhost:3000/")
+//@CrossOrigin("http://localhost:3000/")
 @RequestMapping("/san-pham/")
 public class SanPhamController {
     @Autowired

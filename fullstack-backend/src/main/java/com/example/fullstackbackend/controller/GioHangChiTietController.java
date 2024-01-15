@@ -31,7 +31,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/gio-hang-chi-tiet/")
-@CrossOrigin("http://localhost:3000/")
+//@CrossOrigin("http://localhost:3000/")
 public class GioHangChiTietController {
     @Autowired
     private GioHangChiTietSevice gioHangChiTietSevice;

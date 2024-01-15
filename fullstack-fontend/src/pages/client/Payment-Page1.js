@@ -17,12 +17,13 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import ButtonBase from '@mui/material/ButtonBase';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Image } from 'react-bootstrap';
 // Service
+import { Helmet } from 'react-helmet-async';
 import { detailBill, finByProductOnCart2 } from '../../service/BillSevice';
 import { updateTienShip } from '../../service/OrderManagementTimeLine';
 import { deleteOverTime, selectDiaChiByTK } from '../../service/client/Payment';
@@ -319,6 +320,9 @@ export default function PaymentPage1() {
 
   return (
     <>
+      <Helmet>
+        <title> 5FStore || Thanh Toán  </title>
+      </Helmet>
       <Container sx={{ marginBottom: 10 }}>
         {listHD.trangThai === 11 ? (
           <Grid container spacing={3}>
