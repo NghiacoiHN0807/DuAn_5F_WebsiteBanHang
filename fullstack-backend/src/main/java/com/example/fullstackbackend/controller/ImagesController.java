@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/images/")
-@CrossOrigin("http://localhost:3000/")
+//@CrossOrigin("http://localhost:3000/")
 public class ImagesController {
     @Autowired
     private ImagesSevice imagesSevice;

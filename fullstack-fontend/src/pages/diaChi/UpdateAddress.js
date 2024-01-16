@@ -54,7 +54,7 @@ const UpdateAddress = () => {
         const [selectedQuanHuyenName, setSelectedQuanHuyenName] = useState('');
         const [selectedPhuongXaName, setSelectedPhuongXaName] = useState('');
 
-
+// eslint-disable-next-line
         const fetchtinhThanh = useCallback(async () => {
             try {
                 const response = await axios.get('https://online-gateway.ghn.vn/shiip/public-api/master-data/province', {
@@ -68,9 +68,12 @@ const UpdateAddress = () => {
             }
         });
         useEffect(() => {
+            // eslint-disable-next-line
             fetchtinhThanh();
+            // eslint-disable-next-line
         }, []);
 
+        // eslint-disable-next-line
         function findProvinceIDByName(data, provinceName) {
             const lowerCaseProvinceName = provinceName.toLowerCase();
             // console.log("data", data)
@@ -249,18 +252,25 @@ const UpdateAddress = () => {
 
         useEffect(() => {
             getTongDC(taiKhoan)
+            // eslint-disable-next-line
         }, [taiKhoan]);
 
         useEffect(() => {
+            // eslint-disable-next-line
             getDiaChiTinhThanh(idDc);
+            // eslint-disable-next-line
         }, [idDc, tinhThanh]);
 
         useEffect(() => {
+            // eslint-disable-next-line
             getDiaChiQuanHuyen(idDc);
+            // eslint-disable-next-line
         }, [idDc, quanHuyen]);
 
         useEffect(() => {
+            // eslint-disable-next-line
             getDiaChiPhuongXa(idDc);
+            // eslint-disable-next-line
         }, [idDc, phuongXa]);
 
         const getDiaChi = async (idDc) => {

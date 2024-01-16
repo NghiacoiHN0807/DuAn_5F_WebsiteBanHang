@@ -45,7 +45,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/hoa-don/")
-@CrossOrigin("http://localhost:3000/")
+//@CrossOrigin("http://localhost:3000/")
 public class HoaDonController {
     @Autowired
     private HoadonSevice hoadonSevice;
