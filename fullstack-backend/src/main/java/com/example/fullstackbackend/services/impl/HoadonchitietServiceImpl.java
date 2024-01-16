@@ -390,6 +390,11 @@ public class HoadonchitietServiceImpl implements HoadonchitietSevice {
     }
 
     @Override
+    public List<HoaDonChiTiet> getHDCTInStatus(Integer idHd, Integer trangThai) {
+        return hoadonchitietRepository.findAllByIdHdANDTT(idHd, trangThai);
+    }
+
+    @Override
     public List<HoaDonChiTiet> findAllByIDHD(Integer idHd) {
         return hoadonchitietRepository.findAllByIdHd_IdHdAndTrangThai(idHd, 0);
     }
