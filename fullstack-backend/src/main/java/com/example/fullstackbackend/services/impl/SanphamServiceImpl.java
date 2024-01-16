@@ -259,8 +259,15 @@ public class SanphamServiceImpl implements SanPhamService {
         for(SanPham sp : listSP){
             if(sanphamRepository.setSpIsOut(sp.getIdSp()) == 1){
                 sp.setTrangThai(10);
-                sanphamRepository.save(sp);
+            }else{
+                if(sanphamRepository.checkSPSale(sp.getIdSp()) == 1){
+                    sp.setTrangThai(1);
+                }else {
+                    sp.setTrangThai(0);
+                }
             }
+            sanphamRepository.save(sp);
+
         }
     }
 

@@ -300,4 +300,14 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "WHERE id_sp =:idSp", nativeQuery = true)
 
     Integer setSpIsOut(@Param("idSp") Integer idSp);
+
+    @Query(value = "SELECT \n" +
+            "    CASE\n" +
+            "        WHEN COUNT(*) > 0 AND COUNT(*) = SUM(CASE WHEN gia_thuc_te < gia_ban THEN 1 ELSE 0 END) THEN true\n" +
+            "        ELSE false\n" +
+            "    END AS result\n" +
+            "FROM chi_tiet_san_pham\n" +
+            "WHERE id_sp =:idSp", nativeQuery = true)
+
+    Integer checkSPSale(@Param("idSp") Integer idSp);
 }
