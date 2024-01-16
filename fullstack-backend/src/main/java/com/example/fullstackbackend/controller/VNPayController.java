@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigDecimal;
 
 @RestController
-@CrossOrigin("http://localhost:3000/")
+//@CrossOrigin("http://localhost:3000/")
 @RequestMapping("/payment-online/")
 public class VNPayController {
     @Autowired

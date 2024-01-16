@@ -1,5 +1,5 @@
-import {useEffect, useState} from "react";
-import {Helmet} from "react-helmet-async";
+import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import {
     Button,
     Container,
@@ -10,14 +10,14 @@ import {
     Table,
     TableBody,
     TableCell,
-    TableContainer, TableHead,
+    TableContainer,
+    TableHead,
     TableRow,
     TextField,
-    Typography
-} from "@mui/material";
+    Typography,
+} from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import {getDetailOneTK, postUpdateTaiKhoanKhachHang} from "../service/taiKhoanKhachHangSevice";
-import {detailTaiKhoan, postUpdateTaiKhoan} from "../service/taiKhoanNhanVienService";
+import { detailTaiKhoan, postUpdateTaiKhoan } from '../service/taiKhoanNhanVienService';
 
 
 const ProfileClient = () => {
@@ -116,7 +116,7 @@ const ProfileClient = () => {
     return (
         <>
             <Helmet>
-                <title> 5FStore || Profile </title>
+                <title> Thông tin tài khoản | 5FStore </title>
             </Helmet>
             <Container>
                 <div>

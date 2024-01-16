@@ -6,6 +6,7 @@ import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 
 // Service
+import { Helmet } from 'react-helmet-async';
 import { listImg } from '../../service/client/Detail-Product';
 import {
   listProductOnCart,
@@ -15,6 +16,7 @@ import {
 } from '../../service/client/Detail-Cart';
 import ModalUpdateProductOnCartClientNoAccount from '../../forms/client/Modals-Update-Product-Cart-Client-NoAccount';
 import { findById } from '../../service/BillSevice';
+import { deleteOverTime } from '../../service/client/Payment';
 
 const StyledProductImg = styled('img')({
   top: 0,
@@ -110,7 +112,7 @@ export default function CartNoAccount() {
   };
 
   useEffect(() => {
-    const updateProductOnCart = async () => { };
+    const updateProductOnCart = async () => {};
     updateProductOnCart();
   }, [quantity]);
 
@@ -206,20 +208,24 @@ export default function CartNoAccount() {
         message: 'Hóa Đơn Của Bạn Đã Vượt Quá 10TR. Hãy Liên Hệ Với Chúng Tôi Để Mua Sỉ',
       });
     } else {
-      console.log('authorities: ', authorities);
       const res = await postAddBillNoAccount(totalPayment, 2, 11);
-      for (let i = 0; i < selectedItems.length; i += 1) {
-        (async () => {
-          await postAddDirectClient(res.idHd, selectedItems[i]);
-        })();
+      const changtoHDCT = await postAddDirectClient(res.idHd, selectedItems);
+      if (changtoHDCT.status === 400) {
+        setAlertContent({
+          type: 'warning',
+          message: changtoHDCT.data.error,
+        });
+        await deleteOverTime(res.idHd);
+      } else {
+        console.log('selectedItems', selectedItems);
+        setAlertContent({
+          type: 'success',
+          message: 'Tạo Thành Công Hóa Đơn',
+        });
+        setTimeout(() => {
+          navigate(`/client/payment-noaccount/${res.idHd}`);
+        }, 200);
       }
-      setAlertContent({
-        type: 'success',
-        message: 'Tạo thành công hóa đơn',
-      });
-      setTimeout(() => {
-        navigate(`/client/payment-noaccount/${res.idHd}`);
-      }, 200);
     }
   };
 
@@ -244,6 +250,9 @@ export default function CartNoAccount() {
   };
   return (
     <>
+      <Helmet>
+        <title> 5FStore || Giỏ Hàng  </title>
+      </Helmet>
       <div>
         {/* cart + summary */}
         <section className="bg-light my-5">
@@ -326,18 +335,6 @@ export default function CartNoAccount() {
                                     className="ms-size"
                                   >
                                     {item.idCtsp.idMs.tenMs},
-                                    {/* </Button>
-                                  ,
-                                  <Button
-                                    style={{
-                                      fontSize: '12px',
-                                    }}
-                                    key={`size-button-${index}`}
-                                    // onClick={() => handleShowMS(item.idCtsp.idSize)}
-                                    // variant={selectedMauSac === item.idCtsp.idSize ? 'contained' : 'outlined'}
-                                    size="small"
-                                    className="ms-size"
-                                  > */}
                                     {item.idCtsp.idSize.tenSize}
                                   </Button>
                                 </span>
@@ -396,15 +393,6 @@ export default function CartNoAccount() {
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="border-top pt-4 mx-4 mb-4">
-              <p>
-                <i className="fas fa-truck text-muted fa-lg" /> Free Delivery within 1-2 weeks
-              </p>
-              <p className="text-muted">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-              </p>
             </div>
           </div>
         </section>

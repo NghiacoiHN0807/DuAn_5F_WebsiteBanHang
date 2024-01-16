@@ -186,7 +186,7 @@ const ModalsAddAddressByAdmin = (props) => {
   }, [open, idTaiKhoan]);
   const getTaiKhoan = async (idTaiKhoan) => {
     const resTK = await getDetailOneTK(idTaiKhoan);
-    console.log(resTK);
+    // console.log(resTK);
     setTaiKhoan(resTK);
   };
 
@@ -272,7 +272,7 @@ const ModalsAddAddressByAdmin = (props) => {
       // Reset form data and validation errors on success
       if (res) {
         handleCloseBD();
-        console.log(res);
+        // console.log(res);
         showAlert('success', 'Thêm Địa Chỉ thành công');
         clearText();
         handleClose();

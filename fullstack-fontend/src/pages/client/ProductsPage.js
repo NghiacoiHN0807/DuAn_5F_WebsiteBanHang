@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet-async';
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 // @mui
 import { Button, Container, Grid, InputAdornment, OutlinedInput, Typography, alpha, styled } from '@mui/material';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
@@ -100,7 +100,7 @@ export default function ProductsPage() {
   return (
     <>
       <Helmet>
-        <title> Dashboard: Products | Minimal UI </title>
+        <title> 5FStore || Sản Phẩm </title>
       </Helmet>
 
       <Container>

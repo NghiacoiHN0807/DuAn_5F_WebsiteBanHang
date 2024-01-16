@@ -1,16 +1,15 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
 
 // @mui
-import { Link, Stack, IconButton, InputAdornment, TextField, Checkbox, Snackbar, Alert, Backdrop } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
+import {Alert, Backdrop, IconButton, InputAdornment, Link, Snackbar, Stack, TextField} from '@mui/material';
+import {LoadingButton} from '@mui/lab';
 // components
-
-import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import {GoogleLogin, GoogleOAuthProvider} from '@react-oauth/google';
 import CircularProgress from '@mui/material/CircularProgress';
 import Iconify from '../../../components/iconify';
-import { useAlert } from '../../../layouts/dashboard/AlertContext';
+import {useAlert} from '../../../layouts/dashboard/AlertContext';
 
 // ----------------------------------------------------------------------
 

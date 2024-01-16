@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/lich-su-hoa-don/")
-@CrossOrigin("http://localhost:3000/")
+//@CrossOrigin("http://localhost:3000/")
 public class LichSuHoaDonController {
     @Autowired
     private LichSuHoaDonService lichSuHoaDonService;

@@ -6,7 +6,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   Chip,
   Container,
@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 // Service
+import { Helmet } from 'react-helmet-async';
 import { viewAllHDByIDKH } from '../../service/client/SelectBill';
 
 function TabPanel(props) {
@@ -278,6 +279,10 @@ export default function SelectAllBillOfClient() {
   // Ví dụ: renderTabPanel(0), renderTabPanel(1),...
 
   return (
+    <>
+      <Helmet>
+        <title> 5FStore || Hóa Đơn  </title>
+      </Helmet>
     <Container>
       <Box
         sx={{
@@ -339,5 +344,6 @@ export default function SelectAllBillOfClient() {
         ))} */}
       </Box>
     </Container>
+    </>
   );
 }

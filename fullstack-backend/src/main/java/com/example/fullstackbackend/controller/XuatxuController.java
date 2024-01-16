@@ -27,7 +27,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/xuat-xu/")
-@CrossOrigin("http://localhost:3000/")
+//@CrossOrigin("http://localhost:3000/")
 public class XuatxuController {
     @Autowired
     private XuatxuService xuatxuSevice;

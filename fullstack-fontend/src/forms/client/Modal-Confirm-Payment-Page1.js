@@ -61,6 +61,8 @@ export default function ModalConfirmPayment1(props) {
           type: 'success',
           message: 'Hãy Thanh Toán Trước. Cảm Ơn!!!',
         });
+        await deleteProductOnCartPayment(idHdParam);
+
         const paymentOn = await paymentOnlineClient(thanhTien, idHdParam);
         window.location.href = paymentOn;
       }

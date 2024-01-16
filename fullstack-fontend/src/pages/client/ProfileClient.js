@@ -109,7 +109,7 @@ const ProfileClient = () => {
     return (
         <>
             <Helmet>
-                <title> 5FStore || Profile </title>
+                <title> 5FStore || Thông Tin Tài Khoản </title>
             </Helmet>
             <Container sx={ { margin: '170px '}}>
 

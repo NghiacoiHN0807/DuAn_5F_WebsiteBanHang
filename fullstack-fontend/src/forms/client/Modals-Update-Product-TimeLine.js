@@ -125,17 +125,21 @@ const ModalUpdateProductTimeline = (props) => {
 
       //   Insert to the cart
 
-      await updateCart(getIdHdCt, getOneCTSP, quantity, donGia);
+      const changtoHDCT = await updateCart(getIdHdCt, getOneCTSP, quantity, donGia);
       //   Close the modal
-      // setSelectedSize(null);
+      if (changtoHDCT.status === 400) {
+        setAlertContent({
+          type: 'warning',
+          message: changtoHDCT.data.error,
+        });
+      } else {
+        setAlertContent({
+          type: 'success',
+          message: 'Cập Nhập Sản Phẩm Thành Công',
+        });
+      }
       handleCloseDetai();
-      // setQuantity(1);
-      //   Load new data on cart
       selectDataCart();
-      setAlertContent({
-        type: 'success',
-        message: 'Cập nhập sản phẩm thành công',
-      });
     }
   };
   // Set select one MS and Size
