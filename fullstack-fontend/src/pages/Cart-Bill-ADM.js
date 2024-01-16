@@ -1136,9 +1136,9 @@ const CartBillADM = () => {
                 handleClose={handleCloseAddKH}
                 getDetailHD={getDetailHD}
                 resetInformation={resetInformation}
-                // setSelectedCustomerName={setSelectedCustomerName}
-                // setSelectedMaTk={setSelectedMaTk}
-                // setSelectedCustomerEmail={setSelectedCustomerEmail}
+              // setSelectedCustomerName={setSelectedCustomerName}
+              // setSelectedMaTk={setSelectedMaTk}
+              // setSelectedCustomerEmail={setSelectedCustomerEmail}
               />
               {/* ModalDeleteDirectSale */}
               <ModalDeleteDirectSale open={open} handleClose={handleCloseDeleteInvoice} information={information} />
