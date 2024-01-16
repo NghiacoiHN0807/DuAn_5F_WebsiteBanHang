@@ -121,6 +121,8 @@ export default function Cart() {
   };
   const handleCloseDelete = () => {
     setOpenDialogDelete(false);
+    setCurrentItemId(null);
+    setSelectedItems([]);
   };
 
   const handleSnackbarClose = (event, reason) => {
