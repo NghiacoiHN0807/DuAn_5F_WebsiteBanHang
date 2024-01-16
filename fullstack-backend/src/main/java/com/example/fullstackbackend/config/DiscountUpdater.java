@@ -1,12 +1,20 @@
 package com.example.fullstackbackend.config;
 
+import com.example.fullstackbackend.entity.ChiTietSanPham;
 import com.example.fullstackbackend.entity.Coupons;
 import com.example.fullstackbackend.entity.GiamGia;
 import com.example.fullstackbackend.entity.GiamGiaChiTiet;
+import com.example.fullstackbackend.entity.GioHangChiTiet;
+import com.example.fullstackbackend.entity.HoaDon;
+import com.example.fullstackbackend.entity.HoaDonChiTiet;
 import com.example.fullstackbackend.entity.SanPham;
+import com.example.fullstackbackend.repository.ChitietsanphamRepository;
 import com.example.fullstackbackend.repository.CouponsRepository;
 import com.example.fullstackbackend.repository.GiamGiaChiTietRepository;
 import com.example.fullstackbackend.repository.GiamGiaRepository;
+import com.example.fullstackbackend.repository.GioHangChiTietReponsitory;
+import com.example.fullstackbackend.repository.HoadonRepository;
+import com.example.fullstackbackend.repository.HoadonchitietRepository;
 import com.example.fullstackbackend.services.GiamGiaChiTietService;
 import com.example.fullstackbackend.services.SanPhamService;
 import jakarta.transaction.Transactional;
@@ -15,6 +23,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -33,6 +42,14 @@ public class DiscountUpdater {
 
     private final SanPhamService sanPhamService;
 
+    private final GioHangChiTietReponsitory gioHangChiTietReponsitory;
+
+    private final ChitietsanphamRepository chitietsanphamRepository;
+
+    private final HoadonchitietRepository hoadonchitietRepository;
+
+    private final HoadonRepository hoadonRepo;
+
     @Scheduled(cron = "0 * * * * *", zone = "Asia/Ho_Chi_Minh")
     @Transactional
     public void updateDiscount() {
@@ -45,6 +62,7 @@ public class DiscountUpdater {
         Date currentTimestamp = new Date(now.getTime());
 
         boolean tatCaLaTrangThai0 = true;
+
 
         for (GiamGia giamGia : giamGias) {
             Date ngayKetThuc = giamGia.getNgayKetThuc();
@@ -78,7 +96,7 @@ public class DiscountUpdater {
             }
         }
 
-        for (Coupons coupon: coupons) {
+        for (Coupons coupon : coupons) {
             Date ngayKetThuc = coupon.getThoiGianKetThuc();
             Date ngayBatDau = coupon.getThoiGianTao();
             if (ngayBatDau != null && currentTimestamp.after(ngayBatDau)) {
@@ -89,6 +107,45 @@ public class DiscountUpdater {
                 coupon.setTrangThai(10);
                 couponsRepository.save(coupon);
             }
+        }
+        // Update price on cart's client
+        List<GioHangChiTiet> gioHangChiTiet = gioHangChiTietReponsitory.findAll();
+
+        for (GioHangChiTiet x :
+                gioHangChiTiet) {
+            ChiTietSanPham chiTietSanPham = chitietsanphamRepository.findById(x.getIdCtsp().getIdCtsp()).orElseThrow();
+            x.setIdGhct(x.getIdGhct());
+            BigDecimal newPrice = chiTietSanPham.getGiaThucTe().multiply(new BigDecimal(x.getSoLuong()));
+            x.setDonGia(newPrice);
+            x.setDonGiaSauGiam(newPrice);
+            gioHangChiTietReponsitory.save(x);
+        }
+        // Update price on cart's admin
+        List<HoaDon> hoaDonList = hoadonRepo.findAll();
+        BigDecimal tongTien = BigDecimal.ZERO;
+
+        for (HoaDon y:
+                hoaDonList) {
+            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdHdANDTT(y.getIdHd(), 0);
+            for (HoaDonChiTiet x :
+                    hoaDonChiTiets) {
+                ChiTietSanPham chiTietSanPham = chitietsanphamRepository.findById(x.getIdCtsp().getIdCtsp()).orElseThrow();
+                x.setIdHdct(x.getIdHdct());
+                BigDecimal newPrice = chiTietSanPham.getGiaThucTe().multiply(new BigDecimal(x.getSoLuong()));
+                x.setDonGia(newPrice);
+                tongTien = tongTien.add(newPrice);
+                hoadonchitietRepository.save(x);
+            }
+            y.setTongTien(tongTien);
+            if (y.getSoTienGiamGia() == null) {
+                y.setSoTienGiamGia(BigDecimal.ZERO);
+            }
+            if (y.getTienShip() == null) {
+                y.setTienShip(BigDecimal.ZERO);
+            }
+            BigDecimal thanhTien = tongTien.add(y.getTienShip()).subtract(y.getSoTienGiamGia());
+            y.setThanhTien(thanhTien);
+            hoadonRepo.save(y);
         }
 
     }
@@ -132,8 +189,43 @@ public class DiscountUpdater {
                 }
             }
         }
+        // Update price on cart's client
+        List<GioHangChiTiet> gioHangChiTiet = gioHangChiTietReponsitory.findAll();
+        for (GioHangChiTiet x :
+                gioHangChiTiet) {
+            ChiTietSanPham chiTietSanPham = chitietsanphamRepository.findById(x.getIdCtsp().getIdCtsp()).orElseThrow();
+            x.setIdGhct(x.getIdGhct());
+            BigDecimal newPrice = chiTietSanPham.getGiaThucTe().multiply(new BigDecimal(x.getSoLuong()));
+            x.setDonGia(newPrice);
+            gioHangChiTietReponsitory.save(x);
+        }
+        // Update price on cart's admin
+        List<HoaDon> hoaDonList = hoadonRepo.findAll();
+        BigDecimal tongTien = BigDecimal.ZERO;
 
+        for (HoaDon y:
+                hoaDonList) {
+            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdHdANDTT(y.getIdHd(), 0);
+            for (HoaDonChiTiet x :
+                    hoaDonChiTiets) {
+                ChiTietSanPham chiTietSanPham = chitietsanphamRepository.findById(x.getIdCtsp().getIdCtsp()).orElseThrow();
+                x.setIdHdct(x.getIdHdct());
+                BigDecimal newPrice = chiTietSanPham.getGiaThucTe().multiply(new BigDecimal(x.getSoLuong()));
+                x.setDonGia(newPrice);
+                tongTien = tongTien.add(newPrice);
+                hoadonchitietRepository.save(x);
+            }
+            y.setTongTien(tongTien);
+            if (y.getSoTienGiamGia() == null) {
+                y.setSoTienGiamGia(BigDecimal.ZERO);
+            }
+            if (y.getTienShip() == null) {
+                y.setTienShip(BigDecimal.ZERO);
+            }
+            BigDecimal thanhTien = tongTien.add(y.getTienShip()).subtract(y.getSoTienGiamGia());
+            y.setThanhTien(thanhTien);
+            hoadonRepo.save(y);
+        }
     }
-
 
 }
