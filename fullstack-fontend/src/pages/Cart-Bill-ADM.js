@@ -48,7 +48,14 @@ import ModalDeleteDirectSale from '../forms/Modal-Delete-DirectSale';
 import ModalCreateBillOnline from '../forms/Modal-Create-Online';
 import { updateTienShip } from '../service/OrderManagementTimeLine';
 import ModalAddKhachHang from '../forms/Modals-AddKhachHang';
-import { detailBill, finByProductOnCart, findById, postAddBill, selectAllInvoiceWaiting } from '../service/BillSevice';
+import {
+  detailBill,
+  finByProductOnCart,
+  finByProductOnCart2,
+  findById,
+  postAddBill,
+  selectAllInvoiceWaiting,
+} from '../service/BillSevice';
 import ModalAddProduct from '../forms/Modals-AddProduct';
 import ModalUpdateProductOnCart from '../forms/Modals-Update-Product-Cart';
 import ModalDeleteProductOnCart from '../forms/Modal-Delete-Product';
@@ -210,10 +217,9 @@ const CartBillADM = () => {
 
   const selectDataCart = useCallback(async () => {
     try {
-      const res = await finByProductOnCart(idHdParam);
+      const res = await finByProductOnCart2(idHdParam);
       if (res) {
         setDataCart(res);
-        console.log('Sản Phẩm Trong Giỏ Hàng: ', res);
       }
     } catch (error) {
       console.error(error);
@@ -240,7 +246,6 @@ const CartBillADM = () => {
   const [showModalsDelete, setShowModalDelete] = useState(false);
   const [itemDelete, setIntemDelete] = useState();
   const handleDelete = (item) => {
-    console.log('Check item', item);
     setShowModalDelete(true);
     setIntemDelete(item);
   };
@@ -1136,9 +1141,9 @@ const CartBillADM = () => {
                 handleClose={handleCloseAddKH}
                 getDetailHD={getDetailHD}
                 resetInformation={resetInformation}
-              // setSelectedCustomerName={setSelectedCustomerName}
-              // setSelectedMaTk={setSelectedMaTk}
-              // setSelectedCustomerEmail={setSelectedCustomerEmail}
+                // setSelectedCustomerName={setSelectedCustomerName}
+                // setSelectedMaTk={setSelectedMaTk}
+                // setSelectedCustomerEmail={setSelectedCustomerEmail}
               />
               {/* ModalDeleteDirectSale */}
               <ModalDeleteDirectSale open={open} handleClose={handleCloseDeleteInvoice} information={information} />
