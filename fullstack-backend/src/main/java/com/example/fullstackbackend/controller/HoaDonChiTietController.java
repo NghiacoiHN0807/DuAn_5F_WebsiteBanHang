@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -199,39 +198,43 @@ public class HoaDonChiTietController {
                                 chiTietSanPham1.setTrangThai(10);
                             }
                             chitietsanphamSer.update(chiTietSanPham1);
-                            if (hoaDon.getMaGiamGia() != null) {
-                                Coupons coupons = couponsService.detailByCode(hoaDon.getMaGiamGia()).orElseThrow();
-                                List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSevice.getHDCTInStatus(hoaDon.getIdHd(), 0);
-                                BigDecimal tongTien = BigDecimal.ZERO;
 
-                                for (HoaDonChiTiet x : hoaDonChiTiets) {
-                                    tongTien = tongTien.add(x.getDonGia());
-                                }
-
-                                hoaDon.setTongTien(tongTien);
-
-                                if (hoaDon.getSoTienGiamGia() == null) {
-                                    hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
-                                }else{
-                                    Integer phanTram = coupons.getPhanTram();
-                                    BigDecimal soTienGiam = hoaDon.getThanhTien().multiply(BigDecimal.valueOf(Double.valueOf(phanTram)).divide(BigDecimal.valueOf(100)));
-                                    hoaDon.setSoTienGiamGia(soTienGiam);
-                                }
-                                if (hoaDon.getTienShip() == null) {
-                                    hoaDon.setTienShip(BigDecimal.ZERO);
-                                }
-                                BigDecimal thanhTien = tongTien.add(hoaDon.getTienShip()).subtract(hoaDon.getSoTienGiamGia());
-                                hoaDon.setThanhTien(thanhTien);
-
-                                hoadonSevice.update(hoaDon);
-                            }
                         }
                         ChiTietSanPham ctsp = chitietsanphamSer.findByIdCTSP(newHDCT.getIdCtsp().getIdCtsp()).orElseThrow();
                         BigDecimal newDonGia = ctsp.getGiaThucTe().multiply(new BigDecimal(newHDCT.getSoLuong()));
                         hoaDonChiTiet.setIdCtsp(newHDCT.getIdCtsp());
                         hoaDonChiTiet.setSoLuong(newHDCT.getSoLuong());
                         hoaDonChiTiet.setDonGia(newDonGia);
-                        return hoadonchitietSevice.update(hoaDonChiTiet);
+                        hoadonchitietSevice.update(hoaDonChiTiet);
+                        // Update quantity soTienGiam
+                        if (hoaDon.getMaGiamGia() != null) {
+                            Coupons coupons = couponsService.detailByCode(hoaDon.getMaGiamGia()).orElseThrow();
+                            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSevice.getHDCTInStatus(hoaDon.getIdHd(), 0);
+                            BigDecimal tongTien = BigDecimal.ZERO;
+
+                            for (HoaDonChiTiet x : hoaDonChiTiets) {
+                                tongTien = tongTien.add(x.getDonGia());
+                            }
+
+                            hoaDon.setTongTien(tongTien);
+                            if (hoaDon.getTienShip() == null) {
+                                hoaDon.setTienShip(BigDecimal.ZERO);
+                            }
+                            if (hoaDon.getSoTienGiamGia() == null) {
+                                hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
+                            } else {
+                                Integer phanTram = coupons.getPhanTram();
+                                BigDecimal thanhTien = tongTien.add(hoaDon.getTienShip()).subtract(hoaDon.getSoTienGiamGia());
+                                BigDecimal soTienGiam = thanhTien.multiply(BigDecimal.valueOf(Double.valueOf(phanTram)).divide(BigDecimal.valueOf(100)));
+                                hoaDon.setSoTienGiamGia(soTienGiam);
+                            }
+
+                            BigDecimal thanhTien = tongTien.add(hoaDon.getTienShip()).subtract(hoaDon.getSoTienGiamGia());
+                            hoaDon.setThanhTien(thanhTien);
+
+                            hoadonSevice.update(hoaDon);
+                        }
+                        return ResponseEntity.ok("Update Thành Công");
                     }
 
                 }).orElseThrow(() -> new xuatXuNotFoundException(id));
