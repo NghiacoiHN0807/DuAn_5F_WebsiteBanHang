@@ -65,7 +65,7 @@ public class DiscountUpdater {
             gioHangChiTietReponsitory.save(x);
         }
         // Update price on cart's admin
-        List<HoaDon> hoaDonList = hoadonRepo.findAllByTrangThai(0);
+        List<HoaDon> hoaDonList = hoadonRepo.findAllByTrangThai(8);
         BigDecimal tongTien = BigDecimal.ZERO;
 
         for (HoaDon y :
@@ -136,6 +136,8 @@ public class DiscountUpdater {
                     // Thực hiện câu lệnh khi tất cả đều có trạng thái 10
                     // Ví dụ: System.out.println("Tất cả có trạng thái 10");
                 }
+                //Update price
+                updateQuantityWhenSale();
             }
         }
 
@@ -151,8 +153,7 @@ public class DiscountUpdater {
                 couponsRepository.save(coupon);
             }
         }
-        //Update price
-        updateQuantityWhenSale();
+
 
     }
 
@@ -193,10 +194,11 @@ public class DiscountUpdater {
                     // Thực hiện câu lệnh khi tất cả đều có trạng thái 10
                     // Ví dụ: System.out.println("Tất cả có trạng thái 10");
                 }
+                //Update price
+                updateQuantityWhenSale();
             }
         }
-        //Update price
-        updateQuantityWhenSale();
+
     }
 
 }

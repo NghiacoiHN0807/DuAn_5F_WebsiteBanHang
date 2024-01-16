@@ -18,6 +18,7 @@ public interface HoadonchitietSevice {
     List<Object[]> getListProductOncart(Integer idHd);
 
     List<Object[]> getListProductOncart2(Integer idHd);
+
     List<Object[]> getListProductOncart3(Integer idHd);
 
     Page<HoaDonChiTiet> getListProductByIDKH(Integer idKH, Integer pageNo, Integer size);
@@ -39,6 +40,8 @@ public interface HoadonchitietSevice {
     Optional<HoaDonChiTiet> detail(Integer id);
 
     List<HoaDonChiTiet> getOne(Integer idHd);
+
+    List<HoaDonChiTiet> getHDCTInStatus(Integer idHd, Integer trangThai);
 
     List<HoaDonChiTiet> findAllByIDHD(Integer idHd);
 

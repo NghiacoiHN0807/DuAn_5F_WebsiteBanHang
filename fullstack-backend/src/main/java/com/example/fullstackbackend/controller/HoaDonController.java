@@ -304,6 +304,27 @@ public class HoaDonController {
                         chitietsanphamSer.update(y);
                     }
                 }
+            }else if (newHD.getTrangThai() == 1) {
+                BigDecimal tongTien = BigDecimal.ZERO;
+
+                List<HoaDonChiTiet> hoaDonChiTiets2 = hoadonchitietSer.getHDCTInStatus(newHD1.getIdHd(), 0);
+
+                for (HoaDonChiTiet x : hoaDonChiTiets2) {
+                    tongTien = tongTien.add(x.getDonGia());
+                }
+
+                newHD1.setTongTien(tongTien);
+
+                if (newHD1.getSoTienGiamGia() == null) {
+                    newHD1.setSoTienGiamGia(BigDecimal.ZERO);
+                }
+                if (newHD1.getTienShip() == null) {
+                    newHD1.setTienShip(BigDecimal.ZERO);
+                }
+                BigDecimal thanhTien = tongTien.add(newHD1.getTienShip()).subtract(newHD1.getSoTienGiamGia());
+                newHD1.setThanhTien(thanhTien);
+
+                hoadonSevice.update(newHD1);
             }
 
             //Add to history bill
@@ -386,7 +407,6 @@ public class HoaDonController {
                     }
                 }
             }
-            System.out.println("status: " + status);
             if (status == 2) {
                 //Add to payments
                 HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
