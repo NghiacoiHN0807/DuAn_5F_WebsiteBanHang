@@ -386,7 +386,6 @@ public class HoaDonController {
                     }
                 }
             }
-            System.out.println("status: " + status);
             if (status == 2) {
                 //Add to payments
                 HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
