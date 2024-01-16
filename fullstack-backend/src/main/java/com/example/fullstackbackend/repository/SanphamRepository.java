@@ -141,12 +141,9 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
             "    FROM\n" +
 
             "        chi_tiet_san_pham\n" +
-<<<<<<< HEAD
-            "    WHERE trang_thai = 0 \n" +
-=======
+
             " WHERE\n" +
             "        trang_thai = 0 \n" +
->>>>>>> origin/nghiant0807
             "    GROUP BY\n" +
             "        id_sp) ctsp ON sp.id_sp = ctsp.id_sp\n" +
             "GROUP BY\n" +
