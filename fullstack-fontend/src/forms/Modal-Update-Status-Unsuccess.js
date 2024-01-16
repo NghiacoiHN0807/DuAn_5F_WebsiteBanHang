@@ -40,12 +40,34 @@ const ModalUpdateStatusUnsuccess = (props) => {
       } else {
         if (activeIndex < 1) {
           handleOpenBD();
-          await updateStatusBill(idHdParam, moTa, 10);
-          handleCloseBD();
+          const changtoHDCT = await updateStatusBill(idHdParam, moTa, 10);
+          if (changtoHDCT.status === 400) {
+            setAlertContent({
+              type: 'warning',
+              message: changtoHDCT.data.error,
+            });
+          } else {
+            setAlertContent({
+              type: 'success',
+              message: 'Đã Cập Nhập Trạng Thái Thành Công',
+            });
+            handleCloseBD();
+          }
         } else {
           handleOpenBD();
-          await updateStatusBill(idHdParam, moTa, 15);
-          handleCloseBD();
+          const changtoHDCT = await updateStatusBill(idHdParam, moTa, 15);
+          if (changtoHDCT.status === 400) {
+            setAlertContent({
+              type: 'warning',
+              message: changtoHDCT.data.error,
+            });
+          } else {
+            setAlertContent({
+              type: 'success',
+              message: 'Đã Cập Nhập Trạng Thái Thành Công',
+            });
+            handleCloseBD();
+          }
         }
         setAlertContent({
           type: 'success',

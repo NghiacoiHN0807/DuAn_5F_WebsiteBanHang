@@ -84,6 +84,18 @@ public class HoaDonChiTietController {
                     .status(HttpStatus.BAD_REQUEST)
                     .body(Collections.singletonMap("error", nameError));
         } else {
+            // Detail HD
+            HoaDon hoaDon = hoadonSevice.detail(newHD.getIdHd().getIdHd()).orElseThrow();
+            if (hoaDon.getTrangThai() < 8) {
+                // Apart new's product
+                int newQuantity1 = chiTietSanPham.getSoLuongTon() - newHD.getSoLuong();
+                chiTietSanPham.setSoLuongTon(newQuantity1);
+                if (newQuantity1 <= 0) {
+                    chiTietSanPham.setTrangThai(10);
+                }
+                chitietsanphamSer.update(chiTietSanPham);
+
+            }
             return ResponseEntity.ok(hoadonchitietSevice.add(newHD));
         }
     }
@@ -200,6 +212,7 @@ public class HoaDonChiTietController {
                             chitietsanphamSer.update(chiTietSanPham1);
 
                         }
+                        // Update Product
                         ChiTietSanPham ctsp = chitietsanphamSer.findByIdCTSP(newHDCT.getIdCtsp().getIdCtsp()).orElseThrow();
                         BigDecimal newDonGia = ctsp.getGiaThucTe().multiply(new BigDecimal(newHDCT.getSoLuong()));
                         hoaDonChiTiet.setIdCtsp(newHDCT.getIdCtsp());
@@ -263,6 +276,21 @@ public class HoaDonChiTietController {
         if (!hoadonchitietSevice.checkExists(id)) {
             throw new xuatXuNotFoundException(id);
         } else {
+            HoaDonChiTiet newHD = hoadonchitietSevice.detail(id).orElseThrow();
+            // Detail HD
+            HoaDon hoaDon = hoadonSevice.detail(newHD.getIdHd().getIdHd()).orElseThrow();
+            if (hoaDon.getTrangThai() < 8) {
+                ChiTietSanPham chiTietSanPham = chitietsanphamSer.findByIdCTSP(newHD.getIdCtsp().getIdCtsp()).orElseThrow();
+
+                // Apart new's product
+                int newQuantity1 = chiTietSanPham.getSoLuongTon() + newHD.getSoLuong();
+                chiTietSanPham.setSoLuongTon(newQuantity1);
+                if (newQuantity1 <= 0) {
+                    chiTietSanPham.setTrangThai(10);
+                }
+                chitietsanphamSer.update(chiTietSanPham);
+
+            }
             hoadonchitietSevice.delete(id);
             return "";
         }
