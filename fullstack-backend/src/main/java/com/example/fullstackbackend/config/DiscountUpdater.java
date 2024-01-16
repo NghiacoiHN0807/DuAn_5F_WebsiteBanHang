@@ -50,6 +50,49 @@ public class DiscountUpdater {
 
     private final HoadonRepository hoadonRepo;
 
+
+    public void updateQuantityWhenSale() {
+        // Update price on cart's client
+        List<GioHangChiTiet> gioHangChiTiet = gioHangChiTietReponsitory.findAll();
+
+        for (GioHangChiTiet x :
+                gioHangChiTiet) {
+            ChiTietSanPham chiTietSanPham = chitietsanphamRepository.findById(x.getIdCtsp().getIdCtsp()).orElseThrow();
+            x.setIdGhct(x.getIdGhct());
+            BigDecimal newPrice = chiTietSanPham.getGiaThucTe().multiply(new BigDecimal(x.getSoLuong()));
+            x.setDonGia(newPrice);
+            x.setDonGiaSauGiam(newPrice);
+            gioHangChiTietReponsitory.save(x);
+        }
+        // Update price on cart's admin
+        List<HoaDon> hoaDonList = hoadonRepo.findAllByTrangThai(0);
+        BigDecimal tongTien = BigDecimal.ZERO;
+
+        for (HoaDon y :
+                hoaDonList) {
+            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdHdANDTT(y.getIdHd(), 0);
+            for (HoaDonChiTiet x :
+                    hoaDonChiTiets) {
+                ChiTietSanPham chiTietSanPham = chitietsanphamRepository.findById(x.getIdCtsp().getIdCtsp()).orElseThrow();
+                x.setIdHdct(x.getIdHdct());
+                BigDecimal newPrice = chiTietSanPham.getGiaThucTe().multiply(new BigDecimal(x.getSoLuong()));
+                x.setDonGia(newPrice);
+                tongTien = tongTien.add(newPrice);
+                hoadonchitietRepository.save(x);
+            }
+            y.setTongTien(tongTien);
+            if (y.getSoTienGiamGia() == null) {
+                y.setSoTienGiamGia(BigDecimal.ZERO);
+            }
+            if (y.getTienShip() == null) {
+                y.setTienShip(BigDecimal.ZERO);
+            }
+            BigDecimal thanhTien = tongTien.add(y.getTienShip()).subtract(y.getSoTienGiamGia());
+            y.setThanhTien(thanhTien);
+            hoadonRepo.save(y);
+        }
+    }
+
     @Scheduled(cron = "0 * * * * *", zone = "Asia/Ho_Chi_Minh")
     @Transactional
     public void updateDiscount() {
@@ -108,45 +151,8 @@ public class DiscountUpdater {
                 couponsRepository.save(coupon);
             }
         }
-        // Update price on cart's client
-        List<GioHangChiTiet> gioHangChiTiet = gioHangChiTietReponsitory.findAll();
-
-        for (GioHangChiTiet x :
-                gioHangChiTiet) {
-            ChiTietSanPham chiTietSanPham = chitietsanphamRepository.findById(x.getIdCtsp().getIdCtsp()).orElseThrow();
-            x.setIdGhct(x.getIdGhct());
-            BigDecimal newPrice = chiTietSanPham.getGiaThucTe().multiply(new BigDecimal(x.getSoLuong()));
-            x.setDonGia(newPrice);
-            x.setDonGiaSauGiam(newPrice);
-            gioHangChiTietReponsitory.save(x);
-        }
-        // Update price on cart's admin
-        List<HoaDon> hoaDonList = hoadonRepo.findAll();
-        BigDecimal tongTien = BigDecimal.ZERO;
-
-        for (HoaDon y:
-                hoaDonList) {
-            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdHdANDTT(y.getIdHd(), 0);
-            for (HoaDonChiTiet x :
-                    hoaDonChiTiets) {
-                ChiTietSanPham chiTietSanPham = chitietsanphamRepository.findById(x.getIdCtsp().getIdCtsp()).orElseThrow();
-                x.setIdHdct(x.getIdHdct());
-                BigDecimal newPrice = chiTietSanPham.getGiaThucTe().multiply(new BigDecimal(x.getSoLuong()));
-                x.setDonGia(newPrice);
-                tongTien = tongTien.add(newPrice);
-                hoadonchitietRepository.save(x);
-            }
-            y.setTongTien(tongTien);
-            if (y.getSoTienGiamGia() == null) {
-                y.setSoTienGiamGia(BigDecimal.ZERO);
-            }
-            if (y.getTienShip() == null) {
-                y.setTienShip(BigDecimal.ZERO);
-            }
-            BigDecimal thanhTien = tongTien.add(y.getTienShip()).subtract(y.getSoTienGiamGia());
-            y.setThanhTien(thanhTien);
-            hoadonRepo.save(y);
-        }
+        //Update price
+        updateQuantityWhenSale();
 
     }
 
@@ -189,43 +195,8 @@ public class DiscountUpdater {
                 }
             }
         }
-        // Update price on cart's client
-        List<GioHangChiTiet> gioHangChiTiet = gioHangChiTietReponsitory.findAll();
-        for (GioHangChiTiet x :
-                gioHangChiTiet) {
-            ChiTietSanPham chiTietSanPham = chitietsanphamRepository.findById(x.getIdCtsp().getIdCtsp()).orElseThrow();
-            x.setIdGhct(x.getIdGhct());
-            BigDecimal newPrice = chiTietSanPham.getGiaThucTe().multiply(new BigDecimal(x.getSoLuong()));
-            x.setDonGia(newPrice);
-            gioHangChiTietReponsitory.save(x);
-        }
-        // Update price on cart's admin
-        List<HoaDon> hoaDonList = hoadonRepo.findAll();
-        BigDecimal tongTien = BigDecimal.ZERO;
-
-        for (HoaDon y:
-                hoaDonList) {
-            List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdHdANDTT(y.getIdHd(), 0);
-            for (HoaDonChiTiet x :
-                    hoaDonChiTiets) {
-                ChiTietSanPham chiTietSanPham = chitietsanphamRepository.findById(x.getIdCtsp().getIdCtsp()).orElseThrow();
-                x.setIdHdct(x.getIdHdct());
-                BigDecimal newPrice = chiTietSanPham.getGiaThucTe().multiply(new BigDecimal(x.getSoLuong()));
-                x.setDonGia(newPrice);
-                tongTien = tongTien.add(newPrice);
-                hoadonchitietRepository.save(x);
-            }
-            y.setTongTien(tongTien);
-            if (y.getSoTienGiamGia() == null) {
-                y.setSoTienGiamGia(BigDecimal.ZERO);
-            }
-            if (y.getTienShip() == null) {
-                y.setTienShip(BigDecimal.ZERO);
-            }
-            BigDecimal thanhTien = tongTien.add(y.getTienShip()).subtract(y.getSoTienGiamGia());
-            y.setThanhTien(thanhTien);
-            hoadonRepo.save(y);
-        }
+        //Update price
+        updateQuantityWhenSale();
     }
 
 }
