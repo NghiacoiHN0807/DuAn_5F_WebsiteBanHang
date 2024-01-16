@@ -150,6 +150,7 @@ const ModalItemReturn = (props) => {
       )}
       <ModalAllItemReturn
         show={showModalsReturnAll}
+        handleCloseModalReturnOne={handleCloseModalReturnOne}
         selectDataCart={selectDataCart}
         getListData={getListData}
         handleClose={handleCloseModalReturnAll}

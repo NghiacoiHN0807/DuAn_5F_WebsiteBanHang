@@ -221,6 +221,10 @@ const OrderClientTimeline = ({ classes }) => {
         badgeVariant = 'success';
         statusText = 'Đã Giao Thành Công';
         break;
+      case 6:
+        badgeVariant = 'error';
+        statusText = 'Đơn Hàng Đã Được Đổi Trả';
+        break;
       case 8:
         badgeVariant = 'secondary';
         statusText = 'Đơn Hàng Bán Tại Quầy';

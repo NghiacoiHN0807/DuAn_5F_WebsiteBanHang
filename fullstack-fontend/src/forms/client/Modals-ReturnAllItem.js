@@ -24,10 +24,12 @@ const ModalAllItemReturn = (props) => {
   ModalAllItemReturn.propTypes = {
     show: PropTypes.bool.isRequired,
     handleClose: PropTypes.func.isRequired,
+    handleCloseModalReturnOne: PropTypes.func.isRequired,
+
     selectDataCart: PropTypes.func.isRequired,
     getListData: PropTypes.func.isRequired,
   };
-  const { show, handleClose, selectDataCart, getListData } = props;
+  const { show, handleClose, selectDataCart, getListData, handleCloseModalReturnOne } = props;
 
   const [alertContent, setAlertContent] = useState(null);
   const handleSnackbarClose = (event, reason) => {
@@ -47,13 +49,23 @@ const ModalAllItemReturn = (props) => {
         message: 'Không Được Để Trống Lý Do',
       });
     } else {
-      await returnAllItem(idHdParam, reasonReturn, 6);
-      setAlertContent({
-        type: 'success',
-        message: 'Trả Hàng Thành Công!!!',
-      });
-      selectDataCart();
-      getListData();
+      const changtoHDCT = await returnAllItem(idHdParam, reasonReturn, 6);
+
+      if (changtoHDCT.status === 400) {
+        setAlertContent({
+          type: 'warning',
+          message: changtoHDCT.data.error,
+        });
+      } else {
+        setAlertContent({
+          type: 'success',
+          message: 'Trả Hàng Thành Công!!!',
+        });
+        selectDataCart();
+        getListData();
+        handleClose();
+        handleCloseModalReturnOne();
+      }
     }
   };
 
