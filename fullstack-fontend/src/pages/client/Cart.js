@@ -98,6 +98,7 @@ export default function Cart() {
         try {
           await upadteProductOnCart(currentItemId, productOnCart[0].idGh.idGioHang, quantity);
           setCurrentItemId(null);
+          setSelectedItems([]);
           getDetail();
         } catch (error) {
           console.error(error);
@@ -120,6 +121,8 @@ export default function Cart() {
   };
   const handleCloseDelete = () => {
     setOpenDialogDelete(false);
+    setCurrentItemId(null);
+    setSelectedItems([]);
   };
 
   const handleSnackbarClose = (event, reason) => {
@@ -249,7 +252,7 @@ export default function Cart() {
   return (
     <>
       <Helmet>
-        <title> 5FStore || Giỏ Hàng  </title>
+        <title> 5FStore || Giỏ Hàng </title>
       </Helmet>
       <div>
         {/* cart + summary */}
@@ -391,7 +394,6 @@ export default function Cart() {
                 </div>
               </div>
             </div>
-
           </div>
         </section>
 
