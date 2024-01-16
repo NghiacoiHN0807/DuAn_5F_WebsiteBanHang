@@ -40,14 +40,10 @@ public class GioHangChiTietServiceImpl implements GioHangChiTietSevice {
 
     @Override
     public GioHangChiTiet update(GioHangChiTiet update) {
-//        GioHangChiTiet detailGH = gioHangChiTietReponsitory.findById(update.getIdGhct()).orElseThrow();
-//        if (detailGH != null) {
         Optional<GioHangChiTiet> gioHangChiTietOptional = gioHangChiTietReponsitory.findByIdCtsp_IdCtsp(update.getIdCtsp().getIdCtsp(), update.getIdGh().getIdGioHang());
         if (gioHangChiTietOptional.isPresent()) {
             ChiTietSanPham getCTSP = chitietsanphamRepository.findById(gioHangChiTietOptional.get().getIdCtsp().getIdCtsp()).orElseThrow();
 
-//            int newQuatity = gioHangChiTietOptional.get().getSoLuong()+ update.getSoLuong();
-//            BigDecimal newPrice = getCTSP.getGiaThucTe().multiply(new BigDecimal(newQuatity));
             BigDecimal newPrice = getCTSP.getGiaThucTe().multiply(new BigDecimal(update.getSoLuong()));
 
             gioHangChiTietOptional.get().setSoLuong(update.getSoLuong());
