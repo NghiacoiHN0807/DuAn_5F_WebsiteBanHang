@@ -441,6 +441,8 @@ public class HoaDonController {
         currentTimestamp = new Timestamp(currentDate.getTime());
 
         HoaDon newHD1 = hoadonSevice.detail(id).orElseThrow();
+        newHD1.setTrangThai(4);
+        hoadonSevice.update(newHD1);
         //Add to payments
         HinhThucThanhToan hinhThucThanhToan2 = new HinhThucThanhToan();
         hinhThucThanhToan2.setIdHd(newHD1);
