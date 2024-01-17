@@ -55,7 +55,7 @@ const TABLE_HEAD = [
   { id: 'dongia', label: 'Đơn giá', alignRight: false },
   { id: 'sotienconlai', label: 'Số tiền còn lại', alignRight: false },
   { id: 'trangthai', label: 'Trạng Thái', alignRight: false },
-  { id: 'thaotac', label: 'Thao Tác', alignRight: false }
+  { id: 'thaotac', label: 'Thao Tác', alignRight: false },
 ];
 
 // ----------------------------------------------------------------------
@@ -83,11 +83,11 @@ export default function DiscountPage() {
 
   const [page, setPage] = useState(0);
 
-  const [order, setOrder] = useState('asc');
+  const [order, setOrder] = useState('desc');
 
   const [selected, setSelected] = useState([]);
 
-  const [orderBy, setOrderBy] = useState('tenChuongTrinh');
+  const [orderBy, setOrderBy] = useState('idSp');
 
   const [filterName, setFilterName] = useState('');
 
@@ -109,7 +109,6 @@ export default function DiscountPage() {
 
   function applySortFilter(array, comparator, query) {
     let filteredArray = array;
-
 
     if (query) {
       return filterData(array, query);
@@ -194,7 +193,6 @@ export default function DiscountPage() {
     setSelected([]);
   };
 
-
   const handleClick = (event, idGgct) => {
     const selectedIndex = selected.indexOf(idGgct);
     let newSelected = [];
@@ -238,34 +236,47 @@ export default function DiscountPage() {
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - listData.length) : 0;
 
   const filteredUsers =
-    listData && listData ? applySortFilter(listData.filter((_user) => (statusFilter !== '' ? _user.trangThai.toString() === statusFilter : true)), getComparator(order, orderBy), filterName) : [];
+    listData && listData
+      ? applySortFilter(
+          listData.filter((_user) => (statusFilter !== '' ? _user.trangThai.toString() === statusFilter : true)),
+          getComparator(order, orderBy),
+          filterName
+        )
+      : [];
   const isNotFound = !filteredUsers.length && !!filterName;
 
   // Set status of trangThai
   function mapTrangThaiToStatus(trangThai) {
-    return trangThai === 0 ? <Chip
-      label="Hoạt động"
-      color="primary"
-      variant="outlined"
-      style={{ color: 'white', backgroundColor: 'green', border: 'none' }}
-    /> : trangThai === 10 ? <Chip
-      label="Dừng hoạt động"
-      color="secondary"
-      variant="outlined"
-      style={{ color: 'white', backgroundColor: 'red', border: 'none' }}
-    /> : trangThai === 1 ? <Chip
-      label="Chờ giảm giá"
-      color="warning"
-      variant="outlined"
-      style={{ color: 'black', backgroundColor: 'yellow', border: 'none' }}
-    /> : <Chip
-      label="Không xác định"
-      color="warning"
-      variant="outlined"
-      style={{ color: 'white', backgroundColor: 'red', border: 'none' }}
-    />;
+    return trangThai === 0 ? (
+      <Chip
+        label="Hoạt động"
+        color="primary"
+        variant="outlined"
+        style={{ color: 'white', backgroundColor: 'green', border: 'none' }}
+      />
+    ) : trangThai === 10 ? (
+      <Chip
+        label="Dừng hoạt động"
+        color="secondary"
+        variant="outlined"
+        style={{ color: 'white', backgroundColor: 'red', border: 'none' }}
+      />
+    ) : trangThai === 1 ? (
+      <Chip
+        label="Chờ giảm giá"
+        color="warning"
+        variant="outlined"
+        style={{ color: 'black', backgroundColor: 'yellow', border: 'none' }}
+      />
+    ) : (
+      <Chip
+        label="Không xác định"
+        color="warning"
+        variant="outlined"
+        style={{ color: 'white', backgroundColor: 'red', border: 'none' }}
+      />
+    );
   }
-
 
   // const giaMap = ()
 
@@ -318,11 +329,11 @@ export default function DiscountPage() {
   };
 
   function formatCurrency(price) {
-    if (!price) return "0";
+    if (!price) return '0';
 
-    const formatter = new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
       minimumFractionDigits: 0,
     });
 
@@ -330,7 +341,7 @@ export default function DiscountPage() {
   }
 
   const formatDate = (dateString) => {
-    if (!dateString) return "";
+    if (!dateString) return '';
 
     const dateTime = new Date(dateString);
     const formattedEndDate = format(dateTime, 'HH:mm dd/MM/yyyy');
@@ -381,10 +392,20 @@ export default function DiscountPage() {
         array[1] = item.urlImage;
         array[2] = item.tenChuongTrinh;
         array[3] = item.tenSp;
-        array[4] = `${item.mucGiamTienMat === null ? `${item.mucGiamPhanTram} %` : formatCurrency(item.mucGiamTienMat)}`;
+        array[4] = `${
+          item.mucGiamTienMat === null ? `${item.mucGiamPhanTram} %` : formatCurrency(item.mucGiamTienMat)
+        }`;
         array[5] = `${formatDate(item.ngayBatDau)} - ${formatDate(item.ngayKetThuc)}`;
-        array[6] = `${item.giaBanMin === item.giaBanMax ? formatCurrency(item.giaBanMin) : `${formatCurrency(item.giaBanMin)} - ${formatCurrency(item.giaBanMax)}`}`;
-        array[7] = `${item.giaThucTeMin === item.giaThucTeMax ? formatCurrency(item.giaThucTeMin) : `${formatCurrency(item.giaThucTeMin)} - ${formatCurrency(item.giaThucTeMax)}`}`;
+        array[6] = `${
+          item.giaBanMin === item.giaBanMax
+            ? formatCurrency(item.giaBanMin)
+            : `${formatCurrency(item.giaBanMin)} - ${formatCurrency(item.giaBanMax)}`
+        }`;
+        array[7] = `${
+          item.giaThucTeMin === item.giaThucTeMax
+            ? formatCurrency(item.giaThucTeMin)
+            : `${formatCurrency(item.giaThucTeMin)} - ${formatCurrency(item.giaThucTeMax)}`
+        }`;
         array[8] = `${item.trangThai === 0 ? 'Hoạt động' : 'Dừng hoạt động'}`;
         return res.push(array);
       });
@@ -411,7 +432,13 @@ export default function DiscountPage() {
         </Stack>
 
         <Card>
-          <UserListToolbarDiscounts numSelected={selected.length} filterName={filterName} onFilterName={handleFilterByName} information={selected} getListData={getListData} />
+          <UserListToolbarDiscounts
+            numSelected={selected.length}
+            filterName={filterName}
+            onFilterName={handleFilterByName}
+            information={selected}
+            getListData={getListData}
+          />
           <Grid container className={classes.filterContainer}>
             <TextField
               label="Ngày Bắt Đầu"
@@ -486,7 +513,21 @@ export default function DiscountPage() {
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-                    const { idGgct, urlImage, tenChuongTrinh, tenSp, mucGiamPhanTram, mucGiamTienMat, ngayBatDau, ngayKetThuc, giaBanMin, giaBanMax, giaThucTeMin, giaThucTeMax, trangThai } = row;
+                    const {
+                      idGgct,
+                      urlImage,
+                      tenChuongTrinh,
+                      tenSp,
+                      mucGiamPhanTram,
+                      mucGiamTienMat,
+                      ngayBatDau,
+                      ngayKetThuc,
+                      giaBanMin,
+                      giaBanMax,
+                      giaThucTeMin,
+                      giaThucTeMax,
+                      trangThai,
+                    } = row;
                     const selectedUser = selected.indexOf(idGgct) !== -1;
 
                     return (
@@ -500,10 +541,20 @@ export default function DiscountPage() {
                         </TableCell>
                         <TableCell align="left">{tenChuongTrinh}</TableCell>
                         <TableCell align="left">{tenSp}</TableCell>
-                        <TableCell align="left">{mucGiamTienMat === null ? `${mucGiamPhanTram} %` : formatCurrency(mucGiamTienMat)}</TableCell>
+                        <TableCell align="left">
+                          {mucGiamTienMat === null ? `${mucGiamPhanTram} %` : formatCurrency(mucGiamTienMat)}
+                        </TableCell>
                         <TableCell align="left">{`${formatDate(ngayBatDau)} - ${formatDate(ngayKetThuc)}`}</TableCell>
-                        <TableCell align="left">{giaBanMin === giaBanMax ? formatCurrency(giaBanMin) : `${formatCurrency(giaBanMin)} - ${formatCurrency(giaBanMax)}`}</TableCell>
-                        <TableCell align="left">{giaThucTeMin === giaThucTeMax ? formatCurrency(giaThucTeMin) : `${formatCurrency(giaThucTeMin)} - ${formatCurrency(giaThucTeMax)}`}</TableCell>
+                        <TableCell align="left">
+                          {giaBanMin === giaBanMax
+                            ? formatCurrency(giaBanMin)
+                            : `${formatCurrency(giaBanMin)} - ${formatCurrency(giaBanMax)}`}
+                        </TableCell>
+                        <TableCell align="left">
+                          {giaThucTeMin === giaThucTeMax
+                            ? formatCurrency(giaThucTeMin)
+                            : `${formatCurrency(giaThucTeMin)} - ${formatCurrency(giaThucTeMax)}`}
+                        </TableCell>
                         <TableCell align="left">{mapTrangThaiToStatus(trangThai)}</TableCell>
                         <TableCell align="right">
                           <IconButton size="large" color="inherit" onClick={(event) => handleOpenMenu(event, row)}>

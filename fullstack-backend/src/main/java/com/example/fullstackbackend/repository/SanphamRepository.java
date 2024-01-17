@@ -185,7 +185,7 @@ public interface SanphamRepository extends JpaRepository<SanPham, Integer> {
     List<Object[]> getSpForClient();
 
 
-    @Query(value = "SELECT sp.id_sp, sp.ten_sp, SUM(hdct.so_luong) AS so_luong_ban\n" +
+    @Query(value = "SELECT  SUM(hdct.so_luong) AS so_luong_ban,sp.ten_sp\n" +
             "FROM san_pham sp\n" +
             "JOIN chi_tiet_san_pham ctsp ON sp.id_sp = ctsp.id_sp\n" +
             "JOIN hoa_don_chi_tiet hdct ON ctsp.id_ctsp = hdct.id_ctsp\n" +
