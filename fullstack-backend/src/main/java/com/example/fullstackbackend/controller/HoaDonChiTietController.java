@@ -94,9 +94,40 @@ public class HoaDonChiTietController {
                     chiTietSanPham.setTrangThai(10);
                 }
                 chitietsanphamSer.update(chiTietSanPham);
+                //Add
+                hoadonchitietSevice.add(newHD);
+                // Update quantity soTienGiam
+                if (hoaDon.getMaGiamGia() != null) {
+                    Coupons coupons = couponsService.detailByCode(hoaDon.getMaGiamGia()).orElseThrow();
+                    List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSevice.getHDCTInStatus(hoaDon.getIdHd(), 0);
+                    BigDecimal tongTien = BigDecimal.ZERO;
 
+                    for (HoaDonChiTiet x : hoaDonChiTiets) {
+                        tongTien = tongTien.add(x.getDonGia());
+                    }
+
+                    hoaDon.setTongTien(tongTien);
+                    if (hoaDon.getTienShip() == null) {
+                        hoaDon.setTienShip(BigDecimal.ZERO);
+                    }
+                    if (hoaDon.getSoTienGiamGia() == null) {
+                        hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
+                    } else {
+                        Integer phanTram = coupons.getPhanTram();
+                        BigDecimal thanhTien = tongTien.add(hoaDon.getTienShip()).subtract(hoaDon.getSoTienGiamGia());
+                        BigDecimal soTienGiam = thanhTien.multiply(BigDecimal.valueOf(Double.valueOf(phanTram)).divide(BigDecimal.valueOf(100)));
+                        hoaDon.setSoTienGiamGia(soTienGiam);
+                    }
+
+                    BigDecimal thanhTien = tongTien.add(hoaDon.getTienShip()).subtract(hoaDon.getSoTienGiamGia());
+                    hoaDon.setThanhTien(thanhTien);
+
+                    hoadonSevice.update(hoaDon);
+                }
+            } else {
+                hoadonchitietSevice.add(newHD);
             }
-            return ResponseEntity.ok(hoadonchitietSevice.add(newHD));
+            return ResponseEntity.ok("Update Thành Công!!!");
         }
     }
 
@@ -292,6 +323,34 @@ public class HoaDonChiTietController {
 
             }
             hoadonchitietSevice.delete(id);
+            // Update quantity soTienGiam
+            if (hoaDon.getMaGiamGia() != null) {
+                Coupons coupons = couponsService.detailByCode(hoaDon.getMaGiamGia()).orElseThrow();
+                List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietSevice.getHDCTInStatus(hoaDon.getIdHd(), 0);
+                BigDecimal tongTien = BigDecimal.ZERO;
+
+                for (HoaDonChiTiet x : hoaDonChiTiets) {
+                    tongTien = tongTien.add(x.getDonGia());
+                }
+
+                hoaDon.setTongTien(tongTien);
+                if (hoaDon.getTienShip() == null) {
+                    hoaDon.setTienShip(BigDecimal.ZERO);
+                }
+                if (hoaDon.getSoTienGiamGia() == null) {
+                    hoaDon.setSoTienGiamGia(BigDecimal.ZERO);
+                } else {
+                    Integer phanTram = coupons.getPhanTram();
+                    BigDecimal thanhTien = tongTien.add(hoaDon.getTienShip()).subtract(hoaDon.getSoTienGiamGia());
+                    BigDecimal soTienGiam = thanhTien.multiply(BigDecimal.valueOf(Double.valueOf(phanTram)).divide(BigDecimal.valueOf(100)));
+                    hoaDon.setSoTienGiamGia(soTienGiam);
+                }
+
+                BigDecimal thanhTien = tongTien.add(hoaDon.getTienShip()).subtract(hoaDon.getSoTienGiamGia());
+                hoaDon.setThanhTien(thanhTien);
+
+                hoadonSevice.update(hoaDon);
+            }
             return "";
         }
     }

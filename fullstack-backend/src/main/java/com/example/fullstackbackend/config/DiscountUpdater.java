@@ -66,10 +66,11 @@ public class DiscountUpdater {
         }
         // Update price on cart's admin
         List<HoaDon> hoaDonList = hoadonRepo.findAllByTrangThai(8);
-        BigDecimal tongTien = BigDecimal.ZERO;
 
         for (HoaDon y :
                 hoaDonList) {
+            BigDecimal tongTien = BigDecimal.ZERO;
+
             List<HoaDonChiTiet> hoaDonChiTiets = hoadonchitietRepository.findAllByIdHdANDTT(y.getIdHd(), 0);
             for (HoaDonChiTiet x :
                     hoaDonChiTiets) {

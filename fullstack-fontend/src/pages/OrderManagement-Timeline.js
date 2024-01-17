@@ -458,7 +458,7 @@ const OrderManagementTimeline = ({ classes }) => {
             variant="outlined"
             color="error"
             onClick={handleReturnItem}
-            disabled={activeIndex <= 3 || activeIndex >= 5}
+            disabled={activeIndex < 3 || activeIndex >= 5}
           >
             Đổi/Trả Hàng
           </Button>{' '}
@@ -568,6 +568,15 @@ const OrderManagementTimeline = ({ classes }) => {
                 )}
               </TableBody>
             </Table>
+            {soTienConLai >= 0 ? (
+              <Typography sx={{ textAlign: 'right' }} variant="subtitle2" gutterBottom>
+                Số Tiền Khách Hàng Cần Trả Thêm: {formatCurrency(soTienConLai)}
+              </Typography>
+            ) : (
+              <Typography sx={{ textAlign: 'right' }} variant="subtitle2" gutterBottom>
+                Số Tiền Cần Trả Khách Hàng: {formatCurrency(-soTienConLai)}
+              </Typography>
+            )}
           </TableContainer>
         </div>
       </div>
