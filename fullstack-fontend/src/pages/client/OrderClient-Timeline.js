@@ -58,6 +58,8 @@ const OrderClientTimeline = ({ classes }) => {
   const [listData, setListData] = useState([]);
   const [listHTTT, setListHTTT] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [soTienConLai, setSoTienConLai] = useState(0);
+
   const [idTaiKhoan, setIdTaiKhoan] = useState('');
 
   //   Select bill
@@ -66,6 +68,9 @@ const OrderClientTimeline = ({ classes }) => {
       const res = await getDetailOneHD(idHdParam);
 
       const res1 = await viewAllHTTT(idHdParam);
+      const totalSoTien = res1.reduce((acc, obj) => acc + obj.soTien, 0);
+
+      setSoTienConLai(res[0].idHd.thanhTien - totalSoTien);
 
       setListData(res);
 
@@ -367,7 +372,7 @@ const OrderClientTimeline = ({ classes }) => {
                 variant="outlined"
                 color="error"
                 onClick={handleReturnItem}
-                disabled={activeIndex <= 3 || activeIndex >= 5}
+                disabled={activeIndex < 3 || activeIndex >= 5}
               >
                 Đổi/Trả Hàng
               </Button>{' '}
@@ -473,6 +478,15 @@ const OrderClientTimeline = ({ classes }) => {
                   )}
                 </TableBody>
               </Table>
+              {soTienConLai >= 0 ? (
+                <Typography sx={{ textAlign: 'right' }} variant="subtitle2" gutterBottom>
+                  Số Tiền Khách Hàng Cần Trả Thêm: {formatCurrency(soTienConLai)}
+                </Typography>
+              ) : (
+                <Typography sx={{ textAlign: 'right' }} variant="subtitle2" gutterBottom>
+                  Số Tiền Cần Trả Khách Hàng: {formatCurrency(-soTienConLai)}
+                </Typography>
+              )}
             </TableContainer>
           </div>
         </div>
@@ -482,12 +496,7 @@ const OrderClientTimeline = ({ classes }) => {
               <Typography variant="h6" gutterBottom>
                 Giỏ Hàng{' '}
               </Typography>
-              <Button
-                size="small"
-                onClick={() => handleAddProduct()}
-                variant="outlined"
-                disabled={activeIndex >= 1 || listHTTT.length > 0}
-              >
+              <Button size="small" onClick={() => handleAddProduct()} variant="outlined" disabled={activeIndex >= 1}>
                 Sửa Sản Phẩm
               </Button>
             </Stack>
@@ -527,7 +536,7 @@ const OrderClientTimeline = ({ classes }) => {
                           <TableCell align="right">
                             <Button
                               onClick={() => handleUpdateClassify(item)}
-                              disabled={activeIndex >= 1 || listHTTT.length > 0}
+                              disabled={activeIndex >= 1}
                               size="small"
                               variant="outlined"
                             >
@@ -543,7 +552,7 @@ const OrderClientTimeline = ({ classes }) => {
                             <IconButton
                               aria-label="delete"
                               size="large"
-                              disabled={activeIndex >= 1 || listHTTT.length > 0}
+                              disabled={activeIndex >= 1}
                               onClick={() => handleDelete(item)}
                             >
                               <DeleteSweepOutlinedIcon sx={{ color: pink[500] }} />
