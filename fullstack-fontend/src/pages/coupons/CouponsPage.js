@@ -83,11 +83,11 @@ export default function CouponsPage() {
 
     const [page, setPage] = useState(0);
 
-    const [order, setOrder] = useState('asc');
+    const [order, setOrder] = useState('desc');
 
     const [selected, setSelected] = useState([]);
 
-    const [orderBy, setOrderBy] = useState('tenChuongTrinh');
+    const [orderBy, setOrderBy] = useState('idCoupon');
 
     const [filterName, setFilterName] = useState('');
 

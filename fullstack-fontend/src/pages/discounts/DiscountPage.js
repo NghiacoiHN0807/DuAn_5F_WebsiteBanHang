@@ -83,11 +83,11 @@ export default function DiscountPage() {
 
   const [page, setPage] = useState(0);
 
-  const [order, setOrder] = useState('asc');
+  const [order, setOrder] = useState('desc');
 
   const [selected, setSelected] = useState([]);
 
-  const [orderBy, setOrderBy] = useState('tenChuongTrinh');
+  const [orderBy, setOrderBy] = useState('idSp');
 
   const [filterName, setFilterName] = useState('');
 
