@@ -87,7 +87,7 @@ export default function DiscountPage() {
 
   const [selected, setSelected] = useState([]);
 
-  const [orderBy, setOrderBy] = useState('idSp');
+  const [orderBy, setOrderBy] = useState('idGiamGia');
 
   const [filterName, setFilterName] = useState('');
 
